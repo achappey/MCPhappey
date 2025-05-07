@@ -122,10 +122,11 @@ foreach (var item in mcpServers ?? [])
 
                 if (settings!.ExtendedTest.HasValue && settings?.ExtendedTest.Value == true)
                 {
-                    if (settings!.ToolCalls!.ContainsKey(item.Key)
+                    if ((settings!.ToolCalls!.ContainsKey(item.Key)
                          && settings!.ToolCalls![item.Key].ContainsKey(tool.Name))
+                         || IsRequiredArrayEmpty(tool.JsonSchema))
                     {
-                        var result =
+                        var result = IsRequiredArrayEmpty(tool.JsonSchema) ? [] :
                             settings!.ToolCalls![item.Key][tool.Name]
                             .ToDictionary(a => a.Key, a => (object)a.Value.ToString());
 
@@ -203,3 +204,15 @@ ConsoleWriter.WriteSection($"Tools: ({totalTools})");
 ConsoleWriter.WriteSection($"Resources: ({totalResources})");
 ConsoleWriter.WriteSection($"Resource Templates: ({totalResourceTemplates})");
 ConsoleWriter.WriteSection($"Prompts: ({totalPrompts})");
+
+static bool IsRequiredArrayEmpty(JsonElement jsonElement)
+{
+    if (jsonElement.TryGetProperty("required", out JsonElement requiredElement) &&
+        requiredElement.ValueKind == JsonValueKind.Array)
+    {
+        return requiredElement.GetArrayLength() == 0;
+    }
+
+    // If "required" doesn't exist or isn't an array, treat it as empty
+    return true;
+}

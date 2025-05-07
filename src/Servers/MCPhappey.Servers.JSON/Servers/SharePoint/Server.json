@@ -2,5 +2,9 @@
   "serverInfo": {
     "name": "SharePoint",
     "version": "1.0.0"
+  },
+  "_meta": {
+    "graph.microsoft.com": "Microsoft Graph Access token",
+    "Plugins": "MCPhappey.Tools.SharePoint.SharePointSearch, MCPhappey.Tools"
   }
 }

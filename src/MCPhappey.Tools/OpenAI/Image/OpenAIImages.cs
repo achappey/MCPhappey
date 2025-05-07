@@ -51,7 +51,7 @@ public static class OpenAIImages
             ResponseFormat = OAI.Images.GeneratedImageFormat.Bytes
         }, cancellationToken);
 
-        var uploaded = await uploadService.UploadToRoot(mcpServer, $"OpenAI-Image-{DateTime.Now.Ticks}.png",
+        var uploaded = await uploadService.UploadToRoot(mcpServer,serviceProvider, $"OpenAI-Image-{DateTime.Now.Ticks}.png",
             item.Value.ImageBytes, cancellationToken);
 
         return new CallToolResponse()

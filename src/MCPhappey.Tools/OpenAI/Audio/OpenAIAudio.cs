@@ -58,7 +58,7 @@ public static class OpenAIAudio
                              SpeedRatio = speed,
                          }, cancellationToken);
 
-        var uploaded = await uploadService.UploadToRoot(mcpServer, $"OpenAI-Audio-{DateTime.Now.Ticks}.mp3",
+        var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-{DateTime.Now.Ticks}.mp3",
             item.Value, cancellationToken);
 
         return new CallToolResponse()
@@ -103,7 +103,7 @@ public static class OpenAIAudio
                          download.Filename,
                          cancellationToken);
 
-        var uploaded = await uploadService.UploadToRoot(mcpServer, $"OpenAI-Audio-Transcription-{DateTime.Now.Ticks}.txt",
+        var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-Transcription-{DateTime.Now.Ticks}.txt",
             BinaryData.FromString(item), cancellationToken);
 
         return new CallToolResponse()

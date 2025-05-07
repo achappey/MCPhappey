@@ -18,8 +18,9 @@ public class SamplingService(PromptService promptService,
         var serverConfig = servers.FirstOrDefault(a => a.Server.ServerInfo.Name == mcpServer.ServerOptions.ServerInfo?.Name);
         ArgumentNullException.ThrowIfNull(serverConfig);
 
-        var prompt = await promptService.GetServerPrompt(serverConfig.Server, name, arguments, httpContextAccessor.HttpContext!,
-        cancellationToken);
+        var prompt = await promptService.GetServerPrompt(serverConfig.Server, name,
+            arguments, httpContextAccessor.HttpContext!,
+            cancellationToken);
 
         return await mcpServer.RequestSamplingAsync(new CreateMessageRequestParams()
         {
