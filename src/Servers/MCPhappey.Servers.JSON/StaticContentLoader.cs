@@ -50,9 +50,7 @@ public static class StaticContentLoader
                 if (serverObj.Metadata != null && serverObj.Metadata.ContainsKey(ServerMetadata.Plugins))
                 {
                     serverObj.Capabilities.Tools = new();
-                    //serverConfig.ToolList =
                 }
-
 
                 // If Resources.json exists, mark as not null
                 if (File.Exists(resourcesFile))

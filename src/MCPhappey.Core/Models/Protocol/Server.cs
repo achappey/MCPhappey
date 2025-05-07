@@ -169,19 +169,8 @@ public class GradioPlugin
     public string Title { get; set; } = null!;
 
     [JsonPropertyName("transport")]
-    public Transport Transport { get; set; } = null!;
+    public MCPServer Transport { get; set; } = null!;
 }
-
-public class Transport
-{
-
-    [JsonPropertyName("type")]
-    public string Type { get; set; } = "sse";
-
-    [JsonPropertyName("url")]
-    public string Url { get; set; } = null!;
-}
-
 
 public class Server
 {
@@ -211,5 +200,4 @@ public class ServerInfo
 
     [JsonPropertyName("version")]
     public string Version { get; set; } = null!;
-
 }
