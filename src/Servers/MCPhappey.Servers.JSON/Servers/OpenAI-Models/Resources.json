@@ -1,0 +1,10 @@
+{
+  "resources": [
+    {
+      "uri": "https://api.openai.com/v1/models",
+      "name": "List available OpenAI models",
+      "description": "List all available OpenAI models",
+      "mimeType": "application/json"
+    }
+  ]
+}

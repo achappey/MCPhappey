@@ -1,0 +1,10 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/Shared%20Documents",
+      "name": "Shared documents on a SharePoint Teams site",
+      "description": "Get a list of all documents (including subfolders) on a SharePoint Teams site",
+      "mimeType": "application/json"
+    }
+  ]
+}

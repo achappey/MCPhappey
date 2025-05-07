@@ -1,0 +1,28 @@
+{
+  "resources": [
+    {
+      "uri": "https://coelo.nl/page-sitemap.html",
+      "name": "Alle COELO pagina's",
+      "description": "Sitemap van alle COELO pagina's",
+      "mimeType": "text/plain"
+    },
+    {
+      "uri": "https://coelo.nl/post-sitemap.html",
+      "name": "Sitemap van COELO posts",
+      "description": "Overzicht van alle COELO nieuwsberichten, etc.",
+      "mimeType": "text/plain"
+    },
+    {
+      "uri": "https://coelo.nl/images/rapporten/Atlas2025_rapport.pdf",
+      "name": "Atlas lokale lasten 2025",
+      "description": "De Atlas van de lokale lasten is een jaarlijks overzicht van de heffingen van gemeenten, provincies en waterschappen.",
+      "mimeType": "text/plain"
+    },
+    {
+      "uri": "https://coelo.nl/images/rapporten/Atlas2024_rapport.pdf",
+      "name": "Atlas lokale lasten 2024",
+      "description": "De Atlas van de lokale lasten is een jaarlijks overzicht van de heffingen van gemeenten, provincies en waterschappen.",
+      "mimeType": "text/plain"
+    }
+  ]
+}

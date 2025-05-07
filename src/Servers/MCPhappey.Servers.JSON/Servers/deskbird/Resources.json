@@ -1,0 +1,58 @@
+{
+  "resources": [
+    {
+      "uri": "https://connect.deskbird.com/bookings?limit=100&offset=0",
+      "name": "all-bookings",
+      "description": "Retrieve a general overview of all bookings, regardless of their status.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uri": "https://connect.deskbird.com/bookings?statuses=running,accepted&limit=100&offset=0",
+      "name": "active-bookings",
+      "description": "Retrieve all currently active bookings, including running and accepted ones.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uri": "https://connect.deskbird.com/bookings?statuses=cancelled&limit=50&offset=0",
+      "name": "recently-cancelled-bookings",
+      "description": "Retrieve a list of recently cancelled bookings, limited to the last 50 cancellations.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uri": "https://connect.deskbird.com/bookings?statuses=completed&limit=100&offset=0",
+      "name": "completed-bookings",
+      "description": "Retrieve a detailed list of completed bookings.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uri": "https://connect.deskbird.com/bookings?statuses=editedByUser&limit=100&offset=0",
+      "name": "edited-bookings",
+      "description": "Retrieve a list of all bookings that have been edited by users.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uri": "https://connect.deskbird.com/resources",
+      "name": "all-resources",
+      "description": "Retrieve a list of all available resources from deskbird.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

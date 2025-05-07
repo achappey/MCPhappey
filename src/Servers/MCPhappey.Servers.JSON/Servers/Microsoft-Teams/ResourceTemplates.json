@@ -1,0 +1,52 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels?$select=id,displayName,description",
+      "name": "Team Channels",
+      "description": "Lists all standard and shared channels within a specific Team, including their names and descriptions.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages?$top=20",
+      "name": "Channel Messages",
+      "description": "Retrieves the most recent 20 messages from a specified channel in a Team.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/members?$select=displayName,userId,email,roles",
+      "name": "Team Members",
+      "description": "Lists all members of a specified Team with their names, user IDs, email addresses, and roles.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages?$filter=createdDateTime ge '{startDateTime}' and createdDateTime le '{endDateTime}'&$select=id,replyToId,createdDateTime,body",
+      "name": "Channel Messages by Date",
+      "description": "Retrieves messages from a specified channel in a Team within a given date range.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages/{messageId}/replies?$select=id,replyToId,createdDateTime,body",
+      "name": "Message Replies",
+      "description": "Retrieves replies to a specific message in a channel.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/tabs?$select=displayName,webUrl,teamsApp@odata.bind",
+      "name": "Channel Tabs",
+      "description": "Retrieves the list of tabs (like Planner, OneNote, etc.) configured in a specific Teams channel.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/groups?$search=\"displayName:{searchQuery}\"",
+      "name": "Search groups",
+      "description": "Search a list of Microsoft 365 groups on display name by search query.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/users?$search=\"displayName:{searchQuery}\"",
+      "name": "Search users",
+      "description": "Search a list of Microsoft 365 users by search query",
+      "mimeType": "application/json"
+    }
+  ]
+}

@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "ModelContext-Resources",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "Plugins": "MCPhappey.Tools.ModelContext.Resources.ModelContextResourceService, MCPhappey.Tools"
+  }
+}

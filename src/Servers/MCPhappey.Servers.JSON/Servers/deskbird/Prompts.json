@@ -1,0 +1,43 @@
+{
+  "prompts": [
+    {
+      "prompt": "Create a detailed report on the booking activity of the user with ID '{userId}' over the period from {startDate} to {endDate}. Include:\n- Total number of bookings\n- Breakdown by booking statuses (e.g., running, completed, cancelled)\n- Most frequently booked office locations\n- Average booking duration\n- Any unusual booking patterns or trends\n\nProvide the results in a structured report, highlighting key insights and patterns in the user's booking activity.",
+      "template": {
+        "name": "user-booking-activity-report",
+        "description": "Generate a detailed activity report for a specific user's bookings.",
+        "arguments": [
+          {
+            "name": "userId",
+            "description": "The UUID of the user for whom the booking activity report will be generated.",
+            "required": true
+          },
+          {
+            "name": "startDate",
+            "description": "The start date of the period for the booking activity report (2024-01-01T23:00:00.000Z format).",
+            "required": true
+          },
+          {
+            "name": "endDate",
+            "description": "The end date of the period for the booking activity report (2024-01-01T23:00:00.000Z format).",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://connect.deskbird.com/bookings?userIds={userId}&startDate={startDate}&endDate={endDate}&limit=100&offset=0"
+      ]
+    },
+    {
+      "prompt": "Analyze office bookings data to identify usage patterns and provide actionable insights. Include:\n- Most and least utilized office locations\n- Peak booking times (days and hours)\n- Average booking duration\n- Identify underutilized spaces\n- Recommendations for optimizing office space usage\n\nPresent the results in a clear and concise report with actionable suggestions for improving office utilization.",
+      "template": {
+        "name": "office-utilization-analysis",
+        "description": "Analyze office booking patterns to improve space utilization.",
+        "arguments": []
+      },
+      "resources": [
+        "https://connect.deskbird.com/bookings?statuses=running,completed&limit=100&offset=0",
+        "https://connect.deskbird.com/bookings?statuses=cancelled&limit=100&offset=0"
+      ]
+    }
+  ]
+}

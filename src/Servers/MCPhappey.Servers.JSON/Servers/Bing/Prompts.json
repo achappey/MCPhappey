@@ -1,0 +1,75 @@
+{
+  "prompts": [
+    {
+      "prompt": "Given the following prompt from the user, generate a list of SERP queries to research the topic. Return a maximum of {numberOfQueries} queries, but feel free to return less if the original prompt is clear.\n\nMake sure each query is unique and not similar to each other. The queries must be optimized for use with the Bing search engine.\n\nFor Bing specifically, this means: \n- Formulate natural language queries as if a professional is searching the internet for precise information. \n- Use clear, specific, and descriptive phrases instead of isolated keywords. \n- Combine subject matter terms with relevant contextual keywords, such as industries, technologies, processes, geographic regions, dates, or roles. \n- Whenever applicable, include details like location, time frame, or application domain to narrow the scope and improve relevance (e.g., \"real estate investment outlook Netherlands 2025\"). \n- Avoid vague, overly broad, or generic terms like \"innovation trends\" or \"technology update\" — they produce low-value results. \n- Prefer questions or well-structured phrases that reflect how professionals search online (e.g., \"What are the ESG reporting requirements for real estate funds in Europe?\"). \n- Do not use boolean operators (e.g., AND, OR), advanced syntax, file filters, or quotation marks unless absolutely necessary — Bing is optimized for natural search language. \n- Reflect real-world phrasing that could appear in high-quality content such as whitepapers, news articles, research briefs, or expert blogs. \n- If the topic is emerging or time-sensitive, consider temporal cues like \"2024\", \"latest\", \"new\", or \"current\".\n\nUser prompt:\n<prompt>{topic}</prompt>\n\n{context}\n\nReturn a JSON object with a single property: 'queries'. Each item in the 'queries' array must be a string representing one SERP query. If the prompt and or context is too vague, just return JSON object with empty list. Don't ask for clarification. The list must be optimized for the Bing search engine.",
+      "prompt2": "Given the following prompt from the user, generate a list of SERP queries to research the topic. Return a maximum of {numberOfQueries} queries, but feel free to return less if the original prompt is clear.\n\nMake sure each query is unique and not similar to each other. \nThe queries must be optimized for use with the {searchEngine} search engine.\n\nFor **VectorStore** specifically, this means:\n- Assume the user-provided VectorStore is highly relevant to the research topic.\n- Formulate **focused queries** designed to **retrieve detailed, factual information** from the internal knowledge base.\n- Use **precise, descriptive search terms** that reflect the nature of the research, such as **project names, dates, specific business concepts, or domain-specific terminology**.\n- **Prioritize precision over broad exploration** – the goal is to retrieve **relevant document passages**, not to cast a wide net.\n- **Mirror the language commonly used in internal reports, technical documents, or archival materials**, as the VectorStore is likely to contain such content.\n- If available, **add contextual details** like **years, document types, specific phases, or product/service names** to sharpen the search.\n- **Avoid vague, broad, or generic queries**; specificity increases the likelihood of retrieving useful results.\n- **Avoid boolean operators, advanced syntax, or file filters**, as VectorStore is optimized for semantic search rather than exact keyword matching.\n\nFor **KernelMemory** specifically, this means:\n- Treat KernelMemory as a **structured corporate and contextual knowledge base**, containing **guidelines, policies, legal information, best practices, standard procedures, and potentially user-specific contextual knowledge**.\n- Formulate **clear, fact-oriented queries** aimed at **retrieving definitions, explanations, procedures, or standard methodologies**.\n- **Use formal and professional language** when asking about policies, regulations, or best practices.\n- **Include specific concepts, processes, legal terms, business practices, or organizational standards** where applicable.\n- **Reference known sources** when relevant (e.g., “expense policy 2023”, “supplier evaluation criteria”), as KernelMemory is often populated with organization-specific content.\n- **Avoid exploratory or speculative phrasing**; KernelMemory is intended for **retrieving known facts and formal guidelines**, not for free-form market research.\n- **Avoid boolean operators, complex syntax, or file-specific filters** – KernelMemory uses semantic search optimized for structured knowledge retrieval.\n\nFor **Bing** specifically, this means:\n- Formulate **natural language queries** as if a professional is searching on the internet.\n- Use **clear, descriptive phrases** instead of isolated keywords.\n- Combine **subject matter terms with contextual keywords** relevant to the domain of the research (e.g., industry-specific terms like \"market analysis\", \"regulations\", \"financial impact\", \"technology adoption\").\n- Whenever possible, **add specificity** to ensure relevant results (e.g., \"latest trends in office sustainability Europe 2024\" instead of \"sustainability offices\").\n- If the research relates to a **specific location or sector**, **include these in the query** (e.g., \"commercial real estate financing Netherlands\").\n- **Avoid boolean operators (e.g., AND, OR) and advanced syntax**, as Bing favors natural search patterns.\n- **Prefer specific questions over generic terms**, such as \"How is AI transforming property valuation?\" instead of \"AI property valuation\".\n- **Avoid overly broad or vague queries** like \"innovation real estate\" or \"new technology\", as they often lead to low-quality results.\n\nFor **SharePoint** specifically, this means:\n- Focus on **keywords and search terms** instead of natural language questions.\n- Think about **synonyms, alternate phrasings, and related terms**.\n- Use **terms that reflect typical internal business documents**, such as \"report\", \"analysis\", \"meeting notes\", \"project plan\", \"presentation\", \"spreadsheet\", \"document\", \"contract\", \"memo\", \"policy\", \"financial overview\", \"budget\", or \"proposal\".\n- Consider **localized or region-specific document types** depending on the organization’s language and context. Examples could include:\n    - Dutch: \"verslag\", \"notulen\", \"offerte\", \"jaarrekening\", \"begroting\", \"beleidsstuk\".\n    - German: \"Protokoll\", \"Bericht\", \"Angebot\", \"Haushaltsplan\".\n- Include **context-specific business terms relevant to the research topic**, such as industry-specific keywords, company names, project names, locations, or financial terminology.\n- When the research is about a particular organization, **incorporate internal jargon or department names if known** (e.g., \"sales\", \"operations\", \"asset management\", \"compliance\", \"HR\").\n- Use **SharePoint syntax** if appropriate:\n    - **AND / OR operators**: e.g., `taxatie AND rapport`\n    - **Quotes for exact phrases**: e.g., `\"projectplan Rotterdam\"`\n    - **File types**: `filetype:pdf` or `filetype:xlsx`\n    - **Title search**: `title:taxatie`\n    - **Date filter**: `created>2023-01-01`\n    - **Author search**: `author:\"Jan Jansen\"`\n- Avoid long queries or vague phrases.\n\nUser prompt:\n<prompt>{topic}</prompt>\n\n{context}\n\nReturn a JSON object with 'queries' property. Make sure the queries are optimized for {searchEngine} search engine.",
+      "template": {
+        "name": "get-bing-serp-queries",
+        "description": "Get a list of optimized SERP queries for a Bing search engine",
+        "arguments": [
+          {
+            "name": "topic",
+            "description": "Topic for the the search queries",
+            "required": true
+          },
+          {
+            "name": "numberOfQueries",
+            "description": "Number of queries to return",
+            "required": true
+          },
+          {
+            "name": "context",
+            "description": "More context/background info about the topic"
+          }
+        ]
+      },
+      "resources": [
+        "bot://code/datetime/now",
+        "bot://currentUser/preferredLanguage"
+      ]
+    },
+    {
+      "prompt": "Facts:\n{facts}\n======\nGiven only the facts above, provide a comprehensive/detailed answer.\nYou don't know where the knowledge comes from, just answer.\nIf you don't have sufficient information, reply with 'INFO NOT FOUND'.\nQuestion: {question}\nAnswer:\n",
+      "template": {
+        "name": "extract-with-facts",
+        "description": "Answer a question from some facts",
+        "arguments": [
+          {
+            "name": "facts",
+            "description": "Given facts",
+            "required": true
+          },
+          {
+            "name": "question",
+            "description": "Question to answer",
+            "required": true
+          }
+        ]
+      },
+      "resources": [
+        "bot://code/datetime/now",
+        "bot://currentUser/preferredLanguage"
+      ]
+    },
+    {
+      "prompt": "Content:\n###\n{content}\n###\n\nThe above content is a collection of data from various sources. Analyze the content thoroughly and extract all URLs that provide additional knowledge to achieve the user's goals/question outlined below. Provide only a comma-separated list of these URLs without any additional text or prefixes. If no relevant URLs are found, respond with 'INFO NOT FOUND'.\n\nUser Goals:\n###\n{question}\n###\n",
+      "template": {
+        "name": "extract-urls-with-facts",
+        "description": "Extract URLs from search results relevant for the user question",
+        "arguments": [
+          {
+            "name": "content",
+            "description": "Content to get the URLs from",
+            "required": true
+          },
+          {
+            "name": "question",
+            "description": "Question to answer",
+            "required": true
+          }
+        ]
+      },
+      "resources": ["bot://code/datetime/now"]
+    }
+  ]
+}

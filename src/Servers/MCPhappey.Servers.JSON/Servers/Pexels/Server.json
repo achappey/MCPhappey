@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "Pexels",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "api.pexels.com": "Pexels API key"
+  }
+}

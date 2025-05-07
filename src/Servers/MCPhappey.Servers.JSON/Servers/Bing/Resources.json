@@ -1,0 +1,10 @@
+{
+  "resources": [
+    {
+      "uri": "https://learn.microsoft.com/en-us/bing/search-apis/bing-web-search/reference/query-parameters",
+      "name": "Bing Web Search API Query Parameters",
+      "description": "Reference documentation for the query parameters used in the Bing Web Search API, including options for filtering, formatting, and customizing search results.",
+      "mimeType": "text/plain"
+    }
+  ]
+}

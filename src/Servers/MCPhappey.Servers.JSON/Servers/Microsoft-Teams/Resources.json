@@ -1,0 +1,40 @@
+{
+  "resources": [
+    {
+      "uri": "https://graph.microsoft.com/beta/me/joinedTeams?$select=displayName,id",
+      "name": "Joined Teams",
+      "description": "Get a list of all joined Teams",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://graph.microsoft.com/beta/me/chats?$select=id,topic,createdDateTime,lastUpdatedDateTime",
+      "name": "My Chats",
+      "description": "Retrieves a list of the user's 1:1 and group chat threads, including basic metadata like topic and timestamps.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://graph.microsoft.com/beta/me/presence",
+      "name": "My Presence",
+      "description": "Returns the current presence status of the signed-in user (e.g., Available, Busy, Away).",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://graph.microsoft.com/beta/me/teamwork/devices?$select=id,deviceType,activityState,hardwareDetail",
+      "name": "My Teamwork Devices",
+      "description": "Lists devices used with Teams, such as headsets or peripherals, including device type and current activity state.",
+      "mimeType": "application/json"
+    },    
+    {
+      "uri": "https://graph.microsoft.com/beta/me/teamwork/installedApps?$select=id,displayName",
+      "name": "My Teams Apps",
+      "description": "Retrieves the list of Teams apps installed for the signed-in user, including app ID and display name.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://graph.microsoft.com/beta/me/teamwork/associatedTeams?$select=teamId,displayName,classification",
+      "name": "My Associated Teams",
+      "description": "Lists Teams the user is indirectly associated with (e.g., via tags), including name and classification.",
+      "mimeType": "application/json"
+    } 
+  ]
+}

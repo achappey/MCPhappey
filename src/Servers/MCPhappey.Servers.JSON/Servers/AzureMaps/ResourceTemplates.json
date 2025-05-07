@@ -1,0 +1,67 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://atlas.microsoft.com/route/directions/json?api-version=1.0&query={startLatitude},{startLongitude}:{endLatitude},{endLongitude}&travelMode={travelMode}",
+      "name": "Route directions",
+      "description": "Retrieve route directions between two points based on travel mode",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://atlas.microsoft.com/search/address/reverse/json?api-version=1.0&query={latitude},{longitude}&entityType={resultTypes}",
+      "name": "Reverse geocoding",
+      "description": "Translate coordinates into a human-readable address",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://atlas.microsoft.com/search/address/json?api-version=1.0&query={query}",
+      "name": "Geocoding",
+      "description": "Translate an address query into coordinates",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://atlas.microsoft.com/weather/alerts/json?api-version=1.0&query={latitude},{longitude}",
+      "name": "Severe weather alerts",
+      "description": "Retrieve severe weather alerts for a specific location",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://atlas.microsoft.com/weather/currentConditions/json?api-version=1.0&query={latitude},{longitude}",
+      "name": "Current weather conditions",
+      "description": "Get the current weather conditions for a specific location",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://atlas.microsoft.com/weather/forecast/daily/json?api-version=1.0&query={latitude},{longitude}&duration={duration}",
+      "name": "Weather forecast",
+      "description": "Retrieve daily weather forecasts for a specific location",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://atlas.microsoft.com/search/address/json?api-version=1.0&query={query}&$select=position",
+      "name": "Geocoding lookup",
+      "description": "Fetch latitude and longitude for a given query (e.g., address or location name)",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

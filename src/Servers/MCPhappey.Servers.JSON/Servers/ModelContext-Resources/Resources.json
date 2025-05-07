@@ -1,0 +1,31 @@
+{
+  "resources": [
+    {
+      "uri": "https://spec.modelcontextprotocol.io/sitemap.xml",
+      "name": "Sitemap Model Context Protocol specifications",
+      "description": "Overview of all pages and updates from the Model Context Protocol specifications.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uri": "https://modelcontextprotocol.io/llms-full.txt",
+      "name": "Model Context Protocol documentation",
+      "description": "Complete documentation of Model Context Protocol, including real-life apps, samples, architecture, etc",
+      "mimeType": "text/markdown",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uri": "https://modelcontextprotocol.io/llms.txt",
+      "name": "Model Context Protocol documentation",
+      "description": "Structure of the modelcontextprotocol.io site",
+      "mimeType": "text/markdown",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

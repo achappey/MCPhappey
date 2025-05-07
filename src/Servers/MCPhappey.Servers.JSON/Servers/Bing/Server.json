@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "Bing",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "api.bing.microsoft.com": "Bing API key (Ocp-Apim-Subscription-Key)",
+    "Plugins": "MCPhappey.Tools.Bing.BingWebSearch, MCPhappey.Tools"
+  }
+}

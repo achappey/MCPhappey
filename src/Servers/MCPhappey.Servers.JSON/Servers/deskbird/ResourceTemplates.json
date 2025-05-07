@@ -1,0 +1,31 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://connect.deskbird.com/bookings?statuses={statuses}&limit=100&offset=0",
+      "name": "Bookings by Status",
+      "description": "Retrieve bookings filtered by one or more statuses (e.g., running, cancelled, completed).",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://connect.deskbird.com/bookings?userIds={userId}&limit=100&offset=0",
+      "name": "Bookings by User",
+      "description": "Retrieve all bookings made by a specific user using their UUID.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://connect.deskbird.com/bookings?startDate={startDate}&endDate={endDate}&limit=100&offset=0",
+      "name": "Bookings by Date Range",
+      "description": "Retrieve bookings that occurred within a specific date range.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

@@ -1,0 +1,28 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://{tenantName}.{crmRegioId}.dynamics.com/api/data/v9.2/accounts?$select=accountid,name,accountnumber,telephone1,emailaddress1,address1_city,address1_stateorprovince,address1_postalcode,address1_country,industrycode,revenue,numberofemployees,ownerid,createdon,customertypecode,statuscode,statecode&$filter=createdon ge {createdOnOrAfter}&$orderby=createdon desc",
+      "name": "Dynamics CRM accounts created after",
+      "description": "Get Dynamics CRM accounts created after a specific date",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://{tenantName}.{crmRegioId}.dynamics.com/api/data/v9.2/accounts?$select=accountid,name,accountnumber,telephone1,emailaddress1,address1_city,address1_stateorprovince,address1_postalcode,address1_country,industrycode,revenue,numberofemployees,ownerid,createdon,customertypecode,statuscode,statecode&$filter=contains(name,'{accountName}')",
+      "name": "Search Dynamics CRM accounts by name",
+      "description": "Search for Dynamics CRM accounts by name contains",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://{tenantName}.{crmRegioId}.dynamics.com/api/data/v9.2/systemusers?$select=createdon,mobilephone,title,systemuserid,fullname,domainname,azureactivedirectoryobjectid&$filter=azureactivedirectoryobjectid ne null and isdisabled eq false",
+      "name": "Get Dynamics Enabled system users",
+      "description": "Get a list of enabled system users",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://{tenantName}.{crmRegioId}.dynamics.com/api/data/v9.2/EntityDefinitions",
+      "name": "Get Dynamics Environment Metadata",
+      "description": "Retrieve metadata about the environment including entity definitions",
+      "mimeType": "application/json"
+    }
+  ]
+}

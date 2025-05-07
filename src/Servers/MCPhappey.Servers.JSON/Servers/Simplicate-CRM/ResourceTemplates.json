@@ -1,0 +1,139 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/person/person:{personId}",
+      "name": "Single person details",
+      "description": "Get all details about a single person.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/organization/organization:{organizationId}",
+      "name": "Single organization details",
+      "description": "Get all details about a single organization.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/contactperson/contactperson:{contactpersonId}",
+      "name": "Single contactperson details",
+      "description": "Get all details about a single contactperson.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/myorganizationprofile",
+      "name": "My organization profiles",
+      "description": "Fetch all your organization profiles.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/organization?q[name]=*{organizationName}*&q[relation_type.label]=*{relationTypeLabel}*&q[visiting_address.postal_code]=*{partialPostalCode}*&q[industry.name]=*{industryName}*&q[relation_manager.name]=*{relationManagerName}*&q[teams.name]=*{teamName}*&q[note]=*{partialNote}*&q[bank_account]=*{partialBankAccount}*&q[relation_number]=*{partialRelationNumber}*&q[vat_number]=*{partialVatNumber}*&q[visiting_address.line_1]=*{partialAddressLine}*&q[visiting_address.locality]=*{city}*&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&q[allow_autocollect]={autocollectEnabled}&q[has_different_postal_address]=true&q[is_active]={isActive}&q[phone]=*{partialPhone}*&offset={offset}&limit={limit}&sort={sortColumn}",
+      "name": "Organizations (all filters)",
+      "description": "Retrieve organizations filtered by name, industry, relation type/manager, teams, postal code, address, phone, bank/relation/VAT numbers, notes, dates (created/updated), auto-collect status, and pagination/sorting.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/person?q[full_name]=*{partialName}*&q[family_name]=*{partialFamilyName}*&q[relation_type.label]=*{relationTypeLabel}*&q[note]=*{note}*&q[phone]=*{partialPhone}*&q[email]=*{partialEmail}*&q[gender]={genderValue}&q[is_employee]={isEmployee}&q[relation_number]=*{partialRelationNumber}*&q[linkedin_url]=*{partialLinkedinUrl}*&q[twitter_url]=*{partialTwitterUrl}*&q[mailing_list_email]=*{partialMailingListEmail}*&q[relation_manager.name]=*{relationManagerName}*&q[teams.name]=*{teamName}*&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&q[date_of_birth][ge]={dateOfBirthFrom}&q[date_of_birth][le]={dateOfBirthTo}&q[is_active]=true&offset={offset}&limit={limit}&sort={sortColumn}",
+      "name": "Persons (all filters)",
+      "description": "Retrieve persons filtered by name, phone/email, notes, gender, team, LinkedIn/Twitter/mailings, relation number/type/manager, employee status, date ranges (created, updated, birth). Includes pagination and sorting.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/contactperson?q[person.id]=person:{personId}&q[organization.name]=*{organizationName}*&q[work_email]=*{workEmail}*&q[work_phone]=*{workPhone}*&q[work_mobile]=*{workMobile}*&q[work_function]=*{workFunction}*&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&q[is_active]={isActive}&offset={offset}&limit={limit}&sort={sortColumn}",
+      "name": "Contact persons (all filters)",
+      "description": "Retrieve contact persons by name, organization, email, phone, mobile, function, creation/update date range, activity status. Supports pagination and sorting.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/debtor?q[organization.id]=organization:{organizationId}&q[person.id]=person:{personId}&offset={offset}&limit={limit}&sort=-created_at",
+      "name": "Debtors (all filters)",
+      "description": "Retrieve debtors filtered by organization or person name (partial match), with pagination and sorting.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/documenttype",
+      "name": "CRM document types",
+      "description": "Retrieve all CRM document types.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/industry",
+      "name": "Industry types",
+      "description": "Retrieve all industry types.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/gender",
+      "name": "Genders",
+      "description": "Retrieve all available gender options.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/organizationsize",
+      "name": "Organization sizes",
+      "description": "Retrieve all available organization size options.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/relationtype",
+      "name": "Relation types",
+      "description": "Retrieve all relation types.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/document?q[title]=*{partialTitle}*&q[description]=*{partialDescription}*&q[document_type.label]=*{documentTypeLabel}*&q[created_by.name]=*{createdByName}*&q[linked_to.label]=*{linkedLabel}*&q[linked_to.type]={linkedType}&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&offset={offset}&limit={limit}&sort={sortColumn}",
+      "name": "CRM documents (all filters)",
+      "description": "Retrieve CRM documents filtered by title, description, document type, linked item, creator, creation/update date. Supports pagination and sorting.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/document/document:{documentId}",
+      "name": "Single CRM document details",
+      "description": "Get all details about a single CRM document.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

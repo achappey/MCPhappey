@@ -1,0 +1,10 @@
+{
+  "resources": [
+    {
+      "uri": "https://www.googleapis.com/discovery/v1/apis/customsearch/v1/rest",
+      "name": "Google Custom Search API Discovery Document",
+      "description": "REST discovery document for the Google Custom Search API, providing details on methods, parameters, and data schemas for programmatic search integration.",
+      "mimeType": "text/plain"
+    }
+  ]
+}
