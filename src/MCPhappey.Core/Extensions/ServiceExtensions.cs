@@ -19,7 +19,7 @@ public static class ServiceExtensions
     {
         var domainHeaders = serviceProvider.GetService<Dictionary<string, Dictionary<string, string>>>();
         var openAIKey = domainHeaders?.ContainsKey(Constants.Hosts.OpenAI) == true
-            ? domainHeaders[Constants.Hosts.OpenAI]?.ToString()?.GetBearerToken() : null;
+            ? domainHeaders[Constants.Hosts.OpenAI]?["Authorization"].ToString()?.GetBearerToken() : null;
 
         return new OpenAIClient(openAIKey);
     }

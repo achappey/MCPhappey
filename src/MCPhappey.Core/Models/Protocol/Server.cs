@@ -159,6 +159,30 @@ public class MCPServer
 }
 
 
+public class GradioPlugin
+{
+
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = null!;
+
+    [JsonPropertyName("title")]
+    public string Title { get; set; } = null!;
+
+    [JsonPropertyName("transport")]
+    public Transport Transport { get; set; } = null!;
+}
+
+public class Transport
+{
+
+    [JsonPropertyName("type")]
+    public string Type { get; set; } = "sse";
+
+    [JsonPropertyName("url")]
+    public string Url { get; set; } = null!;
+}
+
+
 public class Server
 {
 

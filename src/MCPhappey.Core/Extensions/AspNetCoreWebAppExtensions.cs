@@ -77,6 +77,9 @@ public static class AspNetCoreWebAppExtensions
         webApp.MapGet("/mcp.json", (HttpContext ctw)
                    => Results.Json(servers.ToMcpServerList(ctw)));
 
+        webApp.MapGet("/gradio.json", (HttpContext ctw)
+                   => Results.Json(servers.Select(a => a.ToGradio(ctw))));
+
         webApp.Use(async (context, next) =>
         {
             var path = context.Request.Path.Value ?? "";

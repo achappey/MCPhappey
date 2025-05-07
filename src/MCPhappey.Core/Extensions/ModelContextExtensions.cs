@@ -15,6 +15,18 @@ namespace MCPhappey.Core.Extensions;
 
 public static partial class ModelContextExtensions
 {
+    public static GradioPlugin ToGradio(this ServerConfig server, HttpContext httpContext)
+     => new()
+     {
+         Id = server.Server.ServerInfo.Name,
+         Title = server.Server.ServerInfo.Name,
+         Transport = new()
+         {
+             Url = server.Server.GetUrl(httpContext)
+         }
+     };
+
+
     public static MCPServerList ToMcpServerList(this IEnumerable<ServerConfig> servers, HttpContext httpContext)
      => new()
      {
