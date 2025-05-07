@@ -24,13 +24,15 @@ public class TransformService(MsExcelDecoder msExcelDecoder,
                 => (await msWordDecoder.DecodeAsync(binaryData, cancellationToken)).GetFileItemFromFileContent(uri),
             "application/vnd.openxmlformats-officedocument.presentationml.presentation"
                 => (await msPowerPointDecoder.DecodeAsync(binaryData, cancellationToken)).GetFileItemFromFileContent(uri),
-            MediaTypeNames.Application.Pdf 
+            MediaTypeNames.Application.Pdf
                 => (await pdfDecoder.DecodeAsync(binaryData, cancellationToken)).GetFileItemFromFileContent(uri),
             MediaTypeNames.Text.Html => binaryData.GetFileItemFromHtml(uri),
             MediaTypeNames.Text.Plain
             or ""
+            or "application/hal+json"
             or MediaTypeNames.Text.Csv
             or MediaTypeNames.Application.Json
+            or MediaTypeNames.Application.ProblemJson
             or MediaTypeNames.Text.Markdown
             or MediaTypeNames.Application.Xml => new()
             {

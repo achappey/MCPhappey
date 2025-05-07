@@ -57,6 +57,8 @@ public static class ModelContextProtocolExtensions
     public static ResourceContents ToResourceContents(this FileItem fileItem)
         => fileItem.MimeType.StartsWith("text/")
             || fileItem.MimeType.Equals(MediaTypeNames.Application.Json)
+            || fileItem.MimeType.Equals(MediaTypeNames.Application.ProblemJson)
+            || fileItem.MimeType.Equals("application/hal+json")            
             || fileItem.MimeType.Equals(MediaTypeNames.Application.Xml) ? new TextResourceContents()
             {
                 Text = fileItem.Contents.ToString(),

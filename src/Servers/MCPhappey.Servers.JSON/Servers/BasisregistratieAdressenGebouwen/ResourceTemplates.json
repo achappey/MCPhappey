@@ -21,7 +21,7 @@
     {
       "uriTemplate": "https://api.bag.kadaster.nl/lvbag/individuelebevragingen/v2/panden?bbox={xmin},{ymin},{xmax},{ymax}&status=Bestaand&pageSize={pageSize}",
       "name": "Panden in een bounding-box",
-      "description": "Retourneert alleen panden met status ‘Bestaand’ binnen de opgegeven bbox. Zet `pageSize` laag om grote hits te voorkomen.",
+      "description": "Retourneert alleen panden met status ‘Bestaand’ binnen de opgegeven bbox. Zet `pageSize` laag om grote hits te voorkomen (min == 10).",
       "mimeType": "application/hal+json"
     },
     {
