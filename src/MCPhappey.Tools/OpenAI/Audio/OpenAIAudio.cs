@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.AspNetCore.Http;
@@ -87,10 +88,10 @@ public static class OpenAIAudio
         ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
         var uploadService = serviceProvider.GetRequiredService<UploadService>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         var openAiClient = serviceProvider.GetOpenAiClient();
-
-        var download = await downloadService.GetContentAsync(url!, httpContextAccessor.HttpContext!, cancellationToken);
+        var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
+        var config = configs.GetServerConfig(mcpServer);
+        var download = await downloadService.GetContentAsync(config!, url!, null, cancellationToken);
 
         if (download.Contents.IsEmpty != false || string.IsNullOrEmpty(download?.Filename))
         {

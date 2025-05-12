@@ -1,24 +1,21 @@
 using MCPhappey.Core.Extensions;
-using MCPhappey.Core.Models.Protocol;
-using Microsoft.AspNetCore.Http;
+using MCPhappey.Common.Models;
 using Microsoft.Extensions.Configuration;
 using ModelContextProtocol.Protocol.Types;
 
 namespace MCPhappey.Core.Services;
 
 public class ResourceService(IConfiguration configuration,
-    DownloadService downloadService,
-    IReadOnlyList<ServerConfig> servers)
+    DownloadService downloadService)
 {
-    public async Task<ListResourceTemplatesResult> GetServerResourceTemplates(Server server) =>
-       await Task.FromResult(servers
-                                .FirstOrDefault(a => a.Server.ServerInfo.Name
-                                    .Equals(server.ServerInfo.Name, StringComparison.OrdinalIgnoreCase))?.ResourceTemplateList
+    public async Task<ListResourceTemplatesResult> GetServerResourceTemplates(ServerConfig serverConfig) =>
+       await Task.FromResult(serverConfig.ResourceTemplateList
                                 ?? new());
-    public async Task<ListResourcesResult> GetServerResources(Server server,
-        HttpContext httpContext, CancellationToken cancellationToken = default)
+
+    public async Task<ListResourcesResult> GetServerResources(ServerConfig serverConfig,
+        string? authToken = null, CancellationToken cancellationToken = default)
     {
-        switch (server.ServerInfo.Name)
+        switch (serverConfig.Server.ServerInfo.Name)
         {
             case "Agent2Agent":
                 var url = configuration["Agent2AgentDiscovery"];
@@ -31,39 +28,36 @@ public class ResourceService(IConfiguration configuration,
                     Name = "Discover other agents for collaboration through detailed agent cards"
                 }] : []
                 };
-            case "ModelContext-Servers":
-                var defaultItems = servers
-                             .FirstOrDefault(a => a.Server.ServerInfo.Name
-                                 .Equals(server.ServerInfo.Name, StringComparison.OrdinalIgnoreCase))?.ResourceList
-                             ?? new();
+            /*    case "ModelContext-Servers":
+                    var defaultItems = servers
+                                 .FirstOrDefault(a => a.Server.ServerInfo.Name
+                                     .Equals(serverConfig.Server.ServerInfo.Name, StringComparison.OrdinalIgnoreCase))?.ResourceList
+                                 ?? new();
 
-                return new ListResourcesResult()
-                {
-                    Resources =
-
-                    [
-                        .. defaultItems.Resources,
-                    new Resource()
+                    return new ListResourcesResult()
                     {
-                        Uri = (httpContext.Request.IsHttps ? "https" : "http") + "://" + httpContext.Request.Host + "/servers",
-                        Name = "Discover other Model Context servers for tools and resources"
-                    }
-                    ]
-                };
+                        Resources =
+                        [
+                            .. defaultItems.Resources,
+                            new Resource()
+                            {
+                                Uri = (httpContext.Request.IsHttps ? "https" : "http") + "://" + httpContext.Request.Host + "/servers",
+                                Name = "Discover other Model Context servers for tools and resources"
+                            }
+                        ]
+                    };*/
 
             default:
-                return await Task.FromResult(servers
-                                  .FirstOrDefault(a => a.Server.ServerInfo.Name
-                                      .Equals(server.ServerInfo.Name, StringComparison.OrdinalIgnoreCase))?.ResourceList
+                return await Task.FromResult(serverConfig?.ResourceList
                                   ?? new());
         }
     }
 
-    public async Task<ReadResourceResult> GetServerResource(Server server, string uri,
-       HttpContext httpContext, CancellationToken cancellationToken = default)
+    public async Task<ReadResourceResult> GetServerResource(ServerConfig serverConfig, string uri,
+      string? authToken = null, CancellationToken cancellationToken = default)
     {
-        var fileItem = await downloadService.GetContentAsync(uri,
-                       httpContext, cancellationToken);
+        var fileItem = await downloadService.GetContentAsync(serverConfig, uri,
+                       authToken, cancellationToken);
 
         return fileItem.ToReadResourceResult();
     }

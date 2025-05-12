@@ -1,10 +1,12 @@
 using System.Text.Json;
+using MCPhappey.Common.Models;
+using MCPhappey.Common.Constants;
 using MCPhappey.Core.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol.Types;
 using ModelContextProtocol.Server;
 using OpenAI;
+using MCPhappey.Auth.Extensions;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -14,14 +16,20 @@ public static class ServiceExtensions
     private static bool HasResult(this string? result)
              => !string.IsNullOrEmpty(result) && !result.Contains("INFO NOT FOUND", StringComparison.OrdinalIgnoreCase);
 
-
     public static OpenAIClient GetOpenAiClient(this IServiceProvider serviceProvider)
     {
         var domainHeaders = serviceProvider.GetService<Dictionary<string, Dictionary<string, string>>>();
-        var openAIKey = domainHeaders?.ContainsKey(Constants.Hosts.OpenAI) == true
-            ? domainHeaders[Constants.Hosts.OpenAI]?["Authorization"].ToString()?.GetBearerToken() : null;
+        var openAIKey = domainHeaders?.ContainsKey(Hosts.OpenAI) == true
+            ? domainHeaders[Hosts.OpenAI]?["Authorization"].ToString()?.GetBearerToken() : null;
 
         return new OpenAIClient(openAIKey);
+    }
+
+    public static ServerConfig? GetServerConfig(this IServiceProvider serviceProvider,
+           IMcpServer mcpServer)
+    {
+        var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
+        return configs.GetServerConfig(mcpServer);
     }
 
     public static async Task<CallToolResponse> ExtractWithFacts(this IServiceProvider serviceProvider,
@@ -33,8 +41,14 @@ public static class ServiceExtensions
         CancellationToken cancellationToken = default)
     {
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
-        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+        var config = serviceProvider.GetServerConfig(mcpServer);
+
+        if (config == null)
+        {
+            return "Server error".ToErrorCallToolResponse();
+        }
+
         Dictionary<string, string> results = [];
 
         var args = new Dictionary<string, JsonElement>()
@@ -44,7 +58,9 @@ public static class ServiceExtensions
         };
 
         var extractWithFactsSampleTask = samplingService.GetPromptSample(mcpServer,
+            config,
             "extract-with-facts", args,
+            null,
             "gpt-4.1-mini", 0, cancellationToken);
 
         var urlArgs = new Dictionary<string, JsonElement>()
@@ -53,7 +69,8 @@ public static class ServiceExtensions
             ["question"] = JsonSerializer.SerializeToElement(query)
         };
 
-        var extracUrlsFromFactsSample = await samplingService.GetPromptSample(mcpServer, "extract-urls-with-facts", urlArgs,
+        var extracUrlsFromFactsSample = await samplingService.GetPromptSample(mcpServer, config, "extract-urls-with-facts", urlArgs,
+                            null,
                            "gpt-4.1", 0, cancellationToken);
 
         var urls = extracUrlsFromFactsSample?.Content.Text?
@@ -76,8 +93,8 @@ public static class ServiceExtensions
                  try
                  {
                      var urlResult = await downloadService
-                              .GetContentAsync(url,
-                              httpContextAccessor.HttpContext!,
+                              .GetContentAsync(config!, url,
+                              null,
                               cancellationToken);
 
                      if (urlResult.Contents.IsEmpty || string.IsNullOrEmpty(urlResult.Contents.ToString()?.Trim()))
@@ -91,8 +108,10 @@ public static class ServiceExtensions
                          ["question"] = JsonSerializer.SerializeToElement(query)
                      };
 
-                     var extractFromUrlsWithFactsSample = await samplingService.GetPromptSample(mcpServer, "extract-with-facts", urlFactArgs,
-                                           "gpt-4.1-mini", 0, cancellationToken);
+                     var extractFromUrlsWithFactsSample = await samplingService.GetPromptSample(mcpServer, config, "extract-with-facts",
+                            urlFactArgs,
+                            null,
+                            "gpt-4.1-mini", 0, cancellationToken);
 
                      if (extractFromUrlsWithFactsSample.Content.Text.HasResult())
                      {

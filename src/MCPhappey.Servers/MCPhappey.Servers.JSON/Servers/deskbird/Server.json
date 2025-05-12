@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "deskbird",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "connect.deskbird.com": "deskbird API key",
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

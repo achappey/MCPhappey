@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "ModelContext-SQL",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "Plugins": "MCPhappey.SQL.Tools.ModelContextServers, MCPhappey.Tools",
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

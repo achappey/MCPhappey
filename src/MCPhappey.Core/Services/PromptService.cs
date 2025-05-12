@@ -1,20 +1,16 @@
 using System.Text.Json;
 using MCPhappey.Core.Extensions;
-using MCPhappey.Core.Models.Protocol;
-using Microsoft.AspNetCore.Http;
+using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol.Types;
 
 namespace MCPhappey.Core.Services;
 
-public class PromptService(ResourceService resourceService,
-    IReadOnlyList<ServerConfig> servers)
+public class PromptService(ResourceService resourceService)
 {
-    public async Task<ListPromptsResult> GetServerPrompts(Server server,
+    public async Task<ListPromptsResult> GetServerPrompts(ServerConfig serverConfig,
         CancellationToken cancellationToken = default)
     {
-        var promptList = servers
-                         .FirstOrDefault(a => a.Server.ServerInfo.Name
-                             .Equals(server.ServerInfo.Name, StringComparison.OrdinalIgnoreCase))?.PromptList
+        var promptList = serverConfig.PromptList
                          ?? new();
 
         return await Task.FromResult<ListPromptsResult>(new()
@@ -23,18 +19,14 @@ public class PromptService(ResourceService resourceService,
         });
     }
 
-    public async Task<GetPromptResult> GetServerPrompt(Server server, string name,
-        IReadOnlyDictionary<string, JsonElement> arguments, HttpContext httpContext,
+    public async Task<GetPromptResult> GetServerPrompt(ServerConfig serverConfig, string name,
+        IReadOnlyDictionary<string, JsonElement> arguments, string? authToken = null,
         CancellationToken cancellationToken = default)
     {
-        var promptList = servers
-                         .FirstOrDefault(a => a.Server.ServerInfo.Name
-                             .Equals(server.ServerInfo.Name, StringComparison.OrdinalIgnoreCase))?.PromptList;
-
-        var prompt = promptList?.Prompts.FirstOrDefault(a => a.Template.Name == name);
+        var prompt = serverConfig.PromptList?.Prompts.FirstOrDefault(a => a.Template.Name == name);
 
         var resourceTasks = prompt?.Resources
-            ?.Select(z => resourceService.GetServerResource(server, z, httpContext)) ?? [];
+            ?.Select(z => resourceService.GetServerResource(serverConfig, z, authToken, cancellationToken)) ?? [];
 
         var resources = await Task.WhenAll(resourceTasks);
         var resourceContents = resources.SelectMany(a => a.Contents)

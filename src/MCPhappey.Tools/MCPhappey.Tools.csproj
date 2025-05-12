@@ -8,6 +8,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\MCPhappey.Core\MCPhappey.Core.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\MCPhappey.Common\MCPhappey.Common.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\MCPhappey.Auth\MCPhappey.Auth.csproj" PrivateAssets="All" />
   </ItemGroup>  
 
 	<ItemGroup>

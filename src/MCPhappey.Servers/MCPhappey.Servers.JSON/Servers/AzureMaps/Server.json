@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "AzureMaps",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "atlas.microsoft.com": "Azure Maps Subscription Key",
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

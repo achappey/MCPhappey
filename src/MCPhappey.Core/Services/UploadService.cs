@@ -1,5 +1,5 @@
 using MCPhappey.Core.Extensions;
-using MCPhappey.Core.Models.Protocol;
+using MCPhappey.Common.Models;
 using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol.Types;
 using ModelContextProtocol.Server;
@@ -9,18 +9,18 @@ namespace MCPhappey.Core.Services;
 public class UploadService(
     IReadOnlyList<ServerConfig> servers)
 {
-    public async Task<Resource?> UploadToRoot(IMcpServer mcpServer, 
-        IServiceProvider serviceProvider, 
+    public async Task<Resource?> UploadToRoot(IMcpServer mcpServer,
+        IServiceProvider serviceProvider,
         string filename,
         BinaryData binaryData,
         CancellationToken cancellationToken = default)
     {
         if (mcpServer.ClientCapabilities?.Roots == null) return null;
+
         var roots = await mcpServer.RequestRootsAsync(new(), cancellationToken);
-        var server = servers.FirstOrDefault(a => a.Server.ServerInfo.Name == mcpServer.ServerOptions.ServerInfo?.Name);
-
+        var server = servers.GetServerConfig(mcpServer);
         var oneDriveRoots = roots.Roots.Where(a => new Uri(a.Uri).Host.EndsWith(".sharepoint.com"));
-
+      
         if (oneDriveRoots.Any())
         {
             using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
@@ -55,5 +55,4 @@ public class UploadService(
 
         return null;
     }
-
 }

@@ -1,13 +1,15 @@
 using System.Net.Mime;
 using System.Text.Json;
 using MCPhappey.Core.Models;
-using MCPhappey.Core.Models.Protocol;
-using Microsoft.AspNetCore.Http;
+using MCPhappey.Common.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Beta;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol.Types;
 using ModelContextProtocol.Server;
+using MCPhappey.Auth.Models;
+using MCPhappey.Auth.Extensions;
+using MCPhappey.Common.Constants;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -17,18 +19,19 @@ public static class GraphClientExtensions
       IMcpServer mcpServer)
     {
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-        var servers = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
-        var server = servers.FirstOrDefault(a => a.Server.ServerInfo.Name == mcpServer.ServerOptions.ServerInfo?.Name);
+        var tokenService = serviceProvider.GetService<TokenProvider>();
+        var oAuthSettings = serviceProvider.GetService<OAuthSettings>();
+        var server = serviceProvider.GetServerConfig(mcpServer);
 
-        return await httpClientFactory.GetOboGraphClient(httpContextAccessor.HttpContext?.GetBearerToken()!, server?.Auth);
+        return await httpClientFactory.GetOboGraphClient(tokenService?.Token!, server?.Server!, oAuthSettings!);
     }
 
     public static async Task<GraphServiceClient> GetOboGraphClient(this IHttpClientFactory httpClientFactory,
         string token,
-        ServerAuth? auth)
+        Server server,
+        OAuthSettings oAuthSettings)
     {
-        var delegated = await httpClientFactory.GetOboToken(token, "graph.microsoft.com", auth);
+        var delegated = await httpClientFactory.GetOboToken(token, Hosts.MicrosoftGraph, server, oAuthSettings);
 
         var authProvider = new StaticTokenAuthProvider(delegated!);
         return new GraphServiceClient(authProvider);

@@ -2,14 +2,18 @@ using MCPhappey.Core.Extensions;
 using MCPhappey.WebApi;
 using MCPhappey.Servers.JSON;
 using Microsoft.KernelMemory;
-using MCPhappey.Core.Services;
 using MCPhappey.Servers.SQL.Extensions;
+using MCPhappey.Decoders.Extensions;
+using MCPhappey.Common.Constants;
+using MCPhappey.Auth.Models;
+using MCPhappey.Auth.Extensions;
+using MCPhappey.Core.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
 
 var basePath = Path.Combine(AppContext.BaseDirectory, "Servers");
-var servers = basePath.GetServers(appConfig?.Auth ?? []).ToList();
+var servers = basePath.GetServers().ToList();
 
 if (!string.IsNullOrEmpty(appConfig?.McpDatabase))
 {
@@ -17,7 +21,7 @@ if (!string.IsNullOrEmpty(appConfig?.McpDatabase))
 }
 
 if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
-    && appConfig?.Domains?.ContainsKey(MCPhappey.Core.Constants.Hosts.OpenAI) == true)
+    && appConfig?.Domains?.ContainsKey(Hosts.OpenAI) == true)
 {
     builder.Services.AddKernelMemoryWithOptions(memoryBuilder =>
     {
@@ -27,7 +31,7 @@ if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
             .WithOpenAI(new OpenAIConfig()
             {
                 APIKey = appConfig?.Domains?
-                    .FirstOrDefault(a => a.Key == MCPhappey.Core.Constants.Hosts.OpenAI)
+                    .FirstOrDefault(a => a.Key == Hosts.OpenAI)
                     .Value
                     .FirstOrDefault(a => a.Key == "Authorization").Value.GetBearerToken()!,
                 TextModel = "gpt-4.1-2025-04-14",
@@ -35,6 +39,7 @@ if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
                 EmbeddingDimensions = 3072,
                 EmbeddingModel = "text-embedding-3-large"
             })
+            .WithDecoders()
             .WithSqlServerMemoryDb(new()
             {
                 ConnectionString = appConfig?.KernelMemoryDatabase!
@@ -49,12 +54,38 @@ if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
     });
 }
 
+var oauthSettings = builder.Configuration
+    .GetSection("OAuth")
+    .Get<OAuthSettings>();
+
+if (oauthSettings != null)
+{
+    builder.Services.AddSingleton(oauthSettings);
+}
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowSpecificOrigin", policy =>
+    {
+        policy
+            .AllowAnyOrigin()
+            .AllowAnyHeader()
+            .AllowAnyMethod();
+    });
+});
+
+builder.AddAuthServices(appConfig?.PrivateKey ?? "", appConfig?.Domains);
 builder.AddMcpCoreServices(servers, appConfig?.Domains);
 
 var app = builder.Build();
-
+app.UseCors("AllowSpecificOrigin");
 app.UseRouting();
-app.UseAuthorization();
+
+if (oauthSettings != null)
+{
+    app.MapOAuth([.. servers.Where(a => a.Server.HasAuth())], oauthSettings);
+}
+
 app.UseMcpWebApplication(servers);
 
 app.Run();

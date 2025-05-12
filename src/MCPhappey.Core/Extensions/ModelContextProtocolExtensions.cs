@@ -1,7 +1,8 @@
 
 using System.Net.Mime;
+using MCPhappey.Auth.Extensions;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Models;
-using MCPhappey.Core.Models.Protocol;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using ModelContextProtocol.Protocol.Types;
@@ -58,7 +59,7 @@ public static class ModelContextProtocolExtensions
         => fileItem.MimeType.StartsWith("text/")
             || fileItem.MimeType.Equals(MediaTypeNames.Application.Json)
             || fileItem.MimeType.Equals(MediaTypeNames.Application.ProblemJson)
-            || fileItem.MimeType.Equals("application/hal+json")            
+            || fileItem.MimeType.Equals("application/hal+json")
             || fileItem.MimeType.Equals(MediaTypeNames.Application.Xml) ? new TextResourceContents()
             {
                 Text = fileItem.Contents.ToString(),
@@ -119,16 +120,16 @@ public static class ModelContextProtocolExtensions
                 await Task.Run(() =>
                 {
                     var kernel = ctx.RequestServices.GetRequiredService<Kernel>();
-
                     var serverName = ctx.Request.Path.Value!.GetServerNameFromUrl();
                     var server = servers.First(a => a.Server.ServerInfo?.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase) == true);
+                    var authToken = ctx.GetBearerToken();
 
                     opts.ServerInfo = server.Server.ToServerInfo();
                     opts.Capabilities = new()
                     {
-                        Resources = server.Server.ToResourcesCapability(ctx),
-                        Prompts = server.Server.ToPromptsCapability(ctx),
-                        Tools = server.Server.ToToolsCapability(kernel)
+                        Resources = server.ToResourcesCapability(authToken),
+                        Prompts = server.ToPromptsCapability(authToken),
+                        Tools = server.Server.ToToolsCapability(kernel, authToken)
                     };
                 }, cancellationToken);
             };

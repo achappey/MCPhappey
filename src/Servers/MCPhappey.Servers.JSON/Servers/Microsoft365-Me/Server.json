@@ -1,9 +1,0 @@
-{
-  "serverInfo": {
-    "name": "Microsoft365-Me",
-    "version": "1.0.0"
-  },
-  "_meta": {
-    "graph.microsoft.com": "Microsoft Graph API key"
-  }
-}

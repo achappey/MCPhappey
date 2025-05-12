@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.AspNetCore.Http;
@@ -94,7 +95,6 @@ public static class SharePointSearch
         CancellationToken cancellationToken = default)
     {
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
 
         var entityCombinations = new List<EntityType?[]>
@@ -128,11 +128,15 @@ public static class SharePointSearch
             ["topic"] = JsonSerializer.SerializeToElement(query),
             ["numberOfQueries"] = JsonSerializer.SerializeToElement("5"),
         };
+        var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
+        var config = configs.GetServerConfig(mcpServer);
 
         var querySampling = await samplingService.GetPromptSample<QueryList>(
             mcpServer,
+            config,
             "get-sharepoint-serp-queries",
             queryArgs,
+            null,
             "o4-mini",
             0,
             cancellationToken);

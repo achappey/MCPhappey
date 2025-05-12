@@ -4,21 +4,26 @@
     <TargetFramework>net9.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <OutputType>Library</OutputType>
     <NoWarn>KMEXP00;SKEXP0050;SKEXP0001</NoWarn>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\MCPhappey.Auth\MCPhappey.Auth.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\MCPhappey.Common\MCPhappey.Common.csproj" PrivateAssets="All" />
+  </ItemGroup>  
+
 	<ItemGroup>
-    <PackageReference Include="Microsoft.KernelMemory.AI.OpenAI" Version="0.98.250324.1" />
-    <PackageReference Include="Microsoft.KernelMemory.MemoryDb.SQLServer" Version="0.98.250324.1" />
+    <PackageReference Include="Microsoft.KernelMemory.AI.OpenAI" Version="0.98.250508.3" />
+    <PackageReference Include="Microsoft.KernelMemory.MemoryDb.SQLServer" Version="0.98.250508.3" />
 	<PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.4" />
 	<PackageReference Include="Microsoft.Graph.Beta" Version="5.107.0-preview" />
-	<PackageReference Include="Microsoft.KernelMemory.Core" Version="0.98.250324.1" />
-	<PackageReference Include="Microsoft.SemanticKernel" Version="1.48.0" />
-	<PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.48.0-alpha" />
-	<PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.48.0-alpha" />
-	<PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.1.0-preview.12" />		
-	<PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.12" />		
-    <PackageReference Include="VersOne.Epub" Version="3.3.4" />
+	<PackageReference Include="Microsoft.KernelMemory.Core" Version="0.98.250508.3" />
+	<PackageReference Include="Microsoft.SemanticKernel" Version="1.49.0" />
+	<PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.49.0-preview" />
+	<PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.49.0-alpha" />
+	<PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.1.0-preview.13" />		
+	<PackageReference Include="ModelContextProtocol" Version="0.1.0-preview.13" />		
 	</ItemGroup>
 
 </Project>

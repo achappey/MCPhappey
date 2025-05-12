@@ -1,6 +1,5 @@
 
 using System.Net.Mime;
-using MCPhappey.Core.Constants;
 using MCPhappey.Core.Models;
 
 namespace MCPhappey.Core.Extensions;
@@ -24,12 +23,8 @@ public static class StringExtensions
     {
         var trimmedUrl = url.TrimStart('/');
 
-        if (trimmedUrl.StartsWith($"{ServerMetadata.McpServerRoot}/", StringComparison.OrdinalIgnoreCase))
-        {
-            trimmedUrl = trimmedUrl.Substring(ServerMetadata.McpServerRoot.Length + 1); // +1 to skip the '/'
-        }
-
-        return trimmedUrl.Split('/', StringSplitOptions.RemoveEmptyEntries).FirstOrDefault()?.ToLowerInvariant() ?? string.Empty;
+        return trimmedUrl.Split('/', StringSplitOptions.RemoveEmptyEntries)
+            .FirstOrDefault()?.ToLowerInvariant() ?? string.Empty;
     }
 
     public static FileItem ToFileItem(this string content,

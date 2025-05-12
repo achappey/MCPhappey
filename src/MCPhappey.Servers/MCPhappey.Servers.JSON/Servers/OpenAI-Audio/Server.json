@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-Audio",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All",
+    "Plugins": "MCPhappey.Tools.OpenAI.Audio.OpenAIAudio, MCPhappey.Tools"
+  }
+}

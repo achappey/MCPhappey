@@ -1,25 +1,21 @@
 using System.Text.Json;
 using MCPhappey.Core.Extensions;
-using MCPhappey.Core.Models.Protocol;
-using Microsoft.AspNetCore.Http;
+using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol.Types;
 using ModelContextProtocol.Server;
 
 namespace MCPhappey.Core.Services;
 
-public class SamplingService(PromptService promptService,
-    IHttpContextAccessor httpContextAccessor,
-    IReadOnlyList<ServerConfig> servers)
+public class SamplingService(PromptService promptService)
 {
-    public async Task<CreateMessageResult> GetPromptSample(IMcpServer mcpServer, string name,
-        IReadOnlyDictionary<string, JsonElement> arguments, string? modelHint = null, float? temperature = null,
+    public async Task<CreateMessageResult> GetPromptSample(IMcpServer mcpServer, ServerConfig serverConfig, string name,
+        IReadOnlyDictionary<string, JsonElement> arguments, string? authToken = null, string? modelHint = null, float? temperature = null,
         CancellationToken cancellationToken = default)
     {
-        var serverConfig = servers.FirstOrDefault(a => a.Server.ServerInfo.Name == mcpServer.ServerOptions.ServerInfo?.Name);
         ArgumentNullException.ThrowIfNull(serverConfig);
 
-        var prompt = await promptService.GetServerPrompt(serverConfig.Server, name,
-            arguments, httpContextAccessor.HttpContext!,
+        var prompt = await promptService.GetServerPrompt(serverConfig, name,
+            arguments, authToken,
             cancellationToken);
 
         return await mcpServer.RequestSamplingAsync(new CreateMessageRequestParams()
@@ -34,11 +30,16 @@ public class SamplingService(PromptService promptService,
         }, cancellationToken);
     }
 
-    public async Task<T?> GetPromptSample<T>(IMcpServer mcpServer, string name,
-      IReadOnlyDictionary<string, JsonElement> arguments, string? modelHint = null, float? temperature = null,
-      CancellationToken cancellationToken = default)
+    public async Task<T?> GetPromptSample<T>(IMcpServer mcpServer,
+        ServerConfig serverConfig,
+        string name,
+        IReadOnlyDictionary<string, JsonElement> arguments,
+        string? authToken = null,
+        string? modelHint = null,
+        float? temperature = null,
+        CancellationToken cancellationToken = default)
     {
-        var promptSample = await GetPromptSample(mcpServer, name, arguments, modelHint, temperature, cancellationToken);
+        var promptSample = await GetPromptSample(mcpServer, serverConfig, name, arguments, authToken, modelHint, temperature, cancellationToken);
 
         return JsonSerializer.Deserialize<T>(promptSample.Content.Text?.CleanJson() ?? ""
              ?? string.Empty);

@@ -1,0 +1,11 @@
+{
+  "serverInfo": {
+    "name": "Simplicate-CRM",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "{organization}.simplicate.app|Authentication-Key": "Simplicate Api Key",
+    "{organization}.simplicate.app|Authentication-Secret": "Simplicate Api Secret",
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MCPhappey.Auth.Models;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.AspNetCore.Http;
@@ -20,10 +22,10 @@ public static class BingWebSearch
     }
 
     private static async Task<(string url, string contents)> Search(
+        ServerConfig serverConfig,
         IServiceProvider serviceProvider,
         string query, Freshness? freshness, string? market, string? language, CancellationToken cancellationToken = default)
     {
-        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         string freshnessParam = string.Empty;
         string marketParam = string.Empty;
@@ -47,8 +49,8 @@ public static class BingWebSearch
         var searchUrl = $"https://api.bing.microsoft.com/v7.0/search?q={query}&responseFilter=webpages,news{freshnessParam}{marketParam}{langParam}";
 
         var result = await downloadService
-            .GetContentAsync(searchUrl,
-            httpContextAccessor.HttpContext!,
+            .GetContentAsync(serverConfig, searchUrl,
+            null,
             cancellationToken);
 
         return (searchUrl, result.Contents.ToString());
@@ -68,15 +70,15 @@ public static class BingWebSearch
         string? language = null,
         CancellationToken cancellationToken = default)
     {
+        var tokenProvider = serviceProvider.GetService<TokenProvider>();
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
-        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+        var config = serviceProvider.GetServerConfig(mcpServer);
 
         if (mcpServer.ClientCapabilities?.Sampling == null)
         {
-            var searchResult = await Search(serviceProvider, query, freshness, market, language, cancellationToken);
+            var (url, contents) = await Search(config!, serviceProvider, query, freshness, market, language, cancellationToken);
 
-            return searchResult.contents.ToJsonCallToolResponse(searchResult.url);
+            return contents.ToJsonCallToolResponse(url);
         }
 
         var queryArgs = new Dictionary<string, JsonElement>()
@@ -87,7 +89,8 @@ public static class BingWebSearch
 
         Dictionary<string, string> results = [];
 
-        var querySampling = await samplingService.GetPromptSample<QueryList>(mcpServer, "get-bing-serp-queries", queryArgs,
+        var querySampling = await samplingService.GetPromptSample<QueryList>(mcpServer, config!, "get-bing-serp-queries", queryArgs,
+                    null,
                     "o4-mini", cancellationToken: cancellationToken);
 
         List<string> queries = [.. querySampling?.Queries ?? [], query];
@@ -100,7 +103,7 @@ public static class BingWebSearch
             await semaphore.WaitAsync();
             try
             {
-                return await Search(serviceProvider, item, freshness, market, language, cancellationToken);
+                return await Search(config!, serviceProvider, item, freshness, market, language, cancellationToken);
             }
             finally
             {

@@ -2,21 +2,26 @@
 using System.Text.RegularExpressions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Models;
-using MCPhappey.Core.Models.Protocol;
-using Microsoft.AspNetCore.Http;
+using MCPhappey.Common.Models;
 using Microsoft.KernelMemory.DataFormats.WebPages;
+using MCPhappey.Auth.Models;
+using MCPhappey.Auth.Extensions;
 
 namespace MCPhappey.Core.Services;
 
 public partial class DownloadService(WebScraper webScraper,
-    IHttpContextAccessor httpContextAccessor,
-    IReadOnlyList<ServerConfig> servers,
     TransformService transformService,
     IHttpClientFactory httpClientFactory,
+    OAuthSettings oAuthSettings,
     Dictionary<string, Dictionary<string, string>>? domainHeaders = null) : IWebScraper
 {
-    public async Task<FileItem> GetContentAsync(string url,
-        HttpContext httpContext, CancellationToken cancellationToken = default)
+    public async Task<WebScraperResult> GetContentAsync(string url, CancellationToken cancellationToken = default)
+    {
+        return await webScraper.GetContentAsync(url, cancellationToken);
+    }
+
+    public async Task<FileItem> GetContentAsync(ServerConfig serverConfig, string url,
+           string? authToken = null, CancellationToken cancellationToken = default)
     {
         Uri uri = new(url);
         FileItem? resultFile = null;
@@ -37,21 +42,19 @@ public partial class DownloadService(WebScraper webScraper,
         }
         else
         {
-            var serverName = httpContext.Request.Path.Value!.GetServerNameFromUrl();
-            var serverConfig = servers.FirstOrDefault(a => a.Server.ServerInfo.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase));
+            //var serverConfig = servers.GetServerConfig(httpContextAccessor.HttpContext);
 
-            if (serverConfig?.Auth?.OBO?.ContainsKey(uri.Host) == true)
+            if (serverConfig.Server.Metadata?.ContainsKey(uri.Host) == true)
             {
-                // OBO API mapping
-                var httpClient = await httpClientFactory.GetOboHttpClient(httpContext.GetBearerToken()!, uri.Host, serverConfig.Auth);
+                var httpClient = await httpClientFactory.GetOboHttpClient(authToken!, uri.Host, serverConfig.Server, oAuthSettings);
                 using var result = await httpClient.GetAsync(url, cancellationToken);
                 resultFile = await result.ToFileItem(url, cancellationToken: cancellationToken);
             }
             else if (uri.Host.EndsWith(".sharepoint.com"))
             {
                 // Graph API mapping
-                using var graphClient = await httpClientFactory.GetOboGraphClient(httpContext.GetBearerToken()!,
-                    serverConfig?.Auth);
+                using var graphClient = await httpClientFactory.GetOboGraphClient(authToken!,
+                    serverConfig.Server, oAuthSettings);
 
                 resultFile = await graphClient.GetFilesByUrl(url);
             }
@@ -63,44 +66,15 @@ public partial class DownloadService(WebScraper webScraper,
             }
         }
 
-        return await transformService.TransformContentAsync(url, resultFile.Contents,
+        return await transformService.DecodeAsync(url, resultFile.Contents,
                resultFile.MimeType, cancellationToken);
     }
-
-    public async Task<WebScraperResult> GetContentAsync(string url, CancellationToken cancellationToken = default)
-    {
-        try
-        {
-            var context = httpContextAccessor.HttpContext;
-            var download = await GetContentAsync(url, httpContextAccessor.HttpContext!, cancellationToken);
-
-            return download != null ? new WebScraperResult()
-            {
-                Content = download.Contents,
-                ContentType = download.MimeType,
-                Success = true,
-            } : new WebScraperResult
-            {
-                Success = false,
-                Error = "Something went wrong"
-            };
-
-        }
-        catch (Exception e)
-        {
-            return new WebScraperResult
-            {
-                Success = false,
-                Error = e.Message
-            };
-        }
-    }
-
 
     [GeneratedRegex(@"^[^.]+\.crm\d+\.dynamics\.com$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
     private static partial Regex DynamicsHostPattern();
 
     [GeneratedRegex(@"^[^.]+\.simplicate\.app$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
     private static partial Regex SimplicateHostPattern();
+
 
 }

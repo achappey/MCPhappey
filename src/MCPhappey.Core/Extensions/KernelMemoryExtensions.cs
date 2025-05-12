@@ -2,6 +2,7 @@ using System.Net.Mime;
 using MCPhappey.Core.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory;
+using Microsoft.KernelMemory.DataFormats.WebPages;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -26,13 +27,20 @@ public static class KernelMemoryExtensions
 
         return services;
     }
+
     public static FileItem GetFileItemFromFileContent(this Microsoft.KernelMemory.DataFormats.FileContent file, string uri)
         => new()
         {
-            Contents = BinaryData.FromString(string.Join("\\n\\n", 
+            Contents = BinaryData.FromString(string.Join("\\n\\n",
                 file.Sections.Select(a => a.Content))),
             MimeType = MediaTypeNames.Text.Plain,
             Uri = uri,
         };
 
+    public static FileItem ToFileItem(this WebScraperResult webScraperResult, string uri) => new()
+    {
+        Contents = webScraperResult.Content,
+        MimeType = webScraperResult.ContentType,
+        Uri = uri,
+    };
 }

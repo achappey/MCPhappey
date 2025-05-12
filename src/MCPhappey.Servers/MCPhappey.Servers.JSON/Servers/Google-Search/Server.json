@@ -1,0 +1,11 @@
+{
+  "serverInfo": {
+    "name": "Google-Search",
+    "version": "1.0.0"
+  },
+  "_meta": {
+    "www.googleapis.com|key": "Google Search API key",
+    "www.googleapis.com|cx": "Google Search Engine Id",
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}
