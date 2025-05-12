@@ -12,9 +12,8 @@ public static class AspNetCoreExtensions
         string privateKey,
         Dictionary<string, Dictionary<string, string>>? domainHeaders = null)
     {
-
         var rsa = RSA.Create();
-        rsa.ImportFromPem(privateKey);
+        rsa.ImportFromPem($"-----BEGIN PRIVATE KEY-----\n{privateKey}\n-----END PRIVATE KEY-----");
         var key = new RsaSecurityKey(rsa) { KeyId = "mcp-keyId" };
         var creds = new SigningCredentials(key, SecurityAlgorithms.RsaSha256);
         builder.Services.AddSingleton(creds);
