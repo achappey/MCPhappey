@@ -1,0 +1,121 @@
+{
+  "prompts": [
+    {
+      "prompt": "Analyseer de meegeleverde verlofregistraties. Bereken per medewerker het totaal aantal opgenomen verlofuren in de periode van {startDatum} tot {eindDatum} voor verloftype '{verlofTypeLabel}'. Presenteer de resultaten als een tabel met kolommen: Medewerker Naam, Totaal Uren.",
+      "template": {
+        "name": "hrm_analyseer_verlofopname_periode_type",
+        "description": "Berekent en presenteert het totaal opgenomen verlof per medewerker voor een specifiek type en periode uit de aangeleverde data.",
+        "arguments": [
+          {
+            "name": "startDatum",
+            "description": "Startdatum van de analyseperiode (JJJJ-MM-DD).",
+            "required": true
+          },
+          {
+            "name": "eindDatum",
+            "description": "Einddatum van de analyseperiode (JJJJ-MM-DD).",
+            "required": true
+          },
+          {
+            "name": "verlofTypeLabel",
+            "description": "Het label van het verloftype om te analyseren (bijv. 'Vakantie').",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/hrm/leave?q[start_date][ge]={startDatum}&q[end_date][le]={eindDatum}&q[leavetype.label]=*{verlofTypeLabel}*&limit=500"
+      ]
+    },
+    {
+      "prompt": "Vat de meegeleverde medewerkersdata samen. Bereken het totale aantal FTE (fulltime-equivalenten) per team, uitgaande van de contractinformatie. Geef een overzicht in tabelvorm: Teamnaam, Totaal FTE.",
+      "template": {
+        "name": "hrm_bereken_fte_per_team",
+        "description": "Berekent het totale FTE per team op basis van de verstrekte medewerkers- en contractdata.",
+        "arguments": []
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/hrm/employee?limit=250",
+        "https://{organization}.simplicate.app/api/v2/hrm/contract?limit=500"
+      ]
+    },
+    {
+      "prompt": "Identificeer contracten in de aangeleverde dataset die binnen de komende {aantalDagenTotEindeContract} dagen aflopen. Geef per contract de naam van de medewerker, de einddatum van het contract en het contracttype. Presenteer als JSON-objecten.",
+      "template": {
+        "name": "hrm_identificeer_aflopende_contracten",
+        "description": "Vindt contracten die binnenkort aflopen uit de verstrekte contractdata.",
+        "arguments": [
+          {
+            "name": "aantalDagenTotEindeContract",
+            "description": "Het maximum aantal dagen tot de einddatum van het contract.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/hrm/contract?q[end_date][le]=%2B{aantalDagenTotEindeContract}d&q[end_date][ge]=today&sort=end_date&limit=100"
+      ]
+    },
+    {
+      "prompt": "Analyseer de verstrekte ziekteverzuimdata. Identificeer medewerkers met meer dan {minimumAantalVerzuimDagen} verzuimdagen in het afgelopen jaar (vanaf {startDatumAfgelopenJaar}). Geef per medewerker het totaal aantal verzuimdagen en het aantal ziekmeldingen. Output als tabel.",
+      "template": {
+        "name": "hrm_analyseer_ziekteverzuim_patronen",
+        "description": "Analyseert ziekteverzuimdata om medewerkers met significant verzuim te identificeren.",
+        "arguments": [
+          {
+            "name": "minimumAantalVerzuimDagen",
+            "description": "Het minimum aantal verzuimdagen om een medewerker op te nemen in de analyse.",
+            "required": true
+          },
+          {
+            "name": "startDatumAfgelopenJaar",
+            "description": "De startdatum voor de analyse van het afgelopen jaar (JJJJ-MM-DD).",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/hrm/absence?q[start_date][ge]={startDatumAfgelopenJaar}&q[absencetype.is_sickleave]=true&limit=1000"
+      ]
+    },
+    {
+      "prompt": "Evalueer de diversiteit binnen de meegeleverde medewerkerspopulatie. Geef een procentuele verdeling op basis van het veld '{customFieldDiversiteit}' (bijv. geslacht, nationaliteit). Presenteer de resultaten als een JSON-object met percentages per categorie.",
+      "template": {
+        "name": "hrm_evalueer_diversiteit",
+        "description": "Analyseert de diversiteit van het personeelsbestand op basis van een opgegeven custom field.",
+        "arguments": [
+          {
+            "name": "customFieldDiversiteit",
+            "description": "De exacte API-naam van het custom field dat de diversiteitsindicator bevat (bijv. 'custom_fields.geslacht').",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/hrm/employee?limit=500"
+      ]
+    },
+    {
+      "prompt": "Identificeer mogelijke 'skills gaps' door de competenties in de meegeleverde medewerkersprofielen (veld: '{customFieldCompetenties}') te vergelijken met een lijst van benodigde competenties: {lijstBenodigdeCompetenties}. Geef per benodigde competentie aan hoeveel medewerkers deze bezitten en welke medewerkers dit zijn. Output als een lijst van objecten, per competentie.",
+      "template": {
+        "name": "hrm_identificeer_skills_gap",
+        "description": "Vergelijkt aanwezige competenties met benodigde competenties om tekorten te signaleren.",
+        "arguments": [
+          {
+            "name": "customFieldCompetenties",
+            "description": "De exacte API-naam van het custom field dat de competenties van een medewerker bevat (bijv. 'custom_fields.vaardigheden'). Waarden in dit veld moeten door komma's gescheiden zijn indien meerdere.",
+            "required": true
+          },
+          {
+            "name": "lijstBenodigdeCompetenties",
+            "description": "Een komma-gescheiden lijst van competenties die benodigd zijn.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/hrm/employee?limit=500"
+      ]
+    }
+  ]
+}

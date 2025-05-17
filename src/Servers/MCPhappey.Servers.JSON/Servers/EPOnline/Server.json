@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "EPOnline",
+    "version": "1.0.0"
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

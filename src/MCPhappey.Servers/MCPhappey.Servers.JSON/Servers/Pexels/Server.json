@@ -1,9 +1,0 @@
-{
-  "serverInfo": {
-    "name": "Pexels",
-    "version": "1.0.0"
-  },
-  "_meta": {
-    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
-  }
-}

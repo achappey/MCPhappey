@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "SemanticKernel-Memory",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.KernelMemory, MCPhappey.Tools"],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

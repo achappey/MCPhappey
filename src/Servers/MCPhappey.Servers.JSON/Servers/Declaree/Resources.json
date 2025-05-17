@@ -1,0 +1,106 @@
+{
+  "resources": [
+    {
+      "uri": "https://app.declaree.com/api/v4/users/me",
+      "name": "Get current user profile",
+      "description": "Retrieve the profile information and preferences of the currently authenticated user",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/expenses?limit=20",
+      "name": "List latest expenses (max 20)",
+      "description": "Return the 20 most recently created expenses for the authenticated user",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/reports?limit=10&status=open",
+      "name": "List open reports (max 10)",
+      "description": "Fetch up to 10 expense reports that are still in 'Open' status and awaiting submission or approval",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/categories",
+      "name": "List expense categories",
+      "description": "Return all available expense categories that the user can select when creating a new expense",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/payment-methods",
+      "name": "List payment methods",
+      "description": "Retrieve the list of allowed payment methods (e.g. company card, cash, mileage) configured for the organisation",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/currencies",
+      "name": "List supported currencies",
+      "description": "Get all currencies supported by the organisation’s Declaree environment, including their ISO codes and exchange-rate settings",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/policies",
+      "name": "List active expense policies",
+      "description": "Show all active expense policies so users can quickly review the rules and limits that apply to their claims",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/cost-centers?limit=30",
+      "name": "List cost centers (max 30)",
+      "description": "Return up to 30 cost centers that users can assign to expenses for allocation purposes",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/projects?limit=30",
+      "name": "List projects (max 30)",
+      "description": "Retrieve up to 30 active projects that expenses can be booked against",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/users?limit=50",
+      "name": "List organisation users (max 50)",
+      "description": "List up to 50 users within the organisation—useful for selecting colleagues when setting approvers or delegating",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/reports?limit=10&status=awaiting_approval",
+      "name": "List reports awaiting approval (max 10)",
+      "description": "Fetch up to 10 reports currently waiting for manager approval, so approvers can see what needs their action",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/reimbursements?limit=10",
+      "name": "List recent reimbursements (max 10)",
+      "description": "Show the 10 most recent reimbursements paid out to the user",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/attachments?limit=20",
+      "name": "List recent attachments (max 20)",
+      "description": "Retrieve the 20 most recent receipt images or other files uploaded by the user",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/tax-rates",
+      "name": "List tax rates",
+      "description": "Return all tax (VAT) rates configured in Declaree, helpful when reviewing how tax is applied to expenses",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/mileage-rates",
+      "name": "List mileage rates",
+      "description": "Get the current mileage reimbursement rates per vehicle type defined by the organisation",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/per-diem-rates",
+      "name": "List per-diem rates",
+      "description": "Retrieve the per-diem allowance rates table used for travel expense claims",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://app.declaree.com/api/v4/notifications?limit=20",
+      "name": "List recent notifications (max 20)",
+      "description": "Return up to 20 most recent system or workflow notifications for the current user",
+      "mimeType": "application/json"
+    }
+  ]
+}

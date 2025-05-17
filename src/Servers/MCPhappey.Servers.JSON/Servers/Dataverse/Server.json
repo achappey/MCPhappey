@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "Dataverse",
+    "version": "1.0.0"
+  },
+  "obo": {
+    ".dynamics.com": "Bearer access token"
+  }
+}

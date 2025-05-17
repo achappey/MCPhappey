@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "AzureMaps",
+    "version": "1.0.0"
+  },
+  "headers": {
+    "Subscription-Key": "Azure Maps Subscription Key"
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

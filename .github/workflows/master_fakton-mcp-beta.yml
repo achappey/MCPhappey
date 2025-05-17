@@ -24,13 +24,13 @@ jobs:
           dotnet-version: '9.x'
 
       - name: Restore dependencies
-        run: dotnet restore src/MCPhappey.WebApi/MCPhappey.WebApi.csproj
+        run: dotnet restore src/Samples/MCPhappey.WebApi/MCPhappey.WebApi.csproj
 
       - name: Build WebAPI project
-        run: dotnet build src/MCPhappey.WebApi/MCPhappey.WebApi.csproj --configuration Release
+        run: dotnet build src/Samples/MCPhappey.WebApi/MCPhappey.WebApi.csproj --configuration Release
 
       - name: Publish WebAPI project
-        run: dotnet publish src/MCPhappey.WebApi/MCPhappey.WebApi.csproj --configuration Release --output ./publish
+        run: dotnet publish src/Samples/MCPhappey.WebApi/MCPhappey.WebApi.csproj --configuration Release --output ./publish
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4

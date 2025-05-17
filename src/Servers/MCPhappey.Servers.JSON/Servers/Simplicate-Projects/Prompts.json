@@ -1,0 +1,139 @@
+{
+  "prompts": [
+    {
+      "prompt": "Analyseer de meegeleverde projectdata. Vergelijk per project het gebudgetteerde bedrag met het reeds bestede bedrag. Identificeer projecten waar het bestede bedrag {percentageOverschrijding}% hoger is dan het budget. Geef een tabel: Projectnaam, Gebudgetteerd, Besteed, Percentage Overschrijding.",
+      "template": {
+        "name": "projects_analyseer_budget_overschrijding",
+        "description": "Detecteert projecten met significante budgetoverschrijdingen uit de aangeleverde data.",
+        "arguments": [
+          {
+            "name": "percentageOverschrijding",
+            "description": "Het drempelpercentage voor budgetoverschrijding om een project te markeren.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/projects/project?limit=200"
+      ]
+    },
+    {
+      "prompt": "Evalueer de voortgang van de meegeleverde projecten. Identificeer projecten waarvan de geplande einddatum ({veldGeplandeEinddatum}) is verstreken, maar de status nog niet op '{statusVoltooidLabel}' staat. Geef per project de naam, geplande einddatum en huidige status. Presenteer als JSON.",
+      "template": {
+        "name": "projects_identificeer_vertraagde_projecten",
+        "description": "Vindt projecten die mogelijk vertraagd zijn door de geplande einddatum en huidige status te vergelijken.",
+        "arguments": [
+          {
+            "name": "veldGeplandeEinddatum",
+            "description": "De exacte API-naam van het veld dat de geplande einddatum bevat (bijv. 'planned_end_date').",
+            "required": true
+          },
+          {
+            "name": "statusVoltooidLabel",
+            "description": "Het label van de projectstatus die aangeeft dat een project voltooid is.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/projects/project?q[project_status.label][ne]=*{statusVoltooidLabel}*&limit=200"
+      ]
+    },
+    {
+      "prompt": "Analyseer de bestede uren per projectservice binnen project ID '{projectId}'. Welke services hebben de meeste uren verbruikt? Geef een top {aantalTopServices} van services met hun respectievelijke bestede uren. Output als een lijst van objecten.",
+      "template": {
+        "name": "projects_analyseer_uren_per_service",
+        "description": "Identificeert de projectservices met de meeste bestede uren voor een specifiek project.",
+        "arguments": [
+          {
+            "name": "projectId",
+            "description": "De unieke ID van het project.",
+            "required": true
+          },
+          {
+            "name": "aantalTopServices",
+            "description": "Het aantal top services om weer te geven (standaard 3).",
+            "required": false
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/projects/service?q[project.id]=project:{projectId}&limit=100",
+        "https://{organization}.simplicate.app/api/v2/hours/hours?q[project.id]=project:{projectId}&limit=1000"
+      ]
+    },
+    {
+      "prompt": "Vat de inhoud van de meegeleverde projectdocumenten voor project ID '{projectId}' samen. Focus op documenten van type '{documentTypeLabel}' en geef per document de titel en een extract van de eerste {aantalWoordenExtract} woorden van de omschrijving (indien aanwezig).",
+      "template": {
+        "name": "projects_vat_documenten_samen",
+        "description": "Genereert een samenvatting van specifieke projectdocumenten.",
+        "arguments": [
+          {
+            "name": "projectId",
+            "description": "De unieke ID van het project.",
+            "required": true
+          },
+          {
+            "name": "documentTypeLabel",
+            "description": "Het label van het documenttype om te analyseren.",
+            "required": true
+          },
+          {
+            "name": "aantalWoordenExtract",
+            "description": "Het aantal woorden voor het extract van de omschrijving (standaard 20).",
+            "required": false
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/projects/document?q[project.id]=project:{projectId}&q[document_type.label]=*{documentTypeLabel}*&limit=50"
+      ]
+    },
+    {
+      "prompt": "Analyseer de openstaande taken (toewijzingen) binnen de meegeleverde projectdata. Welke medewerkers hebben meer dan {maximumAantalOpenTaken} openstaande taken toegewezen gekregen? Geef per medewerker een lijst van deze projecten en taken. Presenteer als een geneste JSON-structuur.",
+      "template": {
+        "name": "projects_analyseer_open_taken_medewerker",
+        "description": "Identificeert medewerkers met een hoge werkdruk op basis van openstaande projecttaken.",
+        "arguments": [
+          {
+            "name": "maximumAantalOpenTaken",
+            "description": "Het maximum aantal openstaande taken voordat een medewerker gemarkeerd wordt.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/projects/assignment?q[status.label]=Open&limit=500"
+      ]
+    },
+    {
+      "prompt": "Evalueer de teambelasting voor de actieve projecten in de dataset. Bereken per team het totaal aantal geplande uren versus het totaal aantal bestede uren voor de periode {startDatumPeriode} tot {eindDatumPeriode}. Identificeer teams waar de bestede uren de geplande uren met meer dan {percentageAfwijking}% overschrijden. Output als tabel: Team, Gepland, Besteed, Afwijking %.",
+      "template": {
+        "name": "projects_evalueer_teambelasting_afwijking",
+        "description": "Analyseert de verhouding tussen geplande en bestede uren per team en signaleert significante afwijkingen.",
+        "arguments": [
+          {
+            "name": "startDatumPeriode",
+            "description": "Startdatum van de analyseperiode (JJJJ-MM-DD).",
+            "required": true
+          },
+          {
+            "name": "eindDatumPeriode",
+            "description": "Einddatum van de analyseperiode (JJJJ-MM-DD).",
+            "required": true
+          },
+          {
+            "name": "percentageAfwijking",
+            "description": "Het drempelpercentage voor afwijking tussen besteed en gepland.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/projects/project?q[project_status.label]=Actief&limit=200",
+        "https://{organization}.simplicate.app/api/v2/hours/hours?q[date][ge]={startDatumPeriode}&q[date][le]={eindDatumPeriode}&limit=2000",
+        "https://{organization}.simplicate.app/api/v2/projects/assignment?limit=1000"
+      ]
+    }
+  ]
+}

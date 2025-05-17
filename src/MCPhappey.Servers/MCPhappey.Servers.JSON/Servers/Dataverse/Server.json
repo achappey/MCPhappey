@@ -1,9 +1,0 @@
-{
-  "serverInfo": {
-    "name": "Dataverse",
-    "version": "1.0.0"
-  },
-  "_meta": {
-    "{tenantName}.{crmRegioId}.dynamics.com": "Bearer access token"
-  }
-}

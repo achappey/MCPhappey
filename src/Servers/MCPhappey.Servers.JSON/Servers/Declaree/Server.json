@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "Declaree",
+    "version": "1.0.0"
+  },
+  "headers": {
+    "Authorization": "Bearer [Declaree_API_key]"
+  }
+}

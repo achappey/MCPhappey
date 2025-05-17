@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "Azure-Vault",
+    "version": "1.0.0"
+  },
+  "obo": {
+    ".vault.azure.net": "https://vault.azure.net/.default"
+  }
+}

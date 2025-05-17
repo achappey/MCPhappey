@@ -1,0 +1,105 @@
+{
+  "prompts": [
+    {
+      "prompt": "Analyseer de meegeleverde lijst met openstaande facturen. Genereer een ouderdomsanalyse (aging list) waarbij facturen gegroepeerd worden in categorieën: 0-30 dagen, 31-60 dagen, 61-90 dagen, en >90 dagen openstaand. Geef per categorie het aantal facturen en het totale openstaande bedrag. Presenteer als tabel.",
+      "template": {
+        "name": "invoices_genereer_ouderdomsanalyse",
+        "description": "Creëert een ouderdomsanalyse van openstaande facturen uit de aangeleverde data.",
+        "arguments": []
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/invoices/invoice?q[invoice_status.label]=Openstaand&limit=500&sort=due_date"
+      ]
+    },
+    {
+      "prompt": "Vat de BTW-informatie samen uit de meegeleverde factuurdata voor de periode van {startDatum} tot {eindDatum}. Geef per BTW-klasse het totale factuurbedrag exclusief BTW, het totale BTW-bedrag, en het totale bedrag inclusief BTW. Output als JSON-objecten per BTW-klasse.",
+      "template": {
+        "name": "invoices_analyseer_btw_periode",
+        "description": "Genereert een samenvatting van BTW-bedragen per klasse voor een specifieke periode.",
+        "arguments": [
+          {
+            "name": "startDatum",
+            "description": "Startdatum van de analyseperiode (JJJJ-MM-DD).",
+            "required": true
+          },
+          {
+            "name": "eindDatum",
+            "description": "Einddatum van de analyseperiode (JJJJ-MM-DD).",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/invoices/invoice?q[invoice_date][ge]={startDatum}&q[invoice_date][le]={eindDatum}&limit=1000"
+      ]
+    },
+    {
+      "prompt": "Identificeer de top {aantalDebiteuren} debiteuren met het hoogste totale openstaande factuurbedrag, op basis van de verstrekte factuurdata. Geef per debiteur de naam en het totale openstaande bedrag. Presenteer als een gesorteerde lijst.",
+      "template": {
+        "name": "invoices_identificeer_top_openstaande_debiteuren",
+        "description": "Vindt debiteuren met de hoogste openstaande bedragen uit de aangeleverde factuurdata.",
+        "arguments": [
+          {
+            "name": "aantalDebiteuren",
+            "description": "Het aantal top debiteuren om weer te geven.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/invoices/invoice?q[invoice_status.label]=Openstaand&limit=1000"
+      ]
+    },
+    {
+      "prompt": "Analyseer het betalingsgedrag van debiteuren op basis van de meegeleverde betaalde facturen. Bereken per debiteur de gemiddelde betalingstermijn (in dagen na factuurdatum). Focus op facturen betaald in de laatste {aantalMaandenAnalyse} maanden. Geef een tabel: Debiteur, Gemiddelde Betalingstermijn (dagen).",
+      "template": {
+        "name": "invoices_analyseer_betalingsgedrag_debiteuren",
+        "description": "Berekent de gemiddelde betalingstermijn per debiteur voor recent betaalde facturen.",
+        "arguments": [
+          {
+            "name": "aantalMaandenAnalyse",
+            "description": "Het aantal recente maanden om mee te nemen in de analyse van betalingsgedrag.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/invoices/invoice?q[invoice_status.label]=Betaald&q[payment_date][ge]=-{aantalMaandenAnalyse}m&limit=1000"
+      ]
+    },
+    {
+      "prompt": "Detecteer mogelijke fouten of inconsistenties in de meegeleverde factuurregels. Zoek naar regels waar het berekende totaal (aantal * stukprijs) significant afwijkt (meer dan {margeAfwijking} EUR) van het opgegeven regeltotaal. Geef per afwijkende regel: Factuur ID, Regel ID, Berekend Totaal, Opgegeven Totaal, Verschil. Output als JSON.",
+      "template": {
+        "name": "invoices_detecteer_fouten_factuurregels",
+        "description": "Controleert factuurregels op consistentie tussen berekende en opgegeven totalen.",
+        "arguments": [
+          {
+            "name": "margeAfwijking",
+            "description": "De toegestane marge (in EUR) voor afwijking voordat een regel als foutief wordt gemarkeerd.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/invoices/invoice/line?limit=2000"
+      ]
+    },
+    {
+      "prompt": "Bereken de totale omzet per opbrengstmodel (veld: '{veldOpbrengstModel}') voor het afgelopen kwartaal (uitgaande van factuurdatum in de meegeleverde factuurdata). Presenteer de resultaten als een tabel: Opbrengstmodel, Totale Omzet.",
+      "template": {
+        "name": "invoices_bereken_omzet_per_opbrengstmodel_kwartaal",
+        "description": "Analyseert de omzet per opbrengstmodel voor het afgelopen kwartaal.",
+        "arguments": [
+          {
+            "name": "veldOpbrengstModel",
+            "description": "De exacte API-naam van het veld dat het opbrengstmodel op de factuurregel bevat (bijv. 'revenue_model.label' of een custom field).",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/invoices/invoice?q[invoice_date][ge]=-3m&q[invoice_date][le]=today&limit=1000"
+      ]
+    }
+  ]
+}

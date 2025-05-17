@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "SemanticKernel-Plugins",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "Microsoft.SemanticKernel.Plugins.Core.TimePlugin, Microsoft.SemanticKernel.Plugins.Core",
+    "Microsoft.SemanticKernel.Plugins.Core.TextPlugin, Microsoft.SemanticKernel.Plugins.Core"
+  ]
+}

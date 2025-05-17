@@ -1,0 +1,13 @@
+{
+  "serverInfo": {
+    "name": "Simplicate-HRM",
+    "version": "1.0.0"
+  },
+  "headers": {
+    "Authentication-Key": "Simplicate Api Key",
+    "Authentication-Secret": "Simplicate Api Secret"
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}
