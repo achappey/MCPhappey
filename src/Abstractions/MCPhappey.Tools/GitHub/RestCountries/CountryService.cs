@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;

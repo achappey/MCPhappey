@@ -9,6 +9,7 @@ using MCPhappey.Auth.Extensions;
 using MCPhappey.Scrapers.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
+using OpenAI;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -85,6 +86,11 @@ if (appConfig?.Domains != null)
 if (appConfig?.OAuth != null)
 {
     builder.Services.WithOboScrapers(servers, appConfig.OAuth);
+}
+
+if (appConfig?.Domains != null && appConfig.Domains.ContainsKey("api.openai.com"))
+{
+    builder.Services.AddSingleton(new OpenAIClient(appConfig.Domains["api.openai.com"]["Authorization"].GetBearerToken()!));
 }
 
 builder.Services.WithDefaultScrapers();

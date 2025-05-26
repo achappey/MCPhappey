@@ -10,6 +10,15 @@
       }
     },
     {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee?q[teams.name]=*{teamName}*&q[status.label]=active&select=name,id,work_email",
+      "name": "Actieve medewerkers gefilterd op team",
+      "description": "Haalt actieve medewerkers in een bepaald team.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee?q[name]=*{nameFilter}*&q[is_active]={isActive}&q[status.label]=*{statusLabelFilter}*&q[team.id]=team:{teamIdFilter}*&q[employeetype.id]=employeetype:{employeeTypeIdFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
       "name": "Medewerkers (gefilterd)",
       "description": "Haalt alle medewerkers op, met filters voor naam, actieve status, statuslabel, team en medewerkerstype. Ondersteunt paginering en sortering.",
@@ -180,7 +189,7 @@
         "audience": ["assistant"]
       }
     },
-     {
+    {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employmenttype/employmenttype:{employmentTypeId}",
       "name": "Dienstverbandtype Details",
       "description": "Haalt een enkel dienstverbandtype op via ID.",

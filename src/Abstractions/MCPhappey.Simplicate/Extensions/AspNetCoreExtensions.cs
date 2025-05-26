@@ -115,6 +115,49 @@ public static class AspNetCoreExtensions
             server.ResourceTemplateList.ResourceTemplates = updatedTemplates;
             server.ResourceList ??= new();
             server.ResourceList.Resources.AddRange(newResources);
+
+
+
+
+            /* -------------------------------------------------
+             * 2. PROMPT section – replace placeholders there too
+             * ------------------------------------------------*/
+            if (server.PromptList?.Prompts == null) continue;
+
+            foreach (var prompt in server.PromptList.Prompts)
+            {
+                // ---------- resource-templates ----------
+                if (prompt.ResourceTemplates != null)
+                {
+                    var promotedResources = new List<string>();
+                    var stillTemplates = new List<string>();
+
+                    foreach (var uriTemplate in prompt.ResourceTemplates)
+                    {
+                        var concrete = uriTemplate.Replace("{organization}", organization);
+
+                        if (concrete.CountPromptArguments() == 0)
+                            promotedResources.Add(concrete);   // becomes a concrete resource
+                        else
+                            stillTemplates.Add(concrete);      // stays a template
+                    }
+
+                    prompt.ResourceTemplates = stillTemplates;
+                    // merge with any existing Resources collection
+                    prompt.Resources = (prompt.Resources ?? Enumerable.Empty<string>())
+                                       .Concat(promotedResources)
+                                       .ToList();
+                }
+
+                // ---------- plain resources ----------
+                if (prompt.Resources != null)
+                {
+                    prompt.Resources = prompt.Resources
+                                       .Select(r => r.Replace("{organization}", organization))
+                                       .ToList();
+                }
+            }
+
         }
     }
 

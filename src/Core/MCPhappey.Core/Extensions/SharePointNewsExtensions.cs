@@ -1,5 +1,6 @@
 using System.Text.Json;
 using System.Web;
+using MCPhappey.Common.Extensions;
 using Microsoft.Graph.Beta;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;

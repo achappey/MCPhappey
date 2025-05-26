@@ -1,4 +1,4 @@
-using MCPhappey.Core.Extensions;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.Extensions.Configuration;
 using ModelContextProtocol.Protocol;

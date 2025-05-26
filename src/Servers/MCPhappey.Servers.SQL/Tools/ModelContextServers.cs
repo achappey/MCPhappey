@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using MCPhappey.Auth.Extensions;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;

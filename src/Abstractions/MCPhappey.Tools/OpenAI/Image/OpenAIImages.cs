@@ -6,6 +6,7 @@ using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using OpenAI;
 using OpenAI.Images;
 
 namespace MCPhappey.Tools.OpenAI.Image;
@@ -30,13 +31,13 @@ public static class OpenAIImages
         IMcpServer mcpServer,
         [Description("Size of the image (1024x1024, 1536x1024 or 1024x1536)")]
         string? size = "1024x1024",
-        [Description("Quality of the image")]
-        ImageQuality? quality = ImageQuality.auto,
+      //  [Description("Quality of the image")]
+     //   ImageQuality? quality = ImageQuality.auto,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
         var uploadService = serviceProvider.GetRequiredService<UploadService>();
-        var openAiClient = serviceProvider.GetOpenAiClient();
+        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
 
         var sizeValue = size switch
         {
@@ -47,7 +48,7 @@ public static class OpenAIImages
         };
 
         var imageClient = openAiClient.GetImageClient("gpt-image-1");
-        var selectedQuality = quality ?? ImageQuality.auto;
+        var selectedQuality = ImageQuality.high;
         var item = await imageClient.GenerateImageAsync(prompt, new()
         {
             Quality = new GeneratedImageQuality(Enum.GetName(selectedQuality)!),

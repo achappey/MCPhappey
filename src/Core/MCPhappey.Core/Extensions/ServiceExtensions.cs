@@ -10,6 +10,7 @@ using MCPhappey.Auth.Extensions;
 using MCPhappey.Common;
 using ModelContextProtocol;
 using System.Collections.Concurrent;
+using MCPhappey.Common.Extensions;
 
 namespace MCPhappey.Core.Extensions;
 

@@ -37,7 +37,7 @@
   var define_DEFAULT_MCP_SERVER_LIST_URLS_default;
   var init_define_DEFAULT_MCP_SERVER_LIST_URLS = __esm({
     "<define:__DEFAULT_MCP_SERVER_LIST_URLS__>"() {
-      define_DEFAULT_MCP_SERVER_LIST_URLS_default = ["http://localhost:3001/mcp.json"];
+      define_DEFAULT_MCP_SERVER_LIST_URLS_default = ["https://mcp.fakton.com/mcp.json"];
     }
   });
 
