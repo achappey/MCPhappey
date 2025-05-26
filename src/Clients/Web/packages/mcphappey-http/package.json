@@ -1,0 +1,16 @@
+{
+  "name": "mcphappey-http",
+  "version": "0.1.0",
+  "main": "index.js",
+  "types": "index.d.ts",
+  "license": "MIT",
+  "dependencies": {
+    "zod": "^3.0.0"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "mcphappey-types": "*"
+  }
+}

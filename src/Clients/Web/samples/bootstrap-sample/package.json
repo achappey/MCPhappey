@@ -1,0 +1,21 @@
+{
+  "name": "mcphappey-bootstrap-sample",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Sample app using mcphappey-core and mcphappey-theme-bootstrap",
+  "scripts": {
+    "build": "node esbuild.config.js",
+    "dev": "node esbuild.config.js --watch",
+    "serve": "npx serve public --single"
+  },
+  "dependencies": {
+    "@types/react-dom": "^18.1.5",
+    "bootstrap": "^5.3.6",
+    "mcphappey-core": "*",
+    "mcphappey-auth": "*",
+    "mcphappey-theme-bootstrap": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router": "^7.6.0"
+  }
+}

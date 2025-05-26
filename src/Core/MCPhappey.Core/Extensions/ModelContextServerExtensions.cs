@@ -18,7 +18,6 @@ public static partial class ModelContextServerExtensions
          }
      };
 
-
     public static ServerConfig? GetServerConfig(this IEnumerable<ServerConfig> servers, IMcpServer mcpServer)
        => servers.GetServerConfig(mcpServer.ServerOptions.ServerInfo?.Name!);
 
@@ -30,6 +29,7 @@ public static partial class ModelContextServerExtensions
      => new()
      {
          Servers = servers
+                .OrderBy(a => a.Server.ServerInfo.Name)
                     .ToDictionary(a => a.Server.ServerInfo.Name, a => sse ? a.ToSseMcpServer(baseUrl)
                         : a.ToMcpServer(baseUrl))
      };
@@ -38,6 +38,7 @@ public static partial class ModelContextServerExtensions
      => new()
      {
          McpServers = servers
+                    .OrderBy(a => a.Server.ServerInfo.Name)
                     .ToDictionary(a => a.Server.ServerInfo.Name, a => a.ToMcpServerSettings(baseUrl))
      };
 

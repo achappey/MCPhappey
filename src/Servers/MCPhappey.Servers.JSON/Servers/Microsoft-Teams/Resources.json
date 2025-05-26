@@ -19,19 +19,19 @@
       "mimeType": "application/json"
     },
     {
-      "uri": "https://graph.microsoft.com/beta/me/teamwork/devices?$select=id,deviceType,activityState,hardwareDetail",
+      "uri": "https://graph.microsoft.com/beta/teamwork/devices?$select=id,deviceType,activityState,hardwareDetail",
       "name": "My Teamwork Devices",
       "description": "Lists devices used with Teams, such as headsets or peripherals, including device type and current activity state.",
       "mimeType": "application/json"
     },    
     {
-      "uri": "https://graph.microsoft.com/beta/me/teamwork/installedApps?$select=id,displayName",
+      "uri": "https://graph.microsoft.com/beta/me/teamwork/installedApps?$select=id&$expand=teamsApp($select=id,externalId,displayName,distributionMethod)",
       "name": "My Teams Apps",
       "description": "Retrieves the list of Teams apps installed for the signed-in user, including app ID and display name.",
       "mimeType": "application/json"
     },
     {
-      "uri": "https://graph.microsoft.com/beta/me/teamwork/associatedTeams?$select=teamId,displayName,classification",
+      "uri": "https://graph.microsoft.com/beta/me/teamwork/associatedTeams?$select=id,displayName,tenantId",
       "name": "My Associated Teams",
       "description": "Lists Teams the user is indirectly associated with (e.g., via tags), including name and classification.",
       "mimeType": "application/json"

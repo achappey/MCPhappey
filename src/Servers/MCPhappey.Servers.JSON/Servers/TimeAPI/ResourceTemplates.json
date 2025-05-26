@@ -1,0 +1,52 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://timeapi.io/api/time/current/zone?timeZone={timeZone}",
+      "name": "Current time by time zone",
+      "description": "Get the current date and time for a specific IANA time zone (e.g., Europe/Amsterdam).",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://timeapi.io/api/time/current/coordinate?latitude={latitude}&longitude={longitude}",
+      "name": "Current time by coordinates",
+      "description": "Get the current date and time for a given latitude and longitude.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://timeapi.io/api/time/current/ip?ipAddress={ipAddress}",
+      "name": "Current time by IP address",
+      "description": "Get the current date and time for the timezone of a given IPv4 address. If not provided, uses the caller's IP.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://timeapi.io/api/timezone/zone?timeZone={timeZone}",
+      "name": "Time zone info by name",
+      "description": "Get detailed info for a specific IANA time zone (offset, DST, etc).",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://timeapi.io/api/timezone/coordinate?latitude={latitude}&longitude={longitude}",
+      "name": "Time zone info by coordinates",
+      "description": "Get detailed info for a time zone at a given latitude and longitude.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://timeapi.io/api/timezone/ip?ipAddress={ipAddress}",
+      "name": "Time zone info by IP address",
+      "description": "Get detailed info for a time zone at a given IPv4 address. If not provided, uses the caller's IP.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://timeapi.io/api/conversion/dayoftheweek/{date}",
+      "name": "Day of the week from date",
+      "description": "Get the weekday name (e.g., Monday) for a date (yyyy-MM-dd).",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://timeapi.io/api/conversion/dayoftheyear/{date}",
+      "name": "Day of the year from date",
+      "description": "Get the day number (1-366) of the year for a date (yyyy-MM-dd).",
+      "mimeType": "application/json"
+    }
+  ]
+}

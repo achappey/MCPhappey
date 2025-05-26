@@ -1,4 +1,3 @@
-
 using System.Text.Json;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
@@ -27,7 +26,7 @@ public static partial class ModelContextPromptExtensions
                     var service = request.Services!.GetRequiredService<PromptService>();
                     request.Services!.WithHeaders(headers);
 
-                    return await service.GetServerPrompt(request.Services!, request.Server, 
+                    return await service.GetServerPrompt(request.Services!, request.Server,
                         request.Params?.Name!,
                         request.Params?.Arguments ?? new Dictionary<string, JsonElement>(),
                         cancellationToken);

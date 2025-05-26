@@ -7,9 +7,12 @@ namespace MCPhappey.Core.Services;
 
 public class SamplingService(PromptService promptService)
 {
-    public async Task<CreateMessageResult> GetPromptSample(IServiceProvider serviceProvider, 
+    public async Task<CreateMessageResult> GetPromptSample(IServiceProvider serviceProvider,
         IMcpServer mcpServer, string name,
-        IReadOnlyDictionary<string, JsonElement> arguments, string? modelHint = null, float? temperature = null,
+        IReadOnlyDictionary<string, JsonElement> arguments, string? modelHint = null,
+        float? temperature = null,
+        string? systemPrompt = null,
+        ContextInclusion includeContext = ContextInclusion.None,
         CancellationToken cancellationToken = default)
     {
         var prompt = await promptService.GetServerPrompt(serviceProvider, mcpServer, name,
@@ -22,9 +25,12 @@ public class SamplingService(PromptService promptService)
                 Role = a.Role,
                 Content = a.Content
             })],
+            IncludeContext = includeContext,
+            MaxTokens = 4096,
+            SystemPrompt = systemPrompt,
             ModelPreferences = modelHint?.ToModelPreferences(),
             Temperature = temperature
-        }, cancellationToken);
+        });
     }
 
     public async Task<T?> GetPromptSample<T>(IServiceProvider serviceProvider,
@@ -33,9 +39,12 @@ public class SamplingService(PromptService promptService)
         IReadOnlyDictionary<string, JsonElement> arguments,
         string? modelHint = null,
         float? temperature = null,
+         string? systemPrompt = null,
+        ContextInclusion includeContext = ContextInclusion.None,
         CancellationToken cancellationToken = default)
     {
-        var promptSample = await GetPromptSample(serviceProvider, mcpServer, name, arguments, modelHint, temperature, cancellationToken);
+        var promptSample = await GetPromptSample(serviceProvider, mcpServer, name, arguments, modelHint,
+            temperature, systemPrompt, includeContext, cancellationToken);
 
         return JsonSerializer.Deserialize<T>(promptSample.Content.Text?.CleanJson() ?? ""
              ?? string.Empty);

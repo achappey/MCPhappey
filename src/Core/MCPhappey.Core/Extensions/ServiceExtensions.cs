@@ -8,14 +8,14 @@ using ModelContextProtocol.Server;
 using OpenAI;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Common;
+using ModelContextProtocol;
+using System.Collections.Concurrent;
 
 namespace MCPhappey.Core.Extensions;
 
 public static class ServiceExtensions
 {
-
-    private static bool HasResult(this string? result)
-             => !string.IsNullOrEmpty(result) && !result.Contains("INFO NOT FOUND", StringComparison.OrdinalIgnoreCase);
+    private const int TOKEN_SIZE = 30000;
 
     public static void WithHeaders(this IServiceProvider serviceProvider, Dictionary<string, string>? headers)
     {
@@ -44,15 +44,19 @@ public static class ServiceExtensions
     }
 
     public static async Task<CallToolResponse> ExtractWithFacts(this IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
-        string facts,
-        string factsSourceUrl,
-        string query,
-        int limitSources = 5,
-        CancellationToken cancellationToken = default)
+       IMcpServer mcpServer,
+       string facts,
+       string factsSourceUrl,
+       string query,
+       ProgressToken? progressToken,
+       int? progressCounter,
+       int limitSources = 5,
+       CancellationToken cancellationToken = default)
     {
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+        var gptTokenizer = serviceProvider.GetRequiredService<GptTokenizer>();
+
         var config = serviceProvider.GetServerConfig(mcpServer);
 
         if (config == null)
@@ -60,7 +64,7 @@ public static class ServiceExtensions
             return "Server error".ToErrorCallToolResponse();
         }
 
-        Dictionary<string, string> results = [];
+        ConcurrentDictionary<string, string> results = [];
 
         var args = new Dictionary<string, JsonElement>()
         {
@@ -70,7 +74,7 @@ public static class ServiceExtensions
 
         var extractWithFactsSampleTask = samplingService.GetPromptSample(serviceProvider, mcpServer,
             "extract-with-facts", args,
-            "gpt-4.1-mini", 0, cancellationToken);
+            "gpt-4.1-mini", 0, cancellationToken: cancellationToken);
 
         var urlArgs = new Dictionary<string, JsonElement>()
         {
@@ -80,7 +84,7 @@ public static class ServiceExtensions
 
         var extracUrlsFromFactsSample = await samplingService.GetPromptSample(serviceProvider,
             mcpServer, "extract-urls-with-facts", urlArgs,
-                           "gpt-4.1", 0, cancellationToken);
+                           "gpt-4.1", 0, cancellationToken: cancellationToken);
 
         var urls = extracUrlsFromFactsSample?.Content.Text?
                          .Split(["\", \"", ","], StringSplitOptions.RemoveEmptyEntries)
@@ -90,60 +94,106 @@ public static class ServiceExtensions
                          .ToList()
                          .Take(limitSources) ?? [];
 
-        var downloadSemaphore = new SemaphoreSlim(5);
-        var readingTasks = new List<Task>();
+        var downloadSemaphore = new SemaphoreSlim(3);
+        int counter = progressCounter++ ?? 1;
+        int total = counter + (urls.Count() * 2);
 
-        foreach (var url in urls)
-        {
-            await downloadSemaphore.WaitAsync(cancellationToken); // Wait for an available slot
-
-            readingTasks.Add(Task.Run(async () =>
-             {
-                 try
-                 {
-                     var urlResults = await downloadService
-                              .ScrapeContentAsync(serviceProvider, mcpServer, url,
-                              cancellationToken);
-
-                     var urlResult = string.Join("\n\n", urlResults.Select(a => a.Contents.ToString()));
-
-                     if (string.IsNullOrEmpty(urlResult?.Trim()))
-                     {
-                         return;
-                     }
-
-                     var urlFactArgs = new Dictionary<string, JsonElement>()
-                     {
-                         ["facts"] = JsonSerializer.SerializeToElement(urlResult),
-                         ["question"] = JsonSerializer.SerializeToElement(query)
-                     };
-
-                     var extractFromUrlsWithFactsSample = await samplingService.GetPromptSample(serviceProvider,
-                            mcpServer, "extract-with-facts",
-                            urlFactArgs,
-                            "gpt-4.1-mini", 0, cancellationToken);
-
-                     if (extractFromUrlsWithFactsSample.Content.Text.HasResult())
-                     {
-                         results.Add(url,
-                                extractFromUrlsWithFactsSample.Content.Text ?? string.Empty);
-                     }
-                 }
-                 finally
-                 {
-                     downloadSemaphore.Release(); // Release the slot
-                 }
-
-             }, cancellationToken));
-        }
-
+        var readingTasks = urls.Select(url => ProcessUrlAsync(url, downloadSemaphore, cancellationToken)).ToList();
         await Task.WhenAll(readingTasks);
+
+        // Helper method outside your loop:
+        async Task ProcessUrlAsync(string url, SemaphoreSlim semaphore, CancellationToken cancellationToken)
+        {
+            await semaphore.WaitAsync();
+
+            try
+            {
+                if (progressToken is not null)
+                {
+                    await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotification()
+                    {
+                        ProgressToken = progressToken.Value,
+                        Progress = new ProgressNotificationValue()
+                        {
+                            Progress = counter++,
+                            Total = total,
+                            Message = $"Downloading: [{new Uri(url).Host}]({url})"
+                        },
+                    }, cancellationToken: CancellationToken.None);
+                }
+
+                var scrapeTask = downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken: CancellationToken.None);
+                var timeoutTask = Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
+                var completedTask = await Task.WhenAny(scrapeTask, timeoutTask);
+
+                if (completedTask == timeoutTask)
+                {
+                    throw new TimeoutException($"Timeout while downloading url {url}");
+                }
+                var urlResults = await scrapeTask;
+                var urlResult = string.Join("\n\n", urlResults.Select(a => a.Contents.ToString()));
+
+                if (string.IsNullOrEmpty(urlResult?.Trim()))
+                    return;
+
+                var tokenized = gptTokenizer.Tokenize(urlResult, TOKEN_SIZE);
+
+                var urlFactArgs = new Dictionary<string, JsonElement>
+                {
+                    ["facts"] = JsonSerializer.SerializeToElement(tokenized),
+                    ["question"] = JsonSerializer.SerializeToElement(query)
+                };
+
+                if (progressToken is not null)
+                {
+                    await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotification()
+                    {
+                        ProgressToken = progressToken.Value,
+                        Progress = new ProgressNotificationValue()
+                        {
+                            Progress = counter++,
+                            Total = total,
+                            Message = $"Reading: [{new Uri(url).Host}]({url})"
+                        },
+                    }, cancellationToken: CancellationToken.None);
+                }
+
+                var extractFromUrlsWithFactsSampleTask = samplingService.GetPromptSample(
+                    serviceProvider, mcpServer, "extract-with-facts",
+                    urlFactArgs, "gpt-4.1-mini", 0);
+                timeoutTask = Task.Delay(TimeSpan.FromSeconds(10), cancellationToken: CancellationToken.None);
+                completedTask = await Task.WhenAny(extractFromUrlsWithFactsSampleTask, timeoutTask);
+
+                if (completedTask == timeoutTask)
+                {
+                    throw new TimeoutException($"Timeout");
+                }
+
+                var extractFromUrlsWithFactsSample = await extractFromUrlsWithFactsSampleTask;
+                if (extractFromUrlsWithFactsSample.Content.Text.HasResult())
+                {
+                    results.TryAdd(url, extractFromUrlsWithFactsSample.Content.Text ?? string.Empty);
+                }
+            }
+            catch (Exception ex)
+            {
+                await mcpServer.SendNotificationAsync("notifications/message", new LoggingMessageNotificationParams()
+                {
+                    Level = LoggingLevel.Warning,
+                    Data = JsonSerializer.SerializeToElement($"Failed to process url {url}: {ex}"),
+                }, cancellationToken: CancellationToken.None);
+            }
+            finally
+            {
+                semaphore.Release();
+            }
+        }
 
         var extractWithFactsSample = await extractWithFactsSampleTask;
 
         if (extractWithFactsSample.Content.Text.HasResult())
         {
-            results.Add(factsSourceUrl,
+            results.TryAdd(factsSourceUrl,
                 extractWithFactsSample.Content.Text ?? string.Empty);
         }
 
@@ -152,4 +202,5 @@ public static class ServiceExtensions
             Content = [.. results.Select(a => a.Value.ToTextResourceContent(a.Key))]
         };
     }
+
 }

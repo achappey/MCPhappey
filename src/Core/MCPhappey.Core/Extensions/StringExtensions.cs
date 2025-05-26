@@ -6,6 +6,9 @@ namespace MCPhappey.Core.Extensions;
 
 public static class StringExtensions
 {
+    public static bool HasResult(this string? result)
+         => !string.IsNullOrEmpty(result) && !result.Contains("INFO NOT FOUND", StringComparison.OrdinalIgnoreCase);
+
     public static string CleanJson(this string input)
     {
         const string prefix = "```json";

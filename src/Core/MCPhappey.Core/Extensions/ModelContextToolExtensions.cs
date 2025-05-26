@@ -47,6 +47,7 @@ public static partial class ModelContextToolExtensions
         return pluginTools;
     }
 
+
     private static ToolsCapability? BuildCapability(this IEnumerable<McpServerTool>? tools,
         Dictionary<string, string>? headers = null)
     {
@@ -61,21 +62,22 @@ public static partial class ModelContextToolExtensions
         return new ToolsCapability
         {
             ListToolsHandler = async (request, cancellationToken)
-                    =>
-                {
-                    return await Task.FromResult(new ListToolsResult()
-                    {
-                        Tools = [.. tools.Select(a => a.ProtocolTool)],
-                    });
-                },
+                       =>
+                   {
+                       return await Task.FromResult(new ListToolsResult()
+                       {
+                           Tools = [.. tools.Select(a => a.ProtocolTool)],
+                       });
+                   },
             CallToolHandler = async (request, cancellationToken)
                 =>
                 {
+                    //request.Params.Meta.ProgressToken.Value
                     var tool = tools.First(a => a.ProtocolTool.Name == request.Params?.Name);
                     request.Services!.WithHeaders(headers);
-
                     return await tool.InvokeAsync(request, cancellationToken);
                 }
         };
     }
+
 }

@@ -1,0 +1,25 @@
+{
+  "name": "mcphappey-mcp",
+  "version": "0.1.0",
+  "description": "Unofficial Model Context Protocol SDK wrapper and helpers",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.4"
+  },
+  "license": "MIT",
+  "exports": {
+    ".": "./dist/index.js",
+    "./react": "./dist/react/index.js"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  }
+}

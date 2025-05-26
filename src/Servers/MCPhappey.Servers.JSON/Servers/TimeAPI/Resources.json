@@ -1,0 +1,16 @@
+{
+  "resources": [
+    {
+      "uri": "https://timeapi.io/api/health/check",
+      "name": "API health check",
+      "description": "Check if the TimeAPI.io service is online and available.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://timeapi.io/api/timezone/availabletimezones",
+      "name": "All available IANA time zones",
+      "description": "Returns a list of all supported IANA time zone names.",
+      "mimeType": "application/json"
+    }
+  ]
+}

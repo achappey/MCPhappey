@@ -21,11 +21,7 @@
             "description": "More context/background info about the topic"
           }
         ]
-      },
-      "resources": [
-        "bot://code/datetime/now",
-        "bot://currentUser/preferredLanguage"
-      ]
+      }
     },
     {
       "prompt": "Facts:\n{facts}\n======\nGiven only the facts above, provide a comprehensive/detailed answer.\nYou don't know where the knowledge comes from, just answer.\nIf you don't have sufficient information, reply with 'INFO NOT FOUND'.\nQuestion: {question}\nAnswer:\n",
@@ -44,11 +40,7 @@
             "required": true
           }
         ]
-      },
-      "resources": [
-        "bot://code/datetime/now",
-        "bot://currentUser/preferredLanguage"
-      ]
+      }
     },
     {
       "prompt": "Content:\n###\n{content}\n###\n\nThe above content is a collection of data from various sources. Analyze the content thoroughly and extract all URLs that provide additional knowledge to achieve the user's goals/question outlined below. Provide only a comma-separated list of these URLs without any additional text or prefixes. If no relevant URLs are found, respond with 'INFO NOT FOUND'.\n\nUser Goals:\n###\n{question}\n###\n",
@@ -67,8 +59,7 @@
             "required": true
           }
         ]
-      },
-      "resources": ["bot://code/datetime/now"]
+      }
     }
   ]
 }

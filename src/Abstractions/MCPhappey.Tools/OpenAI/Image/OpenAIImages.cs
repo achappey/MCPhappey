@@ -1,25 +1,37 @@
 using System.ComponentModel;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using OAI = OpenAI;
+using OpenAI.Images;
 
 namespace MCPhappey.Tools.OpenAI.Image;
 
 public static class OpenAIImages
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
+    public enum ImageQuality
+    {
+        low,
+        medium,
+        high,
+        auto
+    }
+
+
     [Description("Create a image with OpenAI image generator")]
     public static async Task<CallToolResponse> OpenAIImages_CreateImage(
         [Description("prompt")]
         string prompt,
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
-        [Description("Size of the image")]
+        [Description("Size of the image (1024x1024, 1536x1024 or 1024x1536)")]
         string? size = "1024x1024",
-        [Description("Style of the image")]
-        string? style = "vivid",
+        [Description("Quality of the image")]
+        ImageQuality? quality = ImageQuality.auto,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
@@ -28,39 +40,45 @@ public static class OpenAIImages
 
         var sizeValue = size switch
         {
-            "1024x1024" => OAI.Images.GeneratedImageSize.W1024xH1024,
-            "1792x1024" => OAI.Images.GeneratedImageSize.W1792xH1024,
-            "1024x1792" => OAI.Images.GeneratedImageSize.W1024xH1792,
-            _ => OAI.Images.GeneratedImageSize.W1024xH1024
+            "1024x1024" => GeneratedImageSize.W1024xH1024,
+            "1536x1024" => new GeneratedImageSize(1536, 1024),
+            "1024x1536" => new GeneratedImageSize(1024, 1536),
+            _ => GeneratedImageSize.W1024xH1024
         };
 
-        var styleValue = style switch
-        {
-            "vivid" => OAI.Images.GeneratedImageStyle.Vivid,
-            "natural" => OAI.Images.GeneratedImageStyle.Natural,
-            _ => OAI.Images.GeneratedImageStyle.Vivid
-        };
-
-        var imageClient = openAiClient.GetImageClient("dall-e-3");
-
+        var imageClient = openAiClient.GetImageClient("gpt-image-1");
+        var selectedQuality = quality ?? ImageQuality.auto;
         var item = await imageClient.GenerateImageAsync(prompt, new()
         {
-            Quality = new OAI.Images.GeneratedImageQuality("hd"),
+            Quality = new GeneratedImageQuality(Enum.GetName(selectedQuality)!),
             Size = sizeValue,
-            Style = styleValue,
-            ResponseFormat = OAI.Images.GeneratedImageFormat.Bytes
         }, cancellationToken);
 
-        var uploaded = await uploadService.UploadToRoot(mcpServer,serviceProvider, $"OpenAI-Image-{DateTime.Now.Ticks}.png",
-            item.Value.ImageBytes, cancellationToken);
-
-        return new CallToolResponse()
-        {
-            Content = [new Content(){
+        List<Content> content = [new Content(){
                 Type = "image",
                 MimeType = "image/png",
                 Data = Convert.ToBase64String(item.Value.ImageBytes)
-            }]
+            }];
+
+        var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Image-{DateTime.Now.Ticks}.png",
+            item.Value.ImageBytes, cancellationToken);
+
+        if (uploaded != null)
+        {
+            content.Add(new Content()
+            {
+                Resource = new TextResourceContents()
+                {
+                    MimeType = uploaded.MimeType,
+                    Uri = uploaded.Uri,
+                    Text = JsonSerializer.Serialize(uploaded)
+                }
+            });
+        }
+
+        return new CallToolResponse()
+        {
+            Content = content
         };
     }
 }

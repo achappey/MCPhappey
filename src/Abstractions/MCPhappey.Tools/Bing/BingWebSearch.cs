@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using MCPhappey.Auth.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -50,7 +50,7 @@ public static class BingWebSearch
             .ScrapeContentAsync(serviceProvider, mcpServer, searchUrl,
             cancellationToken);
 
-        return (searchUrl, result.FirstOrDefault()?.Contents.ToString()!);
+        return (searchUrl, result.FirstOrDefault()?.Contents.ToString() ?? string.Empty);
     }
 
     [Description("Search the web with Bing")]
@@ -59,7 +59,7 @@ public static class BingWebSearch
         [Description("Search query")]
         string query,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        RequestContext<CallToolRequestParams> requestContext,
         [Description("Specify the content's freshnes. Return items that Bing discovered within the last x period.")]
         Freshness? freshness = null,
         [Description("The market where the results come from. Typically, market is the country where the user is making the request from. The market must be in the form <language>-<country/region>. For example, en-US.")]
@@ -69,7 +69,11 @@ public static class BingWebSearch
         CancellationToken cancellationToken = default)
     {
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
+        var mcpServer = requestContext.Server;
         var config = serviceProvider.GetServerConfig(mcpServer);
+        //ProgressToken? progressToken = requestContext.Params?.Meta?.ProgressToken.HasValue == true ?
+        //    new ProgressToken(requestContext.Params?.Meta?.ProgressToken.Value.Token?.ToString()!) : null;
+        int? progressCounter = requestContext.Params?.Meta?.ProgressToken is not null ? 1 : null;
 
         if (mcpServer.ClientCapabilities?.Sampling == null)
         {
@@ -89,7 +93,20 @@ public static class BingWebSearch
 
         var querySampling = await samplingService.GetPromptSample<QueryList>(serviceProvider,
             mcpServer, "get-bing-serp-queries", queryArgs,
-                    "o4-mini", cancellationToken: cancellationToken);
+                "gpt-4.1-mini", cancellationToken: cancellationToken);
+
+        if (requestContext.Params?.Meta?.ProgressToken is not null)
+        {
+            await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotification()
+            {
+                ProgressToken = requestContext.Params.Meta.ProgressToken.Value,
+                Progress = new ProgressNotificationValue()
+                {
+                    Progress = progressCounter!.Value!,
+                    Message = $"Expanded to {querySampling?.Queries.Count()} queries:\n{string.Join("\n", querySampling?.Queries ?? [])}"
+                },
+            }, cancellationToken: cancellationToken);
+        }
 
         List<string> queries = [.. querySampling?.Queries ?? [], query];
 
@@ -113,8 +130,8 @@ public static class BingWebSearch
         var concatenatedResults = string.Join("\n\n", queryTaskItem);
 
         return await serviceProvider.ExtractWithFacts(mcpServer, concatenatedResults,
-            $"https://api.bing.microsoft.com/v7.0/search?q={query}&responseFilter=webpages,news",
-             query, 5, cancellationToken);
+            $"https://www.bing.com/search?q={query}&responseFilter=webpages,news",
+             query, requestContext.Params?.Meta?.ProgressToken, progressCounter, 5, cancellationToken);
     }
 }
 

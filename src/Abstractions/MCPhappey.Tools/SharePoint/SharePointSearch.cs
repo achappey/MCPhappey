@@ -56,7 +56,7 @@ public static class SharePointSearch
             hits = searchItems,
             hitContainer?.MoreResultsAvailable,
             hitContainer?.Total
-        });
+        }, JsonSerializerOptions.Web);
     }
 
     /// <summary>
@@ -92,15 +92,18 @@ public static class SharePointSearch
     public static async Task<CallToolResponse> SharePoint_Search(
         [Description("Search query")] string query,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
+        var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
+        int? progressCounter = requestContext.Params?.Meta?.ProgressToken is not null ? 1 : null;
 
         var entityCombinations = new List<EntityType?[]>
             {
                 new EntityType?[] { EntityType.Message, EntityType.ChatMessage },
+                //new EntityType?[] { EntityType.Person },
                 new EntityType?[] { EntityType.DriveItem, EntityType.Site, EntityType.ListItem },
             };
 
@@ -139,7 +142,7 @@ public static class SharePointSearch
             queryArgs,
             "o4-mini",
             0,
-            cancellationToken);
+            cancellationToken: cancellationToken);
 
         var queries = (querySampling?.Queries ?? Enumerable.Empty<string>())
             .Append(query)
@@ -164,6 +167,7 @@ public static class SharePointSearch
             concatenatedResults,
             "https://graph.microsoft.com/beta/search/query",
             query,
+            requestContext.Params?.Meta?.ProgressToken, progressCounter,
             5,
             cancellationToken);
     }

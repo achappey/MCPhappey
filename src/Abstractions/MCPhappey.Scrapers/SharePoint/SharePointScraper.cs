@@ -12,11 +12,8 @@ public class SharePointScraper(IHttpClientFactory httpClientFactory, ServerConfi
     OAuthSettings oAuthSettings) : IContentScraper
 {
     public bool SupportsHost(ServerConfig currentConfig, string host)
-    {
-        return currentConfig.Server.ServerInfo.Name == serverConfig.Server.ServerInfo.Name
-            && host.EndsWith(".sharepoint.com", StringComparison.OrdinalIgnoreCase)
+        => host.EndsWith(".sharepoint.com", StringComparison.OrdinalIgnoreCase)
             && serverConfig.Server.OBO?.ContainsKey(Hosts.MicrosoftGraph) == true;
-    }
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider,
          string url, CancellationToken cancellationToken = default)

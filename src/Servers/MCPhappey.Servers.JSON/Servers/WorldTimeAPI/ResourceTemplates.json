@@ -1,0 +1,22 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://worldtimeapi.org/api/timezone/{timezone}",
+      "name": "Current time by timezone",
+      "description": "Returns the current time for a specified timezone (e.g., Europe/Amsterdam, America/New_York, Etc/UTC).",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://worldtimeapi.org/api/timezone/{area}/{location}",
+      "name": "Current time by area/location",
+      "description": "Returns the current time for a specified area and location (e.g., area=Europe, location=Amsterdam).",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://worldtimeapi.org/api/timezone/{area}/{location}/{region}",
+      "name": "Current time by area/location/region",
+      "description": "Returns the current time for a timezone with three segments (e.g., America/Argentina/Buenos_Aires).",
+      "mimeType": "application/json"
+    }
+  ]
+}

@@ -3,6 +3,7 @@ using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory.DataFormats.WebPages;
+using Microsoft.ML.Tokenizers;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -24,6 +25,7 @@ public static class AspNetCoreExtensions
         services.AddSingleton<IReadOnlyList<ServerConfig>>(servers);
         services.AddSingleton<WebScraper>();
         services.AddScoped<HeaderProvider>();
+        services.AddSingleton(new GptTokenizer(TiktokenTokenizer.CreateForModel("gpt-4o")));
 
         services.AddHttpClient();
         services.AddLogging();

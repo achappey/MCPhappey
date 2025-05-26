@@ -1,0 +1,16 @@
+{
+  "resources": [
+    {
+      "uri": "https://worldtimeapi.org/api/timezone",
+      "name": "List all supported timezones",
+      "description": "Returns a list of all available timezones.",
+      "mimeType": "application/json"
+    },
+    {
+      "uri": "https://worldtimeapi.org/api/utc/now",
+      "name": "Current UTC time",
+      "description": "Returns the current UTC date and time.",
+      "mimeType": "application/json"
+    }
+  ]
+}

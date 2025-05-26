@@ -1,0 +1,23 @@
+{
+  "name": "mcphappey-core",
+  "version": "0.1.0",
+  "description": "Core React component structure for MCP Happey apps (no styling)",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "dependencies": {
+    "mcphappey-auth": "*",
+    "mcphappey-state": "*",
+    "react-json-view-lite": "^2.4.1"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "peerDependencies": {
+    "react": "^18.3.1"
+  },
+  "license": "MIT"
+}

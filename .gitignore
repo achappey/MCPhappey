@@ -28,6 +28,7 @@ nupkg/
 *.sln.docstates
 *.Development.json
 .clinerules
+node_modules
 
 # Build results
 [Dd]ebug/
