@@ -7,13 +7,41 @@ namespace MCPhappey.Servers.SQL.Extensions;
 public static class DatabaseExtensions
 {
     public static Server ToMcpServer(this Models.Server server)
-        => new()
+    {
+        // ----------------------------
+        // Build the OBO dictionary
+        // ----------------------------
+        Dictionary<string, string>? obo = null;
+
+        if (server.Secured)
+        {
+            obo = new()
+            {
+                { Hosts.MicrosoftGraph, "https://graph.microsoft.com/User.Read" }
+            };
+
+            // 1.  Collect distinct hosts that end in ".dynamics.com"
+            // 2.  Add them to the dictionary if not already present
+            foreach (var host in server.Resources
+                                     .Select(r => new Uri(r.Uri).Host)      // or r.Url, adjust to model
+                                     .Where(h => h.EndsWith(".dynamics.com",
+                                                            StringComparison.OrdinalIgnoreCase))
+                                     .Distinct())
+            {
+                obo.TryAdd(host, $"https://{host}/.default");
+            }
+        }
+
+        // ----------------------------
+        // Return the MCP-flavoured server
+        // ----------------------------
+        return new Server
         {
             Capabilities = new()
             {
-                Prompts = server.Prompts.Count > 0 ? new() : null,
-                Resources = server.Resources.Count > 0 ? new() : null,
-                Tools = server.Tools.Count > 0 ? new() : null
+                Prompts = server.Prompts.Any() ? new() : null,
+                Resources = server.Resources.Any() ? new() : null,
+                Tools = server.Tools.Any() ? new() : null
             },
             Instructions = server.Instructions,
             ServerInfo = new()
@@ -21,12 +49,16 @@ public static class DatabaseExtensions
                 Name = server.Name,
                 Version = "1.0.0"
             },
-            Groups = server.Secured && server.Groups.Count > 0
-                ? server.Groups.Select(a => a.Id) : null,
-            Owners = server.Owners.Count > 0 ? server.Owners.Select(a => a.Id) : null,
-            OBO = server.Secured ? new Dictionary<string, string>() {
-                { Hosts.MicrosoftGraph, "https://graph.microsoft.com/User.Read"} } : null,
+            Groups = server.Secured && server.Groups.Any()
+                     ? server.Groups.Select(g => g.Id)
+                     : null,
+            Owners = server.Owners.Any()
+                     ? server.Owners.Select(o => o.Id)
+                     : null,
+            OBO = obo
         };
+    }
+
 
     public static ListResourcesResult ToListResourcesResult(this ICollection<Models.Resource> resources)
         => new()

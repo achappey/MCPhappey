@@ -1,6 +1,23 @@
 {
   "prompts": [
     {
+      "prompt": "Analyseer de meegeleverde lijst met sales op reden {reden}. Geef per reden van (niet) geaccepteerde sales een overzicht van het aantal sales, het totaal verwachte omzetbedrag en het aantal unieke verantwoordelijke medewerkers. Presenteer het resultaat als een tabel met de kolommen: Reden, Aantal Sales, Totale Verwachte Omzet en Aantal Medewerkers.",
+      "template": {
+        "name": "sales-overzicht-per-reden",
+        "description": "Maakt een samenvatting van sales gegroepeerd op reden van (niet) geaccepteerd, inclusief aantal sales, totale verwachte omzet en unieke medewerkers.",
+        "arguments": [
+          {
+            "name": "reden",
+            "description": "Reden waarom de sales (niet) geaccepteerd is. Bijvoorbeeld ervaring, etc.",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/sales/sales?q[reason.name]=*{reden}*&select=subject,contact.,start_date,note,expected_closing_date,expected_revenue,chance_to_score,responsible_employee.,organization.,status.,source.,progress."
+      ]
+    },
+    {
       "prompt": "Analyseer de meegeleverde sales pipeline data. Geef een samenvatting van de totale waarde en het aantal deals per salesfase. Welke fase bevat de hoogste totale waarde? Presenteer als een tabel: Fase, Aantal Deals, Totale Waarde.",
       "template": {
         "name": "sales-analyseer-pipeline-samenvatting",

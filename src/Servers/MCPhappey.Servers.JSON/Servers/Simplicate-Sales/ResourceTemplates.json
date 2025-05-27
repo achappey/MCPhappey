@@ -1,6 +1,15 @@
 {
   "resourceTemplates": [
     {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales?q[reason.name]=*Ervaring*&select=subject,contact.,start_date,note,expected_closing_date,expected_revenue,chance_to_score,responsible_employee.,organization.,status.,source.,progress.",
+      "name": "Sales zoeken op reden (niet) geaccepteerd",
+      "description": "Zoek sales op reden (niet) geaccepteerd",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales/sales:{dealId}",
       "name": "Sales details",
       "description": "Haal alle details van een specifieke sales op.",

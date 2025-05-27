@@ -47,7 +47,41 @@ public class SamplingService(PromptService promptService)
         var promptSample = await GetPromptSample(serviceProvider, mcpServer, name, arguments, modelHint,
             temperature, systemPrompt, includeContext, cancellationToken);
 
-        return JsonSerializer.Deserialize<T>(promptSample.Content.Text?.CleanJson() ?? ""
-             ?? string.Empty);
+        try
+        {
+            return JsonSerializer.Deserialize<T>(promptSample.Content.Text?.CleanJson() ?? ""
+                 ?? string.Empty);
+
+        }
+        catch (System.Text.Json.JsonException exception)
+        {
+
+            var prompt = await promptService.GetServerPrompt(serviceProvider, mcpServer, name,
+            arguments, cancellationToken);
+
+            var newResult = await mcpServer.RequestSamplingAsync(new CreateMessageRequestParams()
+            {
+                Messages = [.. prompt.Messages.Select(a => new SamplingMessage()
+            {
+                Role = a.Role,
+                Content = a.Content
+            }),
+                new SamplingMessage() {
+                    Role = Role .User,
+                    Content =new Content() {
+                        Text = $"Your last answer failed to JsonSerializer.Deserialize. Error message is included. Please try again.\n\n{exception.Message}"
+                    }
+            }],
+                IncludeContext = includeContext,
+                MaxTokens = 4096,
+                SystemPrompt = systemPrompt,
+                ModelPreferences = modelHint?.ToModelPreferences(),
+                Temperature = temperature
+            });
+
+            return JsonSerializer.Deserialize<T>(newResult.Content.Text?.CleanJson() ?? ""
+                   ?? string.Empty);
+        }
+
     }
 }

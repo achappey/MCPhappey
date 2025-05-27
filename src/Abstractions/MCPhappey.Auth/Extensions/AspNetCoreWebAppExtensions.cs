@@ -73,7 +73,7 @@ public static class AspNetCoreWebAppExtensions
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
             var principal = await validator.ValidateAsync(token, baseUrl,
                 oAuthSettings.Audience, oAuthSettings);
-                
+
             if (principal is null)
             {
                 await WriteUnauthorized(context, oAuthSettings);

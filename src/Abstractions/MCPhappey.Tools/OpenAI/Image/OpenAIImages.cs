@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -31,8 +30,6 @@ public static class OpenAIImages
         IMcpServer mcpServer,
         [Description("Size of the image (1024x1024, 1536x1024 or 1024x1536)")]
         string? size = "1024x1024",
-      //  [Description("Quality of the image")]
-     //   ImageQuality? quality = ImageQuality.auto,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);

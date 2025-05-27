@@ -22,7 +22,6 @@ public sealed class OutlookScraper(
     #region IContentScraper
 
     public bool SupportsHost(ServerConfig currentConfig, string host) =>
-        currentConfig.Server.ServerInfo.Name == serverConfig.Server.ServerInfo.Name &&
         (host.EndsWith("outlook.office.com", StringComparison.OrdinalIgnoreCase) ||
          host.EndsWith("outlook.office365.com", StringComparison.OrdinalIgnoreCase)) &&
         serverConfig.Server.OBO?.ContainsKey(MCPhappey.Common.Constants.Hosts.MicrosoftGraph) == true;

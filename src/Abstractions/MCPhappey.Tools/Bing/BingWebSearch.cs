@@ -72,8 +72,6 @@ public static class BingWebSearch
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
         var mcpServer = requestContext.Server;
         var config = serviceProvider.GetServerConfig(mcpServer);
-        //ProgressToken? progressToken = requestContext.Params?.Meta?.ProgressToken.HasValue == true ?
-        //    new ProgressToken(requestContext.Params?.Meta?.ProgressToken.Value.Token?.ToString()!) : null;
         int? progressCounter = requestContext.Params?.Meta?.ProgressToken is not null ? 1 : null;
 
         if (mcpServer.ClientCapabilities?.Sampling == null)

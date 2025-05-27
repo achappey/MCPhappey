@@ -12,10 +12,8 @@ public class OboClientScraper(IHttpClientFactory httpClientFactory, ServerConfig
     OAuthSettings oAuthSettings) : IContentScraper
 {
     public bool SupportsHost(ServerConfig currentConfig, string host)
-    {
-        return currentConfig.Server.ServerInfo.Name == serverConfig.Server.ServerInfo.Name
+        => currentConfig.Server.ServerInfo.Name == serverConfig.Server.ServerInfo.Name
             && serverConfig.Server.OBO?.Keys.Any(a => a == host || host.EndsWith(a)) == true;
-    }
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider,
          string url, CancellationToken cancellationToken = default)
