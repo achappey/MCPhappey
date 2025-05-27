@@ -28,15 +28,6 @@ public static class ServiceExtensions
         }
     }
 
-    public static OpenAIClient GetOpenAiClient(this IServiceProvider serviceProvider)
-    {
-        var domainHeaders = serviceProvider.GetService<Dictionary<string, Dictionary<string, string>>>();
-        var openAIKey = domainHeaders?.ContainsKey(Hosts.OpenAI) == true
-            ? domainHeaders[Hosts.OpenAI]?["Authorization"].ToString()?.GetBearerToken() : null;
-
-        return new OpenAIClient(openAIKey);
-    }
-
     public static ServerConfig? GetServerConfig(this IServiceProvider serviceProvider,
            IMcpServer mcpServer)
     {

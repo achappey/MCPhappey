@@ -6,6 +6,7 @@ using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using OpenAI;
 using OAI = OpenAI;
 
 namespace MCPhappey.Tools.OpenAI.Audio;
@@ -37,17 +38,17 @@ public static class OpenAIAudio
         string? model = "tts-1-hd",
         [Description("Control the voice of your generated audio with additional instructions. Does not work with tts-1 or tts-1-hd.")]
         string? instructions = null,
-        [Description("Control the voice of your generated audio with additional instructions. Does not work with tts-1 or tts-1-hd.")]
-        Voice? voice = Voice.Alloy,
+        // [Description("Control the voice of your generated audio with additional instructions. Does not work with tts-1 or tts-1-hd.")]
+        //  Voice? voice = Voice.Alloy,
         [Description("Playback speed factor")]
         float? speed = 1,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(input);
         var uploadService = serviceProvider.GetRequiredService<UploadService>();
-        var openAiClient = serviceProvider.GetOpenAiClient();
+        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
 
-        OAI.Audio.GeneratedSpeechVoice speechVoice = new(Enum.GetName<Voice>(voice!.Value)?.ToLowerInvariant());
+        OAI.Audio.GeneratedSpeechVoice speechVoice = OAI.Audio.GeneratedSpeechVoice.Alloy;
         var audioClient = openAiClient.GetAudioClient(model);
 
         var item = await audioClient.GenerateSpeechAsync(input,
@@ -86,7 +87,8 @@ public static class OpenAIAudio
         ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
         var uploadService = serviceProvider.GetRequiredService<UploadService>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-        var openAiClient = serviceProvider.GetOpenAiClient();
+        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
+
         var downloads = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer,
             url!, cancellationToken);
         var download = downloads.FirstOrDefault();
