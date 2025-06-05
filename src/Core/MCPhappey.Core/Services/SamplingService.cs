@@ -19,7 +19,7 @@ public class SamplingService(PromptService promptService)
         var prompt = await promptService.GetServerPrompt(serviceProvider, mcpServer, name,
             arguments, cancellationToken);
 
-        return await mcpServer.RequestSamplingAsync(new CreateMessageRequestParams()
+        return await mcpServer.SampleAsync(new CreateMessageRequestParams()
         {
             Messages = [.. prompt.Messages.Select(a => new SamplingMessage()
             {
@@ -53,13 +53,13 @@ public class SamplingService(PromptService promptService)
                  ?? string.Empty);
 
         }
-        catch (System.Text.Json.JsonException exception)
+        catch (JsonException exception)
         {
 
             var prompt = await promptService.GetServerPrompt(serviceProvider, mcpServer, name,
             arguments, cancellationToken);
 
-            var newResult = await mcpServer.RequestSamplingAsync(new CreateMessageRequestParams()
+            var newResult = await mcpServer.SampleAsync(new CreateMessageRequestParams()
             {
                 Messages = [.. prompt.Messages.Select(a => new SamplingMessage()
             {

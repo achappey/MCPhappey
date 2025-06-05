@@ -9,6 +9,15 @@
         "audience": ["assistant"]
       }
     },
+     {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/invoices/invoice?select=payment_term.,total_excluding_vat,organization.,my_organization_profile.,simplicate_url,status.&q[invoice_number]={factuurNummer}",
+      "name": "Factuur Details",
+      "description": "Haal alle details van een specifieke factuur op.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/invoices/invoice?q[invoice_number]=*{invoiceNumber}*&q[invoice_status.label]=*{invoiceStatusLabel}*&q[debtor.name]=*{debtorName}*&q[project.name]=*{projectName}*&q[total_incl_vat][ge]={totalInclVatGE}&q[total_incl_vat][le]={totalInclVatLE}&q[invoice_date][ge]={invoiceDateGE}&q[invoice_date][le]={invoiceDateLE}&q[due_date][ge]={dueDateGE}&q[due_date][le]={dueDateLE}&q[payment_date][ge]={paymentDateGE}&q[payment_date][le]={paymentDateLE}&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&limit={limit}&offset={offset}&sort={sortColumn}",
       "name": "Facturen (alle filters)",
