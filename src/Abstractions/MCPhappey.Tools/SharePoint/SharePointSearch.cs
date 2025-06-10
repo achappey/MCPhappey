@@ -5,6 +5,7 @@ using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
+using MCPhappey.Tools.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Beta;
@@ -145,6 +146,13 @@ public static class SharePointSearch
             0,
             cancellationToken: cancellationToken);
 
+        progressCounter = await mcpServer.SendProgressNotificationAsync(
+                requestContext,
+                progressCounter ?? 1,
+                $"Expanded to {querySampling?.Queries.Count()} queries:\n{string.Join("\n", querySampling?.Queries ?? [])}",
+                cancellationToken
+            );
+
         var queries = (querySampling?.Queries ?? Enumerable.Empty<string>())
             .Append(query)
             .Distinct()
@@ -165,10 +173,11 @@ public static class SharePointSearch
 
         return await serviceProvider.ExtractWithFacts(
             mcpServer,
+            requestContext,
             concatenatedResults,
             "https://graph.microsoft.com/beta/search/query",
             query,
-            requestContext.Params?.Meta?.ProgressToken, progressCounter,
+            progressCounter,
             5,
             cancellationToken);
     }

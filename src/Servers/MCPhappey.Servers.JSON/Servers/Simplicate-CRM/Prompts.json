@@ -1,6 +1,22 @@
 {
   "prompts": [
-   
+    {
+      "prompt": "Analyseer de meegeleverde lijst met organisaties. Identificeer actieve en relevante contacten. Geef een overzicht van namen organisaties, contactpersonen en contactgegevens. Presenteer dit als een tabel.",
+      "template": {
+        "name": "crm-organisaties-per-branch",
+        "description": "",
+        "arguments": [
+          {
+            "name": "brancheNaam",
+            "description": "Naam van de branche",
+            "required": true
+          }
+        ]
+      },
+      "resourceTemplates": [
+        "https://{organization}.simplicate.app/api/v2/crm/organization?select=id,name,is_active,created_at,updated_at,simplicate_url,relation_type.label,relation_manager.name,relation_manager.work_email,relation_manager.type.label,relation_manager.simplicate_url,customer_group.name,teams.name,industry.name,organizationsize.name,email,phone,url,linkedin_url,note,coc_code,vat_number,bank_account,bank_bic,relation_number,visiting_address.line_1,visiting_address.postal_code,visiting_address.locality,visiting_address.country,postal_address.line_1,postal_address.postal_code,postal_address.locality,postal_address.country,debtor.payment_term.name,debtor.payment_term.days,debtor.autocollect,sbi_codes.code,sbi_codes.description,custom_fields.id,custom_fields.value,interests.name,linked_persons_contacts.person_id,linked_persons_contacts.work_email,linked_persons_contacts.work_function&q[industry.name]=*{brancheNaam}*"
+      ]
+    },    
     {
       "prompt": "Analyseer de meegeleverde lijst met contactpersonen. Identificeer contacten zonder recente activiteit (langer dan {aantalDagenGeenActiviteit} dagen geleden) en geef een overzicht van hun namen en de datum van laatste contact. Presenteer dit als een tabel.",
       "template": {

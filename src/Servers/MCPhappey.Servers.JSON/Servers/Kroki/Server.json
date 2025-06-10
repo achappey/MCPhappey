@@ -1,0 +1,7 @@
+{
+  "serverInfo": {
+    "name": "Kroki",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.Kroki.KrokiDiagrams, MCPhappey.Tools"]
+}

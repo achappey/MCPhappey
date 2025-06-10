@@ -37,10 +37,10 @@ public static class ServiceExtensions
 
     public static async Task<CallToolResponse> ExtractWithFacts(this IServiceProvider serviceProvider,
        IMcpServer mcpServer,
+       RequestContext<CallToolRequestParams> requestContext,
        string facts,
        string factsSourceUrl,
        string query,
-       ProgressToken? progressToken,
        int? progressCounter,
        int limitSources = 5,
        CancellationToken cancellationToken = default)
@@ -100,19 +100,13 @@ public static class ServiceExtensions
 
             try
             {
-                if (progressToken is not null)
-                {
-                    await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotification()
-                    {
-                        ProgressToken = progressToken.Value,
-                        Progress = new ProgressNotificationValue()
-                        {
-                            Progress = counter++,
-                            Total = total,
-                            Message = $"Downloading: [{new Uri(url).Host}]({url})"
-                        },
-                    }, cancellationToken: CancellationToken.None);
-                }
+
+                counter = (int)await mcpServer.SendProgressNotificationAsync(
+                    requestContext,
+                    counter,
+                    $"Downloading: [{new Uri(url).Host}]({url})",
+                    cancellationToken
+                );
 
                 var scrapeTask = downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken: CancellationToken.None);
                 var timeoutTask = Task.Delay(TimeSpan.FromSeconds(10), cancellationToken);
@@ -136,20 +130,13 @@ public static class ServiceExtensions
                     ["question"] = JsonSerializer.SerializeToElement(query)
                 };
 
-                if (progressToken is not null)
-                {
-                    await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotification()
-                    {
-                        ProgressToken = progressToken.Value,
-                        Progress = new ProgressNotificationValue()
-                        {
-                            Progress = counter++,
-                            Total = total,
-                            Message = $"Reading: [{new Uri(url).Host}]({url})"
-                        },
-                    }, cancellationToken: CancellationToken.None);
-                }
-
+                counter = (int)await mcpServer.SendProgressNotificationAsync(
+                                  requestContext,
+                                  counter,
+                                  $"Reading: [{new Uri(url).Host}]({url})",
+                                  cancellationToken
+                              );
+               
                 var extractFromUrlsWithFactsSampleTask = samplingService.GetPromptSample(
                     serviceProvider, mcpServer, "extract-with-facts",
                     urlFactArgs, "gpt-4.1-mini", 0);

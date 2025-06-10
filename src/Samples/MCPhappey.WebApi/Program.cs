@@ -88,9 +88,9 @@ if (appConfig?.OAuth != null)
     builder.Services.WithOboScrapers(servers, appConfig.OAuth);
 }
 
-if (appConfig?.Domains != null && appConfig.Domains.ContainsKey("api.openai.com"))
+if (appConfig?.Domains != null && appConfig.Domains.ContainsKey(Hosts.OpenAI))
 {
-    builder.Services.AddSingleton(new OpenAIClient(appConfig.Domains["api.openai.com"]["Authorization"].GetBearerToken()!));
+    builder.Services.AddSingleton(new OpenAIClient(appConfig.Domains[Hosts.OpenAI]["Authorization"].GetBearerToken()!));
 }
 
 builder.Services.WithDefaultScrapers();

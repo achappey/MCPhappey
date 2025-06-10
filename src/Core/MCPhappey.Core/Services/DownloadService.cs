@@ -12,9 +12,7 @@ public partial class DownloadService(WebScraper webScraper,
     IEnumerable<IContentScraper> scrapers) : IWebScraper
 {
     public async Task<WebScraperResult> GetContentAsync(string url, CancellationToken cancellationToken = default)
-    {
-        return await webScraper.GetContentAsync(url, cancellationToken);
-    }
+        => await webScraper.GetContentAsync(url, cancellationToken);
 
     public async Task<IEnumerable<FileItem>> ScrapeContentAsync(IServiceProvider serviceProvider,
         ModelContextProtocol.Server.IMcpServer mcpServer,

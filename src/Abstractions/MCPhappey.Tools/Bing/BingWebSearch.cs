@@ -4,8 +4,8 @@ using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -94,18 +94,12 @@ public static class BingWebSearch
             mcpServer, "get-bing-serp-queries", queryArgs,
                 "gpt-4.1-mini", cancellationToken: cancellationToken);
 
-        if (requestContext.Params?.Meta?.ProgressToken is not null)
-        {
-            await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotification()
-            {
-                ProgressToken = requestContext.Params.Meta.ProgressToken.Value,
-                Progress = new ProgressNotificationValue()
-                {
-                    Progress = progressCounter!.Value!,
-                    Message = $"Expanded to {querySampling?.Queries.Count()} queries:\n{string.Join("\n", querySampling?.Queries ?? [])}"
-                },
-            }, cancellationToken: cancellationToken);
-        }
+        await mcpServer.SendProgressNotificationAsync(
+            requestContext,
+            progressCounter!.Value,
+            $"Expanded to {querySampling?.Queries.Count()} queries:\n{string.Join("\n", querySampling?.Queries ?? [])}",
+            cancellationToken
+        );
 
         List<string> queries = [.. querySampling?.Queries ?? [], query];
 
@@ -117,7 +111,11 @@ public static class BingWebSearch
             await semaphore.WaitAsync();
             try
             {
-                return await Search(serviceProvider, mcpServer, item, freshness, market, language, cancellationToken);
+                return await Search(serviceProvider,
+                    mcpServer, item, freshness,
+                    market,
+                    language,
+                    cancellationToken);
             }
             finally
             {
@@ -128,9 +126,10 @@ public static class BingWebSearch
         var queryTaskItem = await Task.WhenAll(tasks);
         var concatenatedResults = string.Join("\n\n", queryTaskItem);
 
-        return await serviceProvider.ExtractWithFacts(mcpServer, concatenatedResults,
+        return await serviceProvider.ExtractWithFacts(mcpServer, requestContext,
+            concatenatedResults,
             $"https://www.bing.com/search?q={query}&responseFilter=webpages,news",
-             query, requestContext.Params?.Meta?.ProgressToken, progressCounter, 5, cancellationToken);
+             query, progressCounter, 5, cancellationToken);
     }
 }
 

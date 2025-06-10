@@ -68,7 +68,7 @@ public class SamplingService(PromptService promptService)
             }),
                 new SamplingMessage() {
                     Role = Role .User,
-                    Content =new Content() {
+                    Content = new() {
                         Text = $"Your last answer failed to JsonSerializer.Deserialize. Error message is included. Please try again.\n\n{exception.Message}"
                     }
             }],

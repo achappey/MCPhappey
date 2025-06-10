@@ -3,6 +3,7 @@ namespace MCPhappey.Tools.Extensions;
 
 public static class BinaryDataExtensions
 {
+    
     public static List<BinaryData> Split(this BinaryData data, int maxChunkSizeInMB)
     {
         long maxChunkSizeInBytes = maxChunkSizeInMB * 1024L * 1024L;
