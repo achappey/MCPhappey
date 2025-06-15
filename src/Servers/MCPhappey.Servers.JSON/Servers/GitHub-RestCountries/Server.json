@@ -3,7 +3,7 @@
     "name": "GitHub-RestCountries",
     "version": "1.0.0"
   },
-  "_meta": {
-    "Plugins": "MCPhappey.Tools.GitHub.RestCountries.CountryService, MCPhappey.Tools"
-  }
+  "plugins": [
+    "MCPhappey.Tools.GitHub.RestCountries.CountryService, MCPhappey.Tools"
+  ]
 }

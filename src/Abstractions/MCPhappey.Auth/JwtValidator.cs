@@ -73,7 +73,6 @@ public class JwtValidator(IHttpClientFactory httpClientFactory) : IJwtValidator
                 var innerResult = await handler.ValidateTokenAsync(actToken, innerValidation);
                 var innerIdentity = innerResult.ClaimsIdentity;
 
-                // Optionally: attach inner claims to outer principal
                 outerIdentity.AddClaims(innerIdentity.Claims
                     .Where(c => !outerIdentity.HasClaim(c.Type, c.Value))); // avoid duplicates
             }

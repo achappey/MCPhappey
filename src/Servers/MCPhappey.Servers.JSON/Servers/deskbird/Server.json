@@ -6,6 +6,8 @@
   "headers": {
     "Authorization": "Bearer [deskbird_API_key]"
   },
+  "roles": ["deskbird.ReadAll"],
+  "instructions": "Always use deskbird with a lowercase 'd'.\nFilter /bookings by startDate and endDate.\nUse limit 100 per request (max 500, but responses are large).",
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }

@@ -22,6 +22,7 @@ public static class ModelContextProtocolExtensions
                      var headers = ctx.Request.Headers
                             .ToDictionary(h => h.Key, h => h.Value.ToString());
                      opts.ServerInfo = server.Server.ToServerInfo();
+                     opts.ServerInstructions = server.Server.Instructions;
                      opts.Capabilities = new()
                      {
                          Resources = server.ToResourcesCapability(headers),

@@ -1,0 +1,7 @@
+{
+  "serverInfo": {
+    "name": "AgentTools",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.Agent.AgentService, MCPhappey.Tools"]
+}

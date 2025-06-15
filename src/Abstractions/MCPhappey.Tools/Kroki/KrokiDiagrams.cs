@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -8,8 +9,39 @@ namespace MCPhappey.Tools.Kroki;
 
 public static class KrokiDiagrams
 {
+    public static readonly HashSet<string> AllowedTypes = new(StringComparer.OrdinalIgnoreCase)
+    {
+        "blockdiag",
+        "bpmn",
+        "bytefield",
+        "seqdiag",
+        "actdiag",
+        "nwdiag",
+        "packetdiag",
+        "rackdiag",
+        "c4plantuml",
+        "d2",
+        "dbml",
+        "ditaa",
+        "erd",
+        "excalidraw",
+        "graphviz",
+        "mermaid",
+        "nomnoml",
+        "pikchr",
+        "plantuml",
+        "structurizr",
+        "svgbob",
+        "symbolator",
+        "tikz",
+        "vega",
+        "vegalite",
+        "wavedrom",
+        "wireviz"
+    };
+
     [Description("Generate a Kroki diagram from code and diagram type")]
-    [McpServerTool(ReadOnly = false)]
+    [McpServerTool(ReadOnly = false, Title = "Create a diagram with Kroki")]
     public static async Task<CallToolResponse> Kroki_CreateDiagram(
       [Description("Diagram type, e.g. graphviz, mermaid, plantuml, etc.")] string diagramType,
       [Description("The diagram source code (DOT, Mermaid, etc.)")] string diagramCode,
@@ -18,6 +50,11 @@ public static class KrokiDiagrams
       RequestContext<CallToolRequestParams> requestContext,
       CancellationToken cancellationToken = default)
     {
+        if (!AllowedTypes.Contains(diagramType))
+        {
+            return $"Unsupported diagram type '{diagramType}'. Allowed types: {string.Join(", ", AllowedTypes)}".ToErrorCallToolResponse();
+        }
+
         var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>()
             ?? throw new InvalidOperationException("No IHttpClientFactory found in service provider");
         var httpClient = httpClientFactory.CreateClient();

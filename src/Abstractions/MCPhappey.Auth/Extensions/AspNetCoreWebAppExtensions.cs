@@ -57,22 +57,36 @@ public static class AspNetCoreWebAppExtensions
                 return;
             }
 
-            if (matchedServer.IsAuthorized(context.Request.Headers.ToDictionary(k => k.Key, v => v.Value.ToString())))
-            {
-                await next();
-                return;
-            }
-
             var token = context.GetBearerToken();
-            if (string.IsNullOrEmpty(token))
+
+            if (string.IsNullOrEmpty(token) && matchedServer.Server.OBO?.Any() == true)
             {
                 await WriteUnauthorized(context, oAuthSettings);
                 return;
             }
 
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
-            var principal = await validator.ValidateAsync(token, baseUrl,
+            var principal = await validator.ValidateAsync(token!, baseUrl,
                 oAuthSettings.Audience, oAuthSettings);
+
+            var userRoles = principal?.Claims
+                                .Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
+                                .Select(c => c.Value)
+                                .ToList() ?? [];
+
+            if (matchedServer.IsAuthorized(context.Request.Headers.ToDictionary(k => k.Key, v => v.Value.ToString()), userRoles))
+            {
+                await next();
+                return;
+            }
+
+
+          /*  if (string.IsNullOrEmpty(token))
+            {
+                await WriteUnauthorized(context, oAuthSettings);
+                return;
+            }*/
+
 
             if (principal is null)
             {
@@ -87,9 +101,25 @@ public static class AspNetCoreWebAppExtensions
                 return;
             }
 
-            context.User = principal;
+            var requiredRoles = matchedServer.Server.Roles?.ToList() ?? new List<string>();
+            if (requiredRoles.Count != 0)
+            {
+                // Get the roles claim(s) from the principal
+                /*  var userRoles = principal.Claims
+                      .Where(c => c.Type == "roles")
+                      .Select(c => c.Value)
+                      .ToList();*/
 
-            // TODO: Add role support here if needed
+                // Check if the user has at least one required role
+                if (!requiredRoles.Intersect(userRoles, StringComparer.OrdinalIgnoreCase).Any())
+                {
+                    context.Response.StatusCode = 403;
+                    await context.Response.WriteAsync("Forbidden: user lacks required role(s)");
+                    return;
+                }
+            }
+
+            context.User = principal;
 
             await next();
         });

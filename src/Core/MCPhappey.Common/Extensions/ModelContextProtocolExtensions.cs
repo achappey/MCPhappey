@@ -101,12 +101,13 @@ public static class ModelContextProtocolExtensions
 
     private static Content ToContent(this ResourceContents contents) => new()
     {
+        Type = "resource",
         Resource = contents
     };
 
     public static CallToolResponse ToCallToolResponse(this ReadResourceResult result) => new()
     {
-        Content = [.. result.Contents.Select(z => z.ToContent())]
+        Content = [.. result.Contents.Select(z => z.ToContent())],
     };
 
     public static ModelPreferences? ToModelPreferences(this string? result) => result != null ? new()

@@ -26,7 +26,23 @@ public static class ServerExtensions
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
            ?? [];
 
-    public static bool IsAuthorized(this ServerConfig serverConfig, Dictionary<string, string> headers)
+    public static bool IsAuthorized2(this ServerConfig serverConfig, Dictionary<string, string> headers)
         => serverConfig.Server.Headers?.Any() == true
         && serverConfig.Server.Headers?.All(a => headers.ContainsKey(a.Key)) == true;
+
+    public static bool IsAuthorized(this ServerConfig serverConfig, Dictionary<string, string> headers, IEnumerable<string> userRoles)
+    {
+        // Header check
+        bool headersOk = serverConfig.Server.Headers?.Any() != true ||
+                         serverConfig.Server.Headers.All(a => headers.ContainsKey(a.Key));
+
+        // Role check
+        var requiredRoles = serverConfig.Server.Roles?.ToList() ?? new List<string>();
+        bool rolesOk = !requiredRoles.Any() ||
+                       (userRoles != null && requiredRoles.Intersect(userRoles, StringComparer.OrdinalIgnoreCase).Any());
+
+        return headersOk && rolesOk;
+    }
+
+
 }
