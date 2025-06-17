@@ -3,5 +3,6 @@
     "name": "Kroki",
     "version": "1.0.0"
   },
-  "plugins": ["MCPhappey.Tools.Kroki.KrokiDiagrams, MCPhappey.Tools"]
+  "plugins": ["MCPhappey.Tools.Kroki.KrokiDiagrams, MCPhappey.Tools"],
+  "instructions": "Use png as default output format, unless specifically requested otherwise."
 }

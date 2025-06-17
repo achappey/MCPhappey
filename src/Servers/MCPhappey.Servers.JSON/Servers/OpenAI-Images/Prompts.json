@@ -1,0 +1,32 @@
+{
+  "prompts": [
+    {
+      "prompt": "Input data:\n###\n{dataInput}\n###\n\nYou are a **data miner** for infographic creation. Analyze the input data provided below (which may be text, records, logs, or any kind of structured or unstructured information).\n\nTASK\n1. Identify all **facts and insights** that would be most relevant and visually appealing for an infographic. These can include key numbers, statistics, percentages, rankings, trends, correlations, timelines, categories, or yes/no flags.\n2. Summarize each insight in a short, catchy, and visually friendly way—each as a concise label with value and optional unit or context, suitable for a data card, chart, or icon in an infographic.\n3. Focus on 4–8 of the most impactful and interesting insights, so the output is visually rich but not crowded.\n4. Leave out anything too uncertain, verbose, or not visually useful.\n\nOUTPUT\nList the extracted facts and insights as **plain text bullets**, ready for use in an infographic. Use a clear, visually-oriented style (short label, value, unit/context if helpful) and no prose, paragraphs, or explanations.",
+      "template": {
+        "name": "extract-infographic-insights",
+        "description": "Extract the most infographic-ready facts and insights from any data as plain text bullets",
+        "arguments": [
+          {
+            "name": "dataInput",
+            "description": "Any data to analyse (text, table, records, logs, etc.)",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Data source ▼\n{insightData}\n\nROLE  Elite infographic designer\n\nOBJECTIVE  Craft one vibrant, magazine-style **infographic** that feels dynamic and engaging – not a rigid grid of identical cards.\n\nLAYOUT GUIDE\n1. **Headline band**\n   • Soft gradient background or subtle texture.\n   • Title ≤ 4 words, subtitle ≤ 6 words, both centred.\n   • Optional hero illustration or icon beside the headline for instant context.\n\n2. **Mixed-visual canvas** (arrange freely; no uniform blocks)\n   • **Primary KPI panel** – 1–2 biggest numbers in oversized font with supporting icon/illustration.\n   • **Chart zone** – choose the best chart per insight:\n       – Pie / donut for shares or weekday splits\n       – Horizontal bar or lollipop for rankings / top-N lists\n       – Column or area for time trends / peaks\n       – Gauge or ring for percentages / utilisation\n   • **Mini-cards & call-outs** – smaller icons with figure + 1–2-word label to fill gaps.\n   • Use varied sizes & aspect ratios; overlap elements slightly for depth.\n\n3. **Illustrative accents**\n   • Integrate line-style people/scenario illustrations (e.g. desks, meeting, parking) that relate to the data theme.\n   • Small arrows or annotations to highlight growth, peak, or comparison.\n\nSTYLE\n• Palette: one dominant brand colour + two complementary accents; keep backgrounds light for clarity.\n• Typography: modern geometric sans; main KPIs ≥ 64 pt, secondary ≥ 24 pt.\n• Rounded corners & soft shadows for cards/charts; thin stroke icons for cohesion.\n• White space between clusters; asymmetric grid for energy.\n\nTEXT RULES\n• Label/heading ≤ 3 words each.\n• Total on-canvas words ≤ 45 (title, subtitle, labels, footer).\n\nOUTPUT  Produce **one single image** of the infographic – no extra text, markdown, or JSON.",
+      "template": {
+        "name": "design-infographic",
+        "description": "Generate a visually dynamic infographic from extracted insight data",
+        "arguments": [
+          {
+            "name": "insightData",
+            "description": "Structured insights to visualise",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

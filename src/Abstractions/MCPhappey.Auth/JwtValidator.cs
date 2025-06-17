@@ -41,6 +41,12 @@ public class JwtValidator(IHttpClientFactory httpClientFactory) : IJwtValidator
         try
         {
             var outerResult = await handler.ValidateTokenAsync(token, outerValidationParameters);
+
+            if (!outerResult.IsValid)
+            {
+
+            }
+
             var outerIdentity = outerResult.ClaimsIdentity;
             var principal = new ClaimsPrincipal(outerIdentity);
 
@@ -78,6 +84,7 @@ public class JwtValidator(IHttpClientFactory httpClientFactory) : IJwtValidator
             }
 
             return principal;
+
         }
         catch
         {
