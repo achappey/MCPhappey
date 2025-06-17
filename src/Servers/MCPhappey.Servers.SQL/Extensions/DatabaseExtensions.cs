@@ -70,4 +70,35 @@ public static class DatabaseExtensions
                 Description = a.Description
             })]
         };
+
+    public static ListResourceTemplatesResult ToListResourceTemplatesResult(this ICollection<Models.ResourceTemplate> resources)
+    => new()
+    {
+        ResourceTemplates = [.. resources.Select(a => new ResourceTemplate()
+            {
+                UriTemplate = a.TemplateUri,
+                Name = a.Name,
+                Description = a.Description
+            })]
+    };
+
+    public static PromptTemplates ToPromptTemplates(this ICollection<Models.Prompt> prompts)
+   => new()
+   {
+       Prompts = [.. prompts.Select(a => new PromptTemplate()
+            {
+                Prompt = a.PromptTemplate,
+                Resources  = a.PromptResources.Select(f => f.Resource.Uri),
+                ResourceTemplates  = a.PromptResourceTemplates.Select(f => f.ResourceTemplate.TemplateUri),
+                Template = new Prompt() {
+                    Name = a.Name,
+                    Description = a.Description,
+                    Arguments = a.Arguments.Select(z => new PromptArgument() {
+                        Name = z.Name,
+                        Description = z.Description,
+                        Required = z.Required
+                    }).ToList()
+                }
+            })]
+   };
 }

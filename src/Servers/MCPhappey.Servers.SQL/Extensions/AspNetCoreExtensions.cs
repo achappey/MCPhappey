@@ -24,6 +24,13 @@ public static class AspNetCoreExtensions
                 .Include(a => a.Resources)
                 .Include(a => a.ResourceTemplates)
                 .Include(a => a.Prompts)
+                .ThenInclude(a => a.Arguments)
+                .Include(a => a.Prompts)
+                .ThenInclude(a => a.PromptResources)
+                .ThenInclude(a => a.Resource)
+                .Include(a => a.Prompts)
+                .ThenInclude(a => a.PromptResourceTemplates)
+                .ThenInclude(a => a.ResourceTemplate)
                 .Include(a => a.Tools)
                 .Include(a => a.Owners)
                 .Include(a => a.Groups)
@@ -32,7 +39,9 @@ public static class AspNetCoreExtensions
                 .Select(a => new ServerConfig()
                 {
                     Server = a.ToMcpServer(),
-                    ResourceList = a.Resources.ToListResourcesResult()
+                    ResourceList = a.Resources.ToListResourcesResult(),
+                    ResourceTemplateList = a.ResourceTemplates.ToListResourceTemplatesResult(),
+                    PromptList = a.Prompts.ToPromptTemplates()
                 });
     }
 }
