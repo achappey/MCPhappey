@@ -1,1 +1,0 @@
-{"version":3,"file":"ServerList.d.ts","sourceRoot":"","sources":["../../src/components/ServerList.tsx"],"names":[],"mappings":"AACA,OAAO,KAAK,EAAE,iBAAiB,EAAE,MAAM,iBAAiB,CAAC;AAOzD,UAAU,eAAe;IACvB,OAAO,EAAE,iBAAiB,EAAE,CAAC;CAC9B;AAED,QAAA,MAAM,UAAU,GAAI,aAAa,eAAe,4CAqF/C,CAAC;AAEF,eAAe,UAAU,CAAC"}

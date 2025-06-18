@@ -1,1 +1,0 @@
-{"version":3,"file":"PromptCard.d.ts","sourceRoot":"","sources":["../../src/components/PromptCard.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,aAAa,EAAE,MAAM,iBAAiB,CAAC;AAGrD,KAAK,eAAe,GAAG;IACrB,MAAM,EAAE,aAAa,CAAC;IACtB,MAAM,EAAE,CAAC,MAAM,EAAE,aAAa,KAAK,IAAI,CAAC;CACzC,CAAC;AAEF,QAAA,MAAM,UAAU,GAAI,oBAAoB,eAAe,4CAiBtD,CAAC;AAEF,eAAe,UAAU,CAAC"}
