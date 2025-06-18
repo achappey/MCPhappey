@@ -29,6 +29,10 @@ nupkg/
 *.Development.json
 .clinerules
 node_modules
+/packages/**/dist/
+/packages/**/dist/*
+/packages/*/dist/
+/packages/*/dist/*
 
 # Build results
 [Dd]ebug/

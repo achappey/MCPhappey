@@ -7,7 +7,7 @@ using Microsoft.Graph.Beta.Models;
 
 namespace MCPhappey.Scrapers.Extensions;
 
-public static partial class OotlookExtensions
+public static partial class OutlookExtensions
 {
 
     public static bool TryParse(string url, out string? mailbox, out string? itemId)

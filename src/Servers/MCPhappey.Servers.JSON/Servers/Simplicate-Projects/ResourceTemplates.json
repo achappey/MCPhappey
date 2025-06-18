@@ -8,7 +8,7 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project?q[name]=*{nameFilter}*&q[project_status.id]=projectstatus:{statusIdFilter}*&q[project_manager.id]=employee:{managerIdFilter}*&q[organization.id]=organization:{orgIdFilter}*&q[start_date][ge]={startDateGE}&q[end_date][le]={endDateLE}&offset={offset}&limit={limit}&sort={sortColumn}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project?q[name]=*{nameFilter}*&q[project_status.id]=projectstatus:{statusIdFilter}*&q[project_manager.name]=*{managerNameFilter}*&q[organization.name]=*{orgNameFilter}*&q[start_date][ge]={startDateGE}&q[end_date][le]={endDateLE}&offset={offset}&limit={limit}&sort={sortColumn}",
       "name": "Projecten (gefilterd)",
       "description": "Haalt projecten op met filters voor naam, status, manager, organisatie en datumbereiken. Ondersteunt paginering en sortering.",
       "mimeType": "application/json",
@@ -71,7 +71,7 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/service?q[project.id]=project:{projectIdFilter}*&q[name]=*{nameFilter}*&q[invoice_method]={invoiceMethodFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/service?q[project_id]=project:{projectIdFilter}*&q[name]=*{nameFilter}*&q[invoice_method]={invoiceMethodFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
       "name": "Projectservices (gefilterd)",
       "description": "Haalt projectservices op met filters voor project, naam en facturatiemethode (bijv. 'Uren', 'Vaste prijs', 'Abonnement'). Ondersteunt paginering en sortering.",
       "mimeType": "application/json",
@@ -92,7 +92,7 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/purchase?q[project.id]=project:{projectIdFilter}*&q[type]={typeFilter}*&q[invoice_number]=*{invoiceNumberFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/purchase?q[project.id]=project:{projectIdFilter}*&q[type]={typeFilter}*&q[invoice_number]=*{invoiceNumberFilter}*&offset={offset}&limit={limit}",
       "name": "Projectinkopen (gefilterd)",
       "description": "Haalt projectinkoopregistraties op met filters voor project, type (bijv. 'inkoop', 'kosten/uitgaven') en factuurnummer. Ondersteunt paginering en sortering.",
       "mimeType": "application/json",

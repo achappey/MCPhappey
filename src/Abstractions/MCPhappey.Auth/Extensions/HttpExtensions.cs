@@ -3,7 +3,6 @@ using System.Net.Http.Headers;
 using System.Text.Json;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common;
-using MCPhappey.Common.Constants;
 using MCPhappey.Common.Models;
 
 namespace MCPhappey.Auth.Extensions;
@@ -87,6 +86,40 @@ public static class HttpExtensions
   }
 
   public static async Task<string> GetOboToken(this IHttpClientFactory httpClientFactory,
+      string token,
+      string host,
+      Server server,
+      OAuthSettings oAuthSettings)
+  {
+    if (string.IsNullOrWhiteSpace(host))
+      throw new ArgumentNullException(nameof(host));
+
+    // Match obo key by suffix
+    var oboKey = server.OBO?.Keys
+        .FirstOrDefault(k => host.EndsWith(k, StringComparison.OrdinalIgnoreCase));
+
+    if (oboKey == null || server.OBO == null || !server.OBO.TryGetValue(oboKey, out var rawScopeString))
+      throw new UnauthorizedAccessException($"No OBO config for host: {host}");
+
+    // Replace [tenantName] placeholder if present
+    var scopeString = rawScopeString.Replace("[tenantName]", host.Split('.')[0], StringComparison.OrdinalIgnoreCase);
+
+    var scopes = scopeString
+        .Split(' ', StringSplitOptions.RemoveEmptyEntries)
+        .ToArray();
+
+    var delegated = await httpClientFactory.ExchangeOnBehalfOfTokenAsync(
+        token,
+        oAuthSettings.ClientId,
+        oAuthSettings.ClientSecret,
+        $"https://login.microsoftonline.com/{oAuthSettings.TenantId}/oauth2/v2.0/token",
+        scopes);
+
+    return delegated ?? throw new UnauthorizedAccessException("Failed to get delegated token.");
+  }
+
+
+  public static async Task<string> GetOboToken2(this IHttpClientFactory httpClientFactory,
     string token,
     string host,
     Server server,

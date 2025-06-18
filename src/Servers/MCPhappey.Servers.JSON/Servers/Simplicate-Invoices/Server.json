@@ -7,6 +7,7 @@
     "Authentication-Key": "Simplicate Api Key",
     "Authentication-Secret": "Simplicate Api Secret"
   },
+  "plugins": ["MCPhappey.Simplicate.Invoices.SimplicateInvoiceService, MCPhappey.Simplicate"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }

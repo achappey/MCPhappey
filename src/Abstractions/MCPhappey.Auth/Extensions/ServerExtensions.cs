@@ -10,6 +10,7 @@ public static class ServerExtensions
     private static bool IsAuthHost(string host)
         => host.Equals(Hosts.MicrosoftGraph, Cmp)
            || host.EndsWith(".dynamics.com", Cmp)
+           || host.EndsWith(".sharepoint.com", Cmp)
            || host.EndsWith(".vault.azure.net", Cmp);
 
     /// <summary>
@@ -25,10 +26,6 @@ public static class ServerExtensions
         => metadata?.Where(kvp => !IsAuthHost(kvp.Key))
                     .ToDictionary(kvp => kvp.Key, kvp => kvp.Value)
            ?? [];
-
-    public static bool IsAuthorized2(this ServerConfig serverConfig, Dictionary<string, string> headers)
-        => serverConfig.Server.Headers?.Any() == true
-        && serverConfig.Server.Headers?.All(a => headers.ContainsKey(a.Key)) == true;
 
     public static bool IsAuthorized(this ServerConfig serverConfig, Dictionary<string, string> headers, IEnumerable<string> userRoles)
     {

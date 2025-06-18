@@ -38,7 +38,7 @@ public sealed class OutlookScraper(
             return null;
 
         // Resolve message identifiers from the url
-        if (!OotlookExtensions.TryParse(url, out var mailbox, out var itemId) ||
+        if (!OutlookExtensions.TryParse(url, out var mailbox, out var itemId) ||
             string.IsNullOrEmpty(itemId))
             return null;
 

@@ -70,6 +70,7 @@ export const initiateOAuthFlow = async (mcpServerUrl: string): Promise<void> => 
     grant_types: ["authorization_code"],
     response_types: ["code"],
     token_endpoint_auth_method: "none",
+    //scope: "https://fakton.sharepoint.com/.default"
     scope: prMetadata.scopes_supported ? prMetadata.scopes_supported.join(" ") : undefined,
   };
   const regResponse = await fetch(asMetadata.registration_endpoint, {

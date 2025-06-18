@@ -30,6 +30,22 @@ public static class DatabaseExtensions
             {
                 obo.TryAdd(host, $"https://{host}/.default");
             }
+
+            foreach (var host in server.Resources
+                .Select(r =>
+                {
+                    var uri = new Uri(r.Uri);
+                    return (uri.Host, Path: uri.AbsolutePath);
+                })
+                .Where(x =>
+                    !string.IsNullOrEmpty(x.Host)
+                    && x.Host.EndsWith(".sharepoint.com", StringComparison.OrdinalIgnoreCase)
+                    && x.Path?.IndexOf("/_api/", StringComparison.OrdinalIgnoreCase) >= 0)
+                .Select(x => x.Host)
+                .Distinct(StringComparer.OrdinalIgnoreCase))
+            {
+                obo.TryAdd(host, $"https://{host}/.default");
+            }
         }
 
         // ----------------------------

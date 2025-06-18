@@ -17443,8 +17443,8 @@
           function validateSuspenseListNestedChild(childSlot, index2) {
             {
               var isAnArray = isArray2(childSlot);
-              var isIterable = !isAnArray && typeof getIteratorFn(childSlot) === "function";
-              if (isAnArray || isIterable) {
+              var isIterable2 = !isAnArray && typeof getIteratorFn(childSlot) === "function";
+              if (isAnArray || isIterable2) {
                 var type = isAnArray ? "array" : "iterable";
                 error("A nested %s was passed to row #%s in <SuspenseList />. Wrap it in an additional SuspenseList to configure its revealOrder: <SuspenseList revealOrder=...> ... <SuspenseList revealOrder=...>{%s}</SuspenseList> ... </SuspenseList>", type, index2, type);
                 return false;
@@ -44526,49 +44526,19 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   // ../../packages/mcphappey-mcp/dist/clientPool.js
   var MCPClientPool = class {
     clients = /* @__PURE__ */ new Map();
-    // private transports = new Map<string, StreamableHTTPClientTransport>();
-    sessionIds = /* @__PURE__ */ new Map();
-    transports = /* @__PURE__ */ new Map();
     /** Connect (or return cached client) */
     async connect(url, headers) {
       if (this.clients.has(url))
         return this.clients.get(url);
-      let transport = this.transports.get(url);
-      if (!transport) {
-        const opts = {
-          requestInit: {
-            headers
-          }
-        };
-        transport = new StreamableHTTPClientTransport(new URL(url), opts);
-      }
-      const client = await createMcpClient(url, headers);
-      await client.connect(transport);
-      this.transports.set(url, transport);
-      this.clients.set(url, client);
-      return client;
-    }
-    /**
-     * Connect to a server and store the client.
-     */
-    async connect2(url, headers) {
       const opts = {
-        requestInit: { headers },
-        sessionId: this.sessionIds.get(url)
-        // may be undefined
+        requestInit: {
+          headers
+        }
       };
-      console.log("blasdsadsadsa");
-      console.log(this.sessionIds);
       const transport = new StreamableHTTPClientTransport(new URL(url), opts);
-      const origSend = transport.send.bind(transport);
-      transport.send = async (...args) => {
-        await origSend(...args);
-        const id = transport.sessionId;
-        if (id)
-          this.sessionIds.set(url, id);
-      };
       const client = await createMcpClient(url, headers);
       await client.connect(transport);
+      this.clients.set(url, client);
       return client;
     }
     /**
@@ -44740,6 +44710,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       grant_types: ["authorization_code"],
       response_types: ["code"],
       token_endpoint_auth_method: "none",
+      //scope: "https://fakton.sharepoint.com/.default"
       scope: prMetadata.scopes_supported ? prMetadata.scopes_supported.join(" ") : void 0
     };
     const regResponse = await fetch(asMetadata.registration_endpoint, {
@@ -46848,7 +46819,7 @@ Source string: ${className}`);
     return always(value, options);
   }
   function resolveShorthand(value) {
-    if (typeof value === "string" || typeof value === "number" || Array.isArray(value) || // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (typeof value === "string" || typeof value === "number" || isIterable(value) || // eslint-disable-next-line @typescript-eslint/no-explicit-any
     React17.isValidElement(value)) {
       return {
         children: value
@@ -46862,6 +46833,7 @@ Slot shorthands can be strings, numbers, arrays or JSX elements`);
     }
     return value;
   }
+  var isIterable = (value) => typeof value === "object" && value !== null && Symbol.iterator in value;
 
   // ../../node_modules/@fluentui/react-utilities/lib/compose/isResolvedShorthand.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
@@ -46889,6 +46861,7 @@ Slot shorthands can be strings, numbers, arrays or JSX elements`);
         }
         if (!isSlot(slotElement)) {
           typedState[slotName] = always(slotElement, {
+            // eslint-disable-next-line @typescript-eslint/no-deprecated
             elementType: typedState.components[slotName]
           });
           console.warn(`@fluentui/react-utilities [${assertSlots.name}]:
@@ -47614,6 +47587,13 @@ ${error.stack}`);
       (value) => {
         mergedCallback.current = value;
         for (const ref of refs) {
+          if (typeof ref === "string" && true) {
+            console.error(`@fluentui/react-utilities [useMergedRefs]:
+This hook does not support the usage of string refs. Please use React.useRef instead.
+
+For more info on 'React.useRef', see https://react.dev/reference/react/useRef.
+For more info on string refs, see https://react.dev/blog/2024/04/25/react-19-upgrade-guide#removed-string-refs.`);
+          }
           if (typeof ref === "function") {
             ref(value);
           } else if (ref) {
@@ -53281,7 +53261,7 @@ You can check this by searching up for matching entries in a lockfile produced b
       this._forgetMemorizedElements = [];
       this._wrappers = /* @__PURE__ */ new Set();
       this._initQueue = [];
-      this._version = "8.5.5";
+      this._version = "8.5.6";
       this._noop = false;
       this.getWindow = () => {
         if (!this._win) {
@@ -56102,7 +56082,7 @@ You can check this by searching up for matching entries in a lockfile produced b
   };
 
   // ../../node_modules/@fluentui/react-icons/lib/utils/createFluentIcon.js
-  var createFluentIcon = (displayName, width, paths, options) => {
+  var createFluentIcon = (displayName, width, pathsOrSvg, options) => {
     const viewBoxWidth = width === "1em" ? "20" : width;
     const Icon = React61.forwardRef((props, ref) => {
       const state = {
@@ -56115,10 +56095,19 @@ You can check this by searching up for matching entries in a lockfile produced b
         viewBox: `0 0 ${viewBoxWidth} ${viewBoxWidth}`,
         xmlns: "http://www.w3.org/2000/svg"
       };
-      return React61.createElement("svg", state, ...paths.map((d) => React61.createElement("path", {
-        d,
-        fill: state.fill
-      })));
+      if (typeof pathsOrSvg === "string") {
+        return React61.createElement("svg", {
+          ...state,
+          dangerouslySetInnerHTML: {
+            __html: pathsOrSvg
+          }
+        });
+      } else {
+        return React61.createElement("svg", state, ...pathsOrSvg.map((d) => React61.createElement("path", {
+          d,
+          fill: state.fill
+        })));
+      }
     });
     Icon.displayName = displayName;
     return Icon;
@@ -62139,10 +62128,6 @@ Please add at least a close button either on \`DialogTitle\` action slot or insi
     const isNestedDialog = useHasParentContext(DialogContext);
     return {
       components: {
-        // TODO: remove once React v18 slot API is modified
-        // This is a problem at the moment due to UnknownSlotProps assumption
-        // that `children` property is `ReactNode`, which in this case is not valid
-        // as PresenceComponentProps['children'] is `ReactElement`
         surfaceMotion: DialogSurfaceMotion
       },
       inertTrapFocus,
@@ -62565,10 +62550,6 @@ and at most two children <DialogTrigger/> <DialogSurface/> (in this order).`);
       components: {
         backdrop: "div",
         root: "div",
-        // TODO: remove once React v18 slot API is modified
-        // This is a problem at the moment due to UnknownSlotProps assumption
-        // that `children` property is `ReactNode`, which in this case is not valid
-        // as PresenceComponentProps['children'] is `ReactElement`
         backdropMotion: DialogBackdropMotion
       },
       open,

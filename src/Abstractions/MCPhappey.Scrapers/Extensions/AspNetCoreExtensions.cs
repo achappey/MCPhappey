@@ -32,7 +32,9 @@ public static class AspNetCoreExtensions
                 {
                     var scopes = server.Server.OBO[Hosts.MicrosoftGraph];
 
-                    if (scopes.Contains("Sites."))
+                    // if (scopes.Contains("Sites."))
+                    if (scopes.Contains("Sites.") || server.Server.OBO.Keys.Any(h =>
+                        h.EndsWith(".sharepoint.com", StringComparison.OrdinalIgnoreCase)))
                     {
                         services.AddSingleton<IContentScraper>(sp =>
                         {
@@ -75,8 +77,8 @@ public static class AspNetCoreExtensions
         return services;
     }
 
-     public static IServiceCollection WithDefaultScrapers(
-        this IServiceCollection services)
+    public static IServiceCollection WithDefaultScrapers(
+       this IServiceCollection services)
     {
         services.AddSingleton<IContentScraper, DynamicHeaderScraper>();
 

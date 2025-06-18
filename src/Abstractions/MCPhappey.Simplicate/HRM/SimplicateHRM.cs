@@ -1,8 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json;
-using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
-using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Options;
 using Microsoft.Extensions.DependencyInjection;
@@ -64,23 +62,6 @@ public static class SimplicateHRMService
             offset += PageSize;
         }
 
-        /*   var result = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer,
-               $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/leave?q[year]={year}&select=employee.,hours,leavetype.");
-
-           var stringContent = result?.FirstOrDefault()?.Contents;
-
-           using var doc = JsonDocument.Parse(stringContent);
-           var leaves = doc.RootElement
-               .GetProperty("data")
-               .EnumerateArray()
-               .Select(item => new
-               {
-                   EmployeeName = item.GetProperty("employee").GetProperty("name").GetString(),
-                   LeaveTypeLabel = item.GetProperty("leavetype").GetProperty("label").GetString(),
-                   Hours = item.GetProperty("hours").GetDouble()
-               })
-               .ToList();
-   */
         if (!string.IsNullOrEmpty(leaveType))
         {
             leaves = leaves.Where(a => a.TypeLabel?.Contains(leaveType, StringComparison.OrdinalIgnoreCase) == true).ToList();
