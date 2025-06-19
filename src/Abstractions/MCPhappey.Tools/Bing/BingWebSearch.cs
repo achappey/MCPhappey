@@ -98,7 +98,7 @@ public static class BingWebSearch
             requestContext,
             progressCounter!.Value,
             $"Expanded to {querySampling?.Queries.Count()} queries:\n{string.Join("\n", querySampling?.Queries ?? [])}",
-            cancellationToken
+            cancellationToken: cancellationToken
         );
 
         List<string> queries = [.. querySampling?.Queries ?? [], query];

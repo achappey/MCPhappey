@@ -19,7 +19,7 @@ public class StaticHeaderScraper(IHttpClientFactory httpClientFactory, string ho
             httpClient.DefaultRequestHeaders.Add(item.Key, [item.Value]);
         }
 
-        using var result = await httpClient.GetAsync(url, cancellationToken);
+        using var result = await httpClient.GetWithContentExceptionAsync(url, cancellationToken);
 
         return [await result.ToFileItem(url, cancellationToken)];
     }

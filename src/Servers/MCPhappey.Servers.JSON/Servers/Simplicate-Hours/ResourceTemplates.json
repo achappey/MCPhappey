@@ -1,0 +1,22 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hours/hourstype",
+      "name": "Uren types",
+      "description": "Haal alle uren types op",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hours/hours?q[project.name]=*{projectName}*&q[employee.name]=*{employeeName}*&limit=50&offset=0",
+      "name": "Betalingen per Factuur",
+      "description": "",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

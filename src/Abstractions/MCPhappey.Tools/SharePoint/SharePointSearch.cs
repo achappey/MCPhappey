@@ -150,7 +150,7 @@ public static class SharePointSearch
                 requestContext,
                 progressCounter ?? 1,
                 $"Expanded to {querySampling?.Queries.Count()} queries:\n{string.Join("\n", querySampling?.Queries ?? [])}",
-                cancellationToken
+                cancellationToken: cancellationToken
             );
 
         var queries = (querySampling?.Queries ?? Enumerable.Empty<string>())

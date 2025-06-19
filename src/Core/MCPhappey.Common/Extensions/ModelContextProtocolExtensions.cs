@@ -7,6 +7,10 @@ namespace MCPhappey.Common.Extensions;
 
 public static class ModelContextProtocolExtensions
 {
+    public static bool ShouldLog(this LoggingLevel messageLevel, LoggingLevel? minLevel)
+        => messageLevel >= (minLevel ?? LoggingLevel.Info);
+
+
     public static CallToolResponse ToErrorCallToolResponse(this string content)
          => new()
          {

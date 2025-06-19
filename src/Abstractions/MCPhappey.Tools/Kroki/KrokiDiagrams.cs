@@ -1,7 +1,9 @@
 using System.ComponentModel;
+using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -67,8 +69,22 @@ public static class KrokiDiagrams
             Content = new StringContent(diagramCode, System.Text.Encoding.UTF8, "text/plain")
         };
 
+        if (LoggingLevel.Info.ShouldLog(requestContext.Server.LoggingLevel))
+        {
+            var domain = new Uri(url).Host; // e.g., "example.com"
+            var markdown =
+                $"<details><summary>POST <a href=\"{url}\" target=\"blank\">{domain}</a></summary>\n\n```\n{diagramCode}\n```\n</details>";
+
+            await requestContext.Server.SendNotificationAsync("notifications/message", new LoggingMessageNotificationParams()
+            {
+                Level = LoggingLevel.Info,
+                Data = JsonSerializer.SerializeToElement(markdown),
+            }, cancellationToken: CancellationToken.None);
+        }
+
         using var response = await httpClient.SendAsync(request,
             HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+
         var error = await response.ToCallToolResponseOrErrorAsync(cancellationToken);
         if (error != null)
             return error;

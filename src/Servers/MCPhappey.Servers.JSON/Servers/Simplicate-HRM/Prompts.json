@@ -92,7 +92,7 @@
         ]
       },
       "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/absence?q[start_date][ge]={startDatumAfgelopenJaar}&q[absencetype.is_sickleave]=true&limit=1000"
+        "https://{organization}.simplicate.app/api/v2/hrm/absence?q[start_date][ge]={startDatumAfgelopenJaar}&q[absencetype.is_sickleave]=true&limit=100"
       ]
     },
     {
@@ -131,7 +131,7 @@
         ]
       },
       "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/employee?limit=500"
+        "https://{organization}.simplicate.app/api/v2/hrm/employee?limit=100"
       ]
     }
   ]

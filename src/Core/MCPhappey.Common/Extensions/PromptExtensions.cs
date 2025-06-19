@@ -1,7 +1,6 @@
 
 using System.Text.Json;
 using System.Text.RegularExpressions;
-using MCPhappey.Common.Models;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -15,6 +14,7 @@ public static partial class PromptExtensions
         {
             if (arg.Required == true && !argumentsDict.ContainsKey(arg.Name))
             {
+                //LoggingLevel.Alert
                 throw new ArgumentException(
                     $"Missing required argument: {arg.Name}",
                     arg.Name

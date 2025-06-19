@@ -21,11 +21,22 @@ public static class AspNetCoreWebAppExtensions
             {
                 authorization_servers = new[]
                 {
-                            $"{baseUri}/.well-known/oauth-authorization-server"
+                        $"{baseUri}/.well-known/oauth-authorization-server"
                 },
                 resource,
                 scopes_supported = scopes,
             });
+            /*
+            var request = context.Request;
+            var baseUri = $"{request.Scheme}://{request.Host.Value}";
+            var resourceUri = $"{baseUri}{serverUrl}";
+
+            return Results.Json(new
+            {
+                authorization_servers = new[] { $"{baseUri}/.well-known/oauth-authorization-server" },
+                resource = resourceUri,
+                scopes_supported = scopes,
+            });*/
         });
     }
 
@@ -66,8 +77,13 @@ public static class AspNetCoreWebAppExtensions
             }
 
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
+           // var serverPath = $"/{matchedServer.Server.ServerInfo.Name.ToLowerInvariant()}";
+          //  var resourceUrl = $"{context.Request.Scheme}://{context.Request.Host}{serverPath}";
+
             var principal = await validator.ValidateAsync(token!, baseUrl,
-                oAuthSettings.Audience, oAuthSettings);
+                           oauthSettings.Audience, oAuthSettings);
+            //  var principal = await validator.ValidateAsync(token!, baseUrl,
+            //     oAuthSettings.Audience, oAuthSettings);
 
             var userRoles = principal?.Claims
                                 .Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
@@ -81,11 +97,11 @@ public static class AspNetCoreWebAppExtensions
             }
 
 
-          /*  if (string.IsNullOrEmpty(token))
-            {
-                await WriteUnauthorized(context, oAuthSettings);
-                return;
-            }*/
+            /*  if (string.IsNullOrEmpty(token))
+              {
+                  await WriteUnauthorized(context, oAuthSettings);
+                  return;
+              }*/
 
 
             if (principal is null)
@@ -123,6 +139,13 @@ public static class AspNetCoreWebAppExtensions
 
             await next();
         });
+
+        /* foreach (var server in servers)
+         {
+             var serverPath = "/" + server.Server.ServerInfo.Name.ToLowerInvariant();
+             webApp.MapServerOAuth(serverPath, oauthSettings.Scopes?.Split(" ") ?? []);
+         }*/
+
 
         foreach (var server in servers)
         {

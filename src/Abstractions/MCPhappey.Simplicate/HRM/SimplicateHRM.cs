@@ -1,7 +1,9 @@
 using System.ComponentModel;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
+using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -11,72 +13,92 @@ namespace MCPhappey.Simplicate.HRM;
 
 public static class SimplicateHRMService
 {
-    [Description("Get Simplicate leaves by year grounep on employee and leave type")]
+
+    [Description("Get Simplicate leaves by year grouped on employee and leave type")]
     [McpServerTool(ReadOnly = true)]
     public static async Task<CallToolResponse> SimplicateHRMService_GetLeaveTotals(
         [Description("Year to get the total from")] string year,
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
-        [Description("Filter on leave type")] string? leaveType = null)
+        [Description("Filter on leave type")] string? leaveType = null,
+        CancellationToken cancellationToken = default)
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        const int PageSize = 100;           // Simplicate hard maximum
-        int offset = 0;                     // Current page start
-        bool morePages = true;              // Loop guard
-
-        var leaves = new List<(string? Employee, string? TypeLabel, double Hours)>();
-
-        while (morePages)
+        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/leave";
+        string select = "employee.,hours,leavetype.";
+        var filters = new List<string>
         {
-            // --- Build URL for *this* page -------------------
-            var url =
-                $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/leave" +
-                $"?q[year]={year}" +
-                $"&select=employee.,hours,leavetype." +
-                $"&limit={PageSize}&offset={offset}";
+            $"q[year]={Uri.EscapeDataString(year)}",
+            $"select={select}"
+        };
 
-            // --- Fetch & parse -------------------------------
-            var page = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url);
-            var stringContent = page?.FirstOrDefault()?.Contents.ToString();
+        var filterString = string.Join("&", filters);
 
-            if (string.IsNullOrWhiteSpace(stringContent))
-                break; // nothing returned – defensive
+        // Typed DTO ophalen via extension method
+        var leaves = await downloadService.GetAllSimplicatePagesAsync<SimplicateLeave>(
+            serviceProvider,
+            mcpServer,
+            baseUrl,
+            filterString,
+            pageNum => $"Downloading HRM leaves",
+            // Progressnotification
+            null!, // Geen requestContext want geen progress nodig, of voeg eventueel toe!
+            cancellationToken: cancellationToken
+        );
 
-            using var doc = JsonDocument.Parse(stringContent);
-
-            var pageLeaves = doc.RootElement
-                .GetProperty("data")
-                .EnumerateArray()
-                .Select(item => (
-                    Employee: item.GetProperty("employee").GetProperty("name").GetString(),
-                    TypeLabel: item.GetProperty("leavetype").GetProperty("label").GetString(),
-                    Hours: item.GetProperty("hours").GetDouble()))
-                .ToList();
-
-            leaves.AddRange(pageLeaves);
-
-            // --- Stop when the page wasn't full --------------
-            morePages = pageLeaves.Count == PageSize;
-            offset += PageSize;
-        }
-
+        // Extra filter op leaveType (optioneel)
         if (!string.IsNullOrEmpty(leaveType))
         {
-            leaves = leaves.Where(a => a.TypeLabel?.Contains(leaveType, StringComparison.OrdinalIgnoreCase) == true).ToList();
+            leaves = leaves
+                .Where(a => a.LeaveType?.Label?.Contains(leaveType, StringComparison.OrdinalIgnoreCase) == true)
+                .ToList();
         }
 
         var grouped = leaves
-            .GroupBy(x => new { x.Employee, x.TypeLabel })
-            .Select(g => new
+            .GroupBy(x => new { x.Employee?.Name, x.LeaveType?.Label })
+            .Select(g => new LeaveTotalsResult
             {
-                g.Key.Employee,
-                g.Key.TypeLabel,
+                Employee = g.Key.Name ?? string.Empty,
+                TypeLabel = g.Key.Label ?? string.Empty,
                 TotalHours = g.Sum(x => x.Hours)
             });
 
         return JsonSerializer.Serialize(grouped).ToTextCallToolResponse();
+    }
+
+    // ---------------------- DTOs ------------------------
+
+    public class SimplicateLeave
+    {
+        [JsonPropertyName("employee")]
+        public Employee? Employee { get; set; }
+
+        [JsonPropertyName("leavetype")]
+        public LeaveType? LeaveType { get; set; }
+
+        [JsonPropertyName("hours")]
+        public double Hours { get; set; }
+    }
+
+    public class Employee
+    {
+        [JsonPropertyName("name")]
+        public string Name { get; set; } = string.Empty;
+    }
+
+    public class LeaveType
+    {
+        [JsonPropertyName("label")]
+        public string Label { get; set; } = string.Empty;
+    }
+
+    public class LeaveTotalsResult
+    {
+        public string Employee { get; set; } = string.Empty;
+        public string TypeLabel { get; set; } = string.Empty;
+        public double TotalHours { get; set; }
     }
 }
 

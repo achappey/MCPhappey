@@ -105,7 +105,7 @@ public static class ServiceExtensions
                     requestContext,
                     counter,
                     $"Downloading: [{new Uri(url).Host}]({url})",
-                    cancellationToken
+                    cancellationToken: cancellationToken
                 );
 
                 var scrapeTask = downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken: CancellationToken.None);
@@ -134,7 +134,7 @@ public static class ServiceExtensions
                                   requestContext,
                                   counter,
                                   $"Reading: [{new Uri(url).Host}]({url})",
-                                  cancellationToken
+                                  cancellationToken: cancellationToken
                               );
                
                 var extractFromUrlsWithFactsSampleTask = samplingService.GetPromptSample(

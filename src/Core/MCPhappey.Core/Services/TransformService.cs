@@ -18,6 +18,7 @@ public class TransformService(
 
         foreach (var decoder in supportedDecoders)
         {
+            
             fileContent = await decoder.DecodeAsync(binaryData, cancellationToken);
         }
 

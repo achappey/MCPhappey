@@ -30,7 +30,7 @@ public class OboClientScraper(IHttpClientFactory httpClientFactory, ServerConfig
         var httpClient = await httpClientFactory.GetOboHttpClient(tokenService.Bearer, uri.Host,
                 serverConfig.Server, oAuthSettings);
 
-        using var result = await httpClient.GetAsync(url, cancellationToken);
+        using var result = await httpClient.GetWithContentExceptionAsync(url, cancellationToken);
 
         return [await result.ToFileItem(url, cancellationToken: cancellationToken)];
     }

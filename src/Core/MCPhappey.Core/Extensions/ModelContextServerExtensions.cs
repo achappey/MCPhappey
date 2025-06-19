@@ -81,28 +81,30 @@ public static partial class ModelContextServerExtensions
         RequestContext<CallToolRequestParams> requestContext,
         int? progressCounter,
         string? message,
+        int? total = null,
         CancellationToken cancellationToken = default)
+    {
+        var progressToken = requestContext.Params?.Meta?.ProgressToken;
+        if (progressToken is not null && progressCounter is not null)
         {
-            var progressToken = requestContext.Params?.Meta?.ProgressToken;
-            if (progressToken is not null && progressCounter is not null)
-            {
-                await mcpServer.SendNotificationAsync(
-                    "notifications/progress",
-                    new ProgressNotification
+            await mcpServer.SendNotificationAsync(
+                "notifications/progress",
+                new ProgressNotification
+                {
+                    ProgressToken = progressToken.Value,
+                    Progress = new ProgressNotificationValue
                     {
-                        ProgressToken = progressToken.Value,
-                        Progress = new ProgressNotificationValue
-                        {
-                            Progress = progressCounter.Value,
-                            Message = message
-                        }
-                    },
-                    cancellationToken: cancellationToken
-                );
+                        Progress = progressCounter.Value,
+                        Total = total,
+                        Message = message
+                    }
+                },
+                cancellationToken: cancellationToken
+            );
 
-                return progressCounter++;
-            }
-
-            return progressCounter;
+            return progressCounter++;
         }
+
+        return progressCounter;
+    }
 }

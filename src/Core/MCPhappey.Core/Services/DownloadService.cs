@@ -4,6 +4,10 @@ using MCPhappey.Core.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.KernelMemory.DataFormats.WebPages;
 using MCPhappey.Common;
+using ModelContextProtocol.Protocol;
+using MCPhappey.Common.Extensions;
+using ModelContextProtocol;
+using System.Text.Json;
 
 namespace MCPhappey.Core.Services;
 
@@ -27,7 +31,19 @@ public partial class DownloadService(WebScraper webScraper,
             .Where(a => a.SupportsHost(serverConfig, uri.Host));
 
         IEnumerable<FileItem>? fileContent = null;
-        
+
+        if (LoggingLevel.Info.ShouldLog(mcpServer.LoggingLevel))
+        {
+            var domain = new Uri(url).Host; // e.g., "example.com"
+            var markdown = $"GET [{domain}]({url})";
+
+            await mcpServer.SendNotificationAsync("notifications/message", new LoggingMessageNotificationParams()
+            {
+                Level = LoggingLevel.Info,
+                Data = JsonSerializer.SerializeToElement(markdown),
+            }, cancellationToken: CancellationToken.None);
+        }
+
         foreach (var decoder in supportedScrapers)
         {
             fileContent = await decoder.GetContentAsync(mcpServer, serviceProvider, url, cancellationToken);
@@ -43,6 +59,12 @@ public partial class DownloadService(WebScraper webScraper,
         }
 
         var defaultScraper = await webScraper.GetContentAsync(url, cancellationToken);
+
+        if (!defaultScraper.Success)
+        {
+            throw new Exception(defaultScraper.Error);
+        }
+
         var fileItem = defaultScraper.ToFileItem(url);
 
         return [await transformService.DecodeAsync(url,
@@ -52,9 +74,5 @@ public partial class DownloadService(WebScraper webScraper,
 
     [GeneratedRegex(@"^[^.]+\.crm\d+\.dynamics\.com$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
     private static partial Regex DynamicsHostPattern();
-
-    [GeneratedRegex(@"^[^.]+\.simplicate\.app$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
-    private static partial Regex SimplicateHostPattern();
-
 
 }
