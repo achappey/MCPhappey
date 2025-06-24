@@ -104,8 +104,6 @@ public static class DatabaseExtensions
        Prompts = [.. prompts.Select(a => new PromptTemplate()
             {
                 Prompt = a.PromptTemplate,
-                Resources  = a.PromptResources.Select(f => f.Resource.Uri),
-                ResourceTemplates  = a.PromptResourceTemplates.Select(f => f.ResourceTemplate.TemplateUri),
                 Template = new Prompt() {
                     Name = a.Name,
                     Description = a.Description,

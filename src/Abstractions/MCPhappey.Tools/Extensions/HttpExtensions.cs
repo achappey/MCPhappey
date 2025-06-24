@@ -5,7 +5,7 @@ namespace MCPhappey.Tools.Extensions;
 
 public static class HttpExtensions
 {
-    public static async Task<CallToolResponse?> ToCallToolResponseOrErrorAsync(
+    public static async Task<CallToolResult?> ToCallToolResponseOrErrorAsync(
         this HttpResponseMessage response,
         CancellationToken cancellationToken = default)
     {

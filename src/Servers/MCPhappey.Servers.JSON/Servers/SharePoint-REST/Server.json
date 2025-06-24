@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "SharePoint-REST",
+    "version": "1.0.0"
+  },
+  "obo": {
+    "*.sharepoint.com": "https://{tenantName}.sharepoint.com/.default"
+  }
+}

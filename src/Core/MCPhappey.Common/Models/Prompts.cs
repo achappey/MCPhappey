@@ -16,10 +16,4 @@ public class PromptTemplate
 
     [JsonPropertyName("template")]
     public Prompt Template { get; set; } = null!;
-
-    [JsonPropertyName("resourceTemplates")]
-    public IEnumerable<string>? ResourceTemplates { get; set; }
-
-    [JsonPropertyName("resources")]
-    public IEnumerable<string>? Resources { get; set; }
 }

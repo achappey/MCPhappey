@@ -11,9 +11,9 @@ namespace MCPhappey.Scrapers.Generic;
 public class OboClientScraper(IHttpClientFactory httpClientFactory, ServerConfig serverConfig,
     OAuthSettings oAuthSettings) : IContentScraper
 {
-    public bool SupportsHost(ServerConfig currentConfig, string host)
+    public bool SupportsHost(ServerConfig currentConfig, string url)
         => currentConfig.Server.ServerInfo.Name == serverConfig.Server.ServerInfo.Name
-            && serverConfig.Server.OBO?.Keys.Any(a => a == host || host.EndsWith(a)) == true;
+            && serverConfig.Server.OBO?.Keys.Any(a => a == new Uri(url).Host || new Uri(url).Host.EndsWith(a)) == true;
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider,
          string url, CancellationToken cancellationToken = default)
@@ -29,6 +29,9 @@ public class OboClientScraper(IHttpClientFactory httpClientFactory, ServerConfig
 
         var httpClient = await httpClientFactory.GetOboHttpClient(tokenService.Bearer, uri.Host,
                 serverConfig.Server, oAuthSettings);
+
+        httpClient.DefaultRequestHeaders.Accept.Clear();
+        httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
 
         using var result = await httpClient.GetWithContentExceptionAsync(url, cancellationToken);
 

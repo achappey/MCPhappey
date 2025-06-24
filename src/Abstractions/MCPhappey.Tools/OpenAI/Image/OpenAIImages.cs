@@ -23,7 +23,7 @@ public static class OpenAIImages
 
 
     [Description("Create a image with OpenAI image generator")]
-    public static async Task<CallToolResponse> OpenAIImages_CreateImage(
+    public static async Task<CallToolResult> OpenAIImages_CreateImage(
         [Description("prompt")]
         string prompt,
         IServiceProvider serviceProvider,
@@ -52,7 +52,7 @@ public static class OpenAIImages
             Size = sizeValue,
         }, cancellationToken);
 
-        List<Content> content = [new Content(){
+        List<ContentBlock> content = [new ImageContentBlock(){
                 Type = "image",
                 MimeType = "image/png",
                 Data = Convert.ToBase64String(item.Value.ImageBytes)
@@ -63,7 +63,7 @@ public static class OpenAIImages
 
         if (uploaded != null)
         {
-            content.Add(new Content()
+            content.Add(new EmbeddedResourceBlock()
             {
                 Resource = new TextResourceContents()
                 {
@@ -74,7 +74,7 @@ public static class OpenAIImages
             });
         }
 
-        return new CallToolResponse()
+        return new CallToolResult()
         {
             Content = content
         };

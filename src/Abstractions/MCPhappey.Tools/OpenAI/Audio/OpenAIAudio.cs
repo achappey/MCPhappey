@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -28,7 +27,7 @@ public static class OpenAIAudio
     }
 
     [Description("Generate audio from the input text")]
-    public static async Task<CallToolResponse> OpenAIAudio_CreateSpeech(
+    public static async Task<CallToolResult> OpenAIAudio_CreateSpeech(
         [Description("The text to generate audio for")]
         [MaxLength(4096)]
         string input,
@@ -61,23 +60,23 @@ public static class OpenAIAudio
         var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-{DateTime.Now.Ticks}.mp3",
             item.Value, cancellationToken);
 
-        return new CallToolResponse()
+        return new CallToolResult()
         {
-            Content = [new Content(){
-                Type = uploaded != null ? "resource" : "audio",
+            Content = [
+                uploaded != null ? new EmbeddedResourceBlock() {
+                    Resource = new BlobResourceContents() {
+                        MimeType = "audio/mpeg",
+                        Blob = Convert.ToBase64String(item.Value)
+                    }
+            } : new AudioContentBlock() {
                 MimeType = "audio/mpeg",
-                Data =  uploaded != null ? null : Convert.ToBase64String(item.Value) ,
-                Resource = uploaded != null ? new TextResourceContents() {
-                    MimeType = "audio/mpeg",
-                    Uri = uploaded?.Uri ?? string.Empty,
-                    Text = Convert.ToBase64String(item.Value)
-                } : null
+                Data = Convert.ToBase64String(item.Value),
             }]
         };
     }
 
     [Description("Generate text from an audio input file")]
-    public static async Task<CallToolResponse> OpenAIAudio_CreateTranscription(
+    public static async Task<CallToolResult> OpenAIAudio_CreateTranscription(
        [Description("Url of the audio file")]
         string url,
        IServiceProvider serviceProvider,
@@ -107,10 +106,9 @@ public static class OpenAIAudio
         var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-Transcription-{DateTime.Now.Ticks}.txt",
             BinaryData.FromString(item), cancellationToken);
 
-        return new CallToolResponse()
+        return new CallToolResult()
         {
-            Content = [new Content(){
-                Type = "resource",
+            Content = [new EmbeddedResourceBlock(){
                 Resource = new TextResourceContents() {
                     MimeType = "text/plain",
                     Uri = uploaded?.Uri ?? string.Empty,

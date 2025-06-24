@@ -1,0 +1,37 @@
+{
+  "prompts": [
+    {
+      "prompt": "User:\n\n###\n{userMessage}\n###\n\nAssistant:\n\n###\n{assistantMessage}\n###\n\nAnalyze the above conversation history very well. Come up with a name for this conversation. Max 3-6 words. The name should be in the conversartion locale. Answer with the name of the conversation only. Don't include quotes.",
+      "template": {
+        "name": "conversation-name",
+        "description": "Generate a name for the conversation",
+        "arguments": [
+          {
+            "name": "userMessage",
+            "description": "User message",
+            "required": true
+          },
+          {
+            "name": "assistantMessage",
+            "description": "Assistant message",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "You are an AI chatbot. Write a very short, friendly, and slightly creative welcome message for the user named {userName}, suitable for a chat interface. Keep it between 3 and 7 words. Messages could mention their first name, but messages without the name are fine. Try to vary the wording, tone, or mood each time—be upbeat, curious, or playful. For example: 'How can I help, {userName}?', 'What’s up, {userName}?', 'Hey {userName}, need a hand?', 'Ready when you are, {userName}!', 'Hi {userName}, what’s your question?', or 'Let’s get started, {userName}!'. Only output the welcome message itself, no quotes or extra text.",
+      "template": {
+        "name": "welcome-message",
+        "description": "Generate a concise, friendly chatbot welcome message mentioning the user by name.",
+        "arguments": [
+          {
+            "name": "userName",
+            "description": "The name of the user",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -9,8 +9,7 @@ public static class AspNetCoreWebAppExtensions
     public static void MapServerOAuth(
               this WebApplication webApp,
               string serverUrl,
-              string[] scopes,
-              string resource)
+              string[] scopes)
     {
         webApp.MapGet($"/.well-known/oauth-protected-resource{serverUrl}", (HttpContext context) =>
         {
@@ -21,22 +20,11 @@ public static class AspNetCoreWebAppExtensions
             {
                 authorization_servers = new[]
                 {
-                        $"{baseUri}/.well-known/oauth-authorization-server"
+                     $"{baseUri}/.well-known/oauth-authorization-server"
                 },
-                resource,
+                resource = $"{baseUri}{serverUrl}",
                 scopes_supported = scopes,
             });
-            /*
-            var request = context.Request;
-            var baseUri = $"{request.Scheme}://{request.Host.Value}";
-            var resourceUri = $"{baseUri}{serverUrl}";
-
-            return Results.Json(new
-            {
-                authorization_servers = new[] { $"{baseUri}/.well-known/oauth-authorization-server" },
-                resource = resourceUri,
-                scopes_supported = scopes,
-            });*/
         });
     }
 
@@ -51,6 +39,7 @@ public static class AspNetCoreWebAppExtensions
         webApp.Use(async (context, next) =>
         {
             var path = context.Request.Path.Value ?? "";
+
             if (path.Contains(".well-known", StringComparison.OrdinalIgnoreCase))
             {
                 await next();
@@ -70,21 +59,15 @@ public static class AspNetCoreWebAppExtensions
 
             var token = context.GetBearerToken();
 
-            if (string.IsNullOrEmpty(token) && matchedServer.Server.OBO?.Any() == true)
+            if (string.IsNullOrEmpty(token) && matchedServer.Server.OBO?.Count > 0)
             {
                 await WriteUnauthorized(context, oAuthSettings);
                 return;
             }
 
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
-           // var serverPath = $"/{matchedServer.Server.ServerInfo.Name.ToLowerInvariant()}";
-          //  var resourceUrl = $"{context.Request.Scheme}://{context.Request.Host}{serverPath}";
-
             var principal = await validator.ValidateAsync(token!, baseUrl,
                            oauthSettings.Audience, oAuthSettings);
-            //  var principal = await validator.ValidateAsync(token!, baseUrl,
-            //     oAuthSettings.Audience, oAuthSettings);
-
             var userRoles = principal?.Claims
                                 .Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
                                 .Select(c => c.Value)
@@ -95,14 +78,6 @@ public static class AspNetCoreWebAppExtensions
                 await next();
                 return;
             }
-
-
-            /*  if (string.IsNullOrEmpty(token))
-              {
-                  await WriteUnauthorized(context, oAuthSettings);
-                  return;
-              }*/
-
 
             if (principal is null)
             {
@@ -117,15 +92,9 @@ public static class AspNetCoreWebAppExtensions
                 return;
             }
 
-            var requiredRoles = matchedServer.Server.Roles?.ToList() ?? new List<string>();
+            var requiredRoles = matchedServer.Server.Roles?.ToList() ?? [];
             if (requiredRoles.Count != 0)
             {
-                // Get the roles claim(s) from the principal
-                /*  var userRoles = principal.Claims
-                      .Where(c => c.Type == "roles")
-                      .Select(c => c.Value)
-                      .ToList();*/
-
                 // Check if the user has at least one required role
                 if (!requiredRoles.Intersect(userRoles, StringComparer.OrdinalIgnoreCase).Any())
                 {
@@ -140,18 +109,10 @@ public static class AspNetCoreWebAppExtensions
             await next();
         });
 
-        /* foreach (var server in servers)
-         {
-             var serverPath = "/" + server.Server.ServerInfo.Name.ToLowerInvariant();
-             webApp.MapServerOAuth(serverPath, oauthSettings.Scopes?.Split(" ") ?? []);
-         }*/
-
-
         foreach (var server in servers)
         {
             webApp.MapServerOAuth("/" + server.Server.ServerInfo.Name.ToLowerInvariant(),
-                oauthSettings.Scopes?.Split(" ") ?? [],
-                oauthSettings.Audience);
+                oauthSettings.Scopes?.Split(" ") ?? []);
         }
 
         return webApp;
@@ -196,6 +157,4 @@ public static class AspNetCoreWebAppExtensions
 
         await context.Response.WriteAsync("Invalid or missing token");
     }
-
-
 }

@@ -13,7 +13,7 @@ public static class KernelMemory
 {
     [Description("Search Microsoft Kernel Memory")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResponse> KernelMemory_Search(
+    public static async Task<CallToolResult> KernelMemory_Search(
         [Description("Search query")]
         string query,
         [Description("Kernel memory index")]
@@ -40,7 +40,7 @@ public static class KernelMemory
 
     [Description("Ask Microsoft Kernel Memory")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResponse> KernelMemory_Ask(
+    public static async Task<CallToolResult> KernelMemory_Ask(
         [Description("Question prompt")]
         string prompt,
         [Description("Kernel memory index")]

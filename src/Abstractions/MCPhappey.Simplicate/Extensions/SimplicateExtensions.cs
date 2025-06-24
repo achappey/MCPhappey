@@ -56,11 +56,7 @@ public static class SimplicateExtensions
                 var markdown =
                     $"<details><summary><a href=\"{url}\" target=\"blank\">{domain}</a></summary>\n\n```\n{stringContent}\n```\n</details>";
 
-                await mcpServer.SendNotificationAsync("notifications/message", new LoggingMessageNotificationParams()
-                {
-                    Level = LoggingLevel.Debug,
-                    Data = JsonSerializer.SerializeToElement(markdown),
-                }, cancellationToken: CancellationToken.None);
+                await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
             }
 
             var result = JsonSerializer.Deserialize<SimplicateData<T>>(stringContent);

@@ -10,7 +10,7 @@ public class DynamicHeaderScraper(IHttpClientFactory httpClientFactory) : IConte
 {
     private static readonly List<string> SupportedHosts = ["app.declaree.com"];
 
-    public bool SupportsHost(ServerConfig serverConfig, string host) => SupportedHosts.Contains(host);
+    public bool SupportsHost(ServerConfig serverConfig, string url) => SupportedHosts.Contains(new Uri(url).Host);
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {

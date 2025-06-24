@@ -17,11 +17,11 @@ public static class TokenController
     {
         var handler = new JwtSecurityTokenHandler();
         var claims = new List<Claim>
-    {
-        new("sub", subject),
-        new("scp", string.Join(" ", scopes)),
-        new("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
-    };
+        {
+            new("sub", subject),
+            new("scp", string.Join(" ", scopes)),
+            new("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
+        };
 
         if (additionalClaims != null)
         {
@@ -42,7 +42,7 @@ public static class TokenController
 
         return handler.WriteToken(token);
     }
- 
+
     public static async Task<IResult> Handle(
         HttpContext ctx,
         IHttpClientFactory httpClientFactory,
@@ -54,6 +54,7 @@ public static class TokenController
         var code = form["code"].ToString();
         var codeVerifier = form["code_verifier"].ToString();
         var grantType = form["grant_type"].ToString();
+        var resource = form["resource"].ToString();
 
         if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(codeVerifier))
         {
@@ -79,16 +80,20 @@ public static class TokenController
             // ✅ Look up client in your confidential clients registry
             if (!oauth.ConfidentialClients?.TryGetValue(clientId, out var conf) == true)
                 return Results.BadRequest("Unknown confidential client");
-           
+
             return Results.Json(new
             {
                 access_token = CreateJwt($"{ctx.Request.Scheme}://{ctx.Request.Host}", clientId,
-                  oauth.Audience, oauth.Scopes.Split(" ") ?? [], signingCredentials,
+                  //oauth.Audience,
+                  resource,
+                   oauth.Scopes.Split(" ") ?? [], signingCredentials,
                 additionalClaims: new Dictionary<string, object>()),
                 token_type = "Bearer",
+                resource,
                 expires_in = 3600
             });
         }
+        // var serverRedirectUri = $"{ctx.Request.Scheme}://{ctx.Request.Host}/sharepoint/callback"; // Or build this per-s
 
         // Must match redirect_uri used during /authorize
         var tokenRequest = new Dictionary<string, string>
@@ -97,7 +102,10 @@ public static class TokenController
             ["client_id"] = oauth.ClientId,
             ["client_secret"] = oauth.ClientSecret,
             ["code"] = code,
+          //  ["redirect_uri"] = redirectUri,
+            // ["redirect_uri"] = "http://localhost:3001/sharepoint/callback",
             ["redirect_uri"] = $"{ctx.Request.Scheme}://{ctx.Request.Host}/callback",
+            //  ["redirect_uri"] = redirectUri,
             ["code_verifier"] = codeVerifier,
             ["scope"] = string.Join(" ", oauth.Scopes.Split(" ") ?? [])
         };
@@ -125,7 +133,7 @@ public static class TokenController
         var exp = azureExp.AddMinutes(-2);
 
         var baseUri = $"{ctx.Request.Scheme}://{ctx.Request.Host}";
-        var mcpToken = CreateJwt(baseUri, sub!, oauth.Audience, scopes: oauth.Scopes?.Split(" ") ?? [], signingCredentials,
+        var mcpToken = CreateJwt(baseUri, sub!, resource, scopes: oauth.Scopes?.Split(" ") ?? [], signingCredentials,
             additionalClaims: new Dictionary<string, object>
             {
                 ["act"] = azureAccessToken!,

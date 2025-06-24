@@ -49,8 +49,7 @@ public class SamplingService(PromptService promptService)
 
         try
         {
-            return JsonSerializer.Deserialize<T>(promptSample.Content.Text?.CleanJson() ?? ""
-                 ?? string.Empty);
+            return JsonSerializer.Deserialize<T>(promptSample.ToText()?.CleanJson()!);
 
         }
         catch (JsonException exception)
@@ -66,9 +65,9 @@ public class SamplingService(PromptService promptService)
                 Role = a.Role,
                 Content = a.Content
             }),
-                new SamplingMessage() {
+            new SamplingMessage() {
                     Role = Role .User,
-                    Content = new() {
+                    Content = new TextContentBlock() {
                         Text = $"Your last answer failed to JsonSerializer.Deserialize. Error message is included. Please try again.\n\n{exception.Message}"
                     }
             }],
@@ -79,8 +78,7 @@ public class SamplingService(PromptService promptService)
                 Temperature = temperature
             });
 
-            return JsonSerializer.Deserialize<T>(newResult.Content.Text?.CleanJson() ?? ""
-                   ?? string.Empty);
+            return JsonSerializer.Deserialize<T>(newResult.ToText()?.CleanJson()!);
         }
 
     }

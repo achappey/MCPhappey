@@ -14,6 +14,7 @@ public interface IJwtValidator
 
 public class JwtValidator(IHttpClientFactory httpClientFactory) : IJwtValidator
 {
+
     public async Task<ClaimsPrincipal?> ValidateAsync(string token, string issuer,
         string audience, OAuthSettings oAuthSettings)
     {

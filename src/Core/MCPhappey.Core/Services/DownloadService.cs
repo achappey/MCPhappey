@@ -28,21 +28,14 @@ public partial class DownloadService(WebScraper webScraper,
             ?? throw new Exception();
 
         var supportedScrapers = scrapers
-            .Where(a => a.SupportsHost(serverConfig, uri.Host));
+            .Where(a => a.SupportsHost(serverConfig, url));
 
         IEnumerable<FileItem>? fileContent = null;
 
-        if (LoggingLevel.Info.ShouldLog(mcpServer.LoggingLevel))
-        {
-            var domain = new Uri(url).Host; // e.g., "example.com"
-            var markdown = $"GET [{domain}]({url})";
+        var domain = new Uri(url).Host; // e.g., "example.com"
+        var markdown = $"GET [{domain}]({url})";
 
-            await mcpServer.SendNotificationAsync("notifications/message", new LoggingMessageNotificationParams()
-            {
-                Level = LoggingLevel.Info,
-                Data = JsonSerializer.SerializeToElement(markdown),
-            }, cancellationToken: CancellationToken.None);
-        }
+        await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Info);
 
         foreach (var decoder in supportedScrapers)
         {

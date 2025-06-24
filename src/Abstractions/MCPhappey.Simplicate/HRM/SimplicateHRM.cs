@@ -16,7 +16,7 @@ public static class SimplicateHRMService
 
     [Description("Get Simplicate leaves by year grouped on employee and leave type")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResponse> SimplicateHRMService_GetLeaveTotals(
+    public static async Task<CallToolResult> SimplicateHRMService_GetLeaveTotals(
         [Description("Year to get the total from")] string year,
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,

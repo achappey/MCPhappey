@@ -8,7 +8,7 @@ namespace MCPhappey.Scrapers.Generic;
 public class StaticHeaderScraper(IHttpClientFactory httpClientFactory, string hostName,
     IDictionary<string, string> headers) : IContentScraper
 {
-    public bool SupportsHost(ServerConfig serverConfig, string host) => host == hostName;
+    public bool SupportsHost(ServerConfig serverConfig, string url) => new Uri(url).Host == hostName;
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {

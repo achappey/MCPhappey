@@ -12,9 +12,10 @@ namespace MCPhappey.Scrapers.SharePoint;
 public class SharePointScraper(IHttpClientFactory httpClientFactory, ServerConfig serverConfig,
     OAuthSettings oAuthSettings) : IContentScraper
 {
-    public bool SupportsHost(ServerConfig currentConfig, string host)
-        => host.EndsWith(".sharepoint.com", StringComparison.OrdinalIgnoreCase)
-            && serverConfig.Server.OBO?.ContainsKey(Hosts.MicrosoftGraph) == true;
+    public bool SupportsHost(ServerConfig currentConfig, string url)
+        => new Uri(url).Host.EndsWith(".sharepoint.com", StringComparison.OrdinalIgnoreCase)
+            && serverConfig.Server.OBO?.ContainsKey(Hosts.MicrosoftGraph) == true
+            && !url.Contains("/_api/");
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider,
          string url, CancellationToken cancellationToken = default)

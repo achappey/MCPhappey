@@ -23,7 +23,7 @@ public static class OpenAIResearch
 
 
     [Description("Perform web research on a topic. Before you use this tool, always ask the user first for more details so you can craft a detailed research topic for maximum accuracy")]
-    public static async Task<CallToolResponse> OpenAIResearch_PerformResearch(
+    public static async Task<CallToolResult> OpenAIResearch_PerformResearch(
         [Description("Topic for the research")]
         string researchTopic,
         IServiceProvider serviceProvider,
@@ -33,7 +33,7 @@ public static class OpenAIResearch
         ArgumentNullException.ThrowIfNullOrWhiteSpace(researchTopic);
         var uploadService = serviceProvider.GetRequiredService<UploadService>();
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
-        int? progressCounter = requestContext.Params?.Meta?.ProgressToken is not null ? 1 : null;
+        int? progressCounter = requestContext.Params?.ProgressToken is not null ? 1 : null;
 
         if (requestContext.Server.ClientCapabilities?.Sampling == null)
         {
@@ -50,11 +50,11 @@ public static class OpenAIResearch
                 "o3", cancellationToken: cancellationToken);
         var counter = 1;
 
-        if (requestContext.Params?.Meta?.ProgressToken is not null)
+        if (requestContext.Params?.ProgressToken is not null)
         {
-            await requestContext.Server.SendNotificationAsync("notifications/progress", new ProgressNotification()
+            await requestContext.Server.SendNotificationAsync("notifications/progress", new ProgressNotificationParams()
             {
-                ProgressToken = requestContext.Params.Meta.ProgressToken.Value,
+                ProgressToken = requestContext.Params.ProgressToken.Value,
                 Progress = new ProgressNotificationValue()
                 {
                     Progress = counter,
@@ -77,11 +77,11 @@ public static class OpenAIResearch
         var resultItems = searchResults
             .OfType<string>();
 
-        if (requestContext.Params?.Meta?.ProgressToken is not null)
+        if (requestContext.Params?.ProgressToken is not null)
         {
-            await requestContext.Server.SendNotificationAsync("notifications/progress", new ProgressNotification()
+            await requestContext.Server.SendNotificationAsync("notifications/progress", new ProgressNotificationParams()
             {
-                ProgressToken = requestContext.Params.Meta.ProgressToken.Value,
+                ProgressToken = requestContext.Params.ProgressToken.Value,
                 Progress = new ProgressNotificationValue()
                 {
                     Progress = counter++,
@@ -112,10 +112,8 @@ public static class OpenAIResearch
         fullReport += $"\n\n=====FOLLOW UP QUESTIONS=====\n\n";
         fullReport += $"Follow up questions: {string.Join("\n", reportSampling.FollowUpQuestions ?? [])}";
 
-        List<Content> content = [new Content(){
-                Type = "text",
-                MimeType = "text/markdown",
-                Data = fullReport
+        List<ContentBlock> content = [new TextContentBlock(){
+                Text = fullReport
             }];
 
         var uploaded = await uploadService.UploadToRoot(requestContext.Server, serviceProvider,
@@ -124,7 +122,7 @@ public static class OpenAIResearch
 
         if (uploaded != null)
         {
-            content.Add(new Content()
+            content.Add(new EmbeddedResourceBlock()
             {
                 Resource = new TextResourceContents()
                 {
@@ -135,7 +133,7 @@ public static class OpenAIResearch
             });
         }
 
-        return new CallToolResponse()
+        return new CallToolResult()
         {
             Content = content
         };
@@ -150,11 +148,11 @@ public static class OpenAIResearch
         string topic, string reason,
         CancellationToken cancellationToken = default)
     {
-        if (requestContext.Params?.Meta?.ProgressToken is not null)
+        if (requestContext.Params?.ProgressToken is not null)
         {
-            await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotification()
+            await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotificationParams()
             {
-                ProgressToken = requestContext.Params.Meta.ProgressToken.Value!,
+                ProgressToken = requestContext.Params.ProgressToken.Value!,
                 Progress = new ProgressNotificationValue()
                 {
                     Progress = counter!.Value,
@@ -174,7 +172,7 @@ public static class OpenAIResearch
                  mcpServer, "web-research", values,
                      "gpt-4o-search-preview", cancellationToken: cancellationToken);
 
-        return querySampling.Content.Text;
+        return querySampling.ToText();
     }
 
     public class WebSearchItem

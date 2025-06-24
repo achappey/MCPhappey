@@ -1,12 +1,9 @@
 using System.Text.Json;
 using MCPhappey.Common.Models;
-using MCPhappey.Common.Constants;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using OpenAI;
-using MCPhappey.Auth.Extensions;
 using MCPhappey.Common;
 using ModelContextProtocol;
 using System.Collections.Concurrent;
@@ -35,7 +32,7 @@ public static class ServiceExtensions
         return configs.GetServerConfig(mcpServer);
     }
 
-    public static async Task<CallToolResponse> ExtractWithFacts(this IServiceProvider serviceProvider,
+    public static async Task<CallToolResult> ExtractWithFacts(this IServiceProvider serviceProvider,
        IMcpServer mcpServer,
        RequestContext<CallToolRequestParams> requestContext,
        string facts,
@@ -78,7 +75,7 @@ public static class ServiceExtensions
             mcpServer, "extract-urls-with-facts", urlArgs,
                            "gpt-4.1", 0, cancellationToken: cancellationToken);
 
-        var urls = extracUrlsFromFactsSample?.Content.Text?
+        var urls = extracUrlsFromFactsSample.ToText()?
                          .Split(["\", \"", ","], StringSplitOptions.RemoveEmptyEntries)
                          .Select(a => a.Trim())
                          .Where(r => r.StartsWith("http"))
@@ -136,10 +133,11 @@ public static class ServiceExtensions
                                   $"Reading: [{new Uri(url).Host}]({url})",
                                   cancellationToken: cancellationToken
                               );
-               
+
                 var extractFromUrlsWithFactsSampleTask = samplingService.GetPromptSample(
                     serviceProvider, mcpServer, "extract-with-facts",
                     urlFactArgs, "gpt-4.1-mini", 0);
+
                 timeoutTask = Task.Delay(TimeSpan.FromSeconds(10), cancellationToken: CancellationToken.None);
                 completedTask = await Task.WhenAny(extractFromUrlsWithFactsSampleTask, timeoutTask);
 
@@ -149,18 +147,16 @@ public static class ServiceExtensions
                 }
 
                 var extractFromUrlsWithFactsSample = await extractFromUrlsWithFactsSampleTask;
-                if (extractFromUrlsWithFactsSample.Content.Text.HasResult())
+                var extractFromUrlsWithFactsSampleText = extractFromUrlsWithFactsSample.ToText();
+
+                if (!string.IsNullOrEmpty(extractFromUrlsWithFactsSampleText) && extractFromUrlsWithFactsSampleText.HasResult())
                 {
-                    results.TryAdd(url, extractFromUrlsWithFactsSample.Content.Text ?? string.Empty);
+                    results.TryAdd(url, extractFromUrlsWithFactsSampleText ?? string.Empty);
                 }
             }
             catch (Exception ex)
             {
-                await mcpServer.SendNotificationAsync("notifications/message", new LoggingMessageNotificationParams()
-                {
-                    Level = LoggingLevel.Warning,
-                    Data = JsonSerializer.SerializeToElement($"Failed to process url {url}: {ex}"),
-                }, cancellationToken: CancellationToken.None);
+                await requestContext.Server.SendMessageNotificationAsync($"Failed to process url {url}: {ex}", LoggingLevel.Warning);
             }
             finally
             {
@@ -169,11 +165,12 @@ public static class ServiceExtensions
         }
 
         var extractWithFactsSample = await extractWithFactsSampleTask;
+        var extractWithFactsSampletEXT = extractWithFactsSample.ToText();
 
-        if (extractWithFactsSample.Content.Text.HasResult())
+        if (!string.IsNullOrEmpty(extractWithFactsSampletEXT) && extractWithFactsSampletEXT.HasResult())
         {
             results.TryAdd(factsSourceUrl,
-                extractWithFactsSample.Content.Text ?? string.Empty);
+                extractWithFactsSampletEXT ?? string.Empty);
         }
 
         return new()

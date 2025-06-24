@@ -16,7 +16,7 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static class ModelContextServers
 {
     [Description("Create a new MCP-server")]
-    public static async Task<CallToolResponse> CreateServer(
+    public static async Task<CallToolResult> CreateServer(
         [Description("Name of the server")]
         string name,
         IServiceProvider serviceProvider,
@@ -44,7 +44,7 @@ public static class ModelContextServers
     }
 
     [Description("Deletes a MCP-server")]
-    public static async Task<CallToolResponse> DeleteServer(
+    public static async Task<CallToolResult> DeleteServer(
         [Description("Name of the server to delete")]
         string name,
         IServiceProvider serviceProvider,
@@ -70,7 +70,7 @@ public static class ModelContextServers
     }
 
     [Description("Adds a resource to a MCP-server")]
-    public static async Task<CallToolResponse> AddResource(
+    public static async Task<CallToolResult> AddResource(
         [Description("Name of the server")]
             string serverName,
         [Description("Uri of the resource to add")]

@@ -1,0 +1,18 @@
+{
+  "prompts": [
+    {
+      "prompt": "You are an expert AI with live web access. Answer the following user question by searching the web for the most accurate and up-to-date information. Cite your main sources or URLs if available. Be concise but include relevant details.\n\nQuestion:\n###\n{query}\n###\n",
+      "template": {
+        "name": "ai-websearch-answer",
+        "description": "Use AI web access to answer a user query",
+        "arguments": [
+          {
+            "name": "query",
+            "description": "Search query",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

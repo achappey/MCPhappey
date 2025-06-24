@@ -11,20 +11,20 @@ public static class ModelContextProtocolExtensions
         => messageLevel >= (minLevel ?? LoggingLevel.Info);
 
 
-    public static CallToolResponse ToErrorCallToolResponse(this string content)
+    public static CallToolResult ToErrorCallToolResponse(this string content)
          => new()
          {
              IsError = true,
-             Content = [content.ToTextContent()]
+             Content = [content.ToTextContentBlock()]
          };
 
-    public static CallToolResponse ToTextCallToolResponse(this string content)
+    public static CallToolResult ToTextCallToolResponse(this string content)
          => new()
          {
-             Content = [content.ToTextContent()]
+             Content = [content.ToTextContentBlock()]
          };
 
-    public static CallToolResponse ToJsonCallToolResponse(this string content, string uri)
+    public static CallToolResult ToJsonCallToolResponse(this string content, string uri)
          => new()
          {
              Content = [content.ToJsonContent(uri)]
@@ -82,16 +82,14 @@ public static class ModelContextProtocolExtensions
         => content.ToReadResourceResult(uri, MediaTypeNames.Application.Json);
 
 
-    public static Content ToTextContent(this string contents) => new()
+    public static TextContentBlock ToTextContentBlock(this string contents) => new()
     {
-        Text = contents,
-        Type = "text"
+        Text = contents
     };
 
-    public static Content ToTextResourceContent(this string contents, string uri,
+    public static EmbeddedResourceBlock ToTextResourceContent(this string contents, string uri,
         string mimeType = MediaTypeNames.Text.Plain) => new()
         {
-            Type = "resource",
             Resource = new TextResourceContents()
             {
                 Uri = uri,
@@ -100,22 +98,39 @@ public static class ModelContextProtocolExtensions
             }
         };
 
-    public static Content ToJsonContent(this string contents, string uri) =>
+    public static ContentBlock ToJsonContent(this string contents, string uri) =>
         contents.ToTextResourceContent(uri, MediaTypeNames.Application.Json);
 
-    private static Content ToContent(this ResourceContents contents) => new()
+
+    private static EmbeddedResourceBlock ToContent(this ResourceContents contents) => new EmbeddedResourceBlock()
     {
-        Type = "resource",
         Resource = contents
     };
 
-    public static CallToolResponse ToCallToolResponse(this ReadResourceResult result) => new()
+    public static CallToolResult ToCallToolResult(this ReadResourceResult result) => new()
     {
         Content = [.. result.Contents.Select(z => z.ToContent())],
     };
 
+    public static CallToolResult ToCallToolResult(this ContentBlock result) => new()
+    {
+        Content = [result],
+    };
+
+     public static CallToolResult ToCallToolResult(this IEnumerable<ContentBlock> results) => new()
+    {
+        Content = [.. results],
+    };
+
+
+    public static string? ToText(this CreateMessageResult result) =>
+         result.Content is TextContentBlock textContentBlock ? textContentBlock.Text : null;
+
     public static ModelPreferences? ToModelPreferences(this string? result) => result != null ? new()
     {
-        Hints = [new ModelHint() { Name = result }]
+        Hints = [result.ToModelHint()!]
     } : null;
+
+    public static ModelHint? ToModelHint(this string? result) => new() { Name = result };
+
 }

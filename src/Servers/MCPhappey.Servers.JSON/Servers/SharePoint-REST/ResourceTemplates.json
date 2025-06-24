@@ -1,0 +1,148 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web",
+      "name": "Site metadata",
+      "description": "Retrieves metadata and settings for the SharePoint site.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/lists",
+      "name": "Lists collection",
+      "description": "Retrieves all lists in the current SharePoint site.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/lists/getbytitle('{listTitle}')/items",
+      "name": "List items by title",
+      "description": "Retrieves all items from a specific list by list title.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/lists/getbytitle('{listTitle}')/fields",
+      "name": "List fields by title",
+      "description": "Retrieves all fields (columns) for a specific list by title.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/lists(guid'{listId}')/items",
+      "name": "List items by GUID",
+      "description": "Retrieves all items from a specific list using its GUID.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/lists",
+      "name": "Create new list",
+      "description": "Creates a new list in the current SharePoint site (use POST with payload).",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfolderbyserverrelativeurl('{folderRelativeUrl}')/files",
+      "name": "Files in folder",
+      "description": "Retrieves all files in a specified SharePoint folder.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfilebyserverrelativeurl('{fileRelativeUrl}')/$value",
+      "name": "Download file",
+      "description": "Downloads the binary content of a file by its server-relative URL.",
+      "mimeType": "application/octet-stream",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/siteusers",
+      "name": "Site users",
+      "description": "Retrieves all users for the current SharePoint site.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/sitegroups",
+      "name": "Site groups",
+      "description": "Retrieves all SharePoint groups for the site, including permission groups.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/HasUniqueRoleAssignments",
+      "name": "Site has unique permissions",
+      "description": "Indicates whether the site has unique (non-inherited) permissions.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/roleassignments?$expand=Member,RoleDefinitionBindings",
+      "name": "Site role assignments",
+      "description": "Retrieves all role assignments (who has which permissions) for the site. Shows unique permissions if they exist.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfolderbyserverrelativeurl('{folderRelativeUrl}')/HasUniqueRoleAssignments",
+      "name": "Folder has unique permissions",
+      "description": "Indicates whether the folder has unique (non-inherited) permissions.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfolderbyserverrelativeurl('{folderRelativeUrl}')/roleassignments?$expand=Member,RoleDefinitionBindings",
+      "name": "Folder role assignments",
+      "description": "Retrieves all role assignments for a folder, showing unique permissions if present.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfilebyserverrelativeurl('{fileRelativeUrl}')/HasUniqueRoleAssignments",
+      "name": "File has unique permissions",
+      "description": "Indicates whether the file has unique (non-inherited) permissions.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfilebyserverrelativeurl('{fileRelativeUrl}')/roleassignments?$expand=Member,RoleDefinitionBindings",
+      "name": "File role assignments",
+      "description": "Retrieves all role assignments for a file, showing unique permissions if present.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

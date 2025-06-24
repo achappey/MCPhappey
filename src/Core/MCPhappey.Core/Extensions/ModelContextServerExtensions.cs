@@ -76,35 +76,5 @@ public static partial class ModelContextServerExtensions
     public static string GetUrl(this Server server, HttpContext httpContext) =>
         $"{httpContext.Request.Scheme}://{httpContext.Request.Host}{server.GetServerRelativeUrl()}";
 
-    public static async Task<int?> SendProgressNotificationAsync(
-        this IMcpServer mcpServer,
-        RequestContext<CallToolRequestParams> requestContext,
-        int? progressCounter,
-        string? message,
-        int? total = null,
-        CancellationToken cancellationToken = default)
-    {
-        var progressToken = requestContext.Params?.Meta?.ProgressToken;
-        if (progressToken is not null && progressCounter is not null)
-        {
-            await mcpServer.SendNotificationAsync(
-                "notifications/progress",
-                new ProgressNotification
-                {
-                    ProgressToken = progressToken.Value,
-                    Progress = new ProgressNotificationValue
-                    {
-                        Progress = progressCounter.Value,
-                        Total = total,
-                        Message = message
-                    }
-                },
-                cancellationToken: cancellationToken
-            );
-
-            return progressCounter++;
-        }
-
-        return progressCounter;
-    }
+   
 }

@@ -1,0 +1,7 @@
+{
+  "serverInfo": {
+    "name": "WebSearch",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.AI.WebSearch, MCPhappey.Tools"]
+}

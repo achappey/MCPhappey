@@ -15,7 +15,7 @@ public static class SimplicateInvoiceService
 {
     [McpServerTool(ReadOnly = true)]
     [Description("Get total invoices grouped by my organization profile, optionally filtered by date range and organization.")]
-    public static async Task<CallToolResponse> SimplicateInvoiceService_GetInvoiceTotalsByMyOrganization(
+    public static async Task<CallToolResult> SimplicateInvoiceService_GetInvoiceTotalsByMyOrganization(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         string? fromDate = null,

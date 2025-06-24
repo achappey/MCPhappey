@@ -1,0 +1,7 @@
+{
+  "serverInfo": {
+    "name": "ChatApp",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.AI.ChatApp, MCPhappey.Tools"]
+}

@@ -5,7 +5,6 @@ using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
-using MCPhappey.Tools.Extensions;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Beta;
@@ -91,7 +90,7 @@ public static class SharePointSearch
 
     [Description("Search Microsoft 365 content")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResponse> SharePoint_Search(
+    public static async Task<CallToolResult> SharePoint_Search(
         [Description("Search query")] string query,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -100,7 +99,7 @@ public static class SharePointSearch
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
-        int? progressCounter = requestContext.Params?.Meta?.ProgressToken is not null ? 1 : null;
+        int? progressCounter = requestContext.Params?.ProgressToken is not null ? 1 : null;
 
         var entityCombinations = new List<EntityType?[]>
             {
@@ -118,12 +117,12 @@ public static class SharePointSearch
                 maxConcurrency: 2,
                 cancellationToken);
 
-            return new CallToolResponse
+            return new CallToolResult
             {
                 Content = basicResults
                     .Where(t => !string.IsNullOrEmpty(t))
-                    .Select(a => a?.ToTextContent())
-                    .OfType<Content>()
+                    .Select(a => a?.ToTextContentBlock())
+                    .OfType<ContentBlock>()
                     .ToList()
             };
         }
@@ -143,7 +142,7 @@ public static class SharePointSearch
             "get-sharepoint-serp-queries",
             queryArgs,
             "o4-mini",
-            0,
+            null,
             cancellationToken: cancellationToken);
 
         progressCounter = await mcpServer.SendProgressNotificationAsync(

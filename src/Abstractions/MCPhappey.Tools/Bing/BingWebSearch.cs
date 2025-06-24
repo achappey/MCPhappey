@@ -56,7 +56,7 @@ public static class BingWebSearch
 
     [Description("Search the web with Bing")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResponse> Bing_SearchBing(
+    public static async Task<CallToolResult> Bing_SearchBing(
         [Description("Search query")]
         string query,
         IServiceProvider serviceProvider,
@@ -72,7 +72,7 @@ public static class BingWebSearch
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
         var mcpServer = requestContext.Server;
         var config = serviceProvider.GetServerConfig(mcpServer);
-        int? progressCounter = requestContext.Params?.Meta?.ProgressToken is not null ? 1 : null;
+        int? progressCounter = requestContext.Params?.ProgressToken is not null ? 1 : null;
 
         if (mcpServer.ClientCapabilities?.Sampling == null)
         {

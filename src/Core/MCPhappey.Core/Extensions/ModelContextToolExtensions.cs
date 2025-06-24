@@ -1,10 +1,8 @@
 
 using System.Reflection;
-using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.SemanticKernel;
-using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -75,7 +73,6 @@ public static partial class ModelContextToolExtensions
             CallToolHandler = async (request, cancellationToken)
                 =>
                 {
-                    //request.Params.Meta.ProgressToken.Value
                     var tool = tools.First(a => a.ProtocolTool.Name == request.Params?.Name);
                     request.Services!.WithHeaders(headers);
 
@@ -85,14 +82,7 @@ public static partial class ModelContextToolExtensions
                     }
                     catch (Exception e)
                     {
-                        if (LoggingLevel.Error.ShouldLog(request.Server.LoggingLevel))
-                        {
-                            await request.Server.SendNotificationAsync("notifications/message", new LoggingMessageNotificationParams()
-                            {
-                                Level = LoggingLevel.Error,
-                                Data = JsonSerializer.SerializeToElement(e.ToString()),
-                            }, cancellationToken: CancellationToken.None);
-                        }
+                        await request.Server.SendMessageNotificationAsync(e.ToString(), LoggingLevel.Error);
 
                         return e.Message.ToErrorCallToolResponse();
                     }
