@@ -12,10 +12,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://timeapi.io/api/time/current/zone?timeZone={timeZone}"
-      ]
+      }
     },
     {
       "prompt": "Is Daylight Saving Time currently active in this time zone? If yes, what are the DST start and end dates?",
@@ -29,10 +26,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://timeapi.io/api/timezone/zone?timeZone={timeZone}"
-      ]
+      }
     },
     {
       "prompt": "What is the offset to UTC in hours and minutes for this time zone?",
@@ -46,10 +40,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://timeapi.io/api/time/current/zone?timeZone={timeZone}"
-      ]
+      }
     },
     {
       "prompt": "What day of the week is this?",
@@ -63,10 +54,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://timeapi.io/api/conversion/dayoftheweek/{date}"
-      ]
+      }
     },
     {
       "prompt": "How far are we into the year, as a day number (e.g., day 123)?",
@@ -80,10 +68,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://timeapi.io/api/conversion/dayoftheyear/{date}"
-      ]
+      }
     },
     {
       "prompt": "What season is it now in this location, based on the date and the hemisphere for this time zone?",
@@ -97,10 +82,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://timeapi.io/api/time/current/zone?timeZone={timeZone}"
-      ]
+      }
     }
   ]
 }

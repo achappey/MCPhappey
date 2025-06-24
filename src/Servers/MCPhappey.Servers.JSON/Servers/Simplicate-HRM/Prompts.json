@@ -12,10 +12,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/employee?q[teams.name]=*{teamNaam}*&q[status.label]=active&select=name,id,work_email,teams."
-      ]
+      }
     },
     {
       "prompt": "Analyseer de meegeleverde verlofregistraties. Bereken per medewerker het totaal aantal opgenomen verlofuren in de periode van {startDatum} tot {eindDatum} voor verloftype '{verlofTypeLabel}'. Presenteer de resultaten als een tabel met kolommen: Medewerker Naam, Totaal Uren.",
@@ -39,10 +36,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/leave?q[start_date][ge]={startDatum}&q[end_date][le]={eindDatum}&q[leavetype.label]=*{verlofTypeLabel}*&limit=500"
-      ]
+      }
     },
     {
       "prompt": "Vat de meegeleverde medewerkersdata samen. Bereken het totale aantal FTE (fulltime-equivalenten) per team, uitgaande van de contractinformatie. Geef een overzicht in tabelvorm: Teamnaam, Totaal FTE.",
@@ -50,11 +44,7 @@
         "name": "hrm-bereken-fte-per-team",
         "description": "Berekent het totale FTE per team op basis van de verstrekte medewerkers- en contractdata.",
         "arguments": []
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/employee",
-        "https://{organization}.simplicate.app/api/v2/hrm/contract"
-      ]
+      }
     },
     {
       "prompt": "Identificeer contracten in de aangeleverde dataset die binnen de komende {aantalDagenTotEindeContract} dagen aflopen. Geef per contract de naam van de medewerker, de einddatum van het contract en het contracttype. Presenteer als JSON-objecten.",
@@ -68,10 +58,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/contract?q[end_date][le]=%2B{aantalDagenTotEindeContract}d&q[end_date][ge]=today&sort=end_date&limit=100"
-      ]
+      }
     },
     {
       "prompt": "Analyseer de verstrekte ziekteverzuimdata. Identificeer medewerkers met meer dan {minimumAantalVerzuimDagen} verzuimdagen in het afgelopen jaar (vanaf {startDatumAfgelopenJaar}). Geef per medewerker het totaal aantal verzuimdagen en het aantal ziekmeldingen. Output als tabel.",
@@ -90,10 +77,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/absence?q[start_date][ge]={startDatumAfgelopenJaar}&q[absencetype.is_sickleave]=true&limit=100"
-      ]
+      }
     },
     {
       "prompt": "Evalueer de diversiteit binnen de meegeleverde medewerkerspopulatie. Geef een procentuele verdeling op basis van het veld '{customFieldDiversiteit}' (bijv. geslacht, nationaliteit). Presenteer de resultaten als een JSON-object met percentages per categorie.",
@@ -107,10 +91,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/employee?limit=500"
-      ]
+      }
     },
     {
       "prompt": "Identificeer mogelijke 'skills gaps' door de competenties in de meegeleverde medewerkersprofielen (veld: '{customFieldCompetenties}') te vergelijken met een lijst van benodigde competenties: {lijstBenodigdeCompetenties}. Geef per benodigde competentie aan hoeveel medewerkers deze bezitten en welke medewerkers dit zijn. Output als een lijst van objecten, per competentie.",
@@ -129,10 +110,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/hrm/employee?limit=100"
-      ]
+      }
     }
   ]
 }

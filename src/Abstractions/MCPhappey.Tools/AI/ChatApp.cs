@@ -53,25 +53,18 @@ public static class ChatApp
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]
     [McpServerTool(ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExecuteGenerateWelcomeMessage(
-    [Description("The name of the user")] string userName,
-    IServiceProvider serviceProvider,
-    RequestContext<CallToolRequestParams> requestContext,
-    CancellationToken cancellationToken = default)
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
-
-        // Arguments for the prompt template
-        var promptArgs = new Dictionary<string, JsonElement>
-        {
-            ["userName"] = JsonSerializer.SerializeToElement(userName ?? string.Empty)
-        };
 
         // Pick the model you want
         var modelName = "gpt-4.1-nano"; // or set to your preferred model
 
         // Optional: Logging/notification
-        var markdown = $"Generating welcome message for user: {userName}";
+        var markdown = $"Generating welcome message";
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
         // Call prompt template (should be named "welcome-message")
@@ -79,8 +72,7 @@ public static class ChatApp
             serviceProvider,
             mcpServer,
             "welcome-message", // prompt template name
-            promptArgs,
-            modelName,
+            modelHint: modelName,
             cancellationToken: cancellationToken
         );
 

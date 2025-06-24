@@ -1,64 +1,94 @@
 {
   "resources": [
     {
-      "uri": "https://connect.deskbird.com/bookings?limit=100&offset=0",
-      "name": "All bookings",
-      "description": "Retrieve a general overview of all bookings, regardless of their status.",
-      "mimeType": "application/json"
+      "uri": "https://connect.deskbird.com/bookings?startDate={startDate}&endDate={endDate}&zoneIds={zoneId}&limit=100&offset=0",
+      "name": "Filtered bookings",
+      "description": "Retrieve a general overview of filtered bookings.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/users?limit=100&offset=0",
       "name": "All users",
       "description": "Retrieve a general overview of all users.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/offices",
       "name": "All offices",
       "description": "Retrieve a general overview of all offices.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/bookings?statuses=running,accepted&limit=100&offset=0",
       "name": "Active bookings",
       "description": "Retrieve all currently active bookings, including running and accepted ones.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/bookings?statuses=cancelled&limit=50&offset=0",
       "name": "Recently cancelled bookings",
       "description": "Retrieve a list of recently cancelled bookings, limited to the last 50 cancellations.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/bookings?statuses=completed&limit=100&offset=0",
       "name": "Completed bookings",
       "description": "Retrieve a detailed list of completed bookings.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/bookings?statuses=editedByUser&limit=100&offset=0",
       "name": "Edited bookings",
       "description": "Retrieve a list of all bookings that have been edited by users.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
-      "uri": "https://connect.deskbird.com/resources",
-      "name": "All resources",
-      "description": "Retrieve a list of all available resources from deskbird.",
-      "mimeType": "application/json"
+      "uri": "https://connect.deskbird.com/resources?zoneId={zoneId}",
+      "name": "Filtered resources",
+      "description": "Retrieve a list of filtered available resources from deskbird.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/resources?type=parking",
       "name": "All parkings",
       "description": "Retrieve a list of all parking resources.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://connect.deskbird.com/resources?type=flexDesk",
       "name": "All flex desks",
       "description": "Retrieve a list of all flex desk resources.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     }
   ]
 }

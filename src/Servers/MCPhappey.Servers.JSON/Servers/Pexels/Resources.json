@@ -4,13 +4,19 @@
       "uri": "https://api.pexels.com/videos/popular",
       "name": "Pexels popular videos",
       "description": "Enables you to receive the current popular Pexels videos",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://api.pexels.com/v1/curated",
       "name": "Enables you to receive real-time photos curated by the Pexels team",
       "description": "Add at least one new photo per hour is added to our curated list so that you always get a changing selection of trending photos",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     }
   ]
 }

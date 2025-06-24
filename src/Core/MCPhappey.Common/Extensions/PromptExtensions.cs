@@ -8,19 +8,24 @@ public static partial class PromptExtensions
 {
     public static void ValidatePrompt(
         this ModelContextProtocol.Protocol.Prompt template,
-        IReadOnlyDictionary<string, JsonElement> argumentsDict)
+        IReadOnlyDictionary<string, JsonElement>? argumentsDict = null)
     {
-        foreach (var arg in template.Arguments ?? [])
-        {
-            if (arg.Required == true && !argumentsDict.ContainsKey(arg.Name))
-            {
-                //LoggingLevel.Alert
-                throw new ArgumentException(
-                    $"Missing required argument: {arg.Name}",
-                    arg.Name
-                );
-            }
-        }
+        var requiredArgs = template.Arguments?.Where(a => a.Required == true).ToList() ?? [];
+
+        if (requiredArgs.Count == 0)
+            return; // No required args, nothing to validate
+
+        if (argumentsDict == null)
+            throw new Exception($"Missing required argument(s): {string.Join(", ", requiredArgs.Select(a => a.Name))}");
+
+        // Find missing required arguments
+        var missing = requiredArgs
+            .Where(a => !argumentsDict.ContainsKey(a.Name))
+            .Select(a => a.Name)
+            .ToList();
+
+        if (missing.Count > 0)
+            throw new ArgumentException($"Missing required argument(s): {string.Join(", ", missing)}");
     }
 
     public static int CountPromptArguments(this string template)
@@ -34,23 +39,11 @@ public static partial class PromptExtensions
             .Distinct(StringComparer.OrdinalIgnoreCase)
             .Count();
     }
-    /*
-        public static string FormatWith(this string template, IReadOnlyDictionary<string, JsonElement> values)
-        {
-            ArgumentNullException.ThrowIfNull(template);
-            ArgumentNullException.ThrowIfNull(values);
-
-            return PromptArgumentRegex().Replace(template, match =>
-            {
-                var key = match.Groups[1].Value;
-                return values.TryGetValue(key, out var value) ? value.ToString() ?? string.Empty : match.Value;
-            });
-        }*/
 
     public static string FormatPrompt(
        this string prompt,
        ModelContextProtocol.Protocol.Prompt promptTemplate,
-       IReadOnlyDictionary<string, JsonElement> argumentsDict)
+       IReadOnlyDictionary<string, JsonElement>? argumentsDict = null)
     {
         promptTemplate.ValidatePrompt(argumentsDict);
 
@@ -60,22 +53,20 @@ public static partial class PromptExtensions
             var argDef = promptTemplate.Arguments?.FirstOrDefault(a => a.Name == argName);
 
             if (argDef == null)
-                return ""; // Remove unknown placeholders
+                return string.Empty; // Remove unknown placeholders
 
-            if (argumentsDict.TryGetValue(argName, out var value))
+            if (argumentsDict != null && argumentsDict.TryGetValue(argName, out var value))
             {
                 return value.ToString();
             }
 
-            return "";
+            return string.Empty;
         });
 
         return result;
     }
 
-
-    [GeneratedRegex("{(.*?)}")]
+    //[GeneratedRegex("{(.*?)}")]
+    [GeneratedRegex(@"\{([a-zA-Z0-9_-]+)\}")]
     private static partial Regex PromptArgumentRegex();
-    [GeneratedRegex(@"\s{2,}")]
-    private static partial Regex CleanRegex();
 }

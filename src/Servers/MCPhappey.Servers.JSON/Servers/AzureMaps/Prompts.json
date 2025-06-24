@@ -32,10 +32,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://atlas.microsoft.com/route/directions/json?api-version=1.0&query={startLatitude},{startLongitude}:{endLatitude},{endLongitude}&travelMode={travelMode}&$select=summary,legs,alternativeRoutes,trafficData"
-      ]
+      }
     }
   ]
 }

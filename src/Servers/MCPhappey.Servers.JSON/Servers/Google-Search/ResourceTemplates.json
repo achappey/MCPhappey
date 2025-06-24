@@ -4,49 +4,73 @@
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}",
       "name": "Basic search",
       "description": "Returns default mixed-type results (web, images, etc.) for a query string.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}&num={num}&start={start}",
       "name": "Paginated search",
       "description": "`num` (1-10) sets page size, `start` sets 1-based index of first result—use them together for paging.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}&lr={lr}&hl={hl}&gl={gl}&cr={cr}",
       "name": "Language / region tuned search",
       "description": "Restrict by document language (`lr=lang_en`), UI language (`hl=en`), user geo (`gl=US`) or country of origin (`cr=countryUS`).",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}&safe={safe}",
       "name": "SafeSearch filtered",
       "description": "Controls adult filtering (`safe=off | active`).",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}&siteSearch={siteSearch}&siteSearchFilter={siteSearchFilter}",
       "name": "Site-restricted search",
       "description": "Force-include or exclude a domain (`siteSearchFilter=i|e`) while preserving normal ranking.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}&fileType={fileType}&rights={rights}",
       "name": "File-type or license filtered search",
       "description": "Restrict to specific file extensions (`fileType=pdf`) and/or Creative-Commons rights (`rights=cc_publicdomain`, `cc_sharealike` …).",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}&dateRestrict={dateRestrict}&sort={sort}",
       "name": "Date-restricted / sorted search",
       "description": "`dateRestrict=d7` (past 7 days, or w#, m#, y#) combined with `sort=date` to surface the most recent content first.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uriTemplate": "https://www.googleapis.com/customsearch/v1?q={q}&searchType=image&imgSize={imgSize}&imgType={imgType}&imgColorType={imgColorType}&imgDominantColor={imgDominantColor}&safe={safe}&num={num}&start={start}",
       "name": "Advanced image search",
       "description": "Set `searchType=image` and optionally filter by size (`imgSize=large`), type (`imgType=photo`), colour, SafeSearch, and paging.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     }
   ]
 }

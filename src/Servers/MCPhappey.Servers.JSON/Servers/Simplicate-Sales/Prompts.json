@@ -12,10 +12,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/sales?q[reason.name]=*{reden}*&select=subject,contact.,start_date,note,expected_closing_date,expected_revenue,chance_to_score,responsible_employee.,organization.,status.,source.,progress."
-      ]
+      }
     },
     {
       "prompt": "Analyseer de meegeleverde sales pipeline data. Geef een samenvatting van de totale waarde en het aantal deals per salesfase. Welke fase bevat de hoogste totale waarde? Presenteer als een tabel: Fase, Aantal Deals, Totale Waarde.",
@@ -23,10 +20,7 @@
         "name": "sales-analyseer-pipeline-samenvatting",
         "description": "Genereert een samenvatting van de sales pipeline per fase, gebaseerd op de aangeleverde dealdata.",
         "arguments": []
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/sales?limit=100"
-      ]
+      }
     },
     {
       "prompt": "Bereken de winrate voor deals die gesloten zijn in de periode van {startDatum} tot {eindDatum}, op basis van de verstrekte dealdata. Toon het percentage gewonnen deals versus het totaal aantal gesloten deals (gewonnen + verloren).",
@@ -45,10 +39,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/sales?q[status_updated_at][ge]={startDatum}&q[status_updated_at][le]={eindDatum}&q[status.label][]=Gewonnen&q[status.label][]=Verloren&limit=500"
-      ]
+      }
     },
     {
       "prompt": "Genereer een sales forecast voor de komende {aantalMaandenForecast} maanden op basis van de openstaande deals in de meegeleverde data. Neem de verwachte sluitingsdatum en de gewogen waarde (waarde * scoringspercentage) per deal mee. Geef een totaal gewogen waarde per maand. Output als JSON.",
@@ -62,10 +53,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/sales?q[status.label]=Open&limit=100"
-      ]
+      }
     },
     {
       "prompt": "Identificeer de top {aantalDeals} deals met de hoogste waarde (veld: '{veldDealWaarde}') die momenteel in de salesfase '{faseNaam}' zitten, volgens de aangeleverde data. Geef per deal de naam, de verantwoordelijke en de exacte waarde. Presenteer als een lijst.",
@@ -89,10 +77,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/sales?q[progress.label]={faseNaam}&sort=-{veldDealWaarde}&limit={aantalDeals}"
-      ]
+      }
     },
     {
       "prompt": "Analyseer de redenen waarom deals verloren zijn gegaan (veld: '{veldVerlorenReden}') in de meegeleverde dataset van verloren deals. Geef een top 3 van meest voorkomende verloren redenen en hun frequentie. Output als tabel: Reden, Frequentie.",
@@ -106,10 +91,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/sales?q[status.label]=Verloren&limit=100"
-      ]
+      }
     },
     {
       "prompt": "Evalueer de effectiviteit van verschillende leadbronnen (veld: '{veldLeadBron}') op basis van de meegeleverde gewonnen deals. Geef per leadbron het aantal gewonnen deals en de totale waarde van deze deals. Presenteer als een JSON-object waarbij elke key de leadbron is.",
@@ -123,10 +105,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/sales?q[status.label]=Gewonnen&limit=100"
-      ]
+      }
     }
   ]
 }

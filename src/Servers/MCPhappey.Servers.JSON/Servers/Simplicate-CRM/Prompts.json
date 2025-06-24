@@ -12,11 +12,8 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/crm/organization?select=id,name,is_active,created_at,updated_at,simplicate_url,relation_type.label,relation_manager.name,relation_manager.work_email,relation_manager.type.label,relation_manager.simplicate_url,customer_group.name,teams.name,industry.name,organizationsize.name,email,phone,url,linkedin_url,note,coc_code,vat_number,bank_account,bank_bic,relation_number,visiting_address.line_1,visiting_address.postal_code,visiting_address.locality,visiting_address.country,postal_address.line_1,postal_address.postal_code,postal_address.locality,postal_address.country,debtor.payment_term.name,debtor.payment_term.days,debtor.autocollect,sbi_codes.code,sbi_codes.description,custom_fields.id,custom_fields.value,interests.name,linked_persons_contacts.person_id,linked_persons_contacts.work_email,linked_persons_contacts.work_function&q[industry.name]=*{brancheNaam}*"
-      ]
-    },    
+      }
+    },
     {
       "prompt": "Analyseer de meegeleverde lijst met contactpersonen. Identificeer contacten zonder recente activiteit (langer dan {aantalDagenGeenActiviteit} dagen geleden) en geef een overzicht van hun namen en de datum van laatste contact. Presenteer dit als een tabel.",
       "template": {
@@ -29,10 +26,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/crm/contact?sort=-last_contact_at&limit=100"
-      ]
+      }
     },
     {
       "prompt": "Vat de meegeleverde organisatiedata samen. Geef per organisatie de naam, het aantal gekoppelde contactpersonen en de totale waarde van openstaande deals. Focus op organisaties met meer dan {minimumAantalContacten} contacten. Geef de output als een lijst met objecten.",
@@ -46,10 +40,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/crm/organization?limit=100"
-      ]
+      }
     },
     {
       "prompt": "Analyseer de verstrekte lijst met deals. Identificeer deals die langer dan {aantalDagenInFase} dagen in de fase '{faseNaam}' staan. Geef per deal de naam, de verantwoordelijke medewerker en de dealwaarde. Presenteer als JSON.",
@@ -68,10 +59,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/sales/deal?q[deal_stage.label]=*{faseNaam}*&sort=deal_stage.updated_at&limit=100"
-      ]
+      }
     },
     {
       "prompt": "Detecteer mogelijke dubbele contactpersonen in de aangeleverde dataset. Vergelijk contacten op basis van een combinatie van achternaam en e-mailadres. Geef een lijst van potentiële duplicaten, met per paar de ID's en namen.",
@@ -79,10 +67,7 @@
         "name": "crm-detecteer-dubbele-contacten",
         "description": "Identificeert potentiële dubbele contactpersonen in de verstrekte data door te kijken naar naam en e-mail.",
         "arguments": []
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/crm/contact?limit=100&sort=name"
-      ]
+      }
     },
     {
       "prompt": "Analyseer de tijdlijnitems van de meegeleverde contactpersoon (ID: {contactId}). Geef een samenvatting van de laatste {aantalItems} interacties, inclusief type interactie, datum en een korte beschrijving. Welke trends vallen op in de communicatie?",
@@ -101,10 +86,7 @@
             "required": false
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/crm/timeline?q[parent_id]=contact:{contactId}&sort=-event_date&limit={aantalItems:-5}"
-      ]
+      }
     },
     {
       "prompt": "Kwalificeer de meegeleverde leads op basis van de ingevulde velden. Geef per lead een score van 1-5 (5 is hoogst gekwalificeerd) gebaseerd op de aanwezigheid van een telefoonnummer, e-mailadres, en een waarde in het veld '{customFieldLeadBron}'. Geef ook aan welke informatie eventueel ontbreekt voor een hogere score. Presenteer als tabel: Lead ID, Score, Ontbrekende Info.",
@@ -118,10 +100,7 @@
             "required": true
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://{organization}.simplicate.app/api/v2/crm/person?q[is_lead]=true&limit=100"
-      ]
+      }
     }
   ]
 }

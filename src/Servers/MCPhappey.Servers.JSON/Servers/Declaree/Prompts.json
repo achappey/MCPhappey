@@ -22,10 +22,7 @@
             "required": false
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://app.declaree.com/api/v4/expenses?startDate={startDate}&endDate={endDate}&limit={limit}&offset=0"
-      ]
+      }
     },
     {
       "prompt": "Identify policy-violating expenses between {startDate} and {endDate}. Include:\n- Total number of violations\n- Top 10 individual violations with details (category, amount, breached rule)\n- Breakdown of violations by policy rule\n- Employees with three or more violations\n- Recommendations to reduce future breaches",
@@ -49,11 +46,7 @@
             "required": false
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://app.declaree.com/api/v4/expenses?startDate={startDate}&endDate={endDate}&limit={limit}&offset=0"
-      ],
-      "resources": ["https://app.declaree.com/api/v4/policies"]
+      }
     },
     {
       "prompt": "Produce an ageing analysis for expense reports with status '{status}'. Include:\n- Total open reports\n- Average age in days\n- Age buckets: 0-7, 8-14, 15-30, 31+ days\n- Top 10 oldest reports with submitter and approver\n- Actionable tips to speed up approvals",
@@ -72,10 +65,7 @@
             "required": false
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://app.declaree.com/api/v4/reports?status={status}&limit={limit}&offset=0"
-      ]
+      }
     },
     {
       "prompt": "Calculate reimbursement cycle time for reports reimbursed between {startDate} and {endDate}. Provide:\n- Average, median and 90th-percentile days from report submission to reimbursement\n- Distribution chart of cycle times\n- List of reimbursements taking longer than {thresholdDays} days\n- Recommendations to shorten the reimbursement process",
@@ -104,11 +94,7 @@
             "required": false
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://app.declaree.com/api/v4/reimbursements?startDate={startDate}&endDate={endDate}&limit={limit}&offset=0",
-        "https://app.declaree.com/api/v4/reports?status=approved&limit={limit}&offset=0"
-      ]
+      }
     },
     {
       "prompt": "Analyse mileage claims for vehicle type '{vehicleType}' between {startDate} and {endDate}. Include:\n- Total kilometres claimed\n- Total reimbursement amount\n- Average distance per claim\n- Weekly trend of kilometres\n- Flag any claims exceeding 500 km in a single day",
@@ -142,10 +128,7 @@
             "required": false
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://app.declaree.com/api/v4/expenses?categoryId={mileageCategoryId}&startDate={startDate}&endDate={endDate}&limit={limit}&offset=0"
-      ]
+      }
     },
     {
       "prompt": "Generate a spending breakdown for cost-center '{costCenterId}' from {startDate} to {endDate}. Compare against the previous period {prevStartDate}–{prevEndDate}. Include:\n- Total spend this period vs. previous\n- Category breakdown\n- Top 5 employees by spend\n- Percentage change by category\n- Key insights and recommendations",
@@ -184,11 +167,7 @@
             "required": false
           }
         ]
-      },
-      "resourceTemplates": [
-        "https://app.declaree.com/api/v4/expenses?costCenterId={costCenterId}&startDate={startDate}&endDate={endDate}&limit={limit}&offset=0",
-        "https://app.declaree.com/api/v4/expenses?costCenterId={costCenterId}&startDate={prevStartDate}&endDate={prevEndDate}&limit={limit}&offset=0"
-      ]
+      }
     }
   ]
 }

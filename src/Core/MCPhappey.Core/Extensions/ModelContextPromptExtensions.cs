@@ -28,8 +28,7 @@ public static partial class ModelContextPromptExtensions
 
                     return await service.GetServerPrompt(request.Services!, request.Server,
                         request.Params?.Name!,
-                        request.Params?.Arguments ?? new Dictionary<string, JsonElement>(),
-                        cancellationToken);
+                        request.Params?.Arguments ?? new Dictionary<string, JsonElement>());
                 }
             }
             : null;

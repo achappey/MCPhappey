@@ -4,7 +4,10 @@
       "uri": "https://graph.microsoft.com/beta/me/followedSites?$select=id,displayName,webUrl",
       "name": "List followed SharePoint sites",
       "description": "Get a list of all followed SharePoint sites",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     }
   ]
 }

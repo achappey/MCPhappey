@@ -26,8 +26,7 @@ public class PromptService
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
         string name,
-        IReadOnlyDictionary<string, JsonElement> arguments,
-        CancellationToken cancellationToken = default)
+        IReadOnlyDictionary<string, JsonElement>? arguments = null)
     {
         var serverConfig = serviceProvider.GetServerConfig(mcpServer) ?? throw new Exception();
         var prompt = serverConfig.PromptList?.Prompts.FirstOrDefault(a => a.Template.Name == name);

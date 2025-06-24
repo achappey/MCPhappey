@@ -10,14 +10,15 @@ public class SamplingService(PromptService promptService)
 {
     public async Task<CreateMessageResult> GetPromptSample(IServiceProvider serviceProvider,
         IMcpServer mcpServer, string name,
-        IReadOnlyDictionary<string, JsonElement> arguments, string? modelHint = null,
+        IReadOnlyDictionary<string, JsonElement>? arguments = null,
+        string? modelHint = null,
         float? temperature = null,
         string? systemPrompt = null,
         ContextInclusion includeContext = ContextInclusion.None,
         CancellationToken cancellationToken = default)
     {
         var prompt = await promptService.GetServerPrompt(serviceProvider, mcpServer, name,
-            arguments, cancellationToken);
+            arguments);
 
         return await mcpServer.SampleAsync(new CreateMessageRequestParams()
         {
@@ -31,7 +32,7 @@ public class SamplingService(PromptService promptService)
             SystemPrompt = systemPrompt,
             ModelPreferences = modelHint?.ToModelPreferences(),
             Temperature = temperature
-        });
+        }, cancellationToken);
     }
 
     public async Task<T?> GetPromptSample<T>(IServiceProvider serviceProvider,
@@ -45,7 +46,7 @@ public class SamplingService(PromptService promptService)
         CancellationToken cancellationToken = default)
     {
         var promptSample = await GetPromptSample(serviceProvider, mcpServer, name, arguments, modelHint,
-            temperature, systemPrompt, includeContext, cancellationToken);
+            temperature, systemPrompt, includeContext);
 
         try
         {
@@ -56,7 +57,7 @@ public class SamplingService(PromptService promptService)
         {
 
             var prompt = await promptService.GetServerPrompt(serviceProvider, mcpServer, name,
-            arguments, cancellationToken);
+            arguments);
 
             var newResult = await mcpServer.SampleAsync(new CreateMessageRequestParams()
             {
@@ -76,7 +77,7 @@ public class SamplingService(PromptService promptService)
                 SystemPrompt = systemPrompt,
                 ModelPreferences = modelHint?.ToModelPreferences(),
                 Temperature = temperature
-            });
+            }, cancellationToken);
 
             return JsonSerializer.Deserialize<T>(newResult.ToText()?.CleanJson()!);
         }

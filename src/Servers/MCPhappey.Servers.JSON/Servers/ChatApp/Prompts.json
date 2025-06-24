@@ -20,17 +20,11 @@
       }
     },
     {
-      "prompt": "You are an AI chatbot. Write a very short, friendly, and slightly creative welcome message for the user named {userName}, suitable for a chat interface. Keep it between 3 and 7 words. Messages could mention their first name, but messages without the name are fine. Try to vary the wording, tone, or mood each time—be upbeat, curious, or playful. For example: 'How can I help, {userName}?', 'What’s up, {userName}?', 'Hey {userName}, need a hand?', 'Ready when you are, {userName}!', 'Hi {userName}, what’s your question?', or 'Let’s get started, {userName}!'. Only output the welcome message itself, no quotes or extra text.",
+      "prompt": "You are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words. Vary the wording, tone, and mood—be upbeat, curious, or playful. For example: 'How can I help today?', 'What’s on your mind?', 'Need a hand with something?', 'Ready when you are!', 'What can I do for you?', or 'Let’s get started!'. Only output the welcome message itself, no quotes or extra text.",
       "template": {
         "name": "welcome-message",
         "description": "Generate a concise, friendly chatbot welcome message mentioning the user by name.",
-        "arguments": [
-          {
-            "name": "userName",
-            "description": "The name of the user",
-            "required": true
-          }
-        ]
+        "arguments": []
       }
     }
   ]
