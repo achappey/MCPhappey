@@ -1,3 +1,4 @@
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common.Models;
@@ -66,8 +67,17 @@ public static class AspNetCoreWebAppExtensions
             }
 
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
+
+            var jwt = new JwtSecurityToken(token);
+            //          Console.WriteLine("Token audience: " + string.Join(", ", jwt.Audiences));
+            //        Console.WriteLine("Expected audience: " + oauthSettings.Audience);
+
+            //var principal = await validator.ValidateAsync(token!, baseUrl,
+            //               oauthSettings.Audience, oAuthSettings);
+
             var principal = await validator.ValidateAsync(token!, baseUrl,
-                           oauthSettings.Audience, oAuthSettings);
+                           string.Join(", ", jwt.Audiences), oAuthSettings);
+
             var userRoles = principal?.Claims
                                 .Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
                                 .Select(c => c.Value)

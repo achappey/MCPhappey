@@ -102,10 +102,7 @@ public static class TokenController
             ["client_id"] = oauth.ClientId,
             ["client_secret"] = oauth.ClientSecret,
             ["code"] = code,
-          //  ["redirect_uri"] = redirectUri,
-            // ["redirect_uri"] = "http://localhost:3001/sharepoint/callback",
             ["redirect_uri"] = $"{ctx.Request.Scheme}://{ctx.Request.Host}/callback",
-            //  ["redirect_uri"] = redirectUri,
             ["code_verifier"] = codeVerifier,
             ["scope"] = string.Join(" ", oauth.Scopes.Split(" ") ?? [])
         };

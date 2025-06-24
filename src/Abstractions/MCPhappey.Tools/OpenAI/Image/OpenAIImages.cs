@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -23,7 +24,8 @@ public static class OpenAIImages
 
 
     [Description("Create a image with OpenAI image generator")]
-    public static async Task<CallToolResult> OpenAIImages_CreateImage(
+    [McpServerTool(ReadOnly = false)]
+    public static async Task<List<ContentBlock>> OpenAIImages_CreateImage(
         [Description("prompt")]
         string prompt,
         IServiceProvider serviceProvider,
@@ -53,7 +55,6 @@ public static class OpenAIImages
         }, cancellationToken);
 
         List<ContentBlock> content = [new ImageContentBlock(){
-                Type = "image",
                 MimeType = "image/png",
                 Data = Convert.ToBase64String(item.Value.ImageBytes)
             }];
@@ -74,10 +75,7 @@ public static class OpenAIImages
             });
         }
 
-        return new CallToolResult()
-        {
-            Content = content
-        };
+        return content;
     }
 }
 

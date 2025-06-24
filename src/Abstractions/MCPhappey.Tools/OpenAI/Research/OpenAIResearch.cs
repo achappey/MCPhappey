@@ -12,17 +12,8 @@ namespace MCPhappey.Tools.OpenAI.Research;
 
 public static class OpenAIResearch
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
-    public enum ImageQuality
-    {
-        low,
-        medium,
-        high,
-        auto
-    }
-
-
     [Description("Perform web research on a topic. Before you use this tool, always ask the user first for more details so you can craft a detailed research topic for maximum accuracy")]
+    [McpServerTool(ReadOnly = false)]
     public static async Task<CallToolResult> OpenAIResearch_PerformResearch(
         [Description("Topic for the research")]
         string researchTopic,
@@ -133,10 +124,7 @@ public static class OpenAIResearch
             });
         }
 
-        return new CallToolResult()
-        {
-            Content = content
-        };
+        return content.ToCallToolResult();
     }
 
     private static async Task<string?> GetWebResearch(IMcpServer mcpServer,

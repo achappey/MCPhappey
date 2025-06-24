@@ -74,7 +74,7 @@ public class JwtValidator(IHttpClientFactory httpClientFactory) : IJwtValidator
                     ValidateLifetime = true,
                     ValidateAudience = true,
                     AudienceValidator = (tokenAudiences, _, _) =>
-                        tokenAudiences.Contains(audience, StringComparer.OrdinalIgnoreCase) == true
+                        tokenAudiences.Contains(oAuthSettings.Audience, StringComparer.OrdinalIgnoreCase) == true
                 };
 
                 var innerResult = await handler.ValidateTokenAsync(actToken, innerValidation);
