@@ -1,19 +1,14 @@
 {
   "prompts": [
     {
-      "prompt": "User:\n\n###\n{userMessage}\n###\n\nAssistant:\n\n###\n{assistantMessage}\n###\n\nAnalyze the above conversation history very well. Come up with a name for this conversation. Max 3-6 words. The name should be in the conversartion locale. Answer with the name of the conversation only. Don't include quotes.",
+      "prompt": "User:\n\n###\n{userMessage}\n###\n\nAnalyze the above user message very well. Come up with a name for this conversation. Max 3-6 words. The name should be in the conversartion locale. Answer with the name of the conversation only. Don't include quotes.",
       "template": {
         "name": "conversation-name",
-        "description": "Generate a name for the conversation",
+        "description": "Generate a name for a conversation",
         "arguments": [
           {
             "name": "userMessage",
             "description": "User message",
-            "required": true
-          },
-          {
-            "name": "assistantMessage",
-            "description": "Assistant message",
             "required": true
           }
         ]

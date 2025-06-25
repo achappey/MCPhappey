@@ -14,7 +14,6 @@ public static class ChatApp
     [McpServerTool(ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExecuteGenerateConversationName(
         [Description("User message")] string userMessage,
-        [Description("Assistant message")] string assistantMessage,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
@@ -26,14 +25,13 @@ public static class ChatApp
         var promptArgs = new Dictionary<string, JsonElement>
         {
             ["userMessage"] = JsonSerializer.SerializeToElement(userMessage ?? string.Empty),
-            ["assistantMessage"] = JsonSerializer.SerializeToElement(assistantMessage ?? string.Empty)
         };
 
         // Pick the model you want (same as before or allow config)
         var modelName = "gpt-4.1-mini"; // or any default model you prefer
 
         // Optional: Logging/notification
-        var markdown = $"Generating conversation name...\nUser: {userMessage}\nAssistant: {assistantMessage}";
+        var markdown = $"Generating conversation name...\nUser: {userMessage}";
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
         // Call prompt template (should be named "conversation-name")
