@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
@@ -9,11 +10,11 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Simplicate.Hours;
 
-public static class SimplicateHoursService
+public static class SimplicateHours
 {
     [Description("Get total registered hours grouped by employee, optionally filtered by date range and project.")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<IEnumerable<SimplicateHourTotals>> SimplicateHoursService_GetHourTotalsByEmployee(
+    public static async Task<EmbeddedResourceBlock> SimplicateHours_GetHourTotalsByEmployee(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         string? fromDate = null,
@@ -44,7 +45,7 @@ public static class SimplicateHoursService
         //  var filterString = string.Join("&", filters) + $"&select={select}";
         var filterString = string.Join("&", filters);
 
-        var hours = await downloadService.GetAllSimplicatePagesAsync<SimplicateHours>(
+        var hours = await downloadService.GetAllSimplicatePagesAsync<SimplicateHourItem>(
             serviceProvider,
             requestContext.Server,
             baseUrl,
@@ -60,10 +61,12 @@ public static class SimplicateHoursService
             {
                 EmployeeName = g.Key,
                 TotalHours = g.Select(r => r.Hours).Sum(),
-                TotalAmount = g.Select(r => r.Amount).Sum()
+                TotalAmount = g.Select(r => r.Amount).Sum().ToAmount()
             });
 
-        return grouped;
+        string url = $"{baseUrl}?{filterString}";
+
+        return grouped.ToJsonContentBlock(url);
     }
 
     public class SimplicateHourTotals
@@ -73,7 +76,7 @@ public static class SimplicateHoursService
         public decimal TotalAmount { get; set; }
     }
 
-    public class SimplicateHours
+    public class SimplicateHourItem
     {
         [JsonPropertyName("employee")]
         public SimplicateEmployee? Employee { get; set; }
@@ -101,7 +104,7 @@ public static class SimplicateHoursService
                 var amount = hours * tariff;
 
                 // If you want to round to 2 decimals for currency (bankers rounding):
-                return Math.Round(amount, 2, MidpointRounding.AwayFromZero);
+                return amount.ToAmount();
             }
         }
     }

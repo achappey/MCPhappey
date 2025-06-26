@@ -8,7 +8,7 @@
     "Authentication-Secret": "Simplicate Api Secret"
   },
   "plugins": [
-    "MCPhappey.Simplicate.Hours.SimplicateHoursService, MCPhappey.Simplicate"
+    "MCPhappey.Simplicate.Hours.SimplicateHours, MCPhappey.Simplicate"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

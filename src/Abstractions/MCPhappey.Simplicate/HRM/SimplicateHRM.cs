@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
@@ -11,12 +10,12 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Simplicate.HRM;
 
-public static class SimplicateHRMService
+public static class SimplicateHRM
 {
 
     [Description("Get Simplicate leaves by year grouped on employee and leave type")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResult> SimplicateHRMService_GetLeaveTotals(
+    public static async Task<EmbeddedResourceBlock> SimplicateHRM_GetLeaveTotals(
         [Description("Year to get the total from")] string year,
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
@@ -65,7 +64,9 @@ public static class SimplicateHRMService
                 TotalHours = g.Sum(x => x.Hours)
             });
 
-        return JsonSerializer.Serialize(grouped).ToTextCallToolResponse();
+        string url = $"{baseUrl}?{filterString}";
+
+        return grouped.ToJsonContentBlock(url);
     }
 
     // ---------------------- DTOs ------------------------

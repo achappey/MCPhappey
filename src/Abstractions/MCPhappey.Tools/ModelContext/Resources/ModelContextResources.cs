@@ -11,7 +11,7 @@ public static class ModelContextResourceService
 {
     [Description("Reads a resource from the specified URI")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResult> ModelContextProtocol_ReadResource(
+    public static async Task<IEnumerable<ContentBlock>> ModelContextProtocol_ReadResource(
         [Description("The URI of the resource to get. Must be a valid URI. Supports web links, but also links to authenticated content like SharePoint, Outlook, Simplicate, etc")]
         string uri,
         IServiceProvider serviceProvider,
@@ -22,18 +22,10 @@ public static class ModelContextResourceService
 
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        try
-        {
-            var content = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, uri,
-                cancellationToken) ?? throw new Exception();
+        var content = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, uri,
+            cancellationToken) ?? throw new Exception();
 
-            return content.ToReadResourceResult().ToCallToolResult();
-
-        }
-        catch (Exception e)
-        {
-            return e.Message.ToErrorCallToolResponse();
-        }
+        return content.ToContentBlocks();
     }
 }
 

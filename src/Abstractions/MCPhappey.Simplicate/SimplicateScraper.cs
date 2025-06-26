@@ -7,6 +7,7 @@ using ModelContextProtocol.Server;
 using System.IdentityModel.Tokens.Jwt;
 using MCPhappey.Common.Extensions;
 using System.Web;
+using System.Text.Json;
 
 namespace MCPhappey.Simplicate;
 
@@ -29,7 +30,7 @@ public class SimplicateScraper(
     private readonly SecretClient? _secretClient = secretClient;
 
     public bool SupportsHost(ServerConfig currentConfig, string host)
-        => host == $"{simplicateOptions.Organization}.simplicate.app";
+        => new Uri(host).Host == $"{simplicateOptions.Organization}.simplicate.app";
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
         IMcpServer mcpServer,
@@ -68,6 +69,40 @@ public class SimplicateScraper(
         return [await response.ToFileItem(url, cancellationToken: cancellationToken)];
     }
 
+    public async Task<SimplicateNewItemData?> PostContentAsync<T>(
+        IMcpServer mcpServer,
+        IServiceProvider serviceProvider,
+        string url,
+        string jsonPayload,
+        CancellationToken cancellationToken = default)
+    {
+        var tokenProvider = serviceProvider.GetService<HeaderProvider>();
+        var (key, secret) = await TryGetKeySecretAsync(tokenProvider, cancellationToken);
+        if (key is null || secret is null)
+            return null;
+
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Add("Authentication-Key", key);
+        client.DefaultRequestHeaders.Add("Authentication-Secret", secret);
+
+        using var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+        using var response = await client.PostAsync(url, content, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            // Optional: log or throw error
+            var error = await response.Content.ReadAsStringAsync();
+            throw new InvalidOperationException($"POST failed: {response.StatusCode} - {error}");
+        }
+
+        // Usually returns JSON, not a file
+        var respContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        return JsonSerializer.Deserialize<SimplicateNewItemData>(respContent);
+
+    }
+
+
     private static string? GetOidClaim(string jwt)
     {
         var handler = new JwtSecurityTokenHandler();
@@ -83,7 +118,7 @@ public class SimplicateScraper(
         {
             return null;
         }
-        
+
         var secret = await _secretClient.GetSecretAsync(oid,
                  cancellationToken: cancellationToken);
         var raw = secret.Value.Value;

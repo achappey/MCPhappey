@@ -8,6 +8,10 @@ namespace MCPhappey.Common.Extensions;
 
 public static class NotificationExtensions
 {
+
+    public static bool ShouldLog(this LoggingLevel messageLevel, LoggingLevel? minLevel)
+        => messageLevel >= (minLevel ?? LoggingLevel.Info);
+
     public static async Task<int?> SendProgressNotificationAsync(
        this IMcpServer mcpServer,
        RequestContext<CallToolRequestParams> requestContext,

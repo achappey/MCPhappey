@@ -1,8 +1,6 @@
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
-using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
-using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -15,6 +13,9 @@ namespace MCPhappey.Simplicate.Extensions;
 //
 public static class SimplicateExtensions
 {
+    public static decimal ToAmount(this decimal item) =>
+         Math.Round(item, 2, MidpointRounding.AwayFromZero);
+
     public static async Task<List<T>> GetAllSimplicatePagesAsync<T>(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
@@ -78,4 +79,36 @@ public static class SimplicateExtensions
         return results;
     }
 
+    public static async Task<SimplicateNewItemData?> PostSimplicateItemAsync<T>(
+        this SimplicateScraper downloadService,
+        IServiceProvider serviceProvider,
+        string baseUrl, // e.g. "https://{subdomain}.simplicate.nl/api/v2/project/project"
+        T item,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
+    {
+        var json = JsonSerializer.Serialize(item, JsonSerializerOptions.Web);
+
+        if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
+        {
+            await requestContext.Server.SendMessageNotificationAsync(
+                $"<details><summary>POST <code>{baseUrl}</code></summary>\n\n```\n{json}\n```\n</details>",
+                LoggingLevel.Debug
+            );
+        }
+
+        // Use your DownloadService to POST (assumes similar signature to ScrapeContentAsync)
+        var response = await downloadService.PostContentAsync<T>(
+            requestContext.Server, serviceProvider, baseUrl, json, cancellationToken);
+
+        if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
+        {
+            await requestContext.Server.SendMessageNotificationAsync(
+                $"<details><summary>RESPONSE</summary>\n\n```\n{JsonSerializer.Serialize(response, JsonSerializerOptions.Web)}\n```\n</details>",
+                LoggingLevel.Debug
+            );
+        }
+
+        return response;
+    }
 }

@@ -14,7 +14,7 @@ public static class WebSearch
 
     [Description("Web search using multiple AI models in parallel")]
     [McpServerTool(ReadOnly = true)]
-    public static async Task<CallToolResult> WebSearch_ExecuteWebSearch(
+    public static async Task<IEnumerable<ContentBlock>> WebSearch_ExecuteWebSearch(
        [Description("Search query")] string query,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
@@ -61,7 +61,7 @@ public static class WebSearch
 
         // Terug als dictionary: model => antwoord
         return results
-            .Select(a => a.Content).ToCallToolResult();
+            .Select(a => a.Content);
     }
 
 }

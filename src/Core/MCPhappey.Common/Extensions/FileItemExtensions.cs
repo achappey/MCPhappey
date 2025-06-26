@@ -1,4 +1,5 @@
 using MCPhappey.Common.Models;
+using ModelContextProtocol.Protocol;
 using System.Net.Mime;
 
 namespace MCPhappey.Common.Extensions;
@@ -21,11 +22,48 @@ public static class FileItemExtensions
     public static async Task<FileItem> ToFileItem(this HttpResponseMessage httpResponseMessage, string uri,
         CancellationToken cancellationToken = default) => new()
         {
-        Contents = BinaryData.FromBytes(await httpResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken)),
-        MimeType = httpResponseMessage.Content.Headers.ContentType?.MediaType!,
-        Uri = uri,
+            Contents = BinaryData.FromBytes(await httpResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken)),
+            MimeType = httpResponseMessage.Content.Headers.ContentType?.MediaType!,
+            Uri = uri,
         };
 
+    public static ReadResourceResult ToReadResourceResult(this FileItem fileItem)
+            => new()
+            {
+                Contents =
+                    [
+                      fileItem.ToResourceContents()
+                    ]
+            };
+
+    public static ReadResourceResult ToReadResourceResult(this IEnumerable<FileItem> fileItems)
+          => new()
+          {
+              Contents = [.. fileItems.Select(a => a.ToResourceContents())]
+          };
+
+    public static IEnumerable<ContentBlock> ToContentBlocks(this IEnumerable<FileItem> fileItems)
+              => fileItems.Select(a => new EmbeddedResourceBlock()
+              {
+                  Resource = a.ToResourceContents()
+              });
+
+    public static ResourceContents ToResourceContents(this FileItem fileItem)
+        => fileItem.MimeType.StartsWith("text/")
+            || fileItem.MimeType.Equals(MediaTypeNames.Application.Json)
+            || fileItem.MimeType.Equals(MediaTypeNames.Application.ProblemJson)
+            || fileItem.MimeType.Equals("application/hal+json")
+            || fileItem.MimeType.Equals(MediaTypeNames.Application.Xml) ? new TextResourceContents()
+            {
+                Text = fileItem.Contents.ToString(),
+                MimeType = fileItem.MimeType,
+                Uri = fileItem.Uri,
+            } : new BlobResourceContents()
+            {
+                Blob = Convert.ToBase64String(fileItem.Contents),
+                MimeType = fileItem.MimeType,
+                Uri = fileItem.Uri,
+            };
 
 }
 

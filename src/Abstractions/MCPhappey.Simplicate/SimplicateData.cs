@@ -17,3 +17,30 @@ public class SimplicateMetadata
     [JsonPropertyName("count")]
     public int Count { get; set; }
 }
+
+public class SimplicateItemData<T>
+{
+    [JsonPropertyName("data")]
+    public T? Data { get; set; }
+
+    [JsonPropertyName("errors")]
+    public IEnumerable<string>? Errors { get; set; }
+}
+
+
+public class SimplicateNewItemData
+{
+    [JsonPropertyName("data")]
+    public SimplicateNewItem Data { get; set; } = default!;
+
+    [JsonPropertyName("errors")]
+    public IEnumerable<string>? Errors { get; set; }
+}
+
+
+public class SimplicateNewItem
+{
+    [JsonPropertyName("id")]
+    public string Id { get; set; } = default!;
+
+}
