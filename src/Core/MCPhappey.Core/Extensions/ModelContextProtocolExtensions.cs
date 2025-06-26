@@ -10,7 +10,6 @@ public static class ModelContextProtocolExtensions
     public static IMcpServerBuilder WithConfigureSessionOptions(this IMcpServerBuilder mcpBuilder,
         IEnumerable<ServerConfig> servers) => mcpBuilder.WithHttpTransport(http =>
         {
-
             http.ConfigureSessionOptions = async (ctx, opts, cancellationToken) =>
              {
                  await Task.Run(() =>
@@ -21,6 +20,7 @@ public static class ModelContextProtocolExtensions
                      var authToken = ctx.GetBearerToken();
                      var headers = ctx.Request.Headers
                             .ToDictionary(h => h.Key, h => h.Value.ToString());
+                            
                      opts.ServerInfo = server.Server.ToServerInfo();
                      opts.ServerInstructions = server.Server.Instructions;
                      opts.Capabilities = new()

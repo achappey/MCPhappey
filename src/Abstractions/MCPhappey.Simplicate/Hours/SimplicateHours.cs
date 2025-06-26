@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
-using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
@@ -13,8 +12,8 @@ namespace MCPhappey.Simplicate.Hours;
 public static class SimplicateHours
 {
     [Description("Get total registered hours grouped by employee, optionally filtered by date range and project.")]
-    [McpServerTool(ReadOnly = true)]
-    public static async Task<EmbeddedResourceBlock> SimplicateHours_GetHourTotalsByEmployee(
+    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByEmployee(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         string? fromDate = null,
@@ -32,7 +31,6 @@ public static class SimplicateHours
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hours/hours";
-        string select = "employee.,project.,hours,tariff.";
         var filters = new List<string>();
 
         if (!string.IsNullOrWhiteSpace(fromDate))
@@ -42,7 +40,7 @@ public static class SimplicateHours
 
         if (!string.IsNullOrWhiteSpace(projectName)) filters.Add($"q[project.name]=*{Uri.EscapeDataString(projectName)}*");
         if (!string.IsNullOrWhiteSpace(employeeName)) filters.Add($"q[employee.name]=*{Uri.EscapeDataString(employeeName)}*");
-        //  var filterString = string.Join("&", filters) + $"&select={select}";
+
         var filterString = string.Join("&", filters);
 
         var hours = await downloadService.GetAllSimplicatePagesAsync<SimplicateHourItem>(
@@ -55,24 +53,21 @@ public static class SimplicateHours
             cancellationToken: cancellationToken
         );
 
-        var grouped = hours
+        return hours
             .GroupBy(x => x.Employee?.Name ?? string.Empty)
-            .Select(g => new SimplicateHourTotals
+            .ToDictionary(g => g.Key, g => new SimplicateHourTotals
             {
-                EmployeeName = g.Key,
                 TotalHours = g.Select(r => r.Hours).Sum(),
                 TotalAmount = g.Select(r => r.Amount).Sum().ToAmount()
             });
-
-        string url = $"{baseUrl}?{filterString}";
-
-        return grouped.ToJsonContentBlock(url);
     }
 
     public class SimplicateHourTotals
     {
-        public string EmployeeName { get; set; } = string.Empty;
+        [JsonPropertyName("totalHours")]
         public double TotalHours { get; set; }
+
+        [JsonPropertyName("totalAmount")]
         public decimal TotalAmount { get; set; }
     }
 

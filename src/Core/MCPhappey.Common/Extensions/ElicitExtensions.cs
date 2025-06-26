@@ -25,6 +25,9 @@ public static class ElicitExtensions
     public static string? GetDescription(this PropertyInfo prop) =>
         prop.GetCustomAttribute<DescriptionAttribute>()?.Description;
 
+    public static object? GetDefaultValue(this PropertyInfo prop) =>
+        prop.GetCustomAttribute<DefaultValueAttribute>()?.Value;
+
     public static bool IsEmail(this PropertyInfo prop) =>
         prop.GetCustomAttribute<EmailAddressAttribute>() != null;
 
@@ -88,6 +91,32 @@ public static class ElicitExtensions
         var desc = prop.GetDescription();
         var type = prop.PropertyType;
 
+        // Enum detection (works for nullable enums too)
+        var enumType = Nullable.GetUnderlyingType(type) ?? (type.IsEnum ? type : null);
+
+        if (enumType != null && enumType.IsEnum)
+        {
+            var enumNames = Enum.GetNames(enumType);
+            // Try to get [Display(Name="...")] friendly names
+            var friendlyNames = enumType
+                .GetFields(BindingFlags.Public | BindingFlags.Static)
+                .Select(field =>
+                {
+                    var display = field.GetCustomAttribute<DisplayAttribute>();
+                    return display?.Name ?? field.Name;
+                })
+                .ToArray();
+
+            // Only set enumNames if they differ from enum values
+            return new ElicitRequestParams.EnumSchema
+            {
+                Title = title,
+                Description = desc,
+                Enum = enumNames,
+                EnumNames = !enumNames.SequenceEqual(friendlyNames) ? friendlyNames : null
+            };
+        }
+
         // Use switch for type logic (add more cases as needed)
         return type switch
         {
@@ -120,6 +149,12 @@ public static class ElicitExtensions
                 Title = title,
                 Format = "date-time",
                 Description = desc
+            },
+            Type t when t == typeof(bool) || t == typeof(bool?) => new ElicitRequestParams.BooleanSchema
+            {
+                Title = title,
+                Description = desc,
+                Default = prop.GetDefaultValue() as bool?
             },
             // Add more cases if needed (enums, arrays, etc.)
             _ => new ElicitRequestParams.StringSchema

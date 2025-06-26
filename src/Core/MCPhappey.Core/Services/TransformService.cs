@@ -11,22 +11,28 @@ public class TransformService(
     public async Task<FileItem> DecodeAsync(string uri, BinaryData binaryData, string contentType,
          CancellationToken cancellationToken = default)
     {
-        var supportedDecoders = contentDecoders
-            .Where(a => a.SupportsMimeType(contentType));
+        string? myAssemblyName = typeof(TransformService).Namespace?.Split(".").FirstOrDefault();
+
+        var bestDecoder = contentDecoders
+            .Where(a => a.SupportsMimeType(contentType))
+            .OrderBy(d => myAssemblyName != null
+                && d.GetType().Namespace?.Contains(myAssemblyName) == true ? 0 : 1)
+            .FirstOrDefault();
 
         FileContent? fileContent = null;
-
-        foreach (var decoder in supportedDecoders)
+        if (bestDecoder != null)
         {
-            
-            fileContent = await decoder.DecodeAsync(binaryData, cancellationToken);
+            fileContent = await bestDecoder.DecodeAsync(binaryData, cancellationToken);
         }
 
-        return fileContent != null ? fileContent.GetFileItemFromFileContent(uri) : new FileItem()
-        {
-            Contents = binaryData,
-            MimeType = contentType,
-            Uri = uri
-        };
+        // Fallback: original content if nothing could decode
+        return fileContent != null
+            ? fileContent.GetFileItemFromFileContent(uri)
+            : new FileItem
+            {
+                Contents = binaryData,
+                MimeType = contentType,
+                Uri = uri
+            };
     }
 }

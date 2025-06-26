@@ -33,7 +33,7 @@ public static class KernelMemoryExtensions
         {
             Contents = BinaryData.FromString(string.Join("\\n\\n",
                 file.Sections.Select(a => a.Content))),
-            MimeType = MediaTypeNames.Text.Plain,
+            MimeType = file.MimeType,
             Uri = uri,
         };
 

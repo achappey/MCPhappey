@@ -4,37 +4,55 @@
       "uri": "https://graph.microsoft.com/beta/me/joinedTeams?$select=displayName,id",
       "name": "Joined Teams",
       "description": "Get a list of all joined Teams",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://graph.microsoft.com/beta/me/chats?$select=id,topic,createdDateTime,lastUpdatedDateTime",
       "name": "My Chats",
       "description": "Retrieves a list of the user's 1:1 and group chat threads, including basic metadata like topic and timestamps.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://graph.microsoft.com/beta/me/presence",
-      "name": "My Presence",
+      "name": "My presence",
       "description": "Returns the current presence status of the signed-in user (e.g., Available, Busy, Away).",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://graph.microsoft.com/beta/teamwork/devices?$select=id,deviceType,activityState,hardwareDetail",
-      "name": "My Teamwork Devices",
+      "name": "My teamwork sevices",
       "description": "Lists devices used with Teams, such as headsets or peripherals, including device type and current activity state.",
-      "mimeType": "application/json"
-    },    
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
     {
       "uri": "https://graph.microsoft.com/beta/me/teamwork/installedApps?$select=id&$expand=teamsApp($select=id,externalId,displayName,distributionMethod)",
-      "name": "My Teams Apps",
+      "name": "My teams apps",
       "description": "Retrieves the list of Teams apps installed for the signed-in user, including app ID and display name.",
-      "mimeType": "application/json"
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     },
     {
       "uri": "https://graph.microsoft.com/beta/me/teamwork/associatedTeams?$select=id,displayName,tenantId",
-      "name": "My Associated Teams",
+      "name": "My associated teams",
       "description": "Lists Teams the user is indirectly associated with (e.g., via tags), including name and classification.",
-      "mimeType": "application/json"
-    } 
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
   ]
 }

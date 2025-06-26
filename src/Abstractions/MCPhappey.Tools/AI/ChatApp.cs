@@ -65,16 +65,13 @@ public static class ChatApp
         var markdown = $"Generating welcome message";
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
-        // Call prompt template (should be named "welcome-message")
         var result = await samplingService.GetPromptSample(
             serviceProvider,
             mcpServer,
-            "welcome-message", // prompt template name
+            "welcome-message",
             modelHint: modelName,
-            cancellationToken: cancellationToken
-        );
+            cancellationToken: cancellationToken);
 
-        // Return the result as a single ContentBlock
         return result.Content;
     }
 }

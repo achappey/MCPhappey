@@ -5,6 +5,7 @@ namespace MCPhappey.Tools.KernelMemory;
 
 public static class KernelMemoryExtensions
 {
+    /*
     public static FileItem GetFileItemFromFileContent(this Microsoft.KernelMemory.DataFormats.FileContent file, string uri)
         => new()
         {
@@ -13,5 +14,5 @@ public static class KernelMemoryExtensions
             MimeType = MediaTypeNames.Text.Plain,
             Uri = uri,
         };
-
+*/
 }

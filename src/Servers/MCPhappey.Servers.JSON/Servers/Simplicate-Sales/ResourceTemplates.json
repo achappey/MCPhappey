@@ -1,16 +1,7 @@
 {
   "resourceTemplates": [
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales?q[reason.name]=*Ervaring*&select=subject,contact.,start_date,note,expected_closing_date,expected_revenue,chance_to_score,responsible_employee.,organization.,status.,source.,progress.",
-      "name": "Sales zoeken op reden (niet) geaccepteerd",
-      "description": "Zoek sales op reden (niet) geaccepteerd",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales/sales:{dealId}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales/sales:{salesId}",
       "name": "Sales details",
       "description": "Haal alle details van een specifieke sales op.",
       "mimeType": "application/json",
@@ -19,7 +10,7 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales?q[subject]={dealName}&q[progress.label]={dealStageLabel}&q[status.label]={dealStatusLabel}&q[responsible_employee.name]={responsibleEmployeeName}&q[organization.name]={organisationName}&q[person.full_name]={personName}&q[expected_revenue][ge]={expectedRevenueGE}&q[expected_revenue][le]={expectedRevenueLE}&q[chance_to_score][ge]={probabilityGE}&q[chance_to_score][le]={probabilityLE}&q[expected_closing_date][ge]={expectedClosingDateGE}&q[expected_closing_date][le]={expectedClosingDateLE}&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&limit={limit}&offset={offset}&sort={sortColumn}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales?q[subject]=*{dealName}*&q[progress.label]={dealStageLabel}&q[status.label]={dealStatusLabel}&q[responsible_employee.name]=*{responsibleEmployeeName}*&q[organization.name]=*{organisationName}*&q[person.full_name]={personName}&q[expected_revenue][ge]={expectedRevenueGE}&q[expected_revenue][le]={expectedRevenueLE}&q[chance_to_score][ge]={probabilityGE}&q[chance_to_score][le]={probabilityLE}&q[expected_closing_date][ge]={expectedClosingDateGE}&q[expected_closing_date][le]={expectedClosingDateLE}&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&limit={limit}&offset={offset}&sort={sortColumn}&select=subject,contact.,start_date,note,expected_closing_date,expected_revenue,chance_to_score,responsible_employee.,organization.,status.,source.,progress.",
       "name": "Sales (alle filters)",
       "description": "Haal sales op, gefilterd op onderwerp, fase, status, verantwoordelijke, organisatie, persoon, verwachte omzet/sluitingsdatum, kans, aanmaak-/wijzigingsdatum. Ondersteunt paginering en sortering.",
       "mimeType": "application/json",
@@ -28,7 +19,7 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/quote/quote:{quotationId}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/quote/quote:{quoteId}",
       "name": "Offerte details",
       "description": "Haal alle details van een specifieke offerte op.",
       "mimeType": "application/json",

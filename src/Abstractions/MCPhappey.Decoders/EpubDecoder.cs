@@ -11,7 +11,7 @@ public class EpubDecoder : IContentDecoder
     public bool SupportsMimeType(string mimeType)
     {
         return mimeType != null &&
-               (mimeType.Equals("application/epub+zip", StringComparison.OrdinalIgnoreCase) ||
+               (mimeType.Equals(MimeTypes.ElectronicPublicationZip, StringComparison.OrdinalIgnoreCase) ||
                 mimeType.EndsWith(".epub", StringComparison.OrdinalIgnoreCase)); // fallback
     }
 

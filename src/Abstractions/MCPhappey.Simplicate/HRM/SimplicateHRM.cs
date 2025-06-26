@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Text.Json.Serialization;
-using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
@@ -14,11 +13,11 @@ public static class SimplicateHRM
 {
 
     [Description("Get Simplicate leaves by year grouped on employee and leave type")]
-    [McpServerTool(ReadOnly = true)]
-    public static async Task<EmbeddedResourceBlock> SimplicateHRM_GetLeaveTotals(
+    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    public static async Task<Dictionary<string, List<LeaveTotals>>?> SimplicateHRM_GetLeaveTotals(
         [Description("Year to get the total from")] string year,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        RequestContext<CallToolRequestParams> requestContext,
         [Description("Filter on leave type")] string? leaveType = null,
         CancellationToken cancellationToken = default)
     {
@@ -38,12 +37,11 @@ public static class SimplicateHRM
         // Typed DTO ophalen via extension method
         var leaves = await downloadService.GetAllSimplicatePagesAsync<SimplicateLeave>(
             serviceProvider,
-            mcpServer,
+            requestContext.Server,
             baseUrl,
             filterString,
-            pageNum => $"Downloading HRM leaves",
-            // Progressnotification
-            null!, // Geen requestContext want geen progress nodig, of voeg eventueel toe!
+            pageNum => $"Downloading HRM leaves page {pageNum}",
+            requestContext, // Geen requestContext want geen progress nodig, of voeg eventueel toe!
             cancellationToken: cancellationToken
         );
 
@@ -55,18 +53,18 @@ public static class SimplicateHRM
                 .ToList();
         }
 
-        var grouped = leaves
-            .GroupBy(x => new { x.Employee?.Name, x.LeaveType?.Label })
-            .Select(g => new LeaveTotalsResult
-            {
-                Employee = g.Key.Name ?? string.Empty,
-                TypeLabel = g.Key.Label ?? string.Empty,
-                TotalHours = g.Sum(x => x.Hours)
-            });
-
-        string url = $"{baseUrl}?{filterString}";
-
-        return grouped.ToJsonContentBlock(url);
+        return leaves
+            .GroupBy(x => new { Employee = x.Employee?.Name ?? "" })
+            .ToDictionary(
+                g => g.Key.Employee,
+                g => g.GroupBy(x => x.LeaveType?.Label ?? "")
+                        .Select(lg => new LeaveTotals
+                        {
+                            LeaveType = lg.Key,
+                            TotalHours = lg.Sum(x => x.Hours)
+                        })
+                        .ToList()
+        );
     }
 
     // ---------------------- DTOs ------------------------
@@ -95,10 +93,12 @@ public static class SimplicateHRM
         public string Label { get; set; } = string.Empty;
     }
 
-    public class LeaveTotalsResult
+    public class LeaveTotals
     {
-        public string Employee { get; set; } = string.Empty;
-        public string TypeLabel { get; set; } = string.Empty;
+        [JsonPropertyName("leavetype")]
+        public string LeaveType { get; set; } = string.Empty;
+
+        [JsonPropertyName("totalHours")]
         public double TotalHours { get; set; }
     }
 }

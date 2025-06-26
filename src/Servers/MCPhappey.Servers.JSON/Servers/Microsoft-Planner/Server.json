@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "Microsoft-Planner",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.Graph.Planner.GraphPlanner, MCPhappey.Tools"],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Group.ReadWrite.All"
+  }
+}

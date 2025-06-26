@@ -22,7 +22,7 @@ public static class SimplicateExtensions
         IMcpServer mcpServer,
         string baseUrl,
         string filterString,
-        Func<int, string> progressTextSelector, // e.g. pageNum => $"Downloading page {pageNum}"
+        Func<int, string> progressTextSelector, 
         RequestContext<CallToolRequestParams> requestContext,
         int pageSize = 100,
         CancellationToken cancellationToken = default)

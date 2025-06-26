@@ -10,8 +10,8 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hours/hours?q[project.name]=*{projectName}*&q[employee.name]=*{employeeName}*&limit=50&offset=0",
-      "name": "Betalingen per Factuur",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hours/hours?q[project.name]=*{projectName}*&q[employee.name]=*{employeeName}*&limit=50&offset=0&select=id,employee.,project.,projectservice.,approvalstatus.,invoice_status,tariff,created_at,updated_at,leave_status.,leave_id,status,hours,start_date,end_date,note,address.",
+      "name": "Uren (alle filters)",
       "description": "",
       "mimeType": "application/json",
       "annotations": {
