@@ -26,6 +26,15 @@
       "annotations": {
         "audience": ["assistant"]
       }
+    },
+    {
+      "uri": "https://raw.githubusercontent.com/modelcontextprotocol/typescript-sdk/refs/heads/main/src/types.ts",
+      "name": "Model Context Protocol typings",
+      "description": "TypeScript typings for MCP types",
+      "mimeType": "application/typescript",
+      "annotations": {
+        "audience": ["assistant"]
+      }
     }
   ]
 }

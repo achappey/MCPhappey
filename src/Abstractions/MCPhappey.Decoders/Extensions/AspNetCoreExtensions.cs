@@ -8,6 +8,7 @@ public static class AspNetCoreExtensions
         this IKernelMemoryBuilder builder)
     {
         return builder.WithContentDecoder<EpubDecoder>()
-            .WithContentDecoder<JsonDecoder>();
+            .WithContentDecoder<JsonDecoder>()
+            .WithContentDecoder<HtmlDecoder>();
     }
 }
