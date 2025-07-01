@@ -1,3 +1,4 @@
+
 namespace MCPhappey.Common;
 
 public class HeaderProvider

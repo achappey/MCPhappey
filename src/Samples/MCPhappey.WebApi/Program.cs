@@ -10,6 +10,7 @@ using MCPhappey.Scrapers.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using OpenAI;
+using MCPhappey.Agent2Agent.Extensions;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -99,6 +100,13 @@ if (appConfig?.Simplicate != null)
 {
     builder.WithSimplicateScraper(appConfig.Simplicate, appConfig.OAuth);
     servers.ApplySimplicateOrganization(appConfig.Simplicate.Organization);
+}
+
+if (appConfig?.Agent2AgentStorage != null)
+{
+    builder.WithAgent2Agent(appConfig.Agent2AgentStorage.ConnectionString,
+    appConfig.Agent2AgentStorage.TaskContainer,
+    appConfig.Agent2AgentStorage.ContextContainer);
 }
 
 builder.Services.AddMcpCoreServices(servers);

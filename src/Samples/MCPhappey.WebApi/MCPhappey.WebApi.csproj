@@ -18,6 +18,7 @@
     <ProjectReference Include="..\..\Core\MCPhappey.Common\MCPhappey.Common.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\..\Abstractions\MCPhappey.Auth\MCPhappey.Auth.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\..\Abstractions\MCPhappey.Simplicate\MCPhappey.Simplicate.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\..\Abstractions\MCPhappey.Agent2Agent\MCPhappey.Agent2Agent.csproj" PrivateAssets="All" />
   </ItemGroup>
 
 	<ItemGroup>

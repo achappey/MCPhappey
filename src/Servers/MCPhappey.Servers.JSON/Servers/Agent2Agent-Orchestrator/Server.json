@@ -1,0 +1,13 @@
+{
+  "serverInfo": {
+    "name": "Agent2Agent-Orchestrator",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Agent2Agent.Agent2AgentOrchestrator, MCPhappey.Agent2Agent",
+    "MCPhappey.Agent2Agent.Agent2AgentContextOrchestrator, MCPhappey.Agent2Agent"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

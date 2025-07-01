@@ -15,20 +15,46 @@ public interface IJwtValidator
 public class JwtValidator(IHttpClientFactory httpClientFactory) : IJwtValidator
 {
 
-    public async Task<ClaimsPrincipal?> ValidateAsync(string token, string issuer,
-        string audience, OAuthSettings oAuthSettings)
+    public async Task<ClaimsPrincipal?> ValidateAsync(
+      string token,
+      string issuer,
+      string audience,
+      OAuthSettings oAuthSettings)
     {
         using var client = httpClientFactory.CreateClient();
-
-        var keys = await JwksCache.GetAsync($"{issuer}/.well-known/jwks.json", httpClientFactory);
-        if (keys == null || keys.Count == 0) return null;
-
         var handler = new JwtSecurityTokenHandler();
 
-        // STEP 1: Validate the outer (MCP) token
+        // STEP 0: Decode token header/payload without validation to check issuer.
+        JwtSecurityToken? jwt = handler.ReadJwtToken(token);
+        string? tokenIssuer = jwt?.Issuer;
+
+        // STEP 1: Pick correct JWKS endpoint based on issuer.
+        string jwksUrl;
+        if (tokenIssuer != null &&
+            (tokenIssuer.StartsWith("https://sts.windows.net/") ||
+             tokenIssuer.StartsWith("https://login.microsoftonline.com/")))
+        {
+            // Azure AD token
+            jwksUrl = $"https://login.microsoftonline.com/{oAuthSettings.TenantId}/discovery/v2.0/keys";
+        }
+        else
+        {
+            // Your own tokens
+            jwksUrl = $"{issuer}/.well-known/jwks.json";
+        }
+
+        var keys = await JwksCache.GetAsync(jwksUrl, httpClientFactory);
+        if (keys == null || keys.Count == 0) return null;
+
+        // STEP 2: Build validation parameters
         var outerValidationParameters = new TokenValidationParameters
         {
-            ValidIssuers = [issuer],
+            ValidIssuers =
+            [
+            issuer, // your own issuer
+            $"https://sts.windows.net/{oAuthSettings.TenantId}/",
+            $"https://login.microsoftonline.com/{oAuthSettings.TenantId}/v2.0"
+        ],
             IssuerSigningKeys = keys,
             ValidateIssuer = true,
             ValidateLifetime = true,
@@ -36,7 +62,7 @@ public class JwtValidator(IHttpClientFactory httpClientFactory) : IJwtValidator
             ClockSkew = TimeSpan.FromMinutes(1),
             ValidateAudience = true,
             AudienceValidator = (tokenAudiences, _, _) =>
-                tokenAudiences.Contains(audience, StringComparer.OrdinalIgnoreCase) == true
+                tokenAudiences.Contains(audience, StringComparer.OrdinalIgnoreCase)
         };
 
         try

@@ -4,10 +4,10 @@ using MCPhappey.Common.Models;
 using MCPhappey.Simplicate.Options;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Server;
-using System.IdentityModel.Tokens.Jwt;
 using MCPhappey.Common.Extensions;
 using System.Web;
 using System.Text.Json;
+using MCPhappey.Auth.Extensions;
 
 namespace MCPhappey.Simplicate;
 
@@ -102,14 +102,6 @@ public class SimplicateScraper(
 
     }
 
-
-    private static string? GetOidClaim(string jwt)
-    {
-        var handler = new JwtSecurityTokenHandler();
-        var token = handler.ReadJwtToken(jwt);
-        return token.Claims.FirstOrDefault(c => c.Type == "oid")?.Value;
-    }
-
     private async Task<(string Key, string Secret)?> GetCredentialsAsync(
         string oid,
         CancellationToken cancellationToken)
@@ -146,7 +138,7 @@ public class SimplicateScraper(
         if (string.IsNullOrEmpty(tokenProvider?.Bearer))
             return (null, null);
 
-        var oid = GetOidClaim(tokenProvider.Bearer);
+        var oid = tokenProvider.GetOidClaim();
         if (string.IsNullOrEmpty(oid))
             return (null, null);
 

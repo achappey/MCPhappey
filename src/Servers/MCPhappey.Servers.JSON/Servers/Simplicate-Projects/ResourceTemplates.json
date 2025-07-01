@@ -1,9 +1,9 @@
 {
   "resourceTemplates": [
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project/project:{projectId}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project/project:{projectId}?select=project_manager.,project_status.,hours_rate_type,abnormal_address,abnormal_person_id,abnormal_organization_id,organization.,person.,separate_invoice_recipient.,contact.,my_organization_profile.,divergent_payment_term.,abnormal_contact_id,created_at,updated_at,simplicate_url,is_reverse_billing,is_invoice_approval,name,billable,can_register_mileage,project_number,note,start_date,end_date,invoice_reference,employees.,budget.",
       "name": "Projectdetails",
-      "description": "Haalt een enkel project op via zijn ID.",
+      "description": "Haalt een enkel project op via zijn ID. Let op: Het project ID is een ander veld dan projectnummer.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
@@ -11,13 +11,6 @@
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project?q[name]=*{nameFilter}*&[teams.name]=*{teamName}*&q[employees.name]=*{employeeNameFilter}*&q[project_status.id]=projectstatus:{statusIdFilter}*&q[project_manager.name]=*{managerNameFilter}*&q[organization.name]=*{orgNameFilter}*&q[start_date][ge]={startDateGE}&q[end_date][le]={endDateLE}&offset={offset}&limit={limit}&sort={sortColumn}&select=project_manager.,project_status.,hours_rate_type,abnormal_address,abnormal_person_id,abnormal_organization_id,organization.,person.,separate_invoice_recipient.,contact.,my_organization_profile.,divergent_payment_term.,abnormal_contact_id,created_at,updated_at,simplicate_url,is_reverse_billing,is_invoice_approval,name,billable,can_register_mileage,project_number,note,start_date,end_date,invoice_reference,employees.,budget.",
       "name": "Projecten (gefilterd)",
       "description": "Haalt projecten op met filters voor naam, status, manager, organisatie en datumbereiken. Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": { "audience": ["assistant"] }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project/project:{projectId}/planningBudget?by={by}&until_date={untilDate}",
-      "name": "Project Planning Budget",
-      "description": "Haalt de budgetinformatie van de toewijzing voor een specifiek project op, geaggregeerd per 'projectservice' of 'projectservicehourstype', tot een opgegeven datum. De parameter 'by' kan 'projectservice' of 'projectservicehourstype' zijn. 'untilDate' moet JJJJ-MM-DD zijn.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
@@ -74,13 +67,6 @@
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/service?q[project_id]=project:{projectIdFilter}*&q[name]=*{nameFilter}*&q[invoice_method]={invoiceMethodFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
       "name": "Projectservices (gefilterd)",
       "description": "Haalt projectservices op met filters voor project, naam en facturatiemethode (bijv. 'Uren', 'Vaste prijs', 'Abonnement'). Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": { "audience": ["assistant"] }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/service/service:{serviceId}/planningBudget?by={by}&until_date={untilDate}",
-      "name": "Planning Budget Projectservice",
-      "description": "Haalt de budgetinformatie van de toewijzing voor een specifieke projectservice op, geaggregeerd per 'projectservicehourstype', tot een opgegeven datum. 'untilDate' moet JJJJ-MM-DD zijn.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },

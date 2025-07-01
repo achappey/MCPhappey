@@ -62,15 +62,14 @@ public static class SimplicateCRM
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/person";
         var elicitParams = "Please fill in the organization details".CreateElicitRequestParamsForType<SimplicateNewPerson>();
 
-        // Nu kun je hem zo gebruiken:
         var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
+
         elicitResult.EnsureAccept();
 
         var dto = JsonSerializer.Deserialize<SimplicateNewPerson>(
             JsonSerializer.Serialize(elicitResult.Content)
         );
-
-        // Use your POST extension to create the org
+        
         return await scraper.PostSimplicateItemAsync(
             serviceProvider,
             baseUrl,
@@ -78,6 +77,7 @@ public static class SimplicateCRM
             requestContext: requestContext,
             cancellationToken: cancellationToken
         );
+
     }
 
     public class SimplicateNewPerson
@@ -100,6 +100,10 @@ public static class SimplicateCRM
         [EmailAddress]
         [Description("The person's primary email address.")]
         public string? Email { get; set; }
+
+        [JsonPropertyName("phone")]
+        [Description("The person's phone number.")]
+        public string? Phone { get; set; }
 
         [JsonPropertyName("website_url")]
         [Description("The person's website URL, if available.")]

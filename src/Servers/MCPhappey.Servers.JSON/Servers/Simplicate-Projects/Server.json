@@ -3,7 +3,7 @@
     "name": "Simplicate-Projects",
     "version": "1.0.0"
   },
-  "instructions": "Always use select properties on resources. Payloads without select query string parameters are very large.",
+  "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries.",
   "headers": {
     "Authentication-Key": "Simplicate Api Key",
     "Authentication-Secret": "Simplicate Api Secret"

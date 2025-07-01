@@ -6,8 +6,6 @@ using Microsoft.KernelMemory.DataFormats.WebPages;
 using MCPhappey.Common;
 using ModelContextProtocol.Protocol;
 using MCPhappey.Common.Extensions;
-using ModelContextProtocol;
-using System.Text.Json;
 
 namespace MCPhappey.Core.Services;
 

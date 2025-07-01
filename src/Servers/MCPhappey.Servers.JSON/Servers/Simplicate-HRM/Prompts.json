@@ -1,112 +1,78 @@
 {
   "prompts": [
     {
-      "prompt": "Hierboven zie je de gegevens van alle medewerkers van team {teamNaam}.",
+      "prompt": "Geef van medewerker {medewerkerNaam} een overzicht van de actuele contractstatus: type, begindatum, einddatum en eventuele opzegdatum.",
       "template": {
-        "name": "hrm-medewerkers-per-team",
-        "description": "Geef alle medewerkers uit een team",
+        "name": "hrm-contractstatus-medewerker",
+        "description": "Toont de belangrijkste contractgegevens van een medewerker.",
+        "arguments": [
+          {
+            "name": "medewerkerNaam",
+            "description": "Naam van de medewerker waarvan je de contractstatus wilt weten.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Voor team {teamNaam}: welke drie medewerkers hebben het afgelopen jaar het meeste verlof opgenomen? Toon naam, verloftype en totaal aantal opgenomen dagen.",
+      "template": {
+        "name": "hrm-top-verlofgebruikers-team",
+        "description": "Geeft per team de drie medewerkers met het meeste verlof afgelopen jaar.",
         "arguments": [
           {
             "name": "teamNaam",
-            "description": "Naam van het team",
+            "description": "Naam van het team.",
             "required": true
           }
         ]
       }
     },
     {
-      "prompt": "Analyseer de meegeleverde verlofregistraties. Bereken per medewerker het totaal aantal opgenomen verlofuren in de periode van {startDatum} tot {eindDatum} voor verloftype '{verlofTypeLabel}'. Presenteer de resultaten als een tabel met kolommen: Medewerker Naam, Totaal Uren.",
+      "prompt": "Analyseer van medewerker {medewerkerNaam} het huidige verlofsaldo per verloftype. Zijn er verloftypes die (bijna) zijn opgebruikt? Geef per type het resterende saldo en markeer indien het minder dan 2 dagen betreft.",
       "template": {
-        "name": "hrm-analyseer-verlofopname-periode-type",
-        "description": "Berekent en presenteert het totaal opgenomen verlof per medewerker voor een specifiek type en periode uit de aangeleverde data.",
+        "name": "hrm-verlofsaldo-analyse",
+        "description": "Geeft per verloftype het huidige verlofsaldo van een medewerker, met waarschuwing bij laag saldo.",
         "arguments": [
           {
-            "name": "startDatum",
-            "description": "Startdatum van de analyseperiode (JJJJ-MM-DD).",
-            "required": true
-          },
-          {
-            "name": "eindDatum",
-            "description": "Einddatum van de analyseperiode (JJJJ-MM-DD).",
-            "required": true
-          },
-          {
-            "name": "verlofTypeLabel",
-            "description": "Het label van het verloftype om te analyseren (bijv. 'Vakantie').",
+            "name": "medewerkerNaam",
+            "description": "Naam van de medewerker.",
             "required": true
           }
         ]
       }
     },
     {
-      "prompt": "Vat de meegeleverde medewerkersdata samen. Bereken het totale aantal FTE (fulltime-equivalenten) per team, uitgaande van de contractinformatie. Geef een overzicht in tabelvorm: Teamnaam, Totaal FTE.",
+      "prompt": "Geef voor team {teamNaam} een overzicht van alle actieve medewerkers, met hun statuslabel en medewerkerstype. Benoem opvallende combinaties of verschillen.",
       "template": {
-        "name": "hrm-bereken-fte-per-team",
-        "description": "Berekent het totale FTE per team op basis van de verstrekte medewerkers- en contractdata.",
+        "name": "hrm-team-samenstelling-analyse",
+        "description": "Overzicht van teamleden met status en type, met opvallende inzichten.",
+        "arguments": [
+          {
+            "name": "teamNaam",
+            "description": "Naam van het team.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Welke medewerker heeft het afgelopen kwartaal de meeste verzuimregistraties? Noem deze medewerker, het totaal aantal meldingen en het meest voorkomende verzuimtype.",
+      "template": {
+        "name": "hrm-top-verzuimer",
+        "description": "Zoekt de medewerker met de meeste verzuimregistraties afgelopen kwartaal.",
         "arguments": []
       }
     },
     {
-      "prompt": "Identificeer contracten in de aangeleverde dataset die binnen de komende {aantalDagenTotEindeContract} dagen aflopen. Geef per contract de naam van de medewerker, de einddatum van het contract en het contracttype. Presenteer als JSON-objecten.",
+      "prompt": "Bekijk van medewerker {medewerkerNaam} de drie meest recente HRM-documenten. Noem het type, de titel en de aanmaakdatum.",
       "template": {
-        "name": "hrm-identificeer-aflopende-contracten",
-        "description": "Vindt contracten die binnenkort aflopen uit de verstrekte contractdata.",
+        "name": "hrm-meest-recente-documenten-medewerker",
+        "description": "Geeft de drie meest recente documenten van een medewerker.",
         "arguments": [
           {
-            "name": "aantalDagenTotEindeContract",
-            "description": "Het maximum aantal dagen tot de einddatum van het contract.",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Analyseer de verstrekte ziekteverzuimdata. Identificeer medewerkers met meer dan {minimumAantalVerzuimDagen} verzuimdagen in het afgelopen jaar (vanaf {startDatumAfgelopenJaar}). Geef per medewerker het totaal aantal verzuimdagen en het aantal ziekmeldingen. Output als tabel.",
-      "template": {
-        "name": "hrm-analyseer-ziekteverzuim-patronen",
-        "description": "Analyseert ziekteverzuimdata om medewerkers met significant verzuim te identificeren.",
-        "arguments": [
-          {
-            "name": "minimumAantalVerzuimDagen",
-            "description": "Het minimum aantal verzuimdagen om een medewerker op te nemen in de analyse.",
-            "required": true
-          },
-          {
-            "name": "startDatumAfgelopenJaar",
-            "description": "De startdatum voor de analyse van het afgelopen jaar (JJJJ-MM-DD).",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Evalueer de diversiteit binnen de meegeleverde medewerkerspopulatie. Geef een procentuele verdeling op basis van het veld '{customFieldDiversiteit}' (bijv. geslacht, nationaliteit). Presenteer de resultaten als een JSON-object met percentages per categorie.",
-      "template": {
-        "name": "hrm-evalueer-diversiteit",
-        "description": "Analyseert de diversiteit van het personeelsbestand op basis van een opgegeven custom field.",
-        "arguments": [
-          {
-            "name": "customFieldDiversiteit",
-            "description": "De exacte API-naam van het custom field dat de diversiteitsindicator bevat (bijv. 'custom_fields.geslacht').",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Identificeer mogelijke 'skills gaps' door de competenties in de meegeleverde medewerkersprofielen (veld: '{customFieldCompetenties}') te vergelijken met een lijst van benodigde competenties: {lijstBenodigdeCompetenties}. Geef per benodigde competentie aan hoeveel medewerkers deze bezitten en welke medewerkers dit zijn. Output als een lijst van objecten, per competentie.",
-      "template": {
-        "name": "hrm-identificeer-skills-gap",
-        "description": "Vergelijkt aanwezige competenties met benodigde competenties om tekorten te signaleren.",
-        "arguments": [
-          {
-            "name": "customFieldCompetenties",
-            "description": "De exacte API-naam van het custom field dat de competenties van een medewerker bevat (bijv. 'custom_fields.vaardigheden'). Waarden in dit veld moeten door komma's gescheiden zijn indien meerdere.",
-            "required": true
-          },
-          {
-            "name": "lijstBenodigdeCompetenties",
-            "description": "Een komma-gescheiden lijst van competenties die benodigd zijn.",
+            "name": "medewerkerNaam",
+            "description": "Naam van de medewerker.",
             "required": true
           }
         ]

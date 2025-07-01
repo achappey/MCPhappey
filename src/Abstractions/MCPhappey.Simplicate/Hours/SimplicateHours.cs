@@ -20,12 +20,43 @@ public static class SimplicateHours
         string? toDate = null,
         string? projectName = null,
         string? employeeName = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => await GetHourTotalsGroupedBy(
+            serviceProvider,
+            requestContext,
+            x => x.Employee?.Name,
+            fromDate, toDate, projectName, employeeName, cancellationToken
+    );
+
+    [Description("Get total registered hours grouped by hour type, optionally filtered by date range, project and employee.")]
+    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByHourType(
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       string? fromDate = null,
+       string? toDate = null,
+       string? projectName = null,
+       string? employeeName = null,
+       CancellationToken cancellationToken = default) => await GetHourTotalsGroupedBy(
+            serviceProvider,
+            requestContext,
+            x => x.Type?.Label,
+            fromDate, toDate, projectName, employeeName, cancellationToken
+    );
+
+    private static async Task<Dictionary<string, SimplicateHourTotals>?> GetHourTotalsGroupedBy(
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            Func<SimplicateHourItem, string?> groupKeySelector,
+            string? fromDate = null,
+            string? toDate = null,
+            string? projectName = null,
+            string? employeeName = null,
+            CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(fromDate) && string.IsNullOrWhiteSpace(toDate)
             && string.IsNullOrWhiteSpace(projectName)
             && string.IsNullOrWhiteSpace(employeeName))
-            throw new ArgumentException("At least one filter (fromDate, toDate, organizationName, employeeName) must be provided.");
+            throw new ArgumentException("At least one filter (fromDate, toDate, projectName, employeeName) must be provided.");
 
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -54,12 +85,14 @@ public static class SimplicateHours
         );
 
         return hours
-            .GroupBy(x => x.Employee?.Name ?? string.Empty)
-            .ToDictionary(g => g.Key, g => new SimplicateHourTotals
-            {
-                TotalHours = g.Select(r => r.Hours).Sum(),
-                TotalAmount = g.Select(r => r.Amount).Sum().ToAmount()
-            });
+            .GroupBy(x => groupKeySelector(x) ?? string.Empty)
+            .ToDictionary(
+                g => g.Key,
+                g => new SimplicateHourTotals
+                {
+                    TotalHours = g.Sum(r => r.Hours),
+                    TotalAmount = g.Sum(r => r.Amount).ToAmount()
+                });
     }
 
     public class SimplicateHourTotals
@@ -78,6 +111,9 @@ public static class SimplicateHours
 
         [JsonPropertyName("project")]
         public SimplicateProject? Project { get; set; }
+
+        [JsonPropertyName("type")]
+        public SimplicateHourType? Type { get; set; }
 
         [JsonPropertyName("tariff")]
         public decimal Tariff { get; set; }
@@ -114,6 +150,12 @@ public static class SimplicateHours
     {
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
+    }
+
+    public class SimplicateHourType
+    {
+        [JsonPropertyName("label")]
+        public string Label { get; set; } = string.Empty;
     }
 }
 

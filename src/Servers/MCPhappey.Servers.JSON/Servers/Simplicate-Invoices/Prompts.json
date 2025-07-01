@@ -1,0 +1,88 @@
+{
+  "prompts": [
+    {
+      "prompt": "Geef van factuur {factuurnummer} een overzicht: wat is de status, het totaalbedrag, de debiteur, de bijbehorende projectnaam en de betaaldatum (indien betaald)?",
+      "template": {
+        "name": "factuur-status-overzicht",
+        "description": "Toont kerngegevens van een factuur, zoals status, bedragen, project en betaaldatum.",
+        "arguments": [
+          {
+            "name": "factuurnummer",
+            "description": "Het factuurnummer waarvoor je de status wilt weten.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Welke tien facturen van debiteur {debiteurNaam} zijn het laatst aangemaakt? Toon per factuur het factuurnummer, de status, het totaalbedrag (inclusief BTW) en de factuurdatum.",
+      "template": {
+        "name": "laatste-facturen-per-debiteur",
+        "description": "Overzicht van de tien nieuwste facturen per debiteur met kerninfo.",
+        "arguments": [
+          {
+            "name": "debiteurNaam",
+            "description": "Naam van de debiteur waarvan je de laatste facturen wilt weten.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Geef voor project {projectNaam} een lijst van maximaal drie openstaande facturen met het hoogste bedrag. Toon het factuurnummer, bedrag, status en vervaldatum.",
+      "template": {
+        "name": "openstaande-facturen-project",
+        "description": "Geeft per project de drie grootste openstaande facturen.",
+        "arguments": [
+          {
+            "name": "projectNaam",
+            "description": "Naam van het project waarvoor je de openstaande facturen wilt weten.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Analyseer de vijf recentste facturen met status '{factuurStatus}'. Wat valt op in betaaldatum, debiteur of project? Benoem opvallende trends of bijzonderheden.",
+      "template": {
+        "name": "factuurstatus-analyse-recent",
+        "description": "Analyseert recente facturen op status, met trends in betaling of klant/project.",
+        "arguments": [
+          {
+            "name": "factuurStatus",
+            "description": "Naam van de factuurstatus (zoals 'Open', 'Verstuurd', 'Betaald').",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Bekijk van factuur {factuurnummer} de betalingscondities en BTW-klasse. Zijn deze conform de standaard voor deze debiteur en het betreffende project?",
+      "template": {
+        "name": "factuur-condities-check",
+        "description": "Checkt of de betalingsconditie en BTW-klasse van een factuur overeenkomen met de gebruikelijke waarden.",
+        "arguments": [
+          {
+            "name": "factuurnummer",
+            "description": "Het factuurnummer dat je wilt controleren.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Welke facturen zijn de afgelopen week aangemaakt met een totaalbedrag boven {bedragEur}? Geef per factuur het factuurnummer, debiteur, totaalbedrag en status.",
+      "template": {
+        "name": "grote-facturen-recent",
+        "description": "Lijst van recent aangemaakte facturen boven een bepaald bedrag.",
+        "arguments": [
+          {
+            "name": "bedragEur",
+            "description": "Ondergrens van het totaalbedrag in euro's.",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

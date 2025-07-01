@@ -1,102 +1,111 @@
 {
   "prompts": [
     {
-      "prompt": "Analyseer de meegeleverde lijst met organisaties. Identificeer actieve en relevante contacten. Geef een overzicht van namen organisaties, contactpersonen en contactgegevens. Presenteer dit als een tabel.",
+      "prompt": "Geef alle contactpersonen die het afgelopen jaar zijn toegevoegd met een specifiek e-mailadresdomein {emailDomein}. Toon maximaal 50 resultaten met naam, e-mail en gekoppelde organisatie.",
       "template": {
-        "name": "crm-organisaties-per-branch",
-        "description": "",
+        "name": "crm-contacten-op-emaildomein",
+        "description": "Overzicht van contactpersonen met een specifiek e-maildomein, maximaal 50 stuks.",
         "arguments": [
           {
-            "name": "brancheNaam",
-            "description": "Naam van de branche",
+            "name": "emailDomein",
+            "description": "Het e-maildomein waar je op wilt filteren (bijvoorbeeld '@bedrijf.nl').",
             "required": true
           }
         ]
       }
     },
     {
-      "prompt": "Analyseer de meegeleverde lijst met contactpersonen. Identificeer contacten zonder recente activiteit (langer dan {aantalDagenGeenActiviteit} dagen geleden) en geef een overzicht van hun namen en de datum van laatste contact. Presenteer dit als een tabel.",
+      "prompt": "Toon de tien laatst toegevoegde organisaties in het CRM, met naam, branche, datum van toevoegen en hoofdcontactpersoon (indien bekend).",
       "template": {
-        "name": "crm-identificeer-inactieve-contacten",
-        "description": "Detecteert contactpersonen zonder recente interacties op basis van de verstrekte contactlijst.",
-        "arguments": [
-          {
-            "name": "aantalDagenGeenActiviteit",
-            "description": "Het maximum aantal dagen sinds de laatste activiteit om een contact als inactief te beschouwen.",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Vat de meegeleverde organisatiedata samen. Geef per organisatie de naam, het aantal gekoppelde contactpersonen en de totale waarde van openstaande deals. Focus op organisaties met meer dan {minimumAantalContacten} contacten. Geef de output als een lijst met objecten.",
-      "template": {
-        "name": "crm-organisatie-overzicht-met-deals",
-        "description": "Genereert een samenvatting van organisaties, inclusief contactaantallen en dealwaardes, uit de aangeleverde data.",
-        "arguments": [
-          {
-            "name": "minimumAantalContacten",
-            "description": "Het minimum aantal contactpersonen dat een organisatie moet hebben om meegenomen te worden in de samenvatting.",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Analyseer de verstrekte lijst met deals. Identificeer deals die langer dan {aantalDagenInFase} dagen in de fase '{faseNaam}' staan. Geef per deal de naam, de verantwoordelijke medewerker en de dealwaarde. Presenteer als JSON.",
-      "template": {
-        "name": "crm-identificeer-gestagneerde-deals",
-        "description": "Vindt deals die te lang in een specifieke salesfase blijven hangen, gebaseerd op de input data.",
-        "arguments": [
-          {
-            "name": "aantalDagenInFase",
-            "description": "Het maximum aantal dagen dat een deal in de opgegeven fase mag staan.",
-            "required": true
-          },
-          {
-            "name": "faseNaam",
-            "description": "De naam van de salesfase om te controleren.",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Detecteer mogelijke dubbele contactpersonen in de aangeleverde dataset. Vergelijk contacten op basis van een combinatie van achternaam en e-mailadres. Geef een lijst van potentiële duplicaten, met per paar de ID's en namen.",
-      "template": {
-        "name": "crm-detecteer-dubbele-contacten",
-        "description": "Identificeert potentiële dubbele contactpersonen in de verstrekte data door te kijken naar naam en e-mail.",
+        "name": "crm-laatst-toegevoegde-organisaties",
+        "description": "Geeft een overzicht van de tien meest recent aangemaakte organisaties in Simplicate.",
         "arguments": []
       }
     },
     {
-      "prompt": "Analyseer de tijdlijnitems van de meegeleverde contactpersoon (ID: {contactId}). Geef een samenvatting van de laatste {aantalItems} interacties, inclusief type interactie, datum en een korte beschrijving. Welke trends vallen op in de communicatie?",
+      "prompt": "Geef van organisatie {organisatieNaam} een kort profiel: toon de kerngegevens (naam, branche, relatiemanager, e-mail, telefoon, website) en maximaal vijf recente contactpersonen met hun functie.",
       "template": {
-        "name": "crm-analyseer-contact-tijdlijn",
-        "description": "Analyseert en vat de recente tijdlijnitems voor een specifiek contact samen.",
+        "name": "crm-organisatie-kort-profiel",
+        "description": "Toont een compact profiel van een organisatie, plus een beknopte lijst van de belangrijkste contactpersonen.",
         "arguments": [
           {
-            "name": "contactId",
-            "description": "De ID van de contactpersoon.",
+            "name": "organisatieNaam",
+            "description": "Naam van de organisatie waarvan je het profiel wilt opvragen.",
             "required": true
-          },
-          {
-            "name": "aantalItems",
-            "description": "Het aantal recente tijdlijnitems om te analyseren (standaard 5).",
-            "required": false
           }
         ]
       }
     },
     {
-      "prompt": "Kwalificeer de meegeleverde leads op basis van de ingevulde velden. Geef per lead een score van 1-5 (5 is hoogst gekwalificeerd) gebaseerd op de aanwezigheid van een telefoonnummer, e-mailadres, en een waarde in het veld '{customFieldLeadBron}'. Geef ook aan welke informatie eventueel ontbreekt voor een hogere score. Presenteer als tabel: Lead ID, Score, Ontbrekende Info.",
+      "prompt": "Zoek alle actieve contactpersonen met de functie {functie} en het e-maildomein {emailDomein}. Beperk je tot maximaal 10 resultaten. Geef inzicht: is deze combinatie typisch voor een bepaald team of organisatie, of valt iets anders op?",
       "template": {
-        "name": "crm-kwalificeer-leads",
-        "description": "Beoordeelt de kwaliteit van leads in de aangeleverde data op basis van specifieke criteria.",
+        "name": "crm-contacten-analyse-functie-en-domein",
+        "description": "Analyse van contactpersonen op basis van functie en e-maildomein, met inzicht in patronen.",
         "arguments": [
           {
-            "name": "customFieldLeadBron",
-            "description": "De naam van het custom field dat de leadbron bevat (exacte API naam).",
+            "name": "functie",
+            "description": "Functietitel van de contactpersoon.",
+            "required": true
+          },
+          {
+            "name": "emailDomein",
+            "description": "Het e-maildomein waarop je wilt filteren (bijvoorbeeld '@bedrijf.nl').",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Bekijk de contactpersonen van organisatie {organisatieNaam} en geef inzicht: zijn er functiegroepen die sterk vertegenwoordigd zijn? Noem maximaal drie meest voorkomende functies en geef een korte uitleg bij het resultaat.",
+      "template": {
+        "name": "crm-functieverdeling-contactpersonen",
+        "description": "Geeft een verdeling van de meest voorkomende functies onder contactpersonen binnen een organisatie.",
+        "arguments": [
+          {
+            "name": "organisatieNaam",
+            "description": "Naam van de organisatie waarvan je de functieverdeling wilt weten.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Analyseer de laatste 25 toegevoegde organisaties binnen branche {brancheNaam}. Geef per organisatie aan wie de relatiemanager is, en meld opvallende patronen, zoals meerdere organisaties bij dezelfde relatiemanager of een plotselinge toename binnen deze branche.",
+      "template": {
+        "name": "crm-patroonanalyse-nieuwe-organisaties",
+        "description": "Analyse van patronen in nieuwe organisaties binnen een branche.",
+        "arguments": [
+          {
+            "name": "brancheNaam",
+            "description": "Naam van de branche waarin je wilt zoeken.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Voor branche {brancheNaam}: welke drie organisaties hebben de meeste actieve contactpersonen? Geef per organisatie het aantal actieve contacten, en beschrijf kort wat deze organisaties typeert volgens hun profiel.",
+      "template": {
+        "name": "crm-top-organisaties-op-actieve-contacten",
+        "description": "Vindt de top 3 organisaties per branche op basis van aantal actieve contactpersonen en beschrijft opvallende kenmerken.",
+        "arguments": [
+          {
+            "name": "brancheNaam",
+            "description": "Naam van de branche waarin je wilt zoeken.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Vergelijk voor organisatie {organisatieNaam} de vijf laatst toegevoegde contactpersonen met de vijf oudste contactpersonen. Wat valt op in functietitel, afdeling of e-maildomein? Benoem opvallende verschillen of trends.",
+      "template": {
+        "name": "crm-vergelijk-contactpersoon-groepen",
+        "description": "Vergelijkt de nieuwste en oudste contactpersonen binnen een organisatie om trends te signaleren.",
+        "arguments": [
+          {
+            "name": "organisatieNaam",
+            "description": "Naam van de organisatie die je wilt analyseren.",
             "required": true
           }
         ]

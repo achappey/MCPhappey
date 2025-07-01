@@ -67,14 +67,7 @@ public static class AspNetCoreWebAppExtensions
             }
 
             var baseUrl = $"{context.Request.Scheme}://{context.Request.Host}";
-
             var jwt = new JwtSecurityToken(token);
-            //          Console.WriteLine("Token audience: " + string.Join(", ", jwt.Audiences));
-            //        Console.WriteLine("Expected audience: " + oauthSettings.Audience);
-
-            //var principal = await validator.ValidateAsync(token!, baseUrl,
-            //               oauthSettings.Audience, oAuthSettings);
-
             var principal = await validator.ValidateAsync(token!, baseUrl,
                            string.Join(", ", jwt.Audiences), oAuthSettings);
 
@@ -128,6 +121,12 @@ public static class AspNetCoreWebAppExtensions
         return webApp;
     }
 
+    public static HashSet<string> GetGroupClaims(this ClaimsPrincipal claimsPrincipal)
+        => claimsPrincipal.Claims
+              .Where(c => c.Type == "groups")
+              .Select(c => c.Value)
+              .ToHashSet(StringComparer.OrdinalIgnoreCase);
+
     static bool IsOwnerOrGroupAuthorized(ServerConfig matchedServer, ClaimsPrincipal principal)
     {
         var ownersValid = true;
@@ -142,10 +141,7 @@ public static class AspNetCoreWebAppExtensions
 
         if (matchedServer.Server.Groups?.Any() == true)
         {
-            var userGroups = principal.Claims
-                .Where(c => c.Type == "groups")
-                .Select(c => c.Value)
-                .ToHashSet(StringComparer.OrdinalIgnoreCase);
+            var userGroups = principal.GetGroupClaims();
 
             groupsValid = matchedServer.Server.Groups.Any(g => userGroups.Contains(g));
         }

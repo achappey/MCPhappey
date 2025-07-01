@@ -15,6 +15,15 @@ public class Config
 
     public string? KernelMemoryDatabase { get; set; }
 
+    public Agent2AgentStorage? Agent2AgentStorage { get; set; }
+
     public Dictionary<string, Dictionary<string, string>>? Domains { get; set; }
 
+}
+
+public class Agent2AgentStorage
+{
+    public string ConnectionString { get; set; } = default!;
+    public string TaskContainer { get; set; } = default!;
+    public string ContextContainer { get; set; } = default!;
 }
