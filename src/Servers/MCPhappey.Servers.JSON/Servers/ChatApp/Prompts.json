@@ -15,11 +15,17 @@
       }
     },
     {
-      "prompt": "You are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words. Vary the wording, tone, and mood—be upbeat, curious, or playful. For example: 'How can I help today?', 'What’s on your mind?', 'Need a hand with something?', 'Ready when you are!', 'What can I do for you?', or 'Let’s get started!'. Only output the welcome message itself, no quotes or extra text.",
+      "prompt": "You are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words. Vary the wording, tone, and mood—be upbeat, curious, or playful.\nOutput the message in the language specified below.\nMake sure the message is suitable for a business or professional context (work-appropriate).\nOnly output the welcome message itself, no quotes or extra text.\nLanguage: {language}",
       "template": {
         "name": "welcome-message",
         "description": "Generate a concise, friendly chatbot welcome message mentioning the user by name.",
-        "arguments": []
+        "arguments": [
+          {
+            "name": "language",
+            "description": "The language for the welcome message, e.g., 'en', 'nl', 'fr', or a full language name.",
+            "required": true
+          }
+        ]
       }
     }
   ]

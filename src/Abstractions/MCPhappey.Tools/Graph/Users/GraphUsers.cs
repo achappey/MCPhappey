@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -20,18 +19,10 @@ public static class GraphUsers
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
+
+        var dto = await requestContext.Server.GetElicitResponse<GraphNewUser>(cancellationToken);
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
-        var elicitParams = "Please fill in the user details".CreateElicitRequestParamsForType<GraphNewUser>();
-
-        var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
-        elicitResult.EnsureAccept();
-
-        var dto = JsonSerializer.Deserialize<GraphNewUser>(
-                 JsonSerializer.Serialize(elicitResult.Content)
-            );
-
-        var result = await client.Users.PostAsync(new User()
+        var user = new User()
         {
             DisplayName = dto?.DisplayName,
             GivenName = dto?.GivenName,
@@ -43,11 +34,15 @@ public static class GraphUsers
                 Password = dto?.Password
             },
             UserPrincipalName = dto?.UserPrincipalName
-        }, cancellationToken: cancellationToken);
+        };
 
-        return result.ToJsonContentBlock("https://graph.microsoft.com/beta/users");
+        await client.Users.PostAsync(user, cancellationToken: cancellationToken);
+
+        return user.ToJsonContentBlock("https://graph.microsoft.com/beta/users");
     }
 
+
+    [Description("Please fill in the user details.")]
     public class GraphNewUser
     {
         [JsonPropertyName("givenName")]

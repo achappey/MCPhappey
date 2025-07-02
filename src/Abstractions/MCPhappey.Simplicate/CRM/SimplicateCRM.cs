@@ -27,15 +27,7 @@ public static class SimplicateCRM
 
         // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/organization";
-        var elicitParams = "Please fill in the organization details".CreateElicitRequestParamsForType<SimplicateNewOrganization>();
-
-        // Nu kun je hem zo gebruiken:
-        var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
-        elicitResult.EnsureAccept();
-
-        var dto = JsonSerializer.Deserialize<SimplicateNewOrganization>(
-            JsonSerializer.Serialize(elicitResult.Content)
-        );
+        var dto = await requestContext.Server.GetElicitResponse<SimplicateNewOrganization>(cancellationToken);
 
         // Use your POST extension to create the org
         return await scraper.PostSimplicateItemAsync(
@@ -60,16 +52,13 @@ public static class SimplicateCRM
 
         // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/person";
-        var elicitParams = "Please fill in the organization details".CreateElicitRequestParamsForType<SimplicateNewPerson>();
+        var dto = await requestContext.Server.GetElicitResponse<SimplicateNewPerson>(cancellationToken);
+        /*   var elicitParams = "Please fill in the organization details".CreateElicitRequestParamsForType<SimplicateNewPerson>();
 
-        var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
+           var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
+           elicitResult.EnsureAccept();
 
-        elicitResult.EnsureAccept();
-
-        var dto = JsonSerializer.Deserialize<SimplicateNewPerson>(
-            JsonSerializer.Serialize(elicitResult.Content)
-        );
-        
+           var dto = elicitResult.Content?.MapToObject<SimplicateNewPerson>();*/
         return await scraper.PostSimplicateItemAsync(
             serviceProvider,
             baseUrl,
@@ -80,6 +69,7 @@ public static class SimplicateCRM
 
     }
 
+    [Description("Please fill in the person details")]
     public class SimplicateNewPerson
     {
         [JsonPropertyName("first_name")]
@@ -111,6 +101,7 @@ public static class SimplicateCRM
     }
 
 
+    [Description("Please fill in the organization details")]
     public class SimplicateNewOrganization
     {
         [JsonPropertyName("name")]

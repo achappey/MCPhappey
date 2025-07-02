@@ -2,9 +2,11 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
 
 namespace MCPhappey.Common.Extensions;
 
@@ -44,8 +46,12 @@ public static class ElicitExtensions
             .ToList();
     }
 
-    public static ElicitRequestParams CreateElicitRequestParamsForType<T>(this string message)
+    public static ElicitRequestParams CreateElicitRequestParamsForType<T>()
     {
+        var type = typeof(T);
+        var description = type.GetCustomAttribute<DescriptionAttribute>()?.Description
+           ?? $"Please fill in the details for {type.Name}";
+
         var properties = typeof(T)
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
             .ToDictionary(
@@ -57,7 +63,7 @@ public static class ElicitExtensions
 
         return new ElicitRequestParams
         {
-            Message = message,
+            Message = description,
             RequestedSchema = new ElicitRequestParams.RequestSchema
             {
                 Properties = properties,
@@ -96,24 +102,25 @@ public static class ElicitExtensions
 
         if (enumType != null && enumType.IsEnum)
         {
-            var enumNames = Enum.GetNames(enumType);
-            // Try to get [Display(Name="...")] friendly names
-            var friendlyNames = enumType
-                .GetFields(BindingFlags.Public | BindingFlags.Static)
+            var enumFields = enumType.GetFields(BindingFlags.Public | BindingFlags.Static);
+            var enumValues = enumFields
                 .Select(field =>
-                {
-                    var display = field.GetCustomAttribute<DisplayAttribute>();
-                    return display?.Name ?? field.Name;
-                })
-                .ToArray();
+                    field.GetCustomAttribute<EnumMemberAttribute>()?.Value ?? field.Name
+                ).ToArray();
+
+            // Friendly names via [Display] attribuut, eventueel voor weergave
+            var friendlyNames = enumFields
+                .Select(field =>
+                    field.GetCustomAttribute<DisplayAttribute>()?.Name ?? field.Name
+                ).ToArray();
 
             // Only set enumNames if they differ from enum values
             return new ElicitRequestParams.EnumSchema
             {
                 Title = title,
                 Description = desc,
-                Enum = enumNames,
-                EnumNames = !enumNames.SequenceEqual(friendlyNames) ? friendlyNames : null
+                Enum = enumValues,
+                EnumNames = !enumValues.SequenceEqual(friendlyNames) ? friendlyNames : null
             };
         }
 
@@ -163,5 +170,75 @@ public static class ElicitExtensions
                 Description = desc
             }
         };
+    }
+
+    public static T MapToObject<T>(this IDictionary<string, JsonElement> dict) where T : new()
+    {
+        var obj = new T();
+        var type = typeof(T);
+
+        foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+        {
+            // Pak JSON property name indien aanwezig
+            var jsonName = prop.Name;
+            var jsonAttr = prop.GetCustomAttribute<JsonPropertyNameAttribute>();
+            if (jsonAttr != null)
+                jsonName = jsonAttr.Name;
+
+            if (dict.TryGetValue(jsonName, out var el))
+            {
+                object? value = null;
+                var t = Nullable.GetUnderlyingType(prop.PropertyType) ?? prop.PropertyType;
+
+                try
+                {
+                    if (t.IsEnum)
+                    {
+                        if (el.ValueKind == JsonValueKind.String && Enum.TryParse(t, el.GetString(), true, out var enumVal))
+                            value = enumVal;
+                    }
+                    else if (t == typeof(string))
+                        value = el.ValueKind == JsonValueKind.String ? el.GetString() : null;
+                    else if (t == typeof(int))
+                        value = el.ValueKind == JsonValueKind.Number ? el.GetInt32() : default(int);
+                    else if (t == typeof(long))
+                        value = el.ValueKind == JsonValueKind.Number ? el.GetInt64() : default(long);
+                    else if (t == typeof(bool))
+                        value = el.ValueKind == JsonValueKind.True ? true :
+                                el.ValueKind == JsonValueKind.False ? false : (bool?)null;
+                    else if (t == typeof(double))
+                        value = el.ValueKind == JsonValueKind.Number ? el.GetDouble() : default(double);
+                    else if (t == typeof(DateTime))
+                        value = el.ValueKind == JsonValueKind.String ? el.GetDateTime() : default(DateTime);
+                    else
+                    {
+                        // fallback voor complexe types (nested objects/arrays)
+                        value = el.Deserialize(t);
+                    }
+                }
+                catch
+                {
+                    // bij conversiefout, laat property op default
+                }
+
+                if (value != null || Nullable.GetUnderlyingType(prop.PropertyType) != null)
+                    prop.SetValue(obj, value);
+            }
+        }
+        return obj;
+    }
+
+    public static async Task<T> GetElicitResponse<T>(this IMcpServer mcpServer, CancellationToken cancellationToken) where T : new()
+    {
+        var elicitParams = CreateElicitRequestParamsForType<T>();
+        var elicitResult = await mcpServer.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
+        elicitResult.EnsureAccept();
+
+        if (elicitResult.Content == null)
+        {
+            throw new Exception("Elicit could not be completed");
+        }
+
+        return elicitResult.Content.MapToObject<T>();
     }
 }

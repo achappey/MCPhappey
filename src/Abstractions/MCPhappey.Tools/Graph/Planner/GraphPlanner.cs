@@ -25,11 +25,7 @@ public static class GraphPlanner
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var elicitParams = "Please fill in the Planner task details".CreateElicitRequestParamsForType<GraphNewPlannerTask>();
-        var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
-        elicitResult.EnsureAccept();
-
-        var dto = JsonSerializer.Deserialize<GraphNewPlannerTask>(JsonSerializer.Serialize(elicitResult.Content));
+        var dto = await requestContext.Server.GetElicitResponse<GraphNewPlannerTask>(cancellationToken);
         var result = await client.Planner.Tasks.PostAsync(new Microsoft.Graph.Beta.Models.PlannerTask
         {
             Title = dto?.Title,
@@ -43,6 +39,7 @@ public static class GraphPlanner
         return result.ToJsonContentBlock("https://graph.microsoft.com/beta/planner/tasks");
     }
 
+    [Description("Please fill in the Planner task details")]
     public class GraphNewPlannerTask
     {
         [JsonPropertyName("title")]

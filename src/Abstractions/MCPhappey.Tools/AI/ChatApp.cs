@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json;
+using DocumentFormat.OpenXml.Wordprocessing;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
@@ -51,6 +52,7 @@ public static class ChatApp
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]
     [McpServerTool(ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExecuteGenerateWelcomeMessage(
+        [Description("Language of the requested welcome message")] string language,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
@@ -69,6 +71,7 @@ public static class ChatApp
             serviceProvider,
             mcpServer,
             "welcome-message",
+            arguments: new Dictionary<string, JsonElement>() { { "language", JsonSerializer.SerializeToElement(language) } },
             modelHint: modelName,
             cancellationToken: cancellationToken);
 

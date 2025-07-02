@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -24,17 +23,12 @@ public static class GraphToDo
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var elicitParams = "Please fill in the To Do task details".CreateElicitRequestParamsForType<GraphNewTodoTask>();
-        var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
-        elicitResult.EnsureAccept();
-
-        var dto = JsonSerializer.Deserialize<GraphNewTodoTask>(JsonSerializer.Serialize(elicitResult.Content));
-
+        var dto = await requestContext.Server.GetElicitResponse<GraphNewTodoTask>(cancellationToken);    
         var result = await client.Me.Todo.Lists[listId].Tasks
-            .PostAsync(new Microsoft.Graph.Beta.Models.TodoTask
+            .PostAsync(new TodoTask
             {
                 Title = dto?.Title,
-                // Importance = dto?.Importance,
+                Importance = dto?.Importance,
                 DueDateTime = dto?.DueDateTime != null ? new DateTimeTimeZone
                 {
                     DateTime = dto.DueDateTime?.ToString("yyyy-MM-ddTHH:mm:ss"),
@@ -45,6 +39,7 @@ public static class GraphToDo
         return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/${listId}/tasks");
     }
 
+    [Description("Please fill in the To Do task details")]
     public class GraphNewTodoTask
     {
         [JsonPropertyName("title")]
@@ -58,7 +53,7 @@ public static class GraphToDo
 
         [JsonPropertyName("importance")]
         [Description("Importance (low, normal, high).")]
-        [JsonConverter(typeof(JsonStringEnumConverter))]
+        //[JsonConverter(typeof(JsonStringEnumConverter))]
         public Importance? Importance { get; set; }
 
     }

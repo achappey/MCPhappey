@@ -29,10 +29,10 @@
       }
     },
     {
-      "prompt": "Geef voor project {projectNaam} een lijst van maximaal drie openstaande facturen met het hoogste bedrag. Toon het factuurnummer, bedrag, status en vervaldatum.",
+      "prompt": "Geef voor project {projectNaam} een lijst van openstaande facturen met het hoogste bedrag. Toon het factuurnummer, bedrag, status en vervaldatum.",
       "template": {
         "name": "openstaande-facturen-project",
-        "description": "Geeft per project de drie grootste openstaande facturen.",
+        "description": "Geeft per project de grootste openstaande facturen.",
         "arguments": [
           {
             "name": "projectNaam",
@@ -43,7 +43,7 @@
       }
     },
     {
-      "prompt": "Analyseer de vijf recentste facturen met status '{factuurStatus}'. Wat valt op in betaaldatum, debiteur of project? Benoem opvallende trends of bijzonderheden.",
+      "prompt": "Analyseer de recentste facturen met status '{factuurStatus}'. Wat valt op in betaaldatum, debiteur of project? Benoem opvallende trends of bijzonderheden.",
       "template": {
         "name": "factuurstatus-analyse-recent",
         "description": "Analyseert recente facturen op status, met trends in betaling of klant/project.",
