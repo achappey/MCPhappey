@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
@@ -11,36 +12,54 @@ namespace MCPhappey.Simplicate.Hours;
 
 public static class SimplicateHours
 {
-    [Description("Get total registered hours grouped by employee, optionally filtered by date range and project.")]
+    [Description("Get total registered hours grouped by employee, optionally filtered by date range (max 65 days), project, or employee.")]
     [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByEmployee(
+    IServiceProvider serviceProvider,
+    RequestContext<CallToolRequestParams> requestContext,
+    [Description("Start date for filtering (inclusive), format yyyy-MM-dd. Optional. If combined with toDate, max range is 65 days.")] string? fromDate = null,
+    [Description("End date for filtering (inclusive), format yyyy-MM-dd. Optional. If combined with fromDate, max range is 65 days.")] string? toDate = null,
+    [Description("Approval status label to filter by. Optional.")] ApprovalStatusLabel? approvalStatusLabel = null,
+    [Description("Project name to filter by. Optional.")] string? projectName = null,
+    [Description("Employee name to filter by. Optional.")] string? employeeName = null,
+    CancellationToken cancellationToken = default) => await GetHourTotalsGroupedBy(
+        serviceProvider,
+        requestContext,
+        x => x.Employee?.Name,
+        fromDate, toDate, projectName, employeeName, approvalStatusLabel, cancellationToken
+);
+
+    [Description("Get total registered hours grouped by hour type, optionally filtered by date range (max 65 days), project, or employee.")]
+    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByHourType(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        string? fromDate = null,
-        string? toDate = null,
-        string? projectName = null,
-        string? employeeName = null,
+        [Description("Start date for filtering (inclusive), format yyyy-MM-dd. Optional. If combined with toDate, max range is 65 days.")] string? fromDate = null,
+        [Description("End date for filtering (inclusive), format yyyy-MM-dd. Optional. If combined with fromDate, max range is 65 days.")] string? toDate = null,
+        [Description("Approval status label to filter by. Optional.")] ApprovalStatusLabel? approvalStatusLabel = null,
+        [Description("Project name to filter by. Optional.")] string? projectName = null,
+        [Description("Employee name to filter by. Optional.")] string? employeeName = null,
         CancellationToken cancellationToken = default) => await GetHourTotalsGroupedBy(
             serviceProvider,
             requestContext,
-            x => x.Employee?.Name,
-            fromDate, toDate, projectName, employeeName, cancellationToken
+            x => x.Type?.Label,
+            fromDate, toDate, projectName, employeeName, approvalStatusLabel, cancellationToken
     );
 
-    [Description("Get total registered hours grouped by hour type, optionally filtered by date range, project and employee.")]
+    [Description("Get total registered hours grouped by project, optionally filtered by date range (max 65 days), or approval status.")]
     [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
-    public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByHourType(
-       IServiceProvider serviceProvider,
-       RequestContext<CallToolRequestParams> requestContext,
-       string? fromDate = null,
-       string? toDate = null,
-       string? projectName = null,
-       string? employeeName = null,
-       CancellationToken cancellationToken = default) => await GetHourTotalsGroupedBy(
+    public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByProject(
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("Start date for filtering (inclusive), format yyyy-MM-dd. Optional. If combined with toDate, max range is 65 days.")] string? fromDate = null,
+        [Description("End date for filtering (inclusive), format yyyy-MM-dd. Optional. If combined with fromDate, max range is 65 days.")] string? toDate = null,
+        [Description("Approval status label to filter by. Optional.")] ApprovalStatusLabel? approvalStatusLabel = null,
+        [Description("Employee name to filter by. Optional.")] string? employeeName = null,
+        CancellationToken cancellationToken = default) => await GetHourTotalsGroupedBy(
             serviceProvider,
             requestContext,
-            x => x.Type?.Label,
-            fromDate, toDate, projectName, employeeName, cancellationToken
+            x => x.Project?.Name,
+            fromDate, toDate, null, employeeName, approvalStatusLabel, cancellationToken
     );
 
     private static async Task<Dictionary<string, SimplicateHourTotals>?> GetHourTotalsGroupedBy(
@@ -51,12 +70,23 @@ public static class SimplicateHours
             string? toDate = null,
             string? projectName = null,
             string? employeeName = null,
+            ApprovalStatusLabel? approvalStatusLabel = null,
             CancellationToken cancellationToken = default)
     {
         if (string.IsNullOrWhiteSpace(fromDate) && string.IsNullOrWhiteSpace(toDate)
             && string.IsNullOrWhiteSpace(projectName)
+            && !approvalStatusLabel.HasValue
             && string.IsNullOrWhiteSpace(employeeName))
-            throw new ArgumentException("At least one filter (fromDate, toDate, projectName, employeeName) must be provided.");
+            throw new ArgumentException("At least one filter (fromDate, toDate, projectName, employeeName, approvalStatusLabel) must be provided.");
+
+        if (!string.IsNullOrWhiteSpace(fromDate) && !string.IsNullOrWhiteSpace(toDate))
+        {
+            if (DateTime.TryParse(fromDate, out var fromDt) && DateTime.TryParse(toDate, out var toDt))
+            {
+                if ((toDt - fromDt).TotalDays > 65)
+                    throw new ArgumentException("The date range cannot exceed 65 days.");
+            }
+        }
 
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -71,6 +101,7 @@ public static class SimplicateHours
 
         if (!string.IsNullOrWhiteSpace(projectName)) filters.Add($"q[project.name]=*{Uri.EscapeDataString(projectName)}*");
         if (!string.IsNullOrWhiteSpace(employeeName)) filters.Add($"q[employee.name]=*{Uri.EscapeDataString(employeeName)}*");
+        if (approvalStatusLabel.HasValue) filters.Add($"q[approvalstatus.label]=*{Uri.EscapeDataString(approvalStatusLabel.Value.ToString())}*");
 
         var filterString = string.Join("&", filters);
 
@@ -93,6 +124,13 @@ public static class SimplicateHours
                     TotalHours = g.Sum(r => r.Hours),
                     TotalAmount = g.Sum(r => r.Amount).ToAmount()
                 });
+    }
+
+
+    public enum ApprovalStatusLabel
+    {
+        to_approved_project,
+        to_forward
     }
 
     public class SimplicateHourTotals

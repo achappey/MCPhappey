@@ -1,6 +1,20 @@
 {
   "prompts": [
     {
+      "prompt": "Geef per project het totaal aantal geregistreerde uren waarvan de goedkeuringsstatus gelijk is aan {approvalStatus}. Toon de projectnaam en het totaal aantal uur per project.",
+      "template": {
+        "name": "uren-per-project-goedkeuringsstatus",
+        "description": "Overzicht van het totaal aantal uren per project met een specifieke goedkeuringsstatus.",
+        "arguments": [
+          {
+            "name": "approvalStatus",
+            "description": "De gewenste goedkeuringsstatus (bijvoorbeeld 'to_approved_project').",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "Geef het totaal aantal geschreven uren per week van {medewerkerNamen} in de vorige maand. Gebruik voor iedere week de start- en einddatum van die week (niet alleen de eerste en laatste dag van de maand). Toon het totaal per medewerker per week en het weeknummer. Als de contracturen van een medewerker bekend zijn, geef dan per week met een groen of rood icoontje aan of het aantal geschreven uren minder is dan het aantal contracturen. Als contracturen niet bekend zijn, laat het icoontje dan weg.",
       "template": {
         "name": "uren-per-week-medewerkers-vorige-maand",

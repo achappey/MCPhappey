@@ -15,6 +15,14 @@
       }
     },
     {
+      "prompt": "Geef een overzicht van alle projectleiders en hun actieve projecten. Als een projectleider veel actieve projecten heeft geef je alleen het aantal projecten van de betreffende projectleider.",
+      "template": {
+        "name": "projecten-per-projectleider",
+        "description": "Toont per projectleider een overzicht van alle projecten waarvan hij of zij projectleider is.",
+        "arguments": []
+      }
+    },
+    {
       "prompt": "Welke drie projecten van organisatie {organisatieNaam} zijn het laatst gestart? Geef per project de naam, startdatum, status en projectmanager.",
       "template": {
         "name": "recent-gestarte-projecten-organisatie",

@@ -1,4 +1,3 @@
-using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
@@ -12,24 +11,22 @@ public static class ModelContextProtocolExtensions
         {
             http.ConfigureSessionOptions = async (ctx, opts, cancellationToken) =>
              {
-                 await Task.Run(() =>
-                 {
-                     var kernel = ctx.RequestServices.GetRequiredService<Kernel>();
-                     var serverName = ctx.Request.Path.Value!.GetServerNameFromUrl();
-                     var server = servers.First(a => a.Server.ServerInfo?.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase) == true);
-                     var authToken = ctx.GetBearerToken();
-                     var headers = ctx.Request.Headers
-                            .ToDictionary(h => h.Key, h => h.Value.ToString());
+                 var kernel = ctx.RequestServices.GetRequiredService<Kernel>();
+                 var serverName = ctx.Request.Path.Value!.GetServerNameFromUrl();
+                 var server = servers.First(a => a.Server.ServerInfo?.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase) == true);
+                 var headers = ctx.Request.Headers
+                        .ToDictionary(h => h.Key, h => h.Value.ToString());
 
-                     opts.ServerInfo = server.Server.ToServerInfo();
-                     opts.ServerInstructions = server.Server.Instructions;
-                     opts.Capabilities = new()
-                     {
-                         Resources = server.ToResourcesCapability(headers),
-                         Prompts = server.ToPromptsCapability(headers),
-                         Tools = server.Server.ToToolsCapability(kernel, headers)
-                     };
-                 }, cancellationToken);
+                 opts.ServerInfo = server.Server.ToServerInfo();
+                 opts.ServerInstructions = server.Server.Instructions;
+                 opts.Capabilities = new()
+                 {
+                     Resources = server.ToResourcesCapability(headers),
+                     Prompts = server.ToPromptsCapability(headers),
+                     Tools = server.Server.ToToolsCapability(kernel, headers)
+                 };
+
+                 await Task.CompletedTask;
              };
 
         });
