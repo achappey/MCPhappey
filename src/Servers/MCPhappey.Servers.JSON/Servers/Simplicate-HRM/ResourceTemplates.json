@@ -1,7 +1,7 @@
 {
   "resourceTemplates": [
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee/employee:{employeeId}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee/employee:{employeeId}?select=id,person.,status.,civil_status.,name,type.,bank_account,function,type.,employment_status,work_email,work_phone,work_mobile,avatar.,created_at,updated_at,is_user",
       "name": "Medewerkerdetails",
       "description": "Haalt een enkele medewerker op via ID.",
       "mimeType": "application/json",
@@ -10,9 +10,9 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee?q[name]=*{nameFilter}*&q[is_active]={isActive}&q[status.label]=*{statusLabelFilter}*&q[team.name]=*{teamName}*&q[employeetype.id]=employeetype:{employeeTypeIdFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee?q[name]=*{nameFilter}*&q[employment_status]={employmentStatus}&q[teams.name]=*{teamName}*&q[is_user]={isUser}&q[status.label]=*{statusLabelFilter}*&q[employeetype.id]=employeetype:{employeeTypeIdFilter}*&offset={offset}&limit={limit}&sort={sortColumn}&select=id,person.,status.,civil_status.,name,type.,bank_account,function,type.,employment_status,work_email,work_phone,work_mobile,avatar.,created_at,updated_at,is_user",
       "name": "Medewerkers (gefilterd)",
-      "description": "Haalt alle medewerkers op, met filters voor naam, actieve status, statuslabel, team en medewerkerstype. Ondersteunt paginering en sortering.",
+      "description": "Haalt alle medewerkers op, met filters voor naam, gebruiker status (true | false), in dienst status ('active' | 'inactive'), team naam, statuslabel, team en medewerkerstype. Ondersteunt paginering en sortering.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
@@ -28,7 +28,7 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/contract?q[employee.id]=employee:{employeeIdFilter}*&q[contracttype.id]=contracttype:{contractTypeIdFilter}*&q[start_date][ge]={startDateGE}&q[end_date][le]={endDateLE}&offset={offset}&limit={limit}&sort={sortColumn}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/contract?q[employee.id]=employee:{employeeIdFilter}&q[contracttype.id]=contracttype:{contractTypeIdFilter}*&q[start_date][ge]={startDateGE}&q[end_date][le]={endDateLE}&offset={offset}&limit={limit}&sort={sortColumn}",
       "name": "Contracten (gefilterd)",
       "description": "Haalt alle contracten op, met filters voor medewerker, contracttype en datumbereik. Ondersteunt paginering en sortering.",
       "mimeType": "application/json",

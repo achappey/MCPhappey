@@ -33,6 +33,7 @@ node_modules
 /packages/**/dist/*
 /packages/*/dist/
 /packages/*/dist/**/
+**/dist/**
 
 # Build results
 [Dd]ebug/

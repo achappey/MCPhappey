@@ -1,0 +1,102 @@
+{
+  "cancel": "Cancel",
+  "loaded": "Loaded",
+  "toggleSidebar": "Sidebar",
+  "welcome": "How can I help?",
+  "chats": "Chats",
+  "text": "Text",
+  "image": "Image",
+  "audio": "Audio",
+  "newChat": "New chat",
+  "promptPlaceholder": "Ask a question",
+  "close": "Close",
+  "delete": "Delete",
+  "disclaimer": "{{appName}} can make mistakes. Check important information.",
+  "select": "Select",
+  "mcp": {
+    "accept": "Accept",
+    "image": "Image",
+    "embeddedResource": "Embedded resource",
+    "embeddedTextResource": "Embedded text resource",
+    "tools": "Tools",
+    "toolCallResult": "Tool result",
+    "prompts": "Prompts",
+    "prompt": "Prompt",
+    "resource": "Resource",
+    "resources": "Resources",
+    "resource_link": "Resource link",
+    "embeddedBlobResource": "Embedded file resource",
+    "reject": "Reject",
+    "cancel": "Cancel",
+    "structuredContent": "Structured content"
+  },
+  "searchPlaceholder": "Search...",
+  "logLevels": {
+    "error": "Error",
+    "debug": "Debug",
+    "info": "Info",
+    "notice": "Notice",
+    "warning": "Warning",
+    "critical": "Critical",
+    "alert": "Alert",
+    "emergency": "Emergency"
+  },
+  "userMenu": {
+    "personalization": "Personalization",
+    "settings": "Settings",
+    "logout": "Log out"
+  },
+  "mcpPage": {
+    "title": "Model Context",
+    "description": "Model Context Protocol gives you one structured way to work with prompts, tasks and knowledge—no matter where the information or function comes from. You always work clearly, transparently and in the same way."
+  },
+  "a2aPage": {
+    "title": "Agent2Agent",
+    "description": "Agent2Agent lets different agents connect and coordinate tasks with each other—so workflows, knowledge and results can flow across systems or teams. This enables smooth, task-driven collaboration."
+  },
+  "library": {
+    "title": "Library"
+  },
+  "settingsModal": {
+    "title": "Settings",
+    "tabGeneral": "General",
+    "logLevel": "Log level",
+    "tabPersonalization": "Personalization",
+    "tabData": "Data controls",
+    "tabConnectors": "Connectors",
+    "languageLabel": "Language",
+    "logoutOnDevice": "Log out on this device",
+    "deleteAll": "Delete all",
+    "deleteAllChats": "Delete all chats",
+    "personalizationComingSoon": "Personalization settings coming soon.",
+    "dataControlsComingSoon": "Data controls coming soon.",
+    "remoteStorage": "Remote Storage"
+  },
+  "locales": {
+    "enUS": "English (US)",
+    "nlNL": "Nederlands"
+  },
+  "ok": "Ok",
+  "storage": {
+    "local": "Local Storage",
+    "remote": "Remote Storage"
+  },
+  "serverSelectModal": {
+    "title": "Select MCP Servers ({{enabled}})",
+    "noServers": "No servers available.",
+    "manage": "Add"
+  },
+  "manageServersModal": {
+    "current": "Current servers",
+    "add": "Add server",
+    "headersInfo": "Headers correct",
+    "headers": "Headers",
+    "name": "Name",
+    "validate": "Validate",
+    "url": "URL",
+    "nameExists": "A server with this name already exists.",
+    "type": "Type",
+    "http": "HTTP",
+    "sse": "SSE"
+  }
+}

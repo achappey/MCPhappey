@@ -1,0 +1,7 @@
+{
+  "serverInfo": {
+    "name": "Calendar",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.Agent.CalendarService, MCPhappey.Tools"]
+}

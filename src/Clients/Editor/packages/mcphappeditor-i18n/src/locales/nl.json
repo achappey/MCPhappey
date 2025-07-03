@@ -1,0 +1,102 @@
+{
+  "cancel": "Annuleer",
+  "loaded": "Geladen",
+  "delete": "Verwijderen",
+  "toggleSidebar": "Zijpaneel",
+  "chats": "Chats",
+  "text": "Tekst",
+  "image": "Afbeelding",
+  "audio": "Audio",
+  "newChat": "Nieuwe chat",
+  "promptPlaceholder": "Stel een vraag",
+  "welcome": "Waar kan ik je mee helpen?",
+  "searchPlaceholder": "Zoeken...",
+  "select": "Selecteer",
+  "close": "Sluiten",
+  "disclaimer": "{{appName}} kan fouten maken. Controleer belangrijke informatie.",
+  "mcp": {
+    "accept": "Accepteer",
+    "reject": "Afwijzen",
+    "cancel": "Annuleer",
+    "toolCallResult": "Toolresultaat",
+    "tools": "Tools",
+    "image": "Afbeelding",
+    "prompts": "Prompts",
+    "prompt": "Prompt",
+    "resources": "Bronnen",
+    "resource": "Bron",
+    "resource_link": "Bron link",
+    "embeddedResource": "Ingesloten bron",
+    "embeddedTextResource": "Ingesloten tekst bron",
+    "embeddedBlobResource": "Ingesloten bestandsbron",
+    "structuredContent": "Gestructureerde inhoud"
+  },
+  "userMenu": {
+    "personalization": "Personalisatie",
+    "settings": "Instellingen",
+    "logout": "Uitloggen"
+  },
+  "library": {
+    "title": "Bibliotheek"
+  },
+  "logLevels": {
+    "error": "Fout",
+    "debug": "Debug",
+    "info": "Info",
+    "notice": "Kennisgeving",
+    "warning": "Waarschuwing",
+    "critical": "Kritiek",
+    "alert": "Alarm",
+    "emergency": "Noodgeval"
+  },
+  "mcpPage": {
+    "title": "Model Context",
+    "description": "Model Context Protocol biedt één gestructureerde manier om met prompts, taken en kennis te werken—ongeacht waar de informatie of functie vandaan komt. Je werkt altijd overzichtelijk, transparant en op dezelfde manier."
+  },
+  "a2aPage": {
+    "title": "Agent2Agent",
+    "description": "Met Agent2Agent kunnen verschillende agenten taken met elkaar afstemmen en verbinden—zodat werkprocessen, kennis en resultaten soepel over systemen of teams heen kunnen stromen. Dit maakt taakgerichte samenwerking eenvoudig."
+  },
+  "settingsModal": {
+    "title": "Instellingen",
+    "tabGeneral": "Algemeen",
+    "logLevel": "Logniveau",
+    "tabPersonalization": "Personalisatie",
+    "tabData": "Gegevensbeheer",
+    "tabConnectors": "Connectoren",
+    "languageLabel": "Taal",
+    "logoutOnDevice": "Uitloggen op dit apparaat",
+    "deleteAll": "Alles verwijderen",
+    "deleteAllChats": "Alle chats verwijderen",
+    "personalizationComingSoon": "Personalisatie-instellingen binnenkort beschikbaar.",
+    "dataControlsComingSoon": "Gegevensbeheer binnenkort beschikbaar.",
+    "remoteStorage": "Remote Storage"
+  },
+  "locales": {
+    "enUS": "Engels (VS)",
+    "nlNL": "Nederlands"
+  },
+  "ok": "Ok",
+  "storage": {
+    "local": "Lokale opslag",
+    "remote": "Remote Storage"
+  },
+  "serverSelectModal": {
+    "title": "Selecteer MCP-servers ({{enabled}})",
+    "noServers": "Geen servers beschikbaar.",
+    "manage": "Wijzigen"
+  },
+  "manageServersModal": {
+    "current": "Huidige servers",
+    "add": "Server toevoegen",
+    "name": "Naam",
+    "url": "URL",
+    "headersInfo": "Headers ok",
+    "validate": "Valideer",
+    "headers": "Headers",
+    "nameExists": "Er bestaat al een server met deze naam.",
+    "type": "Type",
+    "http": "HTTP",
+    "sse": "SSE"
+  }
+}

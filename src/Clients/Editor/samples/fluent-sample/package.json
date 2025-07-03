@@ -1,0 +1,25 @@
+{
+  "name": "mcphappeditor-fluent-sample",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Sample app using mcphappeditor-core and mcphappeditor-theme-fluent",
+  "scripts": {
+    "build:dev": "node esbuild.config.js",
+    "build": "cross-env NODE_ENV=production node esbuild.config.js",
+    "dev": "node esbuild.config.js --watch",
+    "serve": "npx serve public --single -l 3055"
+  },
+  "dependencies": {
+    "@types/react-dom": "^18.1.5",
+    "mcphappeditor-auth": "*",
+    "mcphappeditor-core": "*",
+    "mcphappeditor-theme-fluent": "*",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "react-router": "^7.6.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "dotenv": "^16.5.0"
+  }
+}

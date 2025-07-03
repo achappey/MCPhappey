@@ -8,6 +8,6 @@
   ],
   ".sharepoint.com": "https://{tenantName}.sharepoint.com/_default",
   "obo": {
-    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Mail.Read https://graph.microsoft.com/ChannelMessage.Read.All"
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Mail.Read https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/ChannelMessage.Read.All"
   }
 }

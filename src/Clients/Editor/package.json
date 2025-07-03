@@ -1,0 +1,20 @@
+{
+  "name": "mcphappeditor",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "samples/*"
+  ],
+  "scripts": {
+    "build": "npm run -ws build",
+    "dev": "npm run -ws dev",
+    "build:packages": "npm run -w packages --if-present build",
+    "watch:packages": "npm run -w packages --if-present watch",
+    "clean": "rimraf ./packages/**/dist ./samples/**/dist"
+  },
+  "devDependencies": {
+    "esbuild": "^0.25.4",
+    "rimraf": "^5.0.5",
+    "typescript": "^5.8.3"
+  }
+}

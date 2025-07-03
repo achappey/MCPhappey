@@ -57,7 +57,7 @@ public static class GraphOutlook
         [JsonPropertyName("toRecipients")]
         [Required]
         [Description("E-mail addresses of the recipients. Use a comma seperated list for multiple recipients.")]
-        public string ToRecipients { get; set; } = default!;
+        public string ToRecipients { get; set; } = string.Empty;
 
         [JsonPropertyName("subject")]
         [Required]

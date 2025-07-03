@@ -1,0 +1,120 @@
+using System.ComponentModel;
+using System.Text.Json;
+using MCPhappey.Auth.Extensions;
+using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
+using MCPhappey.Core.Extensions;
+using MCPhappey.Core.Services;
+using MCPhappey.SQL.WebApi.Models.Database;
+using MCPhappey.SQL.WebApi.Repositories;
+using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
+
+namespace MCPhappey.SQL.WebApi.Tools;
+
+public static class ModelContextServers
+{
+    [Description("Create a new MCP-server")]
+    public static async Task<CallToolResult> CreateServer(
+        [Description("Name of the server")]
+        string name,
+        IServiceProvider serviceProvider,
+        [Description("Server instructions")]
+        string? instructions = null,
+        CancellationToken cancellationToken = default)
+    {
+        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
+        var userId = serviceProvider.GetUserId();
+        if (userId == null)
+        {
+            return "No user found".ToErrorCallToolResponse();
+        }
+
+        var server = await serverRepository.CreateServer(new Models.Database.Server()
+        {
+            Name = name,
+            Instructions = instructions,
+            Owners = [new ServerOwner() {
+                       Id = userId
+                    }]
+        }, cancellationToken);
+
+        return JsonSerializer.Serialize(server).ToTextCallToolResponse();
+    }
+
+    [Description("Deletes a MCP-server")]
+    public static async Task<CallToolResult> DeleteServer(
+        [Description("Name of the server to delete")]
+        string name,
+        IServiceProvider serviceProvider,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = serviceProvider.GetUserId();
+        if (userId == null)
+        {
+            return "No user found".ToErrorCallToolResponse();
+        }
+
+        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
+        var server = await serverRepository.GetServer(name, cancellationToken);
+
+        if (server?.Owners.Any(a => a.Id == userId) == true)
+        {
+            await serverRepository.DeleteServer(server.Id);
+
+            return JsonSerializer.Serialize(server).ToTextCallToolResponse();
+        }
+
+        throw new UnauthorizedAccessException();
+    }
+
+    [Description("Adds a resource to a MCP-server")]
+    public static async Task<CallToolResult> AddResource(
+        [Description("Name of the server")]
+            string serverName,
+        [Description("Uri of the resource to add")]
+            string resourceUri,
+        [Description("Name of the resource to add")]
+            string resourceName,
+        IServiceProvider serviceProvider,
+        IMcpServer mcpServer,
+        [Description("Description of the resource to add")]
+            string? resourceDescription = null,
+        CancellationToken cancellationToken = default)
+    {
+        var userId = serviceProvider.GetUserId();
+
+        if (userId == null)
+        {
+            return "No user found".ToErrorCallToolResponse();
+        }
+
+        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+
+        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
+        var resourceRepository = serviceProvider.GetRequiredService<ResourceRepository>();
+        var server = await serverRepository.GetServer(serverName, cancellationToken);
+
+        if (server?.Owners.Any(a => a.Id == userId) == true)
+        {
+            var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
+            var config = configs.GetServerConfig(mcpServer);
+
+            var resource = await downloadService.ScrapeContentAsync(
+                    serviceProvider, mcpServer,
+                    resourceUri, cancellationToken);
+
+            if (resource.Any())
+            {
+                var item = await resourceRepository.AddServerResource(server.Id, resourceUri, resourceName, resourceDescription);
+
+                return JsonSerializer.Serialize(item).ToJsonCallToolResponse(resourceUri);
+            }
+
+            return "No resource found".ToErrorCallToolResponse();
+        }
+
+        return "Access denied. Only owners can add resources".ToErrorCallToolResponse();
+    }
+}
+

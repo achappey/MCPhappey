@@ -14106,7 +14106,7 @@
   // ../../node_modules/react-router/dist/development/index.mjs
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/react-router/dist/development/chunk-NL6KNZEE.mjs
+  // ../../node_modules/react-router/dist/development/chunk-QMGIS6GS.mjs
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
   var React3 = __toESM(require_react(), 1);
   var React = __toESM(require_react(), 1);
@@ -19373,7 +19373,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   var isBrowser = typeof window !== "undefined" && typeof window.document !== "undefined" && typeof window.document.createElement !== "undefined";
   try {
     if (isBrowser) {
-      window.__reactRouterVersion = "7.6.2";
+      window.__reactRouterVersion = "7.6.3";
     }
   } catch (e) {
   }
@@ -20470,13 +20470,125 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   // ../../packages/mcphappey-http/src/schemas.ts
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/index.js
+  // ../../node_modules/zod/index.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/v3/index.js
+  // ../../node_modules/zod/v3/index.js
+  var v3_exports = {};
+  __export(v3_exports, {
+    BRAND: () => BRAND,
+    DIRTY: () => DIRTY,
+    EMPTY_PATH: () => EMPTY_PATH,
+    INVALID: () => INVALID,
+    NEVER: () => NEVER,
+    OK: () => OK,
+    ParseStatus: () => ParseStatus,
+    Schema: () => ZodType,
+    ZodAny: () => ZodAny,
+    ZodArray: () => ZodArray,
+    ZodBigInt: () => ZodBigInt,
+    ZodBoolean: () => ZodBoolean,
+    ZodBranded: () => ZodBranded,
+    ZodCatch: () => ZodCatch,
+    ZodDate: () => ZodDate,
+    ZodDefault: () => ZodDefault,
+    ZodDiscriminatedUnion: () => ZodDiscriminatedUnion,
+    ZodEffects: () => ZodEffects,
+    ZodEnum: () => ZodEnum,
+    ZodError: () => ZodError,
+    ZodFirstPartyTypeKind: () => ZodFirstPartyTypeKind,
+    ZodFunction: () => ZodFunction,
+    ZodIntersection: () => ZodIntersection,
+    ZodIssueCode: () => ZodIssueCode,
+    ZodLazy: () => ZodLazy,
+    ZodLiteral: () => ZodLiteral,
+    ZodMap: () => ZodMap,
+    ZodNaN: () => ZodNaN,
+    ZodNativeEnum: () => ZodNativeEnum,
+    ZodNever: () => ZodNever,
+    ZodNull: () => ZodNull,
+    ZodNullable: () => ZodNullable,
+    ZodNumber: () => ZodNumber,
+    ZodObject: () => ZodObject,
+    ZodOptional: () => ZodOptional,
+    ZodParsedType: () => ZodParsedType,
+    ZodPipeline: () => ZodPipeline,
+    ZodPromise: () => ZodPromise,
+    ZodReadonly: () => ZodReadonly,
+    ZodRecord: () => ZodRecord,
+    ZodSchema: () => ZodType,
+    ZodSet: () => ZodSet,
+    ZodString: () => ZodString,
+    ZodSymbol: () => ZodSymbol,
+    ZodTransformer: () => ZodEffects,
+    ZodTuple: () => ZodTuple,
+    ZodType: () => ZodType,
+    ZodUndefined: () => ZodUndefined,
+    ZodUnion: () => ZodUnion,
+    ZodUnknown: () => ZodUnknown,
+    ZodVoid: () => ZodVoid,
+    addIssueToContext: () => addIssueToContext,
+    any: () => anyType,
+    array: () => arrayType,
+    bigint: () => bigIntType,
+    boolean: () => booleanType,
+    coerce: () => coerce,
+    custom: () => custom,
+    date: () => dateType,
+    datetimeRegex: () => datetimeRegex,
+    default: () => v3_default,
+    defaultErrorMap: () => en_default,
+    discriminatedUnion: () => discriminatedUnionType,
+    effect: () => effectsType,
+    enum: () => enumType,
+    function: () => functionType,
+    getErrorMap: () => getErrorMap,
+    getParsedType: () => getParsedType,
+    instanceof: () => instanceOfType,
+    intersection: () => intersectionType,
+    isAborted: () => isAborted,
+    isAsync: () => isAsync,
+    isDirty: () => isDirty,
+    isValid: () => isValid,
+    late: () => late,
+    lazy: () => lazyType,
+    literal: () => literalType,
+    makeIssue: () => makeIssue,
+    map: () => mapType,
+    nan: () => nanType,
+    nativeEnum: () => nativeEnumType,
+    never: () => neverType,
+    null: () => nullType,
+    nullable: () => nullableType,
+    number: () => numberType,
+    object: () => objectType,
+    objectUtil: () => objectUtil,
+    oboolean: () => oboolean,
+    onumber: () => onumber,
+    optional: () => optionalType,
+    ostring: () => ostring,
+    pipeline: () => pipelineType,
+    preprocess: () => preprocessType,
+    promise: () => promiseType,
+    quotelessJson: () => quotelessJson,
+    record: () => recordType,
+    set: () => setType,
+    setErrorMap: () => setErrorMap,
+    strictObject: () => strictObjectType,
+    string: () => stringType,
+    symbol: () => symbolType,
+    transformer: () => effectsType,
+    tuple: () => tupleType,
+    undefined: () => undefinedType,
+    union: () => unionType,
+    unknown: () => unknownType,
+    util: () => util,
+    void: () => voidType,
+    z: () => external_exports
+  });
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/v3/external.js
+  // ../../node_modules/zod/v3/external.js
   var external_exports = {};
   __export(external_exports, {
     BRAND: () => BRAND,
@@ -20589,16 +20701,16 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   });
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/v3/errors.js
+  // ../../node_modules/zod/v3/errors.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/v3/locales/en.js
+  // ../../node_modules/zod/v3/locales/en.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/v3/ZodError.js
+  // ../../node_modules/zod/v3/ZodError.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/v3/helpers/util.js
+  // ../../node_modules/zod/v3/helpers/util.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
   var util;
   (function(util2) {
@@ -20733,7 +20845,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     }
   };
 
-  // ../../node_modules/zod/dist/esm/v3/ZodError.js
+  // ../../node_modules/zod/v3/ZodError.js
   var ZodIssueCode = util.arrayToEnum([
     "invalid_type",
     "invalid_literal",
@@ -20833,8 +20945,9 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       const formErrors = [];
       for (const sub of this.issues) {
         if (sub.path.length > 0) {
-          fieldErrors[sub.path[0]] = fieldErrors[sub.path[0]] || [];
-          fieldErrors[sub.path[0]].push(mapper(sub));
+          const firstEl = sub.path[0];
+          fieldErrors[firstEl] = fieldErrors[firstEl] || [];
+          fieldErrors[firstEl].push(mapper(sub));
         } else {
           formErrors.push(mapper(sub));
         }
@@ -20850,7 +20963,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     return error;
   };
 
-  // ../../node_modules/zod/dist/esm/v3/locales/en.js
+  // ../../node_modules/zod/v3/locales/en.js
   var errorMap = (issue, _ctx) => {
     let message;
     switch (issue.code) {
@@ -20912,6 +21025,8 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
           message = `String must contain ${issue.exact ? "exactly" : issue.inclusive ? `at least` : `over`} ${issue.minimum} character(s)`;
         else if (issue.type === "number")
           message = `Number must be ${issue.exact ? `exactly equal to ` : issue.inclusive ? `greater than or equal to ` : `greater than `}${issue.minimum}`;
+        else if (issue.type === "bigint")
+          message = `Number must be ${issue.exact ? `exactly equal to ` : issue.inclusive ? `greater than or equal to ` : `greater than `}${issue.minimum}`;
         else if (issue.type === "date")
           message = `Date must be ${issue.exact ? `exactly equal to ` : issue.inclusive ? `greater than or equal to ` : `greater than `}${new Date(Number(issue.minimum))}`;
         else
@@ -20951,7 +21066,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   };
   var en_default = errorMap;
 
-  // ../../node_modules/zod/dist/esm/v3/errors.js
+  // ../../node_modules/zod/v3/errors.js
   var overrideErrorMap = en_default;
   function setErrorMap(map2) {
     overrideErrorMap = map2;
@@ -20960,7 +21075,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     return overrideErrorMap;
   }
 
-  // ../../node_modules/zod/dist/esm/v3/helpers/parseUtil.js
+  // ../../node_modules/zod/v3/helpers/parseUtil.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
   var makeIssue = (params) => {
     const { data: data2, path, errorMaps, issueData } = params;
@@ -21071,13 +21186,10 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   var isValid = (x) => x.status === "valid";
   var isAsync = (x) => typeof Promise !== "undefined" && x instanceof Promise;
 
-  // ../../node_modules/zod/dist/esm/v3/helpers/typeAliases.js
+  // ../../node_modules/zod/v3/types.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
 
-  // ../../node_modules/zod/dist/esm/v3/types.js
-  init_define_DEFAULT_MCP_SERVER_LIST_URLS();
-
-  // ../../node_modules/zod/dist/esm/v3/helpers/errorUtil.js
+  // ../../node_modules/zod/v3/helpers/errorUtil.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
   var errorUtil;
   (function(errorUtil2) {
@@ -21085,7 +21197,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     errorUtil2.toString = (message) => typeof message === "string" ? message : message?.message;
   })(errorUtil || (errorUtil = {}));
 
-  // ../../node_modules/zod/dist/esm/v3/types.js
+  // ../../node_modules/zod/v3/types.js
   var ParseInputLazyPath = class {
     constructor(parent, value, path, key) {
       this._cachedPath = [];
@@ -21484,6 +21596,8 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       return false;
     try {
       const [header] = jwt.split(".");
+      if (!header)
+        return false;
       const base64 = header.replace(/-/g, "+").replace(/_/g, "/").padEnd(header.length + (4 - header.length % 4) % 4, "=");
       const decoded = JSON.parse(atob(base64));
       if (typeof decoded !== "object" || decoded === null)
@@ -24531,14 +24645,17 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   };
   var NEVER = INVALID;
 
+  // ../../node_modules/zod/v3/index.js
+  var v3_default = external_exports;
+
   // ../../packages/mcphappey-http/src/schemas.ts
-  var mcpServerSchema = external_exports.object({
-    type: external_exports.string(),
-    url: external_exports.string().url(),
-    headers: external_exports.record(external_exports.string(), external_exports.string()).optional()
+  var mcpServerSchema = v3_exports.object({
+    type: v3_exports.string(),
+    url: v3_exports.string().url(),
+    headers: v3_exports.record(v3_exports.string(), v3_exports.string()).optional()
   }).passthrough();
-  var mcpServerListResponseSchema = external_exports.object({
-    servers: external_exports.record(external_exports.string(), mcpServerSchema)
+  var mcpServerListResponseSchema = v3_exports.object({
+    servers: v3_exports.record(v3_exports.string(), mcpServerSchema)
   });
 
   // ../../packages/mcphappey-http/src/fetchServerList.ts
@@ -24623,56 +24740,59 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
 
   // ../../node_modules/@modelcontextprotocol/sdk/dist/esm/types.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
-  var LATEST_PROTOCOL_VERSION = "2025-03-26";
+  var LATEST_PROTOCOL_VERSION = "2025-06-18";
   var SUPPORTED_PROTOCOL_VERSIONS = [
     LATEST_PROTOCOL_VERSION,
+    "2025-03-26",
     "2024-11-05",
     "2024-10-07"
   ];
   var JSONRPC_VERSION = "2.0";
-  var ProgressTokenSchema = external_exports.union([external_exports.string(), external_exports.number().int()]);
-  var CursorSchema = external_exports.string();
-  var RequestMetaSchema = external_exports.object({
+  var ProgressTokenSchema = v3_exports.union([v3_exports.string(), v3_exports.number().int()]);
+  var CursorSchema = v3_exports.string();
+  var RequestMetaSchema = v3_exports.object({
     /**
      * If specified, the caller is requesting out-of-band progress notifications for this request (as represented by notifications/progress). The value of this parameter is an opaque token that will be attached to any subsequent notifications. The receiver is not obligated to provide these notifications.
      */
-    progressToken: external_exports.optional(ProgressTokenSchema)
+    progressToken: v3_exports.optional(ProgressTokenSchema)
   }).passthrough();
-  var BaseRequestParamsSchema = external_exports.object({
-    _meta: external_exports.optional(RequestMetaSchema)
+  var BaseRequestParamsSchema = v3_exports.object({
+    _meta: v3_exports.optional(RequestMetaSchema)
   }).passthrough();
-  var RequestSchema = external_exports.object({
-    method: external_exports.string(),
-    params: external_exports.optional(BaseRequestParamsSchema)
+  var RequestSchema = v3_exports.object({
+    method: v3_exports.string(),
+    params: v3_exports.optional(BaseRequestParamsSchema)
   });
-  var BaseNotificationParamsSchema = external_exports.object({
+  var BaseNotificationParamsSchema = v3_exports.object({
     /**
-     * This parameter name is reserved by MCP to allow clients and servers to attach additional metadata to their notifications.
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
      */
-    _meta: external_exports.optional(external_exports.object({}).passthrough())
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
-  var NotificationSchema = external_exports.object({
-    method: external_exports.string(),
-    params: external_exports.optional(BaseNotificationParamsSchema)
+  var NotificationSchema = v3_exports.object({
+    method: v3_exports.string(),
+    params: v3_exports.optional(BaseNotificationParamsSchema)
   });
-  var ResultSchema = external_exports.object({
+  var ResultSchema = v3_exports.object({
     /**
-     * This result property is reserved by the protocol to allow clients and servers to attach additional metadata to their responses.
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
      */
-    _meta: external_exports.optional(external_exports.object({}).passthrough())
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
-  var RequestIdSchema = external_exports.union([external_exports.string(), external_exports.number().int()]);
-  var JSONRPCRequestSchema = external_exports.object({
-    jsonrpc: external_exports.literal(JSONRPC_VERSION),
+  var RequestIdSchema = v3_exports.union([v3_exports.string(), v3_exports.number().int()]);
+  var JSONRPCRequestSchema = v3_exports.object({
+    jsonrpc: v3_exports.literal(JSONRPC_VERSION),
     id: RequestIdSchema
   }).merge(RequestSchema).strict();
   var isJSONRPCRequest = (value) => JSONRPCRequestSchema.safeParse(value).success;
-  var JSONRPCNotificationSchema = external_exports.object({
-    jsonrpc: external_exports.literal(JSONRPC_VERSION)
+  var JSONRPCNotificationSchema = v3_exports.object({
+    jsonrpc: v3_exports.literal(JSONRPC_VERSION)
   }).merge(NotificationSchema).strict();
   var isJSONRPCNotification = (value) => JSONRPCNotificationSchema.safeParse(value).success;
-  var JSONRPCResponseSchema = external_exports.object({
-    jsonrpc: external_exports.literal(JSONRPC_VERSION),
+  var JSONRPCResponseSchema = v3_exports.object({
+    jsonrpc: v3_exports.literal(JSONRPC_VERSION),
     id: RequestIdSchema,
     result: ResultSchema
   }).strict();
@@ -24687,26 +24807,26 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     ErrorCode2[ErrorCode2["InvalidParams"] = -32602] = "InvalidParams";
     ErrorCode2[ErrorCode2["InternalError"] = -32603] = "InternalError";
   })(ErrorCode || (ErrorCode = {}));
-  var JSONRPCErrorSchema = external_exports.object({
-    jsonrpc: external_exports.literal(JSONRPC_VERSION),
+  var JSONRPCErrorSchema = v3_exports.object({
+    jsonrpc: v3_exports.literal(JSONRPC_VERSION),
     id: RequestIdSchema,
-    error: external_exports.object({
+    error: v3_exports.object({
       /**
        * The error type that occurred.
        */
-      code: external_exports.number().int(),
+      code: v3_exports.number().int(),
       /**
        * A short description of the error. The message SHOULD be limited to a concise single sentence.
        */
-      message: external_exports.string(),
+      message: v3_exports.string(),
       /**
        * Additional information about the error. The value of this member is defined by the sender (e.g. detailed error information, nested errors etc.).
        */
-      data: external_exports.optional(external_exports.unknown())
+      data: v3_exports.optional(v3_exports.unknown())
     })
   }).strict();
   var isJSONRPCError = (value) => JSONRPCErrorSchema.safeParse(value).success;
-  var JSONRPCMessageSchema = external_exports.union([
+  var JSONRPCMessageSchema = v3_exports.union([
     JSONRPCRequestSchema,
     JSONRPCNotificationSchema,
     JSONRPCResponseSchema,
@@ -24714,7 +24834,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
   ]);
   var EmptyResultSchema = ResultSchema.strict();
   var CancelledNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/cancelled"),
+    method: v3_exports.literal("notifications/cancelled"),
     params: BaseNotificationParamsSchema.extend({
       /**
        * The ID of the request to cancel.
@@ -24725,93 +24845,109 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       /**
        * An optional string describing the reason for the cancellation. This MAY be logged or presented to the user.
        */
-      reason: external_exports.string().optional()
+      reason: v3_exports.string().optional()
     })
   });
-  var ImplementationSchema = external_exports.object({
-    name: external_exports.string(),
-    version: external_exports.string()
+  var BaseMetadataSchema = v3_exports.object({
+    /** Intended for programmatic or logical use, but used as a display name in past specs or fallback */
+    name: v3_exports.string(),
+    /**
+    * Intended for UI and end-user contexts — optimized to be human-readable and easily understood,
+    * even by those unfamiliar with domain-specific terminology.
+    *
+    * If not provided, the name should be used for display (except for Tool,
+    * where `annotations.title` should be given precedence over using `name`,
+    * if present).
+    */
+    title: v3_exports.optional(v3_exports.string())
   }).passthrough();
-  var ClientCapabilitiesSchema = external_exports.object({
+  var ImplementationSchema = BaseMetadataSchema.extend({
+    version: v3_exports.string()
+  });
+  var ClientCapabilitiesSchema = v3_exports.object({
     /**
      * Experimental, non-standard capabilities that the client supports.
      */
-    experimental: external_exports.optional(external_exports.object({}).passthrough()),
+    experimental: v3_exports.optional(v3_exports.object({}).passthrough()),
     /**
      * Present if the client supports sampling from an LLM.
      */
-    sampling: external_exports.optional(external_exports.object({}).passthrough()),
+    sampling: v3_exports.optional(v3_exports.object({}).passthrough()),
+    /**
+     * Present if the client supports eliciting user input.
+     */
+    elicitation: v3_exports.optional(v3_exports.object({}).passthrough()),
     /**
      * Present if the client supports listing roots.
      */
-    roots: external_exports.optional(external_exports.object({
+    roots: v3_exports.optional(v3_exports.object({
       /**
        * Whether the client supports issuing notifications for changes to the roots list.
        */
-      listChanged: external_exports.optional(external_exports.boolean())
+      listChanged: v3_exports.optional(v3_exports.boolean())
     }).passthrough())
   }).passthrough();
   var InitializeRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("initialize"),
+    method: v3_exports.literal("initialize"),
     params: BaseRequestParamsSchema.extend({
       /**
        * The latest version of the Model Context Protocol that the client supports. The client MAY decide to support older versions as well.
        */
-      protocolVersion: external_exports.string(),
+      protocolVersion: v3_exports.string(),
       capabilities: ClientCapabilitiesSchema,
       clientInfo: ImplementationSchema
     })
   });
-  var ServerCapabilitiesSchema = external_exports.object({
+  var ServerCapabilitiesSchema = v3_exports.object({
     /**
      * Experimental, non-standard capabilities that the server supports.
      */
-    experimental: external_exports.optional(external_exports.object({}).passthrough()),
+    experimental: v3_exports.optional(v3_exports.object({}).passthrough()),
     /**
      * Present if the server supports sending log messages to the client.
      */
-    logging: external_exports.optional(external_exports.object({}).passthrough()),
+    logging: v3_exports.optional(v3_exports.object({}).passthrough()),
     /**
      * Present if the server supports sending completions to the client.
      */
-    completions: external_exports.optional(external_exports.object({}).passthrough()),
+    completions: v3_exports.optional(v3_exports.object({}).passthrough()),
     /**
      * Present if the server offers any prompt templates.
      */
-    prompts: external_exports.optional(external_exports.object({
+    prompts: v3_exports.optional(v3_exports.object({
       /**
        * Whether this server supports issuing notifications for changes to the prompt list.
        */
-      listChanged: external_exports.optional(external_exports.boolean())
+      listChanged: v3_exports.optional(v3_exports.boolean())
     }).passthrough()),
     /**
      * Present if the server offers any resources to read.
      */
-    resources: external_exports.optional(external_exports.object({
+    resources: v3_exports.optional(v3_exports.object({
       /**
        * Whether this server supports clients subscribing to resource updates.
        */
-      subscribe: external_exports.optional(external_exports.boolean()),
+      subscribe: v3_exports.optional(v3_exports.boolean()),
       /**
        * Whether this server supports issuing notifications for changes to the resource list.
        */
-      listChanged: external_exports.optional(external_exports.boolean())
+      listChanged: v3_exports.optional(v3_exports.boolean())
     }).passthrough()),
     /**
      * Present if the server offers any tools to call.
      */
-    tools: external_exports.optional(external_exports.object({
+    tools: v3_exports.optional(v3_exports.object({
       /**
        * Whether this server supports issuing notifications for changes to the tool list.
        */
-      listChanged: external_exports.optional(external_exports.boolean())
+      listChanged: v3_exports.optional(v3_exports.boolean())
     }).passthrough())
   }).passthrough();
   var InitializeResultSchema = ResultSchema.extend({
     /**
      * The version of the Model Context Protocol that the server wants to use. This may not match the version that the client requested. If the client cannot support this version, it MUST disconnect.
      */
-    protocolVersion: external_exports.string(),
+    protocolVersion: v3_exports.string(),
     capabilities: ServerCapabilitiesSchema,
     serverInfo: ImplementationSchema,
     /**
@@ -24819,31 +24955,31 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      *
      * This can be used by clients to improve the LLM's understanding of available tools, resources, etc. It can be thought of like a "hint" to the model. For example, this information MAY be added to the system prompt.
      */
-    instructions: external_exports.optional(external_exports.string())
+    instructions: v3_exports.optional(v3_exports.string())
   });
   var InitializedNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/initialized")
+    method: v3_exports.literal("notifications/initialized")
   });
   var isInitializedNotification = (value) => InitializedNotificationSchema.safeParse(value).success;
   var PingRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("ping")
+    method: v3_exports.literal("ping")
   });
-  var ProgressSchema = external_exports.object({
+  var ProgressSchema = v3_exports.object({
     /**
      * The progress thus far. This should increase every time progress is made, even if the total is unknown.
      */
-    progress: external_exports.number(),
+    progress: v3_exports.number(),
     /**
      * Total number of items to process (or total progress required), if known.
      */
-    total: external_exports.optional(external_exports.number()),
+    total: v3_exports.optional(v3_exports.number()),
     /**
      * An optional message describing the current progress.
      */
-    message: external_exports.optional(external_exports.string())
+    message: v3_exports.optional(v3_exports.string())
   }).passthrough();
   var ProgressNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/progress"),
+    method: v3_exports.literal("notifications/progress"),
     params: BaseNotificationParamsSchema.merge(ProgressSchema).extend({
       /**
        * The progress token which was given in the initial request, used to associate this notification with the request that is proceeding.
@@ -24857,7 +24993,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
        * An opaque token representing the current pagination position.
        * If provided, the server should return results starting after this cursor.
        */
-      cursor: external_exports.optional(CursorSchema)
+      cursor: v3_exports.optional(CursorSchema)
     }).optional()
   });
   var PaginatedResultSchema = ResultSchema.extend({
@@ -24865,238 +25001,267 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      * An opaque token representing the pagination position after the last returned result.
      * If present, there may be more results available.
      */
-    nextCursor: external_exports.optional(CursorSchema)
+    nextCursor: v3_exports.optional(CursorSchema)
   });
-  var ResourceContentsSchema = external_exports.object({
+  var ResourceContentsSchema = v3_exports.object({
     /**
      * The URI of this resource.
      */
-    uri: external_exports.string(),
+    uri: v3_exports.string(),
     /**
      * The MIME type of this resource, if known.
      */
-    mimeType: external_exports.optional(external_exports.string())
+    mimeType: v3_exports.optional(v3_exports.string()),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
   var TextResourceContentsSchema = ResourceContentsSchema.extend({
     /**
      * The text of the item. This must only be set if the item can actually be represented as text (not binary data).
      */
-    text: external_exports.string()
+    text: v3_exports.string()
   });
   var BlobResourceContentsSchema = ResourceContentsSchema.extend({
     /**
      * A base64-encoded string representing the binary data of the item.
      */
-    blob: external_exports.string().base64()
+    blob: v3_exports.string().base64()
   });
-  var ResourceSchema = external_exports.object({
+  var ResourceSchema = BaseMetadataSchema.extend({
     /**
      * The URI of this resource.
      */
-    uri: external_exports.string(),
-    /**
-     * A human-readable name for this resource.
-     *
-     * This can be used by clients to populate UI elements.
-     */
-    name: external_exports.string(),
+    uri: v3_exports.string(),
     /**
      * A description of what this resource represents.
      *
      * This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
      */
-    description: external_exports.optional(external_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
     /**
      * The MIME type of this resource, if known.
      */
-    mimeType: external_exports.optional(external_exports.string())
-  }).passthrough();
-  var ResourceTemplateSchema = external_exports.object({
+    mimeType: v3_exports.optional(v3_exports.string()),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
+  });
+  var ResourceTemplateSchema = BaseMetadataSchema.extend({
     /**
      * A URI template (according to RFC 6570) that can be used to construct resource URIs.
      */
-    uriTemplate: external_exports.string(),
-    /**
-     * A human-readable name for the type of resource this template refers to.
-     *
-     * This can be used by clients to populate UI elements.
-     */
-    name: external_exports.string(),
+    uriTemplate: v3_exports.string(),
     /**
      * A description of what this template is for.
      *
      * This can be used by clients to improve the LLM's understanding of available resources. It can be thought of like a "hint" to the model.
      */
-    description: external_exports.optional(external_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
     /**
      * The MIME type for all resources that match this template. This should only be included if all resources matching this template have the same type.
      */
-    mimeType: external_exports.optional(external_exports.string())
-  }).passthrough();
+    mimeType: v3_exports.optional(v3_exports.string()),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
+  });
   var ListResourcesRequestSchema = PaginatedRequestSchema.extend({
-    method: external_exports.literal("resources/list")
+    method: v3_exports.literal("resources/list")
   });
   var ListResourcesResultSchema = PaginatedResultSchema.extend({
-    resources: external_exports.array(ResourceSchema)
+    resources: v3_exports.array(ResourceSchema)
   });
   var ListResourceTemplatesRequestSchema = PaginatedRequestSchema.extend({
-    method: external_exports.literal("resources/templates/list")
+    method: v3_exports.literal("resources/templates/list")
   });
   var ListResourceTemplatesResultSchema = PaginatedResultSchema.extend({
-    resourceTemplates: external_exports.array(ResourceTemplateSchema)
+    resourceTemplates: v3_exports.array(ResourceTemplateSchema)
   });
   var ReadResourceRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("resources/read"),
+    method: v3_exports.literal("resources/read"),
     params: BaseRequestParamsSchema.extend({
       /**
        * The URI of the resource to read. The URI can use any protocol; it is up to the server how to interpret it.
        */
-      uri: external_exports.string()
+      uri: v3_exports.string()
     })
   });
   var ReadResourceResultSchema = ResultSchema.extend({
-    contents: external_exports.array(external_exports.union([TextResourceContentsSchema, BlobResourceContentsSchema]))
+    contents: v3_exports.array(v3_exports.union([TextResourceContentsSchema, BlobResourceContentsSchema]))
   });
   var ResourceListChangedNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/resources/list_changed")
+    method: v3_exports.literal("notifications/resources/list_changed")
   });
   var SubscribeRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("resources/subscribe"),
+    method: v3_exports.literal("resources/subscribe"),
     params: BaseRequestParamsSchema.extend({
       /**
        * The URI of the resource to subscribe to. The URI can use any protocol; it is up to the server how to interpret it.
        */
-      uri: external_exports.string()
+      uri: v3_exports.string()
     })
   });
   var UnsubscribeRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("resources/unsubscribe"),
+    method: v3_exports.literal("resources/unsubscribe"),
     params: BaseRequestParamsSchema.extend({
       /**
        * The URI of the resource to unsubscribe from.
        */
-      uri: external_exports.string()
+      uri: v3_exports.string()
     })
   });
   var ResourceUpdatedNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/resources/updated"),
+    method: v3_exports.literal("notifications/resources/updated"),
     params: BaseNotificationParamsSchema.extend({
       /**
        * The URI of the resource that has been updated. This might be a sub-resource of the one that the client actually subscribed to.
        */
-      uri: external_exports.string()
+      uri: v3_exports.string()
     })
   });
-  var PromptArgumentSchema = external_exports.object({
+  var PromptArgumentSchema = v3_exports.object({
     /**
      * The name of the argument.
      */
-    name: external_exports.string(),
+    name: v3_exports.string(),
     /**
      * A human-readable description of the argument.
      */
-    description: external_exports.optional(external_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
     /**
      * Whether this argument must be provided.
      */
-    required: external_exports.optional(external_exports.boolean())
+    required: v3_exports.optional(v3_exports.boolean())
   }).passthrough();
-  var PromptSchema = external_exports.object({
-    /**
-     * The name of the prompt or prompt template.
-     */
-    name: external_exports.string(),
+  var PromptSchema = BaseMetadataSchema.extend({
     /**
      * An optional description of what this prompt provides
      */
-    description: external_exports.optional(external_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
     /**
      * A list of arguments to use for templating the prompt.
      */
-    arguments: external_exports.optional(external_exports.array(PromptArgumentSchema))
-  }).passthrough();
+    arguments: v3_exports.optional(v3_exports.array(PromptArgumentSchema)),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
+  });
   var ListPromptsRequestSchema = PaginatedRequestSchema.extend({
-    method: external_exports.literal("prompts/list")
+    method: v3_exports.literal("prompts/list")
   });
   var ListPromptsResultSchema = PaginatedResultSchema.extend({
-    prompts: external_exports.array(PromptSchema)
+    prompts: v3_exports.array(PromptSchema)
   });
   var GetPromptRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("prompts/get"),
+    method: v3_exports.literal("prompts/get"),
     params: BaseRequestParamsSchema.extend({
       /**
        * The name of the prompt or prompt template.
        */
-      name: external_exports.string(),
+      name: v3_exports.string(),
       /**
        * Arguments to use for templating the prompt.
        */
-      arguments: external_exports.optional(external_exports.record(external_exports.string()))
+      arguments: v3_exports.optional(v3_exports.record(v3_exports.string()))
     })
   });
-  var TextContentSchema = external_exports.object({
-    type: external_exports.literal("text"),
+  var TextContentSchema = v3_exports.object({
+    type: v3_exports.literal("text"),
     /**
      * The text content of the message.
      */
-    text: external_exports.string()
+    text: v3_exports.string(),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
-  var ImageContentSchema = external_exports.object({
-    type: external_exports.literal("image"),
+  var ImageContentSchema = v3_exports.object({
+    type: v3_exports.literal("image"),
     /**
      * The base64-encoded image data.
      */
-    data: external_exports.string().base64(),
+    data: v3_exports.string().base64(),
     /**
      * The MIME type of the image. Different providers may support different image types.
      */
-    mimeType: external_exports.string()
+    mimeType: v3_exports.string(),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
-  var AudioContentSchema = external_exports.object({
-    type: external_exports.literal("audio"),
+  var AudioContentSchema = v3_exports.object({
+    type: v3_exports.literal("audio"),
     /**
      * The base64-encoded audio data.
      */
-    data: external_exports.string().base64(),
+    data: v3_exports.string().base64(),
     /**
      * The MIME type of the audio. Different providers may support different audio types.
      */
-    mimeType: external_exports.string()
+    mimeType: v3_exports.string(),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
-  var EmbeddedResourceSchema = external_exports.object({
-    type: external_exports.literal("resource"),
-    resource: external_exports.union([TextResourceContentsSchema, BlobResourceContentsSchema])
+  var EmbeddedResourceSchema = v3_exports.object({
+    type: v3_exports.literal("resource"),
+    resource: v3_exports.union([TextResourceContentsSchema, BlobResourceContentsSchema]),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
-  var PromptMessageSchema = external_exports.object({
-    role: external_exports.enum(["user", "assistant"]),
-    content: external_exports.union([
-      TextContentSchema,
-      ImageContentSchema,
-      AudioContentSchema,
-      EmbeddedResourceSchema
-    ])
+  var ResourceLinkSchema = ResourceSchema.extend({
+    type: v3_exports.literal("resource_link")
+  });
+  var ContentBlockSchema = v3_exports.union([
+    TextContentSchema,
+    ImageContentSchema,
+    AudioContentSchema,
+    ResourceLinkSchema,
+    EmbeddedResourceSchema
+  ]);
+  var PromptMessageSchema = v3_exports.object({
+    role: v3_exports.enum(["user", "assistant"]),
+    content: ContentBlockSchema
   }).passthrough();
   var GetPromptResultSchema = ResultSchema.extend({
     /**
      * An optional description for the prompt.
      */
-    description: external_exports.optional(external_exports.string()),
-    messages: external_exports.array(PromptMessageSchema)
+    description: v3_exports.optional(v3_exports.string()),
+    messages: v3_exports.array(PromptMessageSchema)
   });
   var PromptListChangedNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/prompts/list_changed")
+    method: v3_exports.literal("notifications/prompts/list_changed")
   });
-  var ToolAnnotationsSchema = external_exports.object({
+  var ToolAnnotationsSchema = v3_exports.object({
     /**
      * A human-readable title for the tool.
      */
-    title: external_exports.optional(external_exports.string()),
+    title: v3_exports.optional(v3_exports.string()),
     /**
      * If true, the tool does not modify its environment.
      *
      * Default: false
      */
-    readOnlyHint: external_exports.optional(external_exports.boolean()),
+    readOnlyHint: v3_exports.optional(v3_exports.boolean()),
     /**
      * If true, the tool may perform destructive updates to its environment.
      * If false, the tool performs only additive updates.
@@ -25105,7 +25270,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      *
      * Default: true
      */
-    destructiveHint: external_exports.optional(external_exports.boolean()),
+    destructiveHint: v3_exports.optional(v3_exports.boolean()),
     /**
      * If true, calling the tool repeatedly with the same arguments
      * will have no additional effect on the its environment.
@@ -25114,7 +25279,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      *
      * Default: false
      */
-    idempotentHint: external_exports.optional(external_exports.boolean()),
+    idempotentHint: v3_exports.optional(v3_exports.boolean()),
     /**
      * If true, this tool may interact with an "open world" of external
      * entities. If false, the tool's domain of interaction is closed.
@@ -25123,44 +25288,45 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      *
      * Default: true
      */
-    openWorldHint: external_exports.optional(external_exports.boolean())
+    openWorldHint: v3_exports.optional(v3_exports.boolean())
   }).passthrough();
-  var ToolSchema = external_exports.object({
-    /**
-     * The name of the tool.
-     */
-    name: external_exports.string(),
+  var ToolSchema = BaseMetadataSchema.extend({
     /**
      * A human-readable description of the tool.
      */
-    description: external_exports.optional(external_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
     /**
      * A JSON Schema object defining the expected parameters for the tool.
      */
-    inputSchema: external_exports.object({
-      type: external_exports.literal("object"),
-      properties: external_exports.optional(external_exports.object({}).passthrough()),
-      required: external_exports.optional(external_exports.array(external_exports.string()))
+    inputSchema: v3_exports.object({
+      type: v3_exports.literal("object"),
+      properties: v3_exports.optional(v3_exports.object({}).passthrough()),
+      required: v3_exports.optional(v3_exports.array(v3_exports.string()))
     }).passthrough(),
     /**
      * An optional JSON Schema object defining the structure of the tool's output returned in
      * the structuredContent field of a CallToolResult.
      */
-    outputSchema: external_exports.optional(external_exports.object({
-      type: external_exports.literal("object"),
-      properties: external_exports.optional(external_exports.object({}).passthrough()),
-      required: external_exports.optional(external_exports.array(external_exports.string()))
+    outputSchema: v3_exports.optional(v3_exports.object({
+      type: v3_exports.literal("object"),
+      properties: v3_exports.optional(v3_exports.object({}).passthrough()),
+      required: v3_exports.optional(v3_exports.array(v3_exports.string()))
     }).passthrough()),
     /**
      * Optional additional tool information.
      */
-    annotations: external_exports.optional(ToolAnnotationsSchema)
-  }).passthrough();
+    annotations: v3_exports.optional(ToolAnnotationsSchema),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
+  });
   var ListToolsRequestSchema = PaginatedRequestSchema.extend({
-    method: external_exports.literal("tools/list")
+    method: v3_exports.literal("tools/list")
   });
   var ListToolsResultSchema = PaginatedResultSchema.extend({
-    tools: external_exports.array(ToolSchema)
+    tools: v3_exports.array(ToolSchema)
   });
   var CallToolResultSchema = ResultSchema.extend({
     /**
@@ -25169,18 +25335,13 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      * If the Tool does not define an outputSchema, this field MUST be present in the result.
      * For backwards compatibility, this field is always present, but it may be empty.
      */
-    content: external_exports.array(external_exports.union([
-      TextContentSchema,
-      ImageContentSchema,
-      AudioContentSchema,
-      EmbeddedResourceSchema
-    ])).default([]),
+    content: v3_exports.array(ContentBlockSchema).default([]),
     /**
      * An object containing structured tool output.
      *
      * If the Tool defines an outputSchema, this field MUST be present in the result, and contain a JSON object that matches the schema.
      */
-    structuredContent: external_exports.object({}).passthrough().optional(),
+    structuredContent: v3_exports.object({}).passthrough().optional(),
     /**
      * Whether the tool call ended in an error.
      *
@@ -25195,22 +25356,22 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      * server does not support tool calls, or any other exceptional conditions,
      * should be reported as an MCP error response.
      */
-    isError: external_exports.optional(external_exports.boolean())
+    isError: v3_exports.optional(v3_exports.boolean())
   });
   var CompatibilityCallToolResultSchema = CallToolResultSchema.or(ResultSchema.extend({
-    toolResult: external_exports.unknown()
+    toolResult: v3_exports.unknown()
   }));
   var CallToolRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("tools/call"),
+    method: v3_exports.literal("tools/call"),
     params: BaseRequestParamsSchema.extend({
-      name: external_exports.string(),
-      arguments: external_exports.optional(external_exports.record(external_exports.unknown()))
+      name: v3_exports.string(),
+      arguments: v3_exports.optional(v3_exports.record(v3_exports.unknown()))
     })
   });
   var ToolListChangedNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/tools/list_changed")
+    method: v3_exports.literal("notifications/tools/list_changed")
   });
-  var LoggingLevelSchema = external_exports.enum([
+  var LoggingLevelSchema = v3_exports.enum([
     "debug",
     "info",
     "notice",
@@ -25221,7 +25382,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     "emergency"
   ]);
   var SetLevelRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("logging/setLevel"),
+    method: v3_exports.literal("logging/setLevel"),
     params: BaseRequestParamsSchema.extend({
       /**
        * The level of logging that the client wants to receive from the server. The server should send all logs at this level and higher (i.e., more severe) to the client as notifications/logging/message.
@@ -25230,7 +25391,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     })
   });
   var LoggingMessageNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/message"),
+    method: v3_exports.literal("notifications/message"),
     params: BaseNotificationParamsSchema.extend({
       /**
        * The severity of this log message.
@@ -25239,154 +25400,226 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       /**
        * An optional name of the logger issuing this message.
        */
-      logger: external_exports.optional(external_exports.string()),
+      logger: v3_exports.optional(v3_exports.string()),
       /**
        * The data to be logged, such as a string message or an object. Any JSON serializable type is allowed here.
        */
-      data: external_exports.unknown()
+      data: v3_exports.unknown()
     })
   });
-  var ModelHintSchema = external_exports.object({
+  var ModelHintSchema = v3_exports.object({
     /**
      * A hint for a model name.
      */
-    name: external_exports.string().optional()
+    name: v3_exports.string().optional()
   }).passthrough();
-  var ModelPreferencesSchema = external_exports.object({
+  var ModelPreferencesSchema = v3_exports.object({
     /**
      * Optional hints to use for model selection.
      */
-    hints: external_exports.optional(external_exports.array(ModelHintSchema)),
+    hints: v3_exports.optional(v3_exports.array(ModelHintSchema)),
     /**
      * How much to prioritize cost when selecting a model.
      */
-    costPriority: external_exports.optional(external_exports.number().min(0).max(1)),
+    costPriority: v3_exports.optional(v3_exports.number().min(0).max(1)),
     /**
      * How much to prioritize sampling speed (latency) when selecting a model.
      */
-    speedPriority: external_exports.optional(external_exports.number().min(0).max(1)),
+    speedPriority: v3_exports.optional(v3_exports.number().min(0).max(1)),
     /**
      * How much to prioritize intelligence and capabilities when selecting a model.
      */
-    intelligencePriority: external_exports.optional(external_exports.number().min(0).max(1))
+    intelligencePriority: v3_exports.optional(v3_exports.number().min(0).max(1))
   }).passthrough();
-  var SamplingMessageSchema = external_exports.object({
-    role: external_exports.enum(["user", "assistant"]),
-    content: external_exports.union([TextContentSchema, ImageContentSchema, AudioContentSchema])
+  var SamplingMessageSchema = v3_exports.object({
+    role: v3_exports.enum(["user", "assistant"]),
+    content: v3_exports.union([TextContentSchema, ImageContentSchema, AudioContentSchema])
   }).passthrough();
   var CreateMessageRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("sampling/createMessage"),
+    method: v3_exports.literal("sampling/createMessage"),
     params: BaseRequestParamsSchema.extend({
-      messages: external_exports.array(SamplingMessageSchema),
+      messages: v3_exports.array(SamplingMessageSchema),
       /**
        * An optional system prompt the server wants to use for sampling. The client MAY modify or omit this prompt.
        */
-      systemPrompt: external_exports.optional(external_exports.string()),
+      systemPrompt: v3_exports.optional(v3_exports.string()),
       /**
        * A request to include context from one or more MCP servers (including the caller), to be attached to the prompt. The client MAY ignore this request.
        */
-      includeContext: external_exports.optional(external_exports.enum(["none", "thisServer", "allServers"])),
-      temperature: external_exports.optional(external_exports.number()),
+      includeContext: v3_exports.optional(v3_exports.enum(["none", "thisServer", "allServers"])),
+      temperature: v3_exports.optional(v3_exports.number()),
       /**
        * The maximum number of tokens to sample, as requested by the server. The client MAY choose to sample fewer tokens than requested.
        */
-      maxTokens: external_exports.number().int(),
-      stopSequences: external_exports.optional(external_exports.array(external_exports.string())),
+      maxTokens: v3_exports.number().int(),
+      stopSequences: v3_exports.optional(v3_exports.array(v3_exports.string())),
       /**
        * Optional metadata to pass through to the LLM provider. The format of this metadata is provider-specific.
        */
-      metadata: external_exports.optional(external_exports.object({}).passthrough()),
+      metadata: v3_exports.optional(v3_exports.object({}).passthrough()),
       /**
        * The server's preferences for which model to select.
        */
-      modelPreferences: external_exports.optional(ModelPreferencesSchema)
+      modelPreferences: v3_exports.optional(ModelPreferencesSchema)
     })
   });
   var CreateMessageResultSchema = ResultSchema.extend({
     /**
      * The name of the model that generated the message.
      */
-    model: external_exports.string(),
+    model: v3_exports.string(),
     /**
      * The reason why sampling stopped.
      */
-    stopReason: external_exports.optional(external_exports.enum(["endTurn", "stopSequence", "maxTokens"]).or(external_exports.string())),
-    role: external_exports.enum(["user", "assistant"]),
-    content: external_exports.discriminatedUnion("type", [
+    stopReason: v3_exports.optional(v3_exports.enum(["endTurn", "stopSequence", "maxTokens"]).or(v3_exports.string())),
+    role: v3_exports.enum(["user", "assistant"]),
+    content: v3_exports.discriminatedUnion("type", [
       TextContentSchema,
       ImageContentSchema,
       AudioContentSchema
     ])
   });
-  var ResourceReferenceSchema = external_exports.object({
-    type: external_exports.literal("ref/resource"),
-    /**
-     * The URI or URI template of the resource.
-     */
-    uri: external_exports.string()
+  var BooleanSchemaSchema = v3_exports.object({
+    type: v3_exports.literal("boolean"),
+    title: v3_exports.optional(v3_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
+    default: v3_exports.optional(v3_exports.boolean())
   }).passthrough();
-  var PromptReferenceSchema = external_exports.object({
-    type: external_exports.literal("ref/prompt"),
-    /**
-     * The name of the prompt or prompt template
-     */
-    name: external_exports.string()
+  var StringSchemaSchema = v3_exports.object({
+    type: v3_exports.literal("string"),
+    title: v3_exports.optional(v3_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
+    minLength: v3_exports.optional(v3_exports.number()),
+    maxLength: v3_exports.optional(v3_exports.number()),
+    format: v3_exports.optional(v3_exports.enum(["email", "uri", "date", "date-time"]))
   }).passthrough();
-  var CompleteRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("completion/complete"),
+  var NumberSchemaSchema = v3_exports.object({
+    type: v3_exports.enum(["number", "integer"]),
+    title: v3_exports.optional(v3_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
+    minimum: v3_exports.optional(v3_exports.number()),
+    maximum: v3_exports.optional(v3_exports.number())
+  }).passthrough();
+  var EnumSchemaSchema = v3_exports.object({
+    type: v3_exports.literal("string"),
+    title: v3_exports.optional(v3_exports.string()),
+    description: v3_exports.optional(v3_exports.string()),
+    enum: v3_exports.array(v3_exports.string()),
+    enumNames: v3_exports.optional(v3_exports.array(v3_exports.string()))
+  }).passthrough();
+  var PrimitiveSchemaDefinitionSchema = v3_exports.union([
+    BooleanSchemaSchema,
+    StringSchemaSchema,
+    NumberSchemaSchema,
+    EnumSchemaSchema
+  ]);
+  var ElicitRequestSchema = RequestSchema.extend({
+    method: v3_exports.literal("elicitation/create"),
     params: BaseRequestParamsSchema.extend({
-      ref: external_exports.union([PromptReferenceSchema, ResourceReferenceSchema]),
       /**
-       * The argument's information
+       * The message to present to the user.
        */
-      argument: external_exports.object({
-        /**
-         * The name of the argument
-         */
-        name: external_exports.string(),
-        /**
-         * The value of the argument to use for completion matching.
-         */
-        value: external_exports.string()
+      message: v3_exports.string(),
+      /**
+       * The schema for the requested user input.
+       */
+      requestedSchema: v3_exports.object({
+        type: v3_exports.literal("object"),
+        properties: v3_exports.record(v3_exports.string(), PrimitiveSchemaDefinitionSchema),
+        required: v3_exports.optional(v3_exports.array(v3_exports.string()))
       }).passthrough()
     })
   });
+  var ElicitResultSchema = ResultSchema.extend({
+    /**
+     * The user's response action.
+     */
+    action: v3_exports.enum(["accept", "reject", "cancel"]),
+    /**
+     * The collected user input content (only present if action is "accept").
+     */
+    content: v3_exports.optional(v3_exports.record(v3_exports.string(), v3_exports.unknown()))
+  });
+  var ResourceTemplateReferenceSchema = v3_exports.object({
+    type: v3_exports.literal("ref/resource"),
+    /**
+     * The URI or URI template of the resource.
+     */
+    uri: v3_exports.string()
+  }).passthrough();
+  var PromptReferenceSchema = v3_exports.object({
+    type: v3_exports.literal("ref/prompt"),
+    /**
+     * The name of the prompt or prompt template
+     */
+    name: v3_exports.string()
+  }).passthrough();
+  var CompleteRequestSchema = RequestSchema.extend({
+    method: v3_exports.literal("completion/complete"),
+    params: BaseRequestParamsSchema.extend({
+      ref: v3_exports.union([PromptReferenceSchema, ResourceTemplateReferenceSchema]),
+      /**
+       * The argument's information
+       */
+      argument: v3_exports.object({
+        /**
+         * The name of the argument
+         */
+        name: v3_exports.string(),
+        /**
+         * The value of the argument to use for completion matching.
+         */
+        value: v3_exports.string()
+      }).passthrough(),
+      context: v3_exports.optional(v3_exports.object({
+        /**
+         * Previously-resolved variables in a URI template or prompt.
+         */
+        arguments: v3_exports.optional(v3_exports.record(v3_exports.string(), v3_exports.string()))
+      }))
+    })
+  });
   var CompleteResultSchema = ResultSchema.extend({
-    completion: external_exports.object({
+    completion: v3_exports.object({
       /**
        * An array of completion values. Must not exceed 100 items.
        */
-      values: external_exports.array(external_exports.string()).max(100),
+      values: v3_exports.array(v3_exports.string()).max(100),
       /**
        * The total number of completion options available. This can exceed the number of values actually sent in the response.
        */
-      total: external_exports.optional(external_exports.number().int()),
+      total: v3_exports.optional(v3_exports.number().int()),
       /**
        * Indicates whether there are additional completion options beyond those provided in the current response, even if the exact total is unknown.
        */
-      hasMore: external_exports.optional(external_exports.boolean())
+      hasMore: v3_exports.optional(v3_exports.boolean())
     }).passthrough()
   });
-  var RootSchema = external_exports.object({
+  var RootSchema = v3_exports.object({
     /**
      * The URI identifying the root. This *must* start with file:// for now.
      */
-    uri: external_exports.string().startsWith("file://"),
+    uri: v3_exports.string().startsWith("file://"),
     /**
      * An optional name for the root.
      */
-    name: external_exports.optional(external_exports.string())
+    name: v3_exports.optional(v3_exports.string()),
+    /**
+     * See [MCP specification](https://github.com/modelcontextprotocol/modelcontextprotocol/blob/47339c03c143bb4ec01a26e721a1b8fe66634ebe/docs/specification/draft/basic/index.mdx#general-fields)
+     * for notes on _meta usage.
+     */
+    _meta: v3_exports.optional(v3_exports.object({}).passthrough())
   }).passthrough();
   var ListRootsRequestSchema = RequestSchema.extend({
-    method: external_exports.literal("roots/list")
+    method: v3_exports.literal("roots/list")
   });
   var ListRootsResultSchema = ResultSchema.extend({
-    roots: external_exports.array(RootSchema)
+    roots: v3_exports.array(RootSchema)
   });
   var RootsListChangedNotificationSchema = NotificationSchema.extend({
-    method: external_exports.literal("notifications/roots/list_changed")
+    method: v3_exports.literal("notifications/roots/list_changed")
   });
-  var ClientRequestSchema = external_exports.union([
+  var ClientRequestSchema = v3_exports.union([
     PingRequestSchema,
     InitializeRequestSchema,
     CompleteRequestSchema,
@@ -25401,23 +25634,25 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     CallToolRequestSchema,
     ListToolsRequestSchema
   ]);
-  var ClientNotificationSchema = external_exports.union([
+  var ClientNotificationSchema = v3_exports.union([
     CancelledNotificationSchema,
     ProgressNotificationSchema,
     InitializedNotificationSchema,
     RootsListChangedNotificationSchema
   ]);
-  var ClientResultSchema = external_exports.union([
+  var ClientResultSchema = v3_exports.union([
     EmptyResultSchema,
     CreateMessageResultSchema,
+    ElicitResultSchema,
     ListRootsResultSchema
   ]);
-  var ServerRequestSchema = external_exports.union([
+  var ServerRequestSchema = v3_exports.union([
     PingRequestSchema,
     CreateMessageRequestSchema,
+    ElicitRequestSchema,
     ListRootsRequestSchema
   ]);
-  var ServerNotificationSchema = external_exports.union([
+  var ServerNotificationSchema = v3_exports.union([
     CancelledNotificationSchema,
     ProgressNotificationSchema,
     LoggingMessageNotificationSchema,
@@ -25426,7 +25661,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     ToolListChangedNotificationSchema,
     PromptListChangedNotificationSchema
   ]);
-  var ServerResultSchema = external_exports.union([
+  var ServerResultSchema = v3_exports.union([
     EmptyResultSchema,
     InitializeResultSchema,
     CompleteResultSchema,
@@ -25508,14 +25743,21 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
      * The Protocol object assumes ownership of the Transport, replacing any callbacks that have already been set, and expects that it is the only user of the Transport instance going forward.
      */
     async connect(transport) {
+      var _a, _b, _c;
       this._transport = transport;
+      const _onclose = (_a = this.transport) === null || _a === void 0 ? void 0 : _a.onclose;
       this._transport.onclose = () => {
+        _onclose === null || _onclose === void 0 ? void 0 : _onclose();
         this._onclose();
       };
+      const _onerror = (_b = this.transport) === null || _b === void 0 ? void 0 : _b.onerror;
       this._transport.onerror = (error) => {
+        _onerror === null || _onerror === void 0 ? void 0 : _onerror(error);
         this._onerror(error);
       };
+      const _onmessage = (_c = this._transport) === null || _c === void 0 ? void 0 : _c.onmessage;
       this._transport.onmessage = (message, extra) => {
+        _onmessage === null || _onmessage === void 0 ? void 0 : _onmessage(message, extra);
         if (isJSONRPCResponse(message) || isJSONRPCError(message)) {
           this._onresponse(message);
         } else if (isJSONRPCRequest(message)) {
@@ -25575,7 +25817,8 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
         sendNotification: (notification) => this.notification(notification, { relatedRequestId: request.id }),
         sendRequest: (r, resultSchema, options) => this.request(r, resultSchema, { ...options, relatedRequestId: request.id }),
         authInfo: extra === null || extra === void 0 ? void 0 : extra.authInfo,
-        requestId: request.id
+        requestId: request.id,
+        requestInfo: extra === null || extra === void 0 ? void 0 : extra.requestInfo
       };
       Promise.resolve().then(() => handler(request, fullExtra)).then((result) => {
         var _a2;
@@ -25846,6 +26089,9 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
         }
         this._serverCapabilities = result.capabilities;
         this._serverVersion = result.serverInfo;
+        if (transport.setProtocolVersion) {
+          transport.setProtocolVersion(result.protocolVersion);
+        }
         this._instructions = result.instructions;
         await this.notification({
           method: "notifications/initialized"
@@ -25939,6 +26185,11 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
             throw new Error(`Client does not support sampling capability (required for ${method})`);
           }
           break;
+        case "elicitation/create":
+          if (!this._capabilities.elicitation) {
+            throw new Error(`Client does not support elicitation capability (required for ${method})`);
+          }
+          break;
         case "roots/list":
           if (!this._capabilities.roots) {
             throw new Error(`Client does not support roots capability (required for ${method})`);
@@ -26008,8 +26259,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
           try {
             const validator = this._ajv.compile(tool.outputSchema);
             this._cachedToolOutputValidators.set(tool.name, validator);
-          } catch (error) {
-            console.warn(`Failed to compile output schema for tool ${tool.name}: ${error}`);
+          } catch (_a) {
           }
         }
       }
@@ -26088,86 +26338,108 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
 
   // ../../node_modules/@modelcontextprotocol/sdk/dist/esm/shared/auth.js
   init_define_DEFAULT_MCP_SERVER_LIST_URLS();
-  var OAuthProtectedResourceMetadataSchema = external_exports.object({
-    resource: external_exports.string().url(),
-    authorization_servers: external_exports.array(external_exports.string().url()).optional(),
-    jwks_uri: external_exports.string().url().optional(),
-    scopes_supported: external_exports.array(external_exports.string()).optional(),
-    bearer_methods_supported: external_exports.array(external_exports.string()).optional(),
-    resource_signing_alg_values_supported: external_exports.array(external_exports.string()).optional(),
-    resource_name: external_exports.string().optional(),
-    resource_documentation: external_exports.string().optional(),
-    resource_policy_uri: external_exports.string().url().optional(),
-    resource_tos_uri: external_exports.string().url().optional(),
-    tls_client_certificate_bound_access_tokens: external_exports.boolean().optional(),
-    authorization_details_types_supported: external_exports.array(external_exports.string()).optional(),
-    dpop_signing_alg_values_supported: external_exports.array(external_exports.string()).optional(),
-    dpop_bound_access_tokens_required: external_exports.boolean().optional()
+  var OAuthProtectedResourceMetadataSchema = v3_exports.object({
+    resource: v3_exports.string().url(),
+    authorization_servers: v3_exports.array(v3_exports.string().url()).optional(),
+    jwks_uri: v3_exports.string().url().optional(),
+    scopes_supported: v3_exports.array(v3_exports.string()).optional(),
+    bearer_methods_supported: v3_exports.array(v3_exports.string()).optional(),
+    resource_signing_alg_values_supported: v3_exports.array(v3_exports.string()).optional(),
+    resource_name: v3_exports.string().optional(),
+    resource_documentation: v3_exports.string().optional(),
+    resource_policy_uri: v3_exports.string().url().optional(),
+    resource_tos_uri: v3_exports.string().url().optional(),
+    tls_client_certificate_bound_access_tokens: v3_exports.boolean().optional(),
+    authorization_details_types_supported: v3_exports.array(v3_exports.string()).optional(),
+    dpop_signing_alg_values_supported: v3_exports.array(v3_exports.string()).optional(),
+    dpop_bound_access_tokens_required: v3_exports.boolean().optional()
   }).passthrough();
-  var OAuthMetadataSchema = external_exports.object({
-    issuer: external_exports.string(),
-    authorization_endpoint: external_exports.string(),
-    token_endpoint: external_exports.string(),
-    registration_endpoint: external_exports.string().optional(),
-    scopes_supported: external_exports.array(external_exports.string()).optional(),
-    response_types_supported: external_exports.array(external_exports.string()),
-    response_modes_supported: external_exports.array(external_exports.string()).optional(),
-    grant_types_supported: external_exports.array(external_exports.string()).optional(),
-    token_endpoint_auth_methods_supported: external_exports.array(external_exports.string()).optional(),
-    token_endpoint_auth_signing_alg_values_supported: external_exports.array(external_exports.string()).optional(),
-    service_documentation: external_exports.string().optional(),
-    revocation_endpoint: external_exports.string().optional(),
-    revocation_endpoint_auth_methods_supported: external_exports.array(external_exports.string()).optional(),
-    revocation_endpoint_auth_signing_alg_values_supported: external_exports.array(external_exports.string()).optional(),
-    introspection_endpoint: external_exports.string().optional(),
-    introspection_endpoint_auth_methods_supported: external_exports.array(external_exports.string()).optional(),
-    introspection_endpoint_auth_signing_alg_values_supported: external_exports.array(external_exports.string()).optional(),
-    code_challenge_methods_supported: external_exports.array(external_exports.string()).optional()
+  var OAuthMetadataSchema = v3_exports.object({
+    issuer: v3_exports.string(),
+    authorization_endpoint: v3_exports.string(),
+    token_endpoint: v3_exports.string(),
+    registration_endpoint: v3_exports.string().optional(),
+    scopes_supported: v3_exports.array(v3_exports.string()).optional(),
+    response_types_supported: v3_exports.array(v3_exports.string()),
+    response_modes_supported: v3_exports.array(v3_exports.string()).optional(),
+    grant_types_supported: v3_exports.array(v3_exports.string()).optional(),
+    token_endpoint_auth_methods_supported: v3_exports.array(v3_exports.string()).optional(),
+    token_endpoint_auth_signing_alg_values_supported: v3_exports.array(v3_exports.string()).optional(),
+    service_documentation: v3_exports.string().optional(),
+    revocation_endpoint: v3_exports.string().optional(),
+    revocation_endpoint_auth_methods_supported: v3_exports.array(v3_exports.string()).optional(),
+    revocation_endpoint_auth_signing_alg_values_supported: v3_exports.array(v3_exports.string()).optional(),
+    introspection_endpoint: v3_exports.string().optional(),
+    introspection_endpoint_auth_methods_supported: v3_exports.array(v3_exports.string()).optional(),
+    introspection_endpoint_auth_signing_alg_values_supported: v3_exports.array(v3_exports.string()).optional(),
+    code_challenge_methods_supported: v3_exports.array(v3_exports.string()).optional()
   }).passthrough();
-  var OAuthTokensSchema = external_exports.object({
-    access_token: external_exports.string(),
-    token_type: external_exports.string(),
-    expires_in: external_exports.number().optional(),
-    scope: external_exports.string().optional(),
-    refresh_token: external_exports.string().optional()
+  var OAuthTokensSchema = v3_exports.object({
+    access_token: v3_exports.string(),
+    token_type: v3_exports.string(),
+    expires_in: v3_exports.number().optional(),
+    scope: v3_exports.string().optional(),
+    refresh_token: v3_exports.string().optional()
   }).strip();
-  var OAuthErrorResponseSchema = external_exports.object({
-    error: external_exports.string(),
-    error_description: external_exports.string().optional(),
-    error_uri: external_exports.string().optional()
+  var OAuthErrorResponseSchema = v3_exports.object({
+    error: v3_exports.string(),
+    error_description: v3_exports.string().optional(),
+    error_uri: v3_exports.string().optional()
   });
-  var OAuthClientMetadataSchema = external_exports.object({
-    redirect_uris: external_exports.array(external_exports.string()).refine((uris) => uris.every((uri) => URL.canParse(uri)), { message: "redirect_uris must contain valid URLs" }),
-    token_endpoint_auth_method: external_exports.string().optional(),
-    grant_types: external_exports.array(external_exports.string()).optional(),
-    response_types: external_exports.array(external_exports.string()).optional(),
-    client_name: external_exports.string().optional(),
-    client_uri: external_exports.string().optional(),
-    logo_uri: external_exports.string().optional(),
-    scope: external_exports.string().optional(),
-    contacts: external_exports.array(external_exports.string()).optional(),
-    tos_uri: external_exports.string().optional(),
-    policy_uri: external_exports.string().optional(),
-    jwks_uri: external_exports.string().optional(),
-    jwks: external_exports.any().optional(),
-    software_id: external_exports.string().optional(),
-    software_version: external_exports.string().optional()
+  var OAuthClientMetadataSchema = v3_exports.object({
+    redirect_uris: v3_exports.array(v3_exports.string()).refine((uris) => uris.every((uri) => URL.canParse(uri)), { message: "redirect_uris must contain valid URLs" }),
+    token_endpoint_auth_method: v3_exports.string().optional(),
+    grant_types: v3_exports.array(v3_exports.string()).optional(),
+    response_types: v3_exports.array(v3_exports.string()).optional(),
+    client_name: v3_exports.string().optional(),
+    client_uri: v3_exports.string().optional(),
+    logo_uri: v3_exports.string().optional(),
+    scope: v3_exports.string().optional(),
+    contacts: v3_exports.array(v3_exports.string()).optional(),
+    tos_uri: v3_exports.string().optional(),
+    policy_uri: v3_exports.string().optional(),
+    jwks_uri: v3_exports.string().optional(),
+    jwks: v3_exports.any().optional(),
+    software_id: v3_exports.string().optional(),
+    software_version: v3_exports.string().optional(),
+    software_statement: v3_exports.string().optional()
   }).strip();
-  var OAuthClientInformationSchema = external_exports.object({
-    client_id: external_exports.string(),
-    client_secret: external_exports.string().optional(),
-    client_id_issued_at: external_exports.number().optional(),
-    client_secret_expires_at: external_exports.number().optional()
+  var OAuthClientInformationSchema = v3_exports.object({
+    client_id: v3_exports.string(),
+    client_secret: v3_exports.string().optional(),
+    client_id_issued_at: v3_exports.number().optional(),
+    client_secret_expires_at: v3_exports.number().optional()
   }).strip();
   var OAuthClientInformationFullSchema = OAuthClientMetadataSchema.merge(OAuthClientInformationSchema);
-  var OAuthClientRegistrationErrorSchema = external_exports.object({
-    error: external_exports.string(),
-    error_description: external_exports.string().optional()
+  var OAuthClientRegistrationErrorSchema = v3_exports.object({
+    error: v3_exports.string(),
+    error_description: v3_exports.string().optional()
   }).strip();
-  var OAuthTokenRevocationRequestSchema = external_exports.object({
-    token: external_exports.string(),
-    token_type_hint: external_exports.string().optional()
+  var OAuthTokenRevocationRequestSchema = v3_exports.object({
+    token: v3_exports.string(),
+    token_type_hint: v3_exports.string().optional()
   }).strip();
+
+  // ../../node_modules/@modelcontextprotocol/sdk/dist/esm/shared/auth-utils.js
+  init_define_DEFAULT_MCP_SERVER_LIST_URLS();
+  function resourceUrlFromServerUrl(url) {
+    const resourceURL = typeof url === "string" ? new URL(url) : new URL(url.href);
+    resourceURL.hash = "";
+    return resourceURL;
+  }
+  function checkResourceAllowed({ requestedResource, configuredResource }) {
+    const requested = typeof requestedResource === "string" ? new URL(requestedResource) : new URL(requestedResource.href);
+    const configured = typeof configuredResource === "string" ? new URL(configuredResource) : new URL(configuredResource.href);
+    if (requested.origin !== configured.origin) {
+      return false;
+    }
+    if (requested.pathname.length < configured.pathname.length) {
+      return false;
+    }
+    const requestedPath = requested.pathname.endsWith("/") ? requested.pathname : requested.pathname + "/";
+    const configuredPath = configured.pathname.endsWith("/") ? configured.pathname : configured.pathname + "/";
+    return requestedPath.startsWith(configuredPath);
+  }
 
   // ../../node_modules/@modelcontextprotocol/sdk/dist/esm/client/auth.js
   var UnauthorizedError = class extends Error {
@@ -26176,15 +26448,16 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     }
   };
   async function auth(provider, { serverUrl, authorizationCode, scope, resourceMetadataUrl }) {
+    let resourceMetadata;
     let authorizationServerUrl = serverUrl;
     try {
-      const resourceMetadata = await discoverOAuthProtectedResourceMetadata(resourceMetadataUrl || serverUrl);
+      resourceMetadata = await discoverOAuthProtectedResourceMetadata(serverUrl, { resourceMetadataUrl });
       if (resourceMetadata.authorization_servers && resourceMetadata.authorization_servers.length > 0) {
         authorizationServerUrl = resourceMetadata.authorization_servers[0];
       }
-    } catch (error) {
-      console.warn("Could not load OAuth Protected Resource metadata, falling back to /.well-known/oauth-authorization-server", error);
+    } catch (_a) {
     }
+    const resource = await selectResourceURL(serverUrl, provider, resourceMetadata);
     const metadata = await discoverOAuthMetadata(authorizationServerUrl);
     let clientInformation = await Promise.resolve(provider.clientInformation());
     if (!clientInformation) {
@@ -26208,7 +26481,8 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
         clientInformation,
         authorizationCode,
         codeVerifier: codeVerifier2,
-        redirectUri: provider.redirectUrl
+        redirectUri: provider.redirectUrl,
+        resource
       });
       await provider.saveTokens(tokens2);
       return "AUTHORIZED";
@@ -26219,12 +26493,12 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
         const newTokens = await refreshAuthorization(authorizationServerUrl, {
           metadata,
           clientInformation,
-          refreshToken: tokens.refresh_token
+          refreshToken: tokens.refresh_token,
+          resource
         });
         await provider.saveTokens(newTokens);
         return "AUTHORIZED";
-      } catch (error) {
-        console.error("Could not refresh OAuth tokens:", error);
+      } catch (_b) {
       }
     }
     const state = provider.state ? await provider.state() : void 0;
@@ -26233,11 +26507,25 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       clientInformation,
       state,
       redirectUrl: provider.redirectUrl,
-      scope: scope || provider.clientMetadata.scope
+      scope: scope || provider.clientMetadata.scope,
+      resource
     });
     await provider.saveCodeVerifier(codeVerifier);
     await provider.redirectToAuthorization(authorizationUrl);
     return "REDIRECT";
+  }
+  async function selectResourceURL(serverUrl, provider, resourceMetadata) {
+    const defaultResource = resourceUrlFromServerUrl(serverUrl);
+    if (provider.validateResourceURL) {
+      return await provider.validateResourceURL(defaultResource, resourceMetadata === null || resourceMetadata === void 0 ? void 0 : resourceMetadata.resource);
+    }
+    if (!resourceMetadata) {
+      return void 0;
+    }
+    if (!checkResourceAllowed({ requestedResource: defaultResource, configuredResource: resourceMetadata.resource })) {
+      throw new Error(`Protected resource ${resourceMetadata.resource} does not match expected ${defaultResource} (or origin)`);
+    }
+    return new URL(resourceMetadata.resource);
   }
   function extractResourceMetadataUrl(res) {
     const authenticateHeader = res.headers.get("WWW-Authenticate");
@@ -26246,7 +26534,6 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     }
     const [type, scheme] = authenticateHeader.split(" ");
     if (type.toLowerCase() !== "bearer" || !scheme) {
-      console.log("Invalid WWW-Authenticate header format, expected 'Bearer'");
       return void 0;
     }
     const regex = /resource_metadata="([^"]*)"/;
@@ -26257,7 +26544,6 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     try {
       return new URL(match[1]);
     } catch (_a) {
-      console.log("Invalid resource metadata url: ", match[1]);
       return void 0;
     }
   }
@@ -26291,24 +26577,48 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     }
     return OAuthProtectedResourceMetadataSchema.parse(await response.json());
   }
-  async function discoverOAuthMetadata(authorizationServerUrl, opts) {
-    var _a;
-    const url = new URL("/.well-known/oauth-authorization-server", authorizationServerUrl);
-    let response;
+  async function fetchWithCorsRetry(url, headers) {
     try {
-      response = await fetch(url, {
-        headers: {
-          "MCP-Protocol-Version": (_a = opts === null || opts === void 0 ? void 0 : opts.protocolVersion) !== null && _a !== void 0 ? _a : LATEST_PROTOCOL_VERSION
-        }
-      });
+      return await fetch(url, { headers });
     } catch (error) {
       if (error instanceof TypeError) {
-        response = await fetch(url);
-      } else {
-        throw error;
+        if (headers) {
+          return fetchWithCorsRetry(url);
+        } else {
+          return void 0;
+        }
       }
+      throw error;
     }
-    if (response.status === 404) {
+  }
+  function buildWellKnownPath(pathname) {
+    let wellKnownPath = `/.well-known/oauth-authorization-server${pathname}`;
+    if (pathname.endsWith("/")) {
+      wellKnownPath = wellKnownPath.slice(0, -1);
+    }
+    return wellKnownPath;
+  }
+  async function tryMetadataDiscovery(url, protocolVersion) {
+    const headers = {
+      "MCP-Protocol-Version": protocolVersion
+    };
+    return await fetchWithCorsRetry(url, headers);
+  }
+  function shouldAttemptFallback(response, pathname) {
+    return !response || response.status === 404 && pathname !== "/";
+  }
+  async function discoverOAuthMetadata(authorizationServerUrl, opts) {
+    var _a;
+    const issuer = new URL(authorizationServerUrl);
+    const protocolVersion = (_a = opts === null || opts === void 0 ? void 0 : opts.protocolVersion) !== null && _a !== void 0 ? _a : LATEST_PROTOCOL_VERSION;
+    const wellKnownPath = buildWellKnownPath(issuer.pathname);
+    const pathAwareUrl = new URL(wellKnownPath, issuer);
+    let response = await tryMetadataDiscovery(pathAwareUrl, protocolVersion);
+    if (shouldAttemptFallback(response, issuer.pathname)) {
+      const rootUrl = new URL("/.well-known/oauth-authorization-server", issuer);
+      response = await tryMetadataDiscovery(rootUrl, protocolVersion);
+    }
+    if (!response || response.status === 404) {
       return void 0;
     }
     if (!response.ok) {
@@ -26316,7 +26626,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     }
     return OAuthMetadataSchema.parse(await response.json());
   }
-  async function startAuthorization(authorizationServerUrl, { metadata, clientInformation, redirectUrl, scope, state }) {
+  async function startAuthorization(authorizationServerUrl, { metadata, clientInformation, redirectUrl, scope, state, resource }) {
     const responseType = "code";
     const codeChallengeMethod = "S256";
     let authorizationUrl;
@@ -26345,9 +26655,12 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     if (scope) {
       authorizationUrl.searchParams.set("scope", scope);
     }
+    if (resource) {
+      authorizationUrl.searchParams.set("resource", resource.href);
+    }
     return { authorizationUrl, codeVerifier };
   }
-  async function exchangeAuthorization(authorizationServerUrl, { metadata, clientInformation, authorizationCode, codeVerifier, redirectUri }) {
+  async function exchangeAuthorization(authorizationServerUrl, { metadata, clientInformation, authorizationCode, codeVerifier, redirectUri, resource }) {
     const grantType = "authorization_code";
     let tokenUrl;
     if (metadata) {
@@ -26368,6 +26681,9 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     if (clientInformation.client_secret) {
       params.set("client_secret", clientInformation.client_secret);
     }
+    if (resource) {
+      params.set("resource", resource.href);
+    }
     const response = await fetch(tokenUrl, {
       method: "POST",
       headers: {
@@ -26380,7 +26696,7 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     }
     return OAuthTokensSchema.parse(await response.json());
   }
-  async function refreshAuthorization(authorizationServerUrl, { metadata, clientInformation, refreshToken }) {
+  async function refreshAuthorization(authorizationServerUrl, { metadata, clientInformation, refreshToken, resource }) {
     const grantType = "refresh_token";
     let tokenUrl;
     if (metadata) {
@@ -26398,6 +26714,9 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
     });
     if (clientInformation.client_secret) {
       params.set("client_secret", clientInformation.client_secret);
+    }
+    if (resource) {
+      params.set("resource", resource.href);
     }
     const response = await fetch(tokenUrl, {
       method: "POST",
@@ -26617,7 +26936,14 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       if (this._sessionId) {
         headers["mcp-session-id"] = this._sessionId;
       }
-      return new Headers({ ...headers, ...(_a = this._requestInit) === null || _a === void 0 ? void 0 : _a.headers });
+      if (this._protocolVersion) {
+        headers["mcp-protocol-version"] = this._protocolVersion;
+      }
+      const extraHeaders = this._normalizeHeaders((_a = this._requestInit) === null || _a === void 0 ? void 0 : _a.headers);
+      return new Headers({
+        ...headers,
+        ...extraHeaders
+      });
     }
     async _startOrAuthSse(options) {
       var _a, _b;
@@ -26659,6 +26985,17 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       const growFactor = this._reconnectionOptions.reconnectionDelayGrowFactor;
       const maxDelay = this._reconnectionOptions.maxReconnectionDelay;
       return Math.min(initialDelay * Math.pow(growFactor, attempt), maxDelay);
+    }
+    _normalizeHeaders(headers) {
+      if (!headers)
+        return {};
+      if (headers instanceof Headers) {
+        return Object.fromEntries(headers.entries());
+      }
+      if (Array.isArray(headers)) {
+        return Object.fromEntries(headers);
+      }
+      return { ...headers };
     }
     /**
      * Schedule a reconnection attempt with exponential backoff
@@ -26860,6 +27197,12 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
         throw error;
       }
     }
+    setProtocolVersion(version2) {
+      this._protocolVersion = version2;
+    }
+    get protocolVersion() {
+      return this._protocolVersion;
+    }
   };
 
   // ../../packages/mcphappey-mcp/dist/clientPool.js
@@ -27049,7 +27392,6 @@ Please change the parent <Route path="${parentPath}"> to <Route path="${parentPa
       grant_types: ["authorization_code"],
       response_types: ["code"],
       token_endpoint_auth_method: "none",
-      //scope: "https://fakton.sharepoint.com/.default"
       scope: prMetadata.scopes_supported ? prMetadata.scopes_supported.join(" ") : void 0
     };
     const regResponse = await fetch(asMetadata.registration_endpoint, {
@@ -32704,10 +33046,10 @@ classnames/index.js:
   	http://jedwatson.github.io/classnames
   *)
 
-react-router/dist/development/chunk-NL6KNZEE.mjs:
+react-router/dist/development/chunk-QMGIS6GS.mjs:
 react-router/dist/development/index.mjs:
   (**
-   * react-router v7.6.2
+   * react-router v7.6.3
    *
    * Copyright (c) Remix Software Inc.
    *

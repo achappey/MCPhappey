@@ -1,6 +1,20 @@
 {
   "prompts": [
     {
+      "prompt": "Geef het totaal aantal geschreven uren per week van {medewerkerNamen} in de vorige maand. Gebruik voor iedere week de start- en einddatum van die week (niet alleen de eerste en laatste dag van de maand). Toon het totaal per medewerker per week en het weeknummer. Als de contracturen van een medewerker bekend zijn, geef dan per week met een groen of rood icoontje aan of het aantal geschreven uren minder is dan het aantal contracturen. Als contracturen niet bekend zijn, laat het icoontje dan weg.",
+      "template": {
+        "name": "uren-per-week-medewerkers-vorige-maand",
+        "description": "Toont het totaal aantal geregistreerde uren per week voor één of meerdere medewerkers in de vorige maand. Per week worden het weeknummer, het totaal per medewerker en eventueel een groen/rood icoontje getoond op basis van contracturen (indien beschikbaar).",
+        "arguments": [
+          {
+            "name": "medewerkerNamen",
+            "description": "Lijst met namen van de medewerkers, bijvoorbeeld ['Kelvin', 'Arthur'].",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "Geef een overzicht van de meest recente geregistreerde uren van medewerker {medewerkerNaam} op project {projectNaam}. Vermeld het aantal uren, de datum en de status.",
       "template": {
         "name": "uren-meest-recent-medewerker-project",

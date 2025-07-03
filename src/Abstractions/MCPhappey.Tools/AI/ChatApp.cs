@@ -34,7 +34,8 @@ public static class ChatApp
         // Optional: Logging/notification
         var markdown = $"Generating conversation name...\nUser: {userMessage}";
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
-
+        //using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        // cts.CancelAfter(TimeSpan.FromSeconds(3));
         // Call prompt template (should be named "conversation-name")
         var result = await samplingService.GetPromptSample(
             serviceProvider,
@@ -66,6 +67,9 @@ public static class ChatApp
         // Optional: Logging/notification
         var markdown = $"Generating welcome message";
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
+
+        //  using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+        //  cts.CancelAfter(TimeSpan.FromSeconds(3));
 
         var result = await samplingService.GetPromptSample(
             serviceProvider,

@@ -43,14 +43,28 @@
       }
     },
     {
-      "prompt": "Geef voor team {teamNaam} een overzicht van alle actieve medewerkers, met hun statuslabel en medewerkerstype. Benoem opvallende combinaties of verschillen.",
+      "prompt": "Geef voor team {teamNaam} een overzicht van de namen van alle medewerkers met een gebruikersacocunt.",
       "template": {
-        "name": "hrm-team-samenstelling-analyse",
-        "description": "Overzicht van teamleden met status en type, met opvallende inzichten.",
+        "name": "hrm-team-samenstelling",
+        "description": "Overzicht van de namen van teamleden van een account.",
         "arguments": [
           {
             "name": "teamNaam",
             "description": "Naam van het team.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Geef voor de opgegeven medewerkers {medewerkerNamen} per persoon een overzicht van het aantal contracturen per week. Toon per medewerker de volledige naam en het actuele aantal contracturen per week volgens het meest recente contract. Indien een medewerker meerdere contracten heeft, neem dan het meest recente actieve contract.",
+      "template": {
+        "name": "hrm-contracturen-per-week-medewerkers",
+        "description": "Toont per medewerker het aantal contracturen per week volgens het actuele contract.",
+        "arguments": [
+          {
+            "name": "medewerkerNamen",
+            "description": "Lijst van namen van medewerkers waarvan je het aantal contracturen per week wilt weten.",
             "required": true
           }
         ]
