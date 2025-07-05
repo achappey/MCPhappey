@@ -91,63 +91,9 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/absencetype?q[label]=*{labelFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
-      "name": "Verzuimtypes (gefilterd)",
-      "description": "Haalt alle verzuimtypes op, met filter voor label. Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/contracttype?q[name]=*{nameFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
-      "name": "Contracttypes (gefilterd)",
-      "description": "Haalt alle beschikbare contracttypes op, met filter voor naam. Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/documenttype/documenttype:{documentTypeId}",
-      "name": "HRM Documenttype Details",
-      "description": "Haalt een enkel HRM-documenttype op via ID.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/documenttype?q[label]=*{labelFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
-      "name": "HRM Documenttypes (gefilterd)",
+      "name": "HRM documenttypes (gefilterd)",
       "description": "Haalt alle beschikbare HRM-documenttypes op, met filter voor label. Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employeetype?q[label]=*{labelFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
-      "name": "Medewerkerstypes (gefilterd)",
-      "description": "Haalt alle beschikbare medewerkerstypes op, met filter voor label. Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employmenttype?q[name]=*{nameFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
-      "name": "Dienstverbandtypes (gefilterd)",
-      "description": "Haalt alle beschikbare dienstverbandtypes op, met filter voor naam. Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/civilstatus?q[label]=*{labelFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
-      "name": "Burgerlijke Staten (gefilterd)",
-      "description": "Haalt alle beschikbare burgerlijke staten op, met filter voor label. Ondersteunt paginering en sortering.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
@@ -182,7 +128,7 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/absencetype",
-      "name": "Alle HRM Verzuimtypes",
+      "name": "Alle HRM verzuimtypes",
       "description": "Haalt beschikbare verzuimtypes op in de HRM-module. Dit retourneert doorgaans een volledige lijst omdat het stamgegevens zijn.",
       "mimeType": "application/json",
       "annotations": {
@@ -191,7 +137,7 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/civilstatus",
-      "name": "Alle HRM Burgerlijke Staten",
+      "name": "Alle HRM burgerlijke staten",
       "description": "Haalt beschikbare burgerlijke staten op in de HRM-module. Dit retourneert doorgaans een volledige lijst.",
       "mimeType": "application/json",
       "annotations": {
@@ -200,7 +146,7 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/contracttype",
-      "name": "Alle HRM Contracttypes",
+      "name": "Alle HRM contracttypes",
       "description": "Haalt beschikbare contracttypes op in de HRM-module. Dit retourneert doorgaans een volledige lijst.",
       "mimeType": "application/json",
       "annotations": {
@@ -208,17 +154,8 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/documenttype",
-      "name": "Alle HRM Documenttypes",
-      "description": "Haalt beschikbare documenttypes specifiek voor de HRM-module op. Dit retourneert doorgaans een volledige lijst.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employeetype",
-      "name": "Alle HRM Medewerkerstypes",
+      "name": "Alle HRM medewerkerstypes",
       "description": "Haalt beschikbare medewerkerstypes op in de HRM-module. Dit retourneert doorgaans een volledige lijst.",
       "mimeType": "application/json",
       "annotations": {
@@ -227,7 +164,7 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employmenttype",
-      "name": "Alle HRM Dienstverbandtypes",
+      "name": "Alle HRM dienstverbandtypes",
       "description": "Haalt beschikbare dienstverbandtypes op in de HRM-module. Dit retourneert doorgaans een volledige lijst.",
       "mimeType": "application/json",
       "annotations": {

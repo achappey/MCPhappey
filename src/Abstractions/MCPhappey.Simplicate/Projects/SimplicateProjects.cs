@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
@@ -11,6 +13,28 @@ namespace MCPhappey.Simplicate.Projects;
 
 public static class SimplicateProjects
 {
+    [Description("Create a new project in Simplicate")]
+    [McpServerTool(Name = "SimplicateProjects_CreateProject", ReadOnly = false, Idempotent = false, UseStructuredContent = true)]
+    public static async Task<SimplicateNewItemData?> SimplicateProjects_CreateProject(
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
+    {
+        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+
+        // Simplicate CRM Organization endpoint
+        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/projects/project";
+        var dto = await requestContext.Server.GetElicitResponse<SimplicateNewProject>(cancellationToken);
+
+        // Use your POST extension to create the org
+        return await serviceProvider.PostSimplicateItemAsync(
+            baseUrl,
+            dto!,
+            requestContext: requestContext,
+            cancellationToken: cancellationToken
+        );
+    }
+
     [Description("Get projects grouped by project manager, optionally filtered by date (equal or greater than), project, or employee. At least one filter is required.")]
     [McpServerTool(Name = "SimplicateProjects_GetProjectsByProjectManager", ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, IEnumerable<SimplicateProject>>?> SimplicateProjects_GetProjectsByProjectManager(
@@ -70,6 +94,16 @@ public static class SimplicateProjects
                 g => g.Key,
                 g => g.Select(t => t)) ?? [];
     }
+
+    [Description("Please fill in the project details")]
+    public class SimplicateNewProject
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("The name of the project.")]
+        public string? Name { get; set; }
+    }
+
 
     public enum ProjectStatusLabel
     {

@@ -21,16 +21,13 @@ public static class SimplicateCRM
         CancellationToken cancellationToken = default)
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
-        var scrapers = serviceProvider.GetServices<IContentScraper>();
-        var scraper = scrapers.OfType<SimplicateScraper>().First();
 
         // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/organization";
         var dto = await requestContext.Server.GetElicitResponse<SimplicateNewOrganization>(cancellationToken);
 
         // Use your POST extension to create the org
-        return await scraper.PostSimplicateItemAsync(
-            serviceProvider,
+        return await serviceProvider.PostSimplicateItemAsync(
             baseUrl,
             dto!,
             requestContext: requestContext,
@@ -46,15 +43,12 @@ public static class SimplicateCRM
       CancellationToken cancellationToken = default)
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
-        var scrapers = serviceProvider.GetServices<IContentScraper>();
-        var scraper = scrapers.OfType<SimplicateScraper>().First();
 
         // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/person";
         var dto = await requestContext.Server.GetElicitResponse<SimplicateNewPerson>(cancellationToken);
 
-        return await scraper.PostSimplicateItemAsync(
-            serviceProvider,
+        return await serviceProvider.PostSimplicateItemAsync(
             baseUrl,
             dto!,
             requestContext: requestContext,

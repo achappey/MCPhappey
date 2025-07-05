@@ -43,14 +43,14 @@
       }
     },
     {
-      "prompt": "Analyseer de recentste facturen met status '{factuurStatus}'. Wat valt op in betaaldatum, debiteur of project? Benoem opvallende trends of bijzonderheden.",
+      "prompt": "Analyseer de recentste facturen met status {factuurStatus}. Wat valt op in betaaldatum, debiteur of project? Benoem opvallende trends of bijzonderheden.",
       "template": {
         "name": "factuurstatus-analyse-recent",
-        "description": "Analyseert recente facturen op status, met trends in betaling of klant/project.",
+        "description": "Analyseert recente facturen op status, met trends in betaling of bedrijf/project.",
         "arguments": [
           {
             "name": "factuurStatus",
-            "description": "Naam van de factuurstatus (zoals 'Open', 'Verstuurd', 'Betaald').",
+            "description": "Naam van de factuurstatus.",
             "required": true
           }
         ]

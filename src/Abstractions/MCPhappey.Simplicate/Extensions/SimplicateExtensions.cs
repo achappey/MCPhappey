@@ -1,6 +1,8 @@
 using System.Text.Json;
+using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -95,6 +97,27 @@ public static class SimplicateExtensions
     }
 
     public static async Task<SimplicateNewItemData?> PostSimplicateItemAsync<T>(
+          this IServiceProvider serviceProvider,
+          string baseUrl, // e.g. "https://{subdomain}.simplicate.nl/api/v2/project/project"
+          T item,
+          RequestContext<CallToolRequestParams> requestContext,
+          CancellationToken cancellationToken = default)
+    {
+        var scraper = serviceProvider.GetServices<IContentScraper>()
+         .OfType<SimplicateScraper>().First();
+
+        return await scraper.PostSimplicateItemAsync(
+         serviceProvider,
+         baseUrl,
+         item,
+         requestContext: requestContext,
+         cancellationToken: cancellationToken
+     );
+    }
+
+
+
+    public static async Task<SimplicateNewItemData?> PostSimplicateItemAsync<T>(
         this SimplicateScraper downloadService,
         IServiceProvider serviceProvider,
         string baseUrl, // e.g. "https://{subdomain}.simplicate.nl/api/v2/project/project"
@@ -114,7 +137,7 @@ public static class SimplicateExtensions
 
         // Use your DownloadService to POST (assumes similar signature to ScrapeContentAsync)
         var response = await downloadService.PostContentAsync<T>(
-            requestContext.Server, serviceProvider, baseUrl, json, cancellationToken);
+            serviceProvider, baseUrl, json, cancellationToken);
 
         if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
         {

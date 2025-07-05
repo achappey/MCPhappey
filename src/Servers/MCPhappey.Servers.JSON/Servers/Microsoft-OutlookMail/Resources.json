@@ -10,15 +10,6 @@
       }
     },
     {
-      "uri": "https://graph.microsoft.com/beta/me/calendar/events?$top=10&$select=subject,start,end,location,organizer",
-      "name": "Upcoming calendar events",
-      "description": "Lists the next 10 upcoming calendar events, including subject, start/end time, location, and organizer.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
       "uri": "https://graph.microsoft.com/beta/me/contacts?$top=10&$select=displayName,emailAddresses,mobilePhone",
       "name": "My contacts",
       "description": "Shows the first 10 personal contacts with name, email addresses, and mobile number.",

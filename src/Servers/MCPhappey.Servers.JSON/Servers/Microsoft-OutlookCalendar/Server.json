@@ -1,9 +1,9 @@
 {
   "serverInfo": {
-    "name": "Microsoft-Outlook",
+    "name": "Microsoft-OutlookCalendar",
     "version": "1.0.0"
   },
-  "plugins": ["MCPhappey.Tools.Graph.Outlook.GraphOutlook, MCPhappey.Tools"],
+  "plugins": ["MCPhappey.Tools.Graph.Outlook.GraphOutlookCalendar, MCPhappey.Tools"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/Mail.ReadWrite"
   }

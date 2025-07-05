@@ -70,7 +70,6 @@ public class SimplicateScraper(
     }
 
     public async Task<SimplicateNewItemData?> PostContentAsync<T>(
-        IMcpServer mcpServer,
         IServiceProvider serviceProvider,
         string url,
         string jsonPayload,
@@ -91,7 +90,7 @@ public class SimplicateScraper(
         if (!response.IsSuccessStatusCode)
         {
             // Optional: log or throw error
-            var error = await response.Content.ReadAsStringAsync();
+            var error = await response.Content.ReadAsStringAsync(cancellationToken);
             throw new InvalidOperationException($"POST failed: {response.StatusCode} - {error}");
         }
 
@@ -99,7 +98,6 @@ public class SimplicateScraper(
         var respContent = await response.Content.ReadAsStringAsync(cancellationToken);
 
         return JsonSerializer.Deserialize<SimplicateNewItemData>(respContent);
-
     }
 
     private async Task<(string Key, string Secret)?> GetCredentialsAsync(

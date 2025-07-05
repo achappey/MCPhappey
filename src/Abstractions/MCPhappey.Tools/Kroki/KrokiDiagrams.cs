@@ -10,7 +10,7 @@ namespace MCPhappey.Tools.Kroki;
 public static class KrokiDiagrams
 {
     [Description("Generate a Kroki diagram from code and diagram type")]
-    [McpServerTool(Name = "Kroki_CreateDiagram", ReadOnly = false, Title = "Create a diagram with Kroki")]
+    [McpServerTool(Name = "Kroki_CreateDiagram", ReadOnly = true, Title = "Create a diagram with Kroki")]
     public static async Task<CallToolResult> Kroki_CreateDiagram(
       [Description("Diagram type, e.g. graphviz, mermaid, plantuml, etc.")] string diagramType,
       [Description("The diagram source code (DOT, Mermaid, etc.)")] string diagramCode,

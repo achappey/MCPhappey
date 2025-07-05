@@ -9,7 +9,7 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Tools.Graph.Outlook;
 
-public static class GraphOutlook
+public static class GraphOutlookMail
 {
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
     [McpServerTool(Name = "GraphOutlook_SendMail", ReadOnly = false)]

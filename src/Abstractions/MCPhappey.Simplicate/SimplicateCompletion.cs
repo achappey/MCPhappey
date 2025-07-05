@@ -80,7 +80,7 @@ public class SimplicateCompletion(
     {
         var url = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/{urlFactory(argValue)}";
         var items = await downloadService.GetSimplicatePageAsync<T>(serviceProvider, mcpServer, url, cancellationToken);
-        return items?.Data?.Select(selector).ToList() ?? [];
+        return items?.Data?.Take(100).Select(selector).Where(a => !string.IsNullOrEmpty(a)).ToList() ?? [];
     }
 
 
@@ -109,15 +109,33 @@ public class SimplicateCompletion(
         ["factuurnummer"] = new CompletionSource<SimplicateInvoiceItem>(
             value => $"invoices/invoice?q[invoice_number]={value}*&sort=invoice_number&select=invoice_number",
             item => item.InvoiceNumber),
-        //    ["bedrijfLabel"] = new CompletionSource<OtherType>(
-        //       value => $"crm/organization?q[label]={value}*&sort=label&select=label",
-        //      item => item.Label),
+
+        ["factuurStatus"] = new CompletionSource<SimplicateNameItem>(
+            value => $"invoices/invoicestatus?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name.Replace("label_", string.Empty)),
+
     };
+
+    public class SimplicateDebtorItem
+    {
+        [JsonPropertyName("organization")]
+        public SimplicateNameItem? Organization { get; set; }
+
+        [JsonPropertyName("person")]
+        public SimplicateFullNameItem? Person { get; set; } = default!;
+    }
+
 
     public class SimplicateInvoiceItem
     {
         [JsonPropertyName("invoice_number")]
         public string InvoiceNumber { get; set; } = string.Empty;
+    }
+
+    public class SimplicateFullNameItem
+    {
+        [JsonPropertyName("full_name")]
+        public string FullName { get; set; } = string.Empty;
     }
 
     public class SimplicateNameItem

@@ -1,0 +1,14 @@
+{
+  "resources": [
+    {
+      "uri": "https://graph.microsoft.com/beta/me/calendar/events?$top=10&$select=subject,start,end,location,organizer",
+      "name": "Upcoming calendar events",
+      "description": "Lists the next 10 upcoming calendar events, including subject, start/end time, location, and organizer.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  
+  ]
+}

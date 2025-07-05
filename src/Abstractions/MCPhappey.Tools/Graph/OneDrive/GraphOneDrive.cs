@@ -28,4 +28,6 @@ public static class GraphOneDrive
 
         return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/drives/{driveId}/items/root:/{path}/{filename}:/content");
     }
+
+    
 }
