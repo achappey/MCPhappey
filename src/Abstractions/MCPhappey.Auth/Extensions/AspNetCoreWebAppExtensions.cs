@@ -50,7 +50,7 @@ public static class AspNetCoreWebAppExtensions
             var validator = context.RequestServices.GetRequiredService<IJwtValidator>();
             var oAuthSettings = context.RequestServices.GetRequiredService<OAuthSettings>();
             var matchedServer = servers.FirstOrDefault(a =>
-                path.StartsWith($"/{a.Server.ServerInfo.Name}", StringComparison.OrdinalIgnoreCase));
+                path.StartsWith($"/{a.Server.ServerInfo.Name.ToLowerInvariant()}"));
 
             if (matchedServer is null)
             {

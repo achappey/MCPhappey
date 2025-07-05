@@ -23,14 +23,14 @@
       }
     },
     {
-      "prompt": "Welke drie projecten van organisatie {organisatieNaam} zijn het laatst gestart? Geef per project de naam, startdatum, status en projectmanager.",
+      "prompt": "Welke drie projecten van bedrijf {naamBedrijf} zijn het laatst gestart? Geef per project de naam, startdatum, status en projectmanager.",
       "template": {
-        "name": "recent-gestarte-projecten-organisatie",
-        "description": "Toont een overzicht van de meest recent gestarte projecten van een organisatie.",
+        "name": "recent-gestarte-projecten-bedrijf",
+        "description": "Toont een overzicht van de meest recent gestarte projecten van een bedrijf.",
         "arguments": [
           {
-            "name": "organisatieNaam",
-            "description": "Naam van de organisatie.",
+            "name": "naamBedrijf",
+            "description": "Naam van her bedrijf.",
             "required": true
           }
         ]

@@ -17,7 +17,7 @@ public static class ServerExtensions
     /// Returns <c>true</c> when the <see cref="Server"/> contains metadata entries that require OAuth.
     /// </summary>
     public static bool HasAuth(this Server server)
-        => server?.OBO?.Keys.Any() ?? false;
+        => server?.OBO?.Keys.Any() == true ? true : false;
 
     /// <summary>
     /// Returns a new dictionary that excludes entries that require OAuth.
