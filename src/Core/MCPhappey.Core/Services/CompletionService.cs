@@ -28,6 +28,6 @@ public class CompletionService(
             fileContent = await bestDecoder.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
         }
 
-        return new CompleteResult();
+        return fileContent ?? new CompleteResult();
     }
 }
