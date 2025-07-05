@@ -11,7 +11,7 @@ public static class CountryService
     static readonly string SOURCE_URL = "https://github.com/egbakou/RESTCountries.NET";
 
     [Description("Search country codes and names")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Name = "GitHubRestCountries_SearchCountryCodes", ReadOnly = true)]
     public static async Task<EmbeddedResourceBlock> GitHubRestCountries_SearchCountryCodes(
         [Description("Search query by name (contains)")] string name,
         RequestContext<CallToolRequestParams> requestContext)
@@ -24,7 +24,7 @@ public static class CountryService
     }
 
     [Description("Get all country details by the alpha-2 code")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Name = "GitHubRestCountries_GetCountryDetail", ReadOnly = true)]
     public static async Task<EmbeddedResourceBlock?> GitHubRestCountries_GetCountryDetail(
         [Description("The alpha-2 code of the country")] string cca2) =>
             await Task.FromResult(RestCountriesService.GetCountryByCode(cca2.ToString()!).ToJsonContentBlock(SOURCE_URL));

@@ -13,7 +13,7 @@ public static class SimplicateHRM
 {
 
     [Description("Get Simplicate leaves by year grouped on employee and leave type")]
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateHRM_GetLeaveTotals",ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, List<LeaveTotals>>?> SimplicateHRM_GetLeaveTotals(
         [Description("Year to get the total from")] string year,
         IServiceProvider serviceProvider,

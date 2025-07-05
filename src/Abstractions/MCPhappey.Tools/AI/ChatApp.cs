@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.AI;
 public static class ChatApp
 {
     [Description("Generate a conversation name from initial user and assistant messages")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Name="ChatApp_ExecuteGenerateConversationName", ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExecuteGenerateConversationName(
         [Description("User message")] string userMessage,
         IServiceProvider serviceProvider,
@@ -34,9 +34,7 @@ public static class ChatApp
         // Optional: Logging/notification
         var markdown = $"Generating conversation name...\nUser: {userMessage}";
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
-        //using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        // cts.CancelAfter(TimeSpan.FromSeconds(3));
-        // Call prompt template (should be named "conversation-name")
+
         var result = await samplingService.GetPromptSample(
             serviceProvider,
             mcpServer,
@@ -51,7 +49,7 @@ public static class ChatApp
     }
 
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Name="ChatApp_ExecuteGenerateWelcomeMessage", ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExecuteGenerateWelcomeMessage(
         [Description("Language of the requested welcome message")] string language,
         IServiceProvider serviceProvider,
@@ -67,9 +65,6 @@ public static class ChatApp
         // Optional: Logging/notification
         var markdown = $"Generating welcome message";
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
-
-        //  using var cts = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
-        //  cts.CancelAfter(TimeSpan.FromSeconds(3));
 
         var result = await samplingService.GetPromptSample(
             serviceProvider,

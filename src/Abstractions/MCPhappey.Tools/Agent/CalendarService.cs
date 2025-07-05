@@ -13,7 +13,7 @@ public static class CalendarService
     }
 
     [Description("Returns all week numbers for the month of the specified date, including the start and end date for each week that covers at least one day of the month. Week rule and first day of week are configurable.")]
-    [McpServerTool(ReadOnly = true, OpenWorld = false, UseStructuredContent = true)]
+    [McpServerTool(Name="CalendarService_GetWeeksForMonth", ReadOnly = true, OpenWorld = false, UseStructuredContent = true)]
     public static async Task<Dictionary<int, WeekInfo>> CalendarService_GetWeeksForMonth(
            [Description("Any date within the desired month, e.g. 2025-04-11.")] DateTime date,
            [Description("Optional: Calendar week rule (FirstDay, FirstFullWeek, FirstFourDayWeek). Default is ISO (FirstFourDayWeek).")] CalendarWeekRule? weekRule = null,

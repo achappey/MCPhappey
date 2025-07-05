@@ -1,4 +1,5 @@
 using MCPhappey.Common.Models;
+using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 
@@ -12,6 +13,7 @@ public static class ModelContextProtocolExtensions
             http.ConfigureSessionOptions = async (ctx, opts, cancellationToken) =>
              {
                  var kernel = ctx.RequestServices.GetRequiredService<Kernel>();
+                 var completionService = ctx.RequestServices.GetRequiredService<CompletionService>();
                  var serverName = ctx.Request.Path.Value!.GetServerNameFromUrl();
                  var server = servers.First(a => a.Server.ServerInfo?.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase) == true);
                  var headers = ctx.Request.Headers
@@ -23,6 +25,7 @@ public static class ModelContextProtocolExtensions
                  {
                      Resources = server.ToResourcesCapability(headers),
                      Prompts = server.ToPromptsCapability(headers),
+                     Completions = server.ToCompletionsCapability(completionService),
                      Tools = server.Server.ToToolsCapability(kernel, headers)
                  };
 

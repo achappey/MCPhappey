@@ -11,6 +11,6 @@ public interface IAutoCompletion
 {
     bool SupportsHost(ServerConfig serverConfig);
 
-    Task<IEnumerable<FileItem>?> GetCompletion(IMcpServer mcpServer, IServiceProvider serviceProvider,
-        CompleteRequestParams completeRequestParams, CancellationToken cancellationToken = default);
+    Task<CompleteResult?> GetCompletion(IMcpServer mcpServer, IServiceProvider serviceProvider,
+        CompleteRequestParams? completeRequestParams, CancellationToken cancellationToken = default);
 }

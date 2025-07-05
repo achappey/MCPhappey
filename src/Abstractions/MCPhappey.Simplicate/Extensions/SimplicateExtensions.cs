@@ -16,13 +16,30 @@ public static class SimplicateExtensions
     public static decimal ToAmount(this decimal item) =>
          Math.Round(item, 2, MidpointRounding.AwayFromZero);
 
+    public static async Task<SimplicateData<T>?> GetSimplicatePageAsync<T>(
+        this DownloadService downloadService,
+        IServiceProvider serviceProvider,
+        IMcpServer mcpServer,
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        var page = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken);
+        var stringContent = page?.FirstOrDefault()?.Contents?.ToString();
+
+        if (string.IsNullOrWhiteSpace(stringContent))
+            return null;
+
+        return JsonSerializer.Deserialize<SimplicateData<T>>(stringContent);
+    }
+
+
     public static async Task<List<T>> GetAllSimplicatePagesAsync<T>(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
         string baseUrl,
         string filterString,
-        Func<int, string> progressTextSelector, 
+        Func<int, string> progressTextSelector,
         RequestContext<CallToolRequestParams> requestContext,
         int pageSize = 100,
         CancellationToken cancellationToken = default)
@@ -45,23 +62,21 @@ public static class SimplicateExtensions
                 cancellationToken
             );
 
-            var page = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken);
-            var stringContent = page?.FirstOrDefault()?.Contents?.ToString();
+            var result = await downloadService.GetSimplicatePageAsync<T>(
+                        serviceProvider, mcpServer, url, cancellationToken);
 
-            if (string.IsNullOrWhiteSpace(stringContent)) break;
+            if (result == null || result.Data == null)
+                break;
 
             if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
             {
                 var uri = new Uri(url);
                 var domain = uri.Host;
                 var markdown =
-                    $"<details><summary><a href=\"{url}\" target=\"blank\">{domain}</a></summary>\n\n```\n{stringContent}\n```\n</details>";
+                      $"<details><summary><a href=\"{url}\" target=\"blank\">{domain}</a></summary>\n\n```\n{JsonSerializer.Serialize(result)}\n```\n</details>";
 
                 await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
             }
-
-            var result = JsonSerializer.Deserialize<SimplicateData<T>>(stringContent);
-            if (result == null || result.Data == null) break;
 
             results.AddRange(result.Data);
 

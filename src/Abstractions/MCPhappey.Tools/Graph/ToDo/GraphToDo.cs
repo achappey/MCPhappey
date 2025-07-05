@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.ToDo;
 public static class GraphToDo
 {
     [Description("Create a new Microsoft To Do task")]
-    [McpServerTool(ReadOnly = false)]
+    [McpServerTool(Name = "GraphTodo_CreateTask", ReadOnly = false)]
     public static async Task<ContentBlock?> GraphTodo_CreateTask(
          [Description("ToDo list id")]
             string listId,

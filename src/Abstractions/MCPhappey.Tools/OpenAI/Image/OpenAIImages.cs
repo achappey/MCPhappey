@@ -24,7 +24,7 @@ public static class OpenAIImages
 
 
     [Description("Create a image with OpenAI image generator")]
-    [McpServerTool(ReadOnly = false)]
+    [McpServerTool(Name = "OpenAIImages_CreateImage", ReadOnly = true)]
     public static async Task<List<ContentBlock>> OpenAIImages_CreateImage(
         [Description("prompt")]
         string prompt,

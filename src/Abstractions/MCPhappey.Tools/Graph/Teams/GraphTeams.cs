@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.Teams;
 public static class GraphTeams
 {
     [Description("Create a new Microsoft Teams.")]
-    [McpServerTool(ReadOnly = false, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_CreateTeam", ReadOnly = false, Destructive = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphTeams_CreateTeam(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -44,7 +44,7 @@ public static class GraphTeams
     }
 
     [Description("Create a new channel in a Microsoft Teams.")]
-    [McpServerTool(ReadOnly = false, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_CreateChannel", ReadOnly = false, Destructive = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphTeams_CreateChannel(
         string teamId,
         IServiceProvider serviceProvider,
@@ -66,7 +66,7 @@ public static class GraphTeams
     }
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
-    [McpServerTool(ReadOnly = false, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_CreateChannelMessage", ReadOnly = false, Destructive = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphTeams_CreateChannelMessage(
         string teamId,
         string channelId,

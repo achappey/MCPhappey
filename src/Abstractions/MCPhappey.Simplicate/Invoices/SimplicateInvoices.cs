@@ -11,7 +11,7 @@ namespace MCPhappey.Simplicate.Invoices;
 
 public static class SimplicateInvoices
 {
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateInvoices_GetInvoiceTotalsByMyOrganization", ReadOnly = true, UseStructuredContent = true)]
     [Description("Get total invoices grouped by my organization profile, optionally filtered by date range and organization.")]
     public static async Task<Dictionary<string, SimplicateInvoiceTotals>?> SimplicateInvoices_GetInvoiceTotalsByMyOrganization(
         IServiceProvider serviceProvider,

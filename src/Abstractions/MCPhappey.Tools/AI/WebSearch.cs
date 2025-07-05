@@ -13,7 +13,7 @@ public static class WebSearch
     private static readonly string[] ModelNames = ["sonar-pro", "gpt-4o-search-preview", "gemini-2.5-pro-preview-06-05"];
 
     [Description("Web search using multiple AI models in parallel")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Name="WebSearch_ExecuteWebSearch", ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> WebSearch_ExecuteWebSearch(
        [Description("Search query")] string query,
        IServiceProvider serviceProvider,

@@ -10,7 +10,7 @@ namespace MCPhappey.Tools.ModelContext.Resources;
 public static class ModelContextResourceService
 {
     [Description("Reads a resource from the specified URI")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Name = "ModelContextProtocol_ReadResource", ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> ModelContextProtocol_ReadResource(
         [Description("The URI of the resource to get. Must be a valid URI. Supports web links, but also links to authenticated content like SharePoint, Outlook, Simplicate, etc")]
         string uri,

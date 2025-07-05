@@ -89,7 +89,7 @@ public static class SharePointSearch
     }
 
     [Description("Search Microsoft 365 content")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Name = "SharePoint_Search", ReadOnly = true)]
     public static async Task<CallToolResult> SharePoint_Search(
         [Description("Search query")] string query,
         IServiceProvider serviceProvider,

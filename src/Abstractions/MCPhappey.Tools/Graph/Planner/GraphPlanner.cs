@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static class GraphPlanner
 {
     [Description("Create a new Microsoft Planner task")]
-    [McpServerTool(ReadOnly = false)]
+    [McpServerTool(Name = "GraphPlanner_CreateTask", ReadOnly = false)]
     public static async Task<ContentBlock?> GraphPlanner_CreateTask(
          [Description("Planner id")]
             string plannerId,

@@ -1,5 +1,6 @@
 
 using System.Reflection;
+using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.SemanticKernel;
@@ -73,7 +74,13 @@ public static partial class ModelContextToolExtensions
             CallToolHandler = async (request, cancellationToken)
                 =>
                 {
-                    var tool = tools.First(a => a.ProtocolTool.Name == request.Params?.Name);
+                    var tool = tools.FirstOrDefault(a => a.ProtocolTool.Name == request.Params?.Name);
+
+                    if (tool == null)
+                    { 
+                        return JsonSerializer.Serialize($"Tool {tool?.ProtocolTool.Name} not found").ToErrorCallToolResponse();
+                    }
+
                     request.Services!.WithHeaders(headers);
 
                     try
@@ -84,7 +91,7 @@ public static partial class ModelContextToolExtensions
                     {
                         await request.Server.SendMessageNotificationAsync(e.ToString(), LoggingLevel.Error);
 
-                        return e.Message.ToErrorCallToolResponse();
+                        return JsonSerializer.Serialize(e).ToErrorCallToolResponse();
                     }
                 }
         };

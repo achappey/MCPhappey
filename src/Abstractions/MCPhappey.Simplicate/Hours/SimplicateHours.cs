@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
@@ -13,7 +12,7 @@ namespace MCPhappey.Simplicate.Hours;
 public static class SimplicateHours
 {
     [Description("Get total registered hours grouped by employee, optionally filtered by date range (max 65 days), project, or employee.")]
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateHours_GetHourTotalsByEmployee",ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByEmployee(
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,
@@ -30,7 +29,7 @@ public static class SimplicateHours
 );
 
     [Description("Get total registered hours grouped by hour type, optionally filtered by date range (max 65 days), project, or employee.")]
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateHours_GetHourTotalsByHourType",ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByHourType(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -47,7 +46,7 @@ public static class SimplicateHours
     );
 
     [Description("Get total registered hours grouped by project, optionally filtered by date range (max 65 days), or approval status.")]
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateHours_GetHourTotalsByProject",ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, SimplicateHourTotals>?> SimplicateHours_GetHourTotalsByProject(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

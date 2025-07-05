@@ -9,7 +9,7 @@ public static partial class ModelContextResourceExtensions
 {
     public static ResourcesCapability? ToResourcesCapability(this ServerConfig server,
         Dictionary<string, string>? headers = null)
-        => server.Server.Capabilities != null ?
+        => server.Server.Capabilities.Resources != null ?
             new ResourcesCapability()
             {
                 ListResourcesHandler = async (request, cancellationToken)

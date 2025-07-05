@@ -8,7 +8,7 @@ namespace MCPhappey.Tools.Agent;
 public static class AgentService
 {
     [Description("Use the tool to think about something. It will not obtain new information or change the database, but just append the thought to the log. Use it when complex reasoning or some cache memory is needed.")]
-    [McpServerTool(ReadOnly = true, OpenWorld = false)]
+    [McpServerTool(Name = "Agent_Think", ReadOnly = true, OpenWorld = false)]
     public static async Task<CallToolResult> Agent_Think(
         [Description("A thought to think about.")] string thought) =>
             await Task.FromResult(thought.ToTextCallToolResponse());

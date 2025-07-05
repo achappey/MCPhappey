@@ -57,6 +57,7 @@ public static class AspNetCoreExtensions
 
         // Register scraper.
         builder.Services.AddSingleton<IContentScraper, SimplicateScraper>();
+        builder.Services.AddSingleton<IAutoCompletion, SimplicateCompletion>();
 
         return builder;
     }

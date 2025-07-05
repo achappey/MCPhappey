@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.Outlook;
 public static class GraphOutlook
 {
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
-    [McpServerTool(ReadOnly = false)]
+    [McpServerTool(Name = "GraphOutlook_SendMail", ReadOnly = false)]
     public static async Task<ContentBlock?> GraphOutlook_SendMail(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

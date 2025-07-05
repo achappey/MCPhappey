@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
@@ -15,7 +14,7 @@ namespace MCPhappey.Simplicate.CRM;
 public static class SimplicateCRM
 {
     [Description("Create a new organization in Simplicate CRM")]
-    [McpServerTool(ReadOnly = false, Idempotent = false, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateCRM_CreateOrganization", ReadOnly = false, Idempotent = false, UseStructuredContent = true)]
     public static async Task<SimplicateNewItemData?> SimplicateCRM_CreateOrganization(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -40,7 +39,7 @@ public static class SimplicateCRM
     }
 
     [Description("Create a new person in Simplicate CRM")]
-    [McpServerTool(ReadOnly = false, Idempotent = false, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateCRM_CreatePerson", ReadOnly = false, Idempotent = false, UseStructuredContent = true)]
     public static async Task<SimplicateNewItemData?> SimplicateCRM_CreatePerson(
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
@@ -53,12 +52,7 @@ public static class SimplicateCRM
         // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/person";
         var dto = await requestContext.Server.GetElicitResponse<SimplicateNewPerson>(cancellationToken);
-        /*   var elicitParams = "Please fill in the organization details".CreateElicitRequestParamsForType<SimplicateNewPerson>();
 
-           var elicitResult = await requestContext.Server.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
-           elicitResult.EnsureAccept();
-
-           var dto = elicitResult.Content?.MapToObject<SimplicateNewPerson>();*/
         return await scraper.PostSimplicateItemAsync(
             serviceProvider,
             baseUrl,
