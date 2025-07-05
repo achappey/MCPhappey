@@ -16,53 +16,108 @@ public class SimplicateCompletion(
     public bool SupportsHost(ServerConfig serverConfig)
         => serverConfig.Server.ServerInfo.Name.StartsWith("Simplicate-");
 
-    public async Task<CompleteResult?> GetCompletion(IMcpServer mcpServer, IServiceProvider serviceProvider, CompleteRequestParams? completeRequestParams, CancellationToken cancellationToken = default)
+    public async Task<CompleteResult?> GetCompletion(
+     IMcpServer mcpServer,
+     IServiceProvider serviceProvider,
+     CompleteRequestParams? completeRequestParams,
+     CancellationToken cancellationToken = default)
     {
-        switch (completeRequestParams?.Argument.Name)
+        if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
+            return new CompleteResult();
+
+        if (!completionSources.TryGetValue(argName, out var source))
+            return new CompleteResult();
+
+        // Use reflection to invoke the generic helper
+        var sourceType = source.GetType();
+        var tType = sourceType.GenericTypeArguments[0];
+        var method = GetType().GetMethod(nameof(CompleteAsync), System.Reflection.BindingFlags.NonPublic | System.Reflection.BindingFlags.Instance)
+            ?.MakeGenericMethod(tType);
+
+        if (method == null)
+            return new CompleteResult();
+
+        var urlFactory = sourceType.GetProperty(nameof(CompletionSource<object>.UrlFactory))?.GetValue(source);
+        var selector = sourceType.GetProperty(nameof(CompletionSource<object>.Selector))?.GetValue(source);
+
+        if (method == null || urlFactory == null || selector == null)
+            return new CompleteResult();
+
+        var objArray = new object[]
         {
-            case "teamNaam":
-                string teamUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/team?q[name]={completeRequestParams.Argument.Value}*&sort=name&select=name";
-                var items = await downloadService.GetSimplicatePageAsync<SimplicateNameItem>(serviceProvider,
-                    mcpServer, teamUrl, cancellationToken);
+                urlFactory,
+                selector,
+                argValue,
+                mcpServer,
+                serviceProvider,
+                cancellationToken
+        };
 
-                return new CompleteResult()
-                {
-                    Completion = new()
-                    {
-                        Values = items?.Data.Select(z => z.Name)
-                            .ToList() ?? []
-                    }
-                };
+        var result = method.Invoke(this, objArray);
 
-            case "projectNaam":
-                string projectUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/projects/project?q[name]={completeRequestParams.Argument.Value}*&sort=name&select=name";
-                var projectItems = await downloadService.GetSimplicatePageAsync<SimplicateNameItem>(serviceProvider,
-                    mcpServer, projectUrl, cancellationToken);
+        if (result is not Task<List<string>> task)
+            return new CompleteResult();
 
-                return new CompleteResult()
-                {
-                    Completion = new()
-                    {
-                        Values = projectItems?.Data.Select(z => z.Name)
-                            .ToList() ?? []
-                    }
-                };
-            case "medewerkerNaam":
-                string employeeUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/employee?q[name]={completeRequestParams.Argument.Value}*&sort=name&select=name&q[is_user]=true";
-                var employeeItems = await downloadService.GetSimplicatePageAsync<SimplicateNameItem>(serviceProvider,
-                    mcpServer, employeeUrl, cancellationToken);
+        var values = await task;
 
-                return new CompleteResult()
-                {
-                    Completion = new()
-                    {
-                        Values = employeeItems?.Data.Select(z => z.Name)
-                            .ToList() ?? []
-                    }
-                };
-            default:
-                return new CompleteResult();
-        }
+        return new CompleteResult
+        {
+            Completion = new()
+            {
+                Values = values
+            }
+        };
+
+    }
+
+    private async Task<List<string>> CompleteAsync<T>(
+        Func<string, string> urlFactory,
+        Func<T, string> selector,
+        string argValue,
+        IMcpServer mcpServer,
+        IServiceProvider serviceProvider,
+        CancellationToken cancellationToken)
+    {
+        var url = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/{urlFactory(argValue)}";
+        var items = await downloadService.GetSimplicatePageAsync<T>(serviceProvider, mcpServer, url, cancellationToken);
+        return items?.Data?.Select(selector).ToList() ?? [];
+    }
+
+
+    private readonly Dictionary<string, object> completionSources = new()
+    {
+        ["teamNaam"] = new CompletionSource<SimplicateNameItem>(
+            value => $"hrm/team?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name),
+
+        ["projectNaam"] = new CompletionSource<SimplicateNameItem>(
+            value => $"projects/project?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name),
+
+        ["medewerkerNaam"] = new CompletionSource<SimplicateNameItem>(
+            value => $"hrm/employee?q[name]=*{value}*&sort=name&select=name&q[is_user]=true",
+            item => item.Name),
+
+        ["brancheNaam"] = new CompletionSource<SimplicateNameItem>(
+            value => $"crm/industry?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name),
+
+        ["naamBedrijf"] = new CompletionSource<SimplicateNameItem>(
+            value => $"crm/organization?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name),
+
+        ["factuurnummer"] = new CompletionSource<SimplicateInvoiceItem>(
+            value => $"invoices/invoice?q[invoice_number]={value}*&sort=invoice_number&select=invoice_number",
+            item => item.InvoiceNumber),
+        //    ["bedrijfLabel"] = new CompletionSource<OtherType>(
+        //       value => $"crm/organization?q[label]={value}*&sort=label&select=label",
+        //      item => item.Label),
+    };
+
+    public class SimplicateInvoiceItem
+    {
+        [JsonPropertyName("invoice_number")]
+        public string InvoiceNumber { get; set; } = string.Empty;
     }
 
     public class SimplicateNameItem
@@ -70,5 +125,12 @@ public class SimplicateCompletion(
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
     }
+
+    public class CompletionSource<T>(Func<string, string> urlFactory, Func<T, string> selector)
+    {
+        public Func<string, string> UrlFactory { get; set; } = urlFactory;
+        public Func<T, string> Selector { get; set; } = selector;
+    }
+
 
 }

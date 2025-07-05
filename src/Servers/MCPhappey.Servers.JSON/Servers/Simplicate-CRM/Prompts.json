@@ -23,14 +23,14 @@
       }
     },
     {
-      "prompt": "Geef van organisatie {organisatieNaam} een kort profiel: toon de kerngegevens (naam, branche, relatiemanager, e-mail, telefoon, website) en maximaal vijf recente contactpersonen met hun functie.",
+      "prompt": "Geef van bedrijf {naamBedrijf} een kort profiel: toon de kerngegevens (naam, branche, relatiemanager, e-mail, telefoon, website) en maximaal vijf recente contactpersonen met hun functie.",
       "template": {
         "name": "crm-organisatie-kort-profiel",
-        "description": "Toont een compact profiel van een organisatie, plus een beknopte lijst van de belangrijkste contactpersonen.",
+        "description": "Toont een compact profiel van een bedrijf, plus een beknopte lijst van de belangrijkste contactpersonen.",
         "arguments": [
           {
-            "name": "organisatieNaam",
-            "description": "Naam van de organisatie waarvan je het profiel wilt opvragen.",
+            "name": "naamBedrijf",
+            "description": "Naam van het bedrijf waarvan je het profiel wilt opvragen.",
             "required": true
           }
         ]
@@ -56,21 +56,21 @@
       }
     },
     {
-      "prompt": "Bekijk de contactpersonen van organisatie {organisatieNaam} en geef inzicht: zijn er functiegroepen die sterk vertegenwoordigd zijn? Noem maximaal drie meest voorkomende functies en geef een korte uitleg bij het resultaat.",
+      "prompt": "Bekijk de contactpersonen van bedrijf {naamBedrijf} en geef inzicht: zijn er functiegroepen die sterk vertegenwoordigd zijn? Noem maximaal drie meest voorkomende functies en geef een korte uitleg bij het resultaat.",
       "template": {
         "name": "crm-functieverdeling-contactpersonen",
-        "description": "Geeft een verdeling van de meest voorkomende functies onder contactpersonen binnen een organisatie.",
+        "description": "Geeft een verdeling van de meest voorkomende functies onder contactpersonen binnen een bedrijf.",
         "arguments": [
           {
-            "name": "organisatieNaam",
-            "description": "Naam van de organisatie waarvan je de functieverdeling wilt weten.",
+            "name": "naamBedrijf",
+            "description": "Naam van het bedrijf waarvan je de functieverdeling wilt weten.",
             "required": true
           }
         ]
       }
     },
     {
-      "prompt": "Analyseer de laatste 25 toegevoegde organisaties binnen branche {brancheNaam}. Geef per organisatie aan wie de relatiemanager is, en meld opvallende patronen, zoals meerdere organisaties bij dezelfde relatiemanager of een plotselinge toename binnen deze branche.",
+      "prompt": "Analyseer de laatste 25 toegevoegde bedrijven binnen branche {brancheNaam}. Geef per bedrijf aan wie de relatiemanager is, en meld opvallende patronen, zoals meerdere bedrijven bij dezelfde relatiemanager of een plotselinge toename binnen deze branche.",
       "template": {
         "name": "crm-patroonanalyse-nieuwe-organisaties",
         "description": "Analyse van patronen in nieuwe organisaties binnen een branche.",
@@ -98,14 +98,14 @@
       }
     },
     {
-      "prompt": "Vergelijk voor organisatie {organisatieNaam} de vijf laatst toegevoegde contactpersonen met de vijf oudste contactpersonen. Wat valt op in functietitel, afdeling of e-maildomein? Benoem opvallende verschillen of trends.",
+      "prompt": "Vergelijk voor bedrijf {naamBedrijf} de vijf laatst toegevoegde contactpersonen met de vijf oudste contactpersonen. Wat valt op in functietitel, afdeling of e-maildomein? Benoem opvallende verschillen of trends.",
       "template": {
         "name": "crm-vergelijk-contactpersoon-groepen",
-        "description": "Vergelijkt de nieuwste en oudste contactpersonen binnen een organisatie om trends te signaleren.",
+        "description": "Vergelijkt de nieuwste en oudste contactpersonen binnen een bedrijf om trends te signaleren.",
         "arguments": [
           {
-            "name": "organisatieNaam",
-            "description": "Naam van de organisatie die je wilt analyseren.",
+            "name": "naamBedrijf",
+            "description": "Naam van het bedrijf die je wilt analyseren.",
             "required": true
           }
         ]

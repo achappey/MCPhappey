@@ -236,7 +236,7 @@ public static class ElicitExtensions
 
         if (elicitResult.Content == null)
         {
-            throw new Exception("Elicit could not be completed");
+           throw new Exception(elicitResult.Action);
         }
 
         return elicitResult.Content.MapToObject<T>();
