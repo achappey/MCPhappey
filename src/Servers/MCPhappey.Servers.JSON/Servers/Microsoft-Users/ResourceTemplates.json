@@ -1,0 +1,18 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/users/{userId}?$select=id,displayName,userPrincipalName,mail,givenName,surname,jobTitle,department,officeLocation,accountEnabled,createdDateTime,manager",
+      "name": "User details by ID",
+      "description": "Get rich profile information for a specific user by userId.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter={userFilter}&$top=100&$select=id,displayName,userPrincipalName,mail,givenName,surname,jobTitle,department,officeLocation,accountEnabled,createdDateTime",
+      "name": "Filtered users (flexible)",
+      "description": "Flexible user listing: filter by any supported property. Example filters: startswith(displayName,'Arthur'), department eq 'HR', accountEnabled eq true, etc. Replace {userFilter} as needed.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    }
+  ]
+}

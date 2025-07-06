@@ -1,0 +1,46 @@
+{
+  "prompts": [
+    {
+      "prompt": "Find a user by username {userName} and show their display name, department, and job title.",
+      "template": {
+        "name": "find-user-by-username",
+        "description": "Finds a user using their username (email address/UPN) and shows key details.",
+        "arguments": [
+          {
+            "name": "userName",
+            "description": "The user's username (user principal name or email address).",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Show all users in the department {departmentName}, including their display name and email address.",
+      "template": {
+        "name": "list-users-by-department",
+        "description": "Lists all users in the specified department, showing display name and email address.",
+        "arguments": [
+          {
+            "name": "departmentName",
+            "description": "The department name to filter users by.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Find a user by their display name: {userDisplayName}, and show their full profile.",
+      "template": {
+        "name": "find-user-by-displayname",
+        "description": "Finds a user by their full display name, returning full profile.",
+        "arguments": [
+          {
+            "name": "userDisplayName",
+            "description": "The user's full display name.",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

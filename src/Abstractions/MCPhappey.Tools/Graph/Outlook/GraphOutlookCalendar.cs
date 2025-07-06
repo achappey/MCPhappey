@@ -15,8 +15,8 @@ public static class GraphOutlookCalendar
     /// Create a new calendar event in the user's Outlook calendar.
     /// </summary>
     [Description("Create a new calendar event in the user's Outlook calendar.")]
-    [McpServerTool(Name = "GraphOutlook_CreateCalendarEvent", ReadOnly = false)]
-    public static async Task<ContentBlock?> GraphOutlook_CreateCalendarEvent(
+    [McpServerTool(Name = "GraphOutlookCalendar_CreateCalendarEvent", ReadOnly = false)]
+    public static async Task<ContentBlock?> GraphOutlookCalendar_CreateCalendarEvent(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
@@ -49,12 +49,12 @@ public static class GraphOutlookCalendar
                 DisplayName = dto.Location
             },
             Attendees = string.IsNullOrWhiteSpace(dto.Attendees) ? null :
-                dto.Attendees.Split(',')
+                [.. dto.Attendees.Split(',')
                     .Select(a => new Attendee
                     {
                         EmailAddress = new EmailAddress { Address = a.Trim() },
                         Type = AttendeeType.Required
-                    }).ToList()
+                    })]
         };
 
         var result = await client.Me.Events.PostAsync(newEvent, cancellationToken: cancellationToken);

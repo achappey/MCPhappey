@@ -8,7 +8,7 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uri": "https://graph.microsoft.com/beta/me/planner/tasks?$top=50&$select=id,title,percentComplete,dueDateTime,planId,assignedToUserIds,createdDateTime",
+      "uri": "https://graph.microsoft.com/beta/me/planner/tasks?$top=50&$select=id,title,percentComplete,dueDateTime,planId,createdDateTime,completedDateTime",
       "name": "My Planner tasks",
       "description": "Lists up to 50 Planner tasks assigned to you, with details like title, due date, progress, plan, and assigned users.",
       "mimeType": "application/json",
@@ -22,7 +22,7 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uri": "https://graph.microsoft.com/beta/planner/tasks?$top=50&$select=id,title,percentComplete,dueDateTime,planId,assignedToUserIds,createdDateTime",
+      "uri": "https://graph.microsoft.com/beta/planner/tasks?$top=50&$select=id,title,percentComplete,dueDateTime,planId,createdDateTime,completedDateTime",
       "name": "All accessible Planner tasks",
       "description": "Shows up to 50 Planner tasks across all plans you have access to, including title, due date, progress, plan, and assigned users.",
       "mimeType": "application/json",

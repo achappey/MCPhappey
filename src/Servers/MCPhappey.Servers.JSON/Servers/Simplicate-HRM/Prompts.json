@@ -1,6 +1,20 @@
 {
   "prompts": [
     {
+      "prompt": "Zoek eerst naar actieve medewerkers van team {teamNaam} via de medewerkerlijst. Zoek daarna van het resterend vakantieverlof saldo voor dit jaar. Presenteer de lijst met medewerkers van {teamNaam}, de naam met resterend aantal uren dit jaar, in de vorm van een informele e-mail die we kunnen sturen aan de HR-verantwoordelijke van {teamNaam}. Geef de mail in html opmaak en het email onderwerp als losse tekst, geen andere teksten in je antwoord.",
+      "template": {
+        "name": "hrm-resterend-verlofsaldo-team",
+        "description": "Toont de resterende verlofsaldi het huidige jaar van medewerkers uit een team.",
+        "arguments": [
+          {
+            "name": "teamNaam",
+            "description": "Naam van de team.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "Geef van medewerker {medewerkerNaam} een overzicht van de actuele contractstatus: type, begindatum, einddatum en eventuele opzegdatum.",
       "template": {
         "name": "hrm-contractstatus-medewerker",

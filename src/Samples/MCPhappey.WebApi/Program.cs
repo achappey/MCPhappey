@@ -74,6 +74,8 @@ builder.Services.AddCors(options =>
     });
 });
 
+builder.WithCompletion();
+
 if (!string.IsNullOrEmpty(appConfig?.PrivateKey))
 {
     builder.AddAuthServices(appConfig.PrivateKey);

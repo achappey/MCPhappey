@@ -15,21 +15,21 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/planner/plans/{planId}/tasks?$top=20&$select=id,title,percentComplete,dueDateTime,assignedToUserIds",
+      "uriTemplate": "https://graph.microsoft.com/beta/planner/plans/{planId}/tasks?$top=50&$select=id,title,percentComplete,dueDateTime,completedDateTime,hasDescription,completedBy",
       "name": "Tasks in plan",
-      "description": "Lists up to 20 tasks from a specific Planner plan. Replace {planId} with the plan's ID.",
+      "description": "Lists up to 50 tasks from a specific Planner plan. Replace {planId} with the plan's ID.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/planner/buckets/{bucketId}/tasks?$top=20&$select=id,title,percentComplete,dueDateTime,assignedToUserIds",
+      "uriTemplate": "https://graph.microsoft.com/beta/planner/buckets/{bucketId}/tasks?$top=50&$select=id,title,percentComplete,dueDateTime",
       "name": "Tasks in bucket",
-      "description": "Lists up to 20 tasks in a specific Planner bucket. Replace {bucketId} with the bucket's ID.",
+      "description": "Lists up to 50 tasks in a specific Planner bucket. Replace {bucketId} with the bucket's ID.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/planner/tasks/{taskId}/details?$select=description,checklist,referenceCount",
+      "uriTemplate": "https://graph.microsoft.com/beta/planner/tasks/{taskId}/details?$select=description,checklist,previewType",
       "name": "Task details",
       "description": "Gets extra details, checklist, and references for a specific task. Replace {taskId} with the task's ID.",
       "mimeType": "application/json",

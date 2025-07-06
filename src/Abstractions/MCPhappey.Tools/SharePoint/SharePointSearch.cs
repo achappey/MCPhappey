@@ -34,7 +34,7 @@ public static class SharePointSearch
             [
                 new()
                     {
-                        EntityTypes = entityTypes.ToList(),
+                        EntityTypes = [.. entityTypes],
                         Query = new SearchQuery { QueryString = query },
                         From = from,
                         Size = size,
@@ -119,11 +119,10 @@ public static class SharePointSearch
 
             return new CallToolResult
             {
-                Content = basicResults
+                Content = [.. basicResults
                     .Where(t => !string.IsNullOrEmpty(t))
                     .Select(a => a?.ToTextContentBlock())
-                    .OfType<ContentBlock>()
-                    .ToList()
+                    .OfType<ContentBlock>()]
             };
         }
 

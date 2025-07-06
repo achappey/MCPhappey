@@ -5,6 +5,6 @@
   },
   "plugins": ["MCPhappey.Tools.Graph.Outlook.GraphOutlookMail, MCPhappey.Tools"],
   "obo": {
-    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/Mail.ReadWrite"
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/Mail.ReadWrite https://graph.microsoft.com/Mail.Send.Shared"
   }
 }
