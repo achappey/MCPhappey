@@ -77,7 +77,7 @@ public static class GraphPlanner
 
         var dto = await requestContext.Server.GetElicitResponse<GraphNewPlannerPlan>(cancellationToken);
 
-        var result = await client.Planner.Plans.PostAsync(new Microsoft.Graph.Beta.Models.PlannerPlan
+        var result = await client.Planner.Plans.PostAsync(new PlannerPlan
         {
             Title = dto.Title,
             Owner = groupId

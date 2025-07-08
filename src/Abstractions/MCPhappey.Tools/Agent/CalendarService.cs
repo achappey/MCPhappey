@@ -30,11 +30,11 @@ public static class CalendarService
         var lastOfMonth = firstOfMonth.AddMonths(1).AddDays(-1);
 
         // Find first week start (on/before first of month)
-        int daysToFirstDay = ((7 + (int)firstOfMonth.DayOfWeek - (int)firstDay) % 7);
+        int daysToFirstDay = (7 + (int)firstOfMonth.DayOfWeek - (int)firstDay) % 7;
         var firstWeekStart = firstOfMonth.AddDays(-daysToFirstDay);
 
         // Find last week end (on/after last of month)
-        int daysToLastDay = ((7 - (int)lastOfMonth.DayOfWeek + (int)firstDay + 6) % 7);
+        int daysToLastDay = (7 - (int)lastOfMonth.DayOfWeek + (int)firstDay + 6) % 7;
         var lastWeekEnd = lastOfMonth.AddDays(daysToLastDay);
 
         var calendar = CultureInfo.InvariantCulture.Calendar;
@@ -52,7 +52,6 @@ public static class CalendarService
 
             weeks[weekNumber] = new WeekInfo
             {
-                // WeekNumber = weekNumber,
                 StartDate = weekStart,
                 EndDate = weekEnd
             };

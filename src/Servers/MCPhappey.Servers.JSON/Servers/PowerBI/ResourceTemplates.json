@@ -1,0 +1,73 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}",
+      "name": "Get dataset by ID",
+      "description": "Retrieve a single dataset by its unique ID.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/refreshes",
+      "name": "Get dataset refresh history",
+      "description": "Retrieve refresh history for a specific dataset.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/groups/{groupId}/reports",
+      "name": "List reports in workspace",
+      "description": "List all reports within a specific workspace (group).",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/groups/{groupId}/datasets",
+      "name": "List datasets in workspace",
+      "description": "Retrieve all datasets in a specific workspace (group).",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/tables",
+      "name": "List tables in streaming dataset",
+      "description": "List all tables in a specific streaming dataset.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/tables/{tableName}/columns",
+      "name": "List columns in table",
+      "description": "List all columns in a specific table of a dataset.",
+      "mimeType": "application/json"
+    },
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/groups/{groupId}/dashboards",
+      "name": "List dashboards in workspace",
+      "description": "List all dashboards within a specific workspace (group).",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://api.powerbi.com/v1.0/myorg/reports/{reportId}",
+      "name": "Get report by ID",
+      "description": "Retrieve a report by its unique ID.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

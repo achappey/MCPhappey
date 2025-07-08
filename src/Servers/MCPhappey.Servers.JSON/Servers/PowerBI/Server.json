@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "PowerBI",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.PowerBI.PowerBI, MCPhappey.Tools"],
+  "obo": {
+    "api.powerbi.com": "https://analysis.windows.net/powerbi/api/Dataset.ReadWrite.All https://analysis.windows.net/powerbi/api/Report.Execute.All https://analysis.windows.net/powerbi/api/Report.ReadWrite.All https://analysis.windows.net/powerbi/api/Workspace.Read.All"
+  }
+}
