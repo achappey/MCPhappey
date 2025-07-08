@@ -1,0 +1,46 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/security/alerts?$top={top}&$filter=severity eq '{severity}'&$select=id,title,severity,status,createdDateTime,assignedTo,category,incidentId",
+      "name": "Security alerts by severity",
+      "description": "Lists recent security alerts filtered by severity, returning only essential fields.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/security/alerts/{alertId}?$select=id,title,description,severity,status,assignedTo,createdDateTime,lastUpdateDateTime,incidentId,alertWebUrl",
+      "name": "Security alert details",
+      "description": "Retrieves a specific alert with key details and related incident link.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/security/incidents?$top={top}&$filter=status eq '{status}'&$select=id,displayName,status,incidentWebUrl",
+      "name": "Security Incidents by status",
+      "description": "Lists incidents with their names, status, timestamps, and link.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/security/secureScores?$top={top}&$select=id,createdDateTime,currentScore,maxScore",
+      "name": "Secure Scores",
+      "description": "Lists secure score snapshots with date and score values.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/security/secureScoreControlProfiles?$filter=category eq '{category}'&$select=id,controlName,controlCategory,actionType,implementationCost,actionUrl",
+      "name": "Secure Score controls by category",
+      "description": "Retrieves controls filtered by category with name, cost, and action URL.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/security/threatIndicators?$top={top}&$filter=indicatorType eq '{type}'&$select=id,indicatorType,threatType,displayName,createdDateTime",
+      "name": "Threat indicators by type",
+      "description": "Lists threat indicators by type with minimal metadata.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    }
+  ]
+}

@@ -5,6 +5,6 @@
   },
   "plugins": ["MCPhappey.Tools.SharePoint.SharePointSearch, MCPhappey.Tools"],
   "obo": {
-    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read"
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read"
   }
 }

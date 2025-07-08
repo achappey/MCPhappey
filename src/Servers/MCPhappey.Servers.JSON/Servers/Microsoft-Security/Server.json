@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "Microsoft-Security",
+    "version": "1.0.0"
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/SecurityActions.ReadWrite.All https://graph.microsoft.com/SecurityEvents.ReadWrite.All https://graph.microsoft.com/ThreatIndicators.Read.All"
+  }
+}
