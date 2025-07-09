@@ -15,17 +15,13 @@ public static class DatabaseExtensions
 
         if (server.Secured)
         {
-            obo = new()
-            {
-                { Hosts.MicrosoftGraph, "https://graph.microsoft.com/User.Read" }
-            };
+            obo = [];
 
             // 1.  Collect distinct hosts that end in ".dynamics.com"
             // 2.  Add them to the dictionary if not already present
             foreach (var host in server.Resources
                                      .Select(r => new Uri(r.Uri).Host)      // or r.Url, adjust to model
-                                     .Where(h => h.EndsWith(".dynamics.com",
-                                                            StringComparison.OrdinalIgnoreCase))
+                                     .Where(h => h.EndsWith(".dynamics.com", StringComparison.OrdinalIgnoreCase))
                                      .Distinct())
             {
                 obo.TryAdd(host, $"https://{host}/.default");
@@ -45,6 +41,11 @@ public static class DatabaseExtensions
                 .Distinct(StringComparer.OrdinalIgnoreCase))
             {
                 obo.TryAdd(host, $"https://{host}/.default");
+            }
+
+            if (obo.Count == 0)
+            {
+                obo.TryAdd(Hosts.MicrosoftGraph, "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read");
             }
         }
 

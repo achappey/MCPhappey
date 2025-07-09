@@ -12,10 +12,10 @@ namespace MCPhappey.Simplicate.HRM;
 public static class SimplicateHRM
 {
 
-    [Description("Get Simplicate leaves by year grouped on employee and leave type")]
+    [Description("Get Simplicate leaves totals grouped on employee and leave type")]
     [McpServerTool(Name = "SimplicateHRM_GetLeaveTotals",ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, List<LeaveTotals>>?> SimplicateHRM_GetLeaveTotals(
-        [Description("Year to get the total from")] string year,
+     //   [Description("Year to get the total from")] string year,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Filter on leave type")] string? leaveType = null,
@@ -28,7 +28,7 @@ public static class SimplicateHRM
         string select = "employee.,hours,leavetype.";
         var filters = new List<string>
         {
-            $"q[year]={Uri.EscapeDataString(year)}",
+        //    $"q[year]={Uri.EscapeDataString(year)}",
             $"select={select}"
         };
 
@@ -48,9 +48,7 @@ public static class SimplicateHRM
         // Extra filter op leaveType (optioneel)
         if (!string.IsNullOrEmpty(leaveType))
         {
-            leaves = leaves
-                .Where(a => a.LeaveType?.Label?.Contains(leaveType, StringComparison.OrdinalIgnoreCase) == true)
-                .ToList();
+            leaves = [.. leaves.Where(a => a.LeaveType?.Label?.Contains(leaveType, StringComparison.OrdinalIgnoreCase) == true)];
         }
 
         return leaves
