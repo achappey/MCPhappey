@@ -93,10 +93,10 @@
       }
     },
     {
-      "prompt": "Bekijk van medewerker {medewerkerNaam} de drie meest recente HRM-documenten. Noem het type, de titel en de aanmaakdatum.",
+      "prompt": "Bekijk van medewerker {medewerkerNaam} de meest recente HRM-documenten. Noem het type, de titel en de aanmaakdatum.",
       "template": {
         "name": "hrm-meest-recente-documenten-medewerker",
-        "description": "Geeft de drie meest recente documenten van een medewerker.",
+        "description": "Geeft de meest recente documenten van een medewerker.",
         "arguments": [
           {
             "name": "medewerkerNaam",
