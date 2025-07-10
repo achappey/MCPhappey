@@ -11,7 +11,7 @@ public static class CountryService
     static readonly string SOURCE_URL = "https://github.com/egbakou/RESTCountries.NET";
 
     [Description("Search country codes and names")]
-    [McpServerTool(Name = "GitHubRestCountries_SearchCountryCodes", ReadOnly = true)]
+    [McpServerTool(Name = "GitHubRestCountries_SearchCountryCodes", ReadOnly = true, OpenWorld = false)]
     public static async Task<EmbeddedResourceBlock> GitHubRestCountries_SearchCountryCodes(
         [Description("Search query by name (contains)")] string name,
         RequestContext<CallToolRequestParams> requestContext)
@@ -24,9 +24,17 @@ public static class CountryService
     }
 
     [Description("Get all country details by the alpha-2 code")]
-    [McpServerTool(Name = "GitHubRestCountries_GetCountryDetail", ReadOnly = true)]
-    public static async Task<EmbeddedResourceBlock?> GitHubRestCountries_GetCountryDetail(
+    [McpServerTool(Name = "GitHubRestCountries_GetCountryDetail", ReadOnly = true, OpenWorld = false, UseStructuredContent = true)]
+    public static async Task<RESTCountries.NET.Models.Country?> GitHubRestCountries_GetCountryDetail(
         [Description("The alpha-2 code of the country")] string cca2) =>
-            await Task.FromResult(RestCountriesService.GetCountryByCode(cca2.ToString()!).ToJsonContentBlock(SOURCE_URL));
+            await Task.FromResult(RestCountriesService.GetCountryByCode(cca2.ToString()!));
+
+    [Description("Get countries by region")]
+    [McpServerTool(Name = "GitHubRestCountries_GetCountriesByRegion", ReadOnly = true, UseStructuredContent = true)]
+    public static async Task<IEnumerable<RESTCountries.NET.Models.Country>> GitHubRestCountries_GetCountriesByRegion(
+        [Description("The region to filter on (e.g. Europe, Asia, Africa).")] string region) =>
+            await Task.FromResult(RestCountriesService.GetAllCountries()
+                .Where(a => a.Region.Equals(region, StringComparison.OrdinalIgnoreCase)));
+
 }
 

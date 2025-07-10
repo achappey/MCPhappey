@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -12,7 +11,6 @@ namespace MCPhappey.Tools.OpenAI.Audio;
 
 public static class OpenAIAudio
 {
-    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Voice
     {
         Alloy,
@@ -34,12 +32,10 @@ public static class OpenAIAudio
         string input,
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
-        [Description("Which model to use. tts-1, tts-1-hd or gpt-4o-mini-tts")]
-        string? model = "tts-1-hd",
-        [Description("Control the voice of your generated audio with additional instructions. Does not work with tts-1 or tts-1-hd.")]
+        [Description("Additional instructions about the generated audio.")]
         string? instructions = null,
-        // [Description("Control the voice of your generated audio with additional instructions. Does not work with tts-1 or tts-1-hd.")]
-        //  Voice? voice = Voice.Alloy,
+        [Description("The voice of your generated audio.")]
+        Voice? voice = Voice.Alloy,
         [Description("Playback speed factor")]
         float? speed = 1,
         CancellationToken cancellationToken = default)
@@ -48,14 +44,17 @@ public static class OpenAIAudio
         var uploadService = serviceProvider.GetRequiredService<UploadService>();
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
 
-        OAI.Audio.GeneratedSpeechVoice speechVoice = OAI.Audio.GeneratedSpeechVoice.Alloy;
-        var audioClient = openAiClient.GetAudioClient(model);
+        OAI.Audio.GeneratedSpeechVoice speechVoice = voice.HasValue ? voice.Value.ToGeneratedSpeechVoice()
+            : OAI.Audio.GeneratedSpeechVoice.Alloy;
+
+        var audioClient = openAiClient.GetAudioClient("gpt-4o-mini-tts");
 
         var item = await audioClient.GenerateSpeechAsync(input,
                          speechVoice,
                          new OAI.Audio.SpeechGenerationOptions()
                          {
                              SpeedRatio = speed,
+                             Instructions = instructions,
                          }, cancellationToken);
 
         var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-{DateTime.Now.Ticks}.mp3",
@@ -67,6 +66,7 @@ public static class OpenAIAudio
                 uploaded != null ? new EmbeddedResourceBlock() {
                     Resource = new BlobResourceContents() {
                         MimeType = "audio/mpeg",
+                        Uri = uploaded.Uri,
                         Blob = Convert.ToBase64String(item.Value)
                     }
             } : new AudioContentBlock() {
@@ -83,6 +83,12 @@ public static class OpenAIAudio
         string url,
        IServiceProvider serviceProvider,
        IMcpServer mcpServer,
+       [Description("A prompt to improve the quality of the generated transcripts.")]
+        string? prompt = null,
+       [Description("The language of the audio to transcribe")]
+        string? language = null,
+       [Description("Temperature")]
+        float? temperature = null,
        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
@@ -100,9 +106,14 @@ public static class OpenAIAudio
         }
 
         var audioClient = openAiClient.GetAudioClient("gpt-4o-transcribe");
-
         var item = await audioClient.CreateTranscriptionText(download.Contents,
                          download.Filename,
+                         new OAI.Audio.AudioTranscriptionOptions()
+                         {
+                             Prompt = prompt,
+                             Language = language,
+                             Temperature = temperature
+                         },
                          cancellationToken);
 
         var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-Transcription-{DateTime.Now.Ticks}.txt",
@@ -110,12 +121,14 @@ public static class OpenAIAudio
 
         return new CallToolResult()
         {
-            Content = [new EmbeddedResourceBlock(){
+            Content = [uploaded != null ? new EmbeddedResourceBlock(){
                 Resource = new TextResourceContents() {
                     MimeType = "text/plain",
-                    Uri = uploaded?.Uri ?? string.Empty,
+                    Uri = uploaded.Uri,
                     Text = item
                 }
+            } : new TextContentBlock() {
+                Text = item
             }]
         };
     }

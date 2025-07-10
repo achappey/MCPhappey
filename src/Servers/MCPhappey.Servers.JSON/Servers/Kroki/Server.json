@@ -3,5 +3,6 @@
     "name": "Kroki",
     "version": "1.0.0"
   },
+  "instructions": "Invoke the Kroki tool to render the diagrams; do not output code or text in codeblocks, unless explicitly requested.",
   "plugins": ["MCPhappey.Tools.Kroki.KrokiDiagrams, MCPhappey.Tools"]
 }

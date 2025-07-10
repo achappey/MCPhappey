@@ -12,8 +12,35 @@ public static class CalendarService
         public DateTime EndDate { get; set; }
     }
 
+    public class Now
+    {
+        public required DateTimeOffset UtcNow { get; set; }
+        public required long Ticks { get; set; }
+        public required long UnixTimeSeconds { get; set; }
+        public required string IsoString { get; set; } = default!;
+        public required DayOfWeek DayOfWeek { get; set; }
+
+    }
+
+    [Description("Gets current date and time information")]
+    [McpServerTool(Name = "CalendarService_GetDateTimeNow", ReadOnly = true, OpenWorld = false, UseStructuredContent = true)]
+    public static Task<Now> CalendarService_GetDateTimeNow()
+    {
+        var now = DateTimeOffset.UtcNow;
+        
+        return Task.FromResult(new Now
+        {
+            UtcNow = now,
+            UnixTimeSeconds = now.ToUnixTimeSeconds(),
+            Ticks = now.Ticks,
+            IsoString = now.ToString("o"),
+            DayOfWeek = now.DayOfWeek,
+        });
+    }
+
+
     [Description("Returns all week numbers for the month of the specified date, including the start and end date for each week that covers at least one day of the month. Week rule and first day of week are configurable.")]
-    [McpServerTool(Name="CalendarService_GetWeeksForMonth", ReadOnly = true, OpenWorld = false, UseStructuredContent = true)]
+    [McpServerTool(Name = "CalendarService_GetWeeksForMonth", ReadOnly = true, OpenWorld = false, UseStructuredContent = true)]
     public static async Task<Dictionary<int, WeekInfo>> CalendarService_GetWeeksForMonth(
            [Description("Any date within the desired month, e.g. 2025-04-11.")] DateTime date,
            [Description("Optional: Calendar week rule (FirstDay, FirstFullWeek, FirstFourDayWeek). Default is ISO (FirstFourDayWeek).")] CalendarWeekRule? weekRule = null,

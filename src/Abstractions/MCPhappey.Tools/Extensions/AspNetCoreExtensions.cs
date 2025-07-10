@@ -1,4 +1,5 @@
 using MCPhappey.Common;
+using MCPhappey.Tools.GitHub.RestCountries;
 using MCPhappey.Tools.Graph;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -11,6 +12,7 @@ public static class AspNetCoreExtensions
         this WebApplicationBuilder builder)
     {
         builder.Services.AddSingleton<IAutoCompletion, GraphCompletion>();
+        builder.Services.AddSingleton<IAutoCompletion, CountryCompletion>();
 
         return builder;
     }
