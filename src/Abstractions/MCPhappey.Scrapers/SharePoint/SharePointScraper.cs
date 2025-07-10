@@ -1,4 +1,3 @@
-using MCPhappey.Auth.Extensions;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common;
 using MCPhappey.Common.Constants;
@@ -30,6 +29,39 @@ public class SharePointScraper(IHttpClientFactory httpClientFactory, ServerConfi
         var graphClient = await httpClientFactory.GetOboGraphClient(tokenService.Bearer,
                 serverConfig.Server, oAuthSettings);
 
-        return [await graphClient.GetFilesByUrl(url)];
+        if (url.Contains("/_layouts/15/news.aspx?"))
+        {
+            var newsFile = await graphClient
+                .GetInputFileFromNewsPagesAsync(url);
+
+            return newsFile ?? [];
+        }
+        else
+        {
+            try
+            {
+                return [await graphClient.GetFilesByUrl(url)];
+            }
+            catch (Exception e)
+            {
+                if (e.Message == "Site Pages cannot be accessed as a drive item")
+                {
+
+                    var pageResult = await graphClient.GetSharePointPage(url);
+                    if (pageResult != null)
+                    {
+                        var inputFile = pageResult?.ToFileItem();
+
+                        return inputFile != null && !inputFile.Contents.IsEmpty
+                            ? [inputFile] : [];
+                    }
+
+                    return [];
+                }
+
+                throw;
+
+            }
+        }
     }
 }

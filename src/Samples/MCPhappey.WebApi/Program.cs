@@ -28,21 +28,23 @@ if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
 {
     builder.Services.AddKernelMemoryWithOptions(memoryBuilder =>
     {
+        var apiKey = appConfig?.Domains?
+                    .FirstOrDefault(a => a.Key == Hosts.OpenAI)
+                    .Value
+                    .FirstOrDefault(a => a.Key == "Authorization").Value.GetBearerToken()!;
+
         memoryBuilder
             .WithCustomWebScraper<DownloadService>()
             .WithSimpleQueuesPipeline()
             .WithOpenAI(new OpenAIConfig()
             {
-                APIKey = appConfig?.Domains?
-                    .FirstOrDefault(a => a.Key == Hosts.OpenAI)
-                    .Value
-                    .FirstOrDefault(a => a.Key == "Authorization").Value.GetBearerToken()!,
+                APIKey = apiKey,
                 TextModel = "gpt-4.1-2025-04-14",
                 TextModelMaxTokenTotal = 65536,
                 EmbeddingDimensions = 3072,
                 EmbeddingModel = "text-embedding-3-large"
             })
-            .WithDecoders()
+            .WithDecoders(apiKey)
             .WithSqlServerMemoryDb(new()
             {
                 ConnectionString = appConfig?.KernelMemoryDatabase!

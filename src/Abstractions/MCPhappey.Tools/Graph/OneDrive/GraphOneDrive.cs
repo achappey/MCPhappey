@@ -13,9 +13,9 @@ public static class GraphOneDrive
     [McpServerTool(Name = "GraphOneDrive_UploadFile", ReadOnly = false)]
     public static async Task<ContentBlock?> GraphOneDrive_UploadFile(
         [Description("The OneDrive Drive ID.")] string driveId,
-        [Description("The file contents as a string.")] string content,
         [Description("The file name (e.g. foo.txt).")] string filename,
         [Description("The folder path in OneDrive (e.g. docs).")] string path,
+        [Description("The file contents as a string.")] string content,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
@@ -29,5 +29,5 @@ public static class GraphOneDrive
         return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/drives/{driveId}/items/root:/{path}/{filename}:/content");
     }
 
-    
+
 }

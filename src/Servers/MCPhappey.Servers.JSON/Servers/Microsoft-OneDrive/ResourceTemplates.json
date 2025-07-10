@@ -28,15 +28,6 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/me/drive/root:/Fakton/{projectNumber}:/children?$select=id,name,webUrl,lastModifiedDateTime,size,file,folder",
-      "name": "Project folder contents",
-      "description": "Get contents of a specific Fakton project folder",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/permissions?$select=id,roles,grantedTo,link,inheritedFrom",
       "name": "Sharing permissions",
       "description": "Get sharing details and permissions for any item",

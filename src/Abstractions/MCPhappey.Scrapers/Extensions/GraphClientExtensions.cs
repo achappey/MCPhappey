@@ -8,6 +8,7 @@ using System.Net.Mime;
 using System.Text.Json;
 using ModelContextProtocol.Protocol;
 using MCPhappey.Common.Extensions;
+using System.Web;
 
 namespace MCPhappey.Scrapers.Extensions;
 
@@ -44,6 +45,83 @@ public static class GraphClientExtensions
         }
 
         throw new Exception("Something went wrong. Only valid shareId or sharing URL are valid.");
+    }
+
+    public static FileItem? ToFileItem(this SitePage sitePage)
+    {
+        var allInnerHtml = sitePage?.CanvasLayout?.HorizontalSections?
+                  .SelectMany(hs => hs.Columns ?? [])
+                  .SelectMany(c => c.Webparts ?? [])
+                  .OfType<TextWebPart>()
+                  .Select(wp => wp.InnerHtml)
+                  .ToList();
+
+        if (sitePage?.CanvasLayout?.VerticalSection != null)
+        {
+            allInnerHtml?.AddRange(sitePage?.CanvasLayout?.VerticalSection?.Webparts?
+                .OfType<TextWebPart>()
+                .Select(wp => wp.InnerHtml) ?? []);
+        }
+
+        var html = string.Join("", allInnerHtml?.Where(y => !string.IsNullOrEmpty(y)) ?? []);
+
+        if (string.IsNullOrEmpty(html)) return null;
+
+        var htmlString = @$"<html><head><meta name='author' content='{sitePage?.CreatedBy?.User?.DisplayName}'>
+          <meta name='creation-date' content='{sitePage?.CreatedDateTime}'>
+          <meta name='source-url' content='{sitePage?.WebUrl}'>
+          <title>{sitePage?.Title}</title>
+          </head>
+          <body>
+          <div>{html}</div>
+          </body>
+          </html>";
+
+        return new()
+        {
+            Contents = BinaryData.FromString(htmlString),
+            MimeType = MediaTypeNames.Text.Html,
+            Filename = System.IO.Path.ChangeExtension(sitePage?.Name, ".html"),
+            Uri = sitePage?.WebUrl ?? string.Empty,
+        };
+    }
+
+
+    public static async Task<SitePage?> GetSharePointPage(this GraphServiceClient client, string url)
+    {
+        var (Hostname, Path, PageName) = url.ExtractSharePointValues();
+
+        var site = await client.Sites[$"{Hostname}:/sites/{Path}"].GetAsync();
+        var pages = await client.Sites[site?.Id].Pages.GraphSitePage.GetAsync((config) =>
+        {
+            config.QueryParameters.Select = ["name", "id", "title", "webUrl", "createdDateTime", "createdBy"];
+            config.QueryParameters.Top = 999;
+        });
+
+        var page = pages?.Value?.FirstOrDefault(t => t.Name == PageName);
+        var sitePage = await client.Sites[site?.Id].Pages[page?.Id].GraphSitePage.GetAsync((config) =>
+        {
+            config.QueryParameters.Expand = ["canvasLayout"];
+        });
+
+        return sitePage;
+    }
+
+    public static (string Hostname, string Path, string PageName) ExtractSharePointValues(this string sharePointUrl)
+    {
+        // Extracting the hostname, site path, and page name from the given URL
+        var uri = new Uri(sharePointUrl);
+        string hostname = uri.Host;
+        string[] pathSegments = uri.AbsolutePath.Split(['/'], StringSplitOptions.RemoveEmptyEntries);
+
+        // Assuming the path segment after "sites" is the required path
+        int siteIndex = Array.IndexOf(pathSegments, "sites");
+        string path = siteIndex >= 0 && pathSegments.Length > siteIndex + 1 ? pathSegments[siteIndex + 1] : string.Empty;
+
+        // Assuming the page name is the last segment in the URL
+        string pageName = pathSegments.Length > 0 ? pathSegments[pathSegments.Length - 1] : string.Empty;
+
+        return (Hostname: hostname, Path: path, PageName: pageName);
     }
 
     public static Task<DriveItem?> GetDriveItem(this GraphServiceClient client, string link,
@@ -108,5 +186,65 @@ public static class GraphClientExtensions
         };
 
     }
+
+    public static async Task<IEnumerable<FileItem>?> GetInputFileFromNewsPagesAsync(
+        this GraphServiceClient graphClient,
+        string fullUrl)
+    {
+        var uri = new Uri(fullUrl);
+        var hostname = uri.Host;
+        var queryParams = HttpUtility.ParseQueryString(uri.Query);
+
+        var fullServerRelativeUrl = HttpUtility.UrlDecode(queryParams["serverRelativeUrl"]);
+        var sitePath = fullServerRelativeUrl?.Split("/SitePages", StringSplitOptions.None)[0];
+        var pagesListId = queryParams["pagesListId"];
+
+        if (string.IsNullOrEmpty(sitePath) || string.IsNullOrEmpty(pagesListId))
+            throw new ArgumentException("Missing site path or pages list ID.");
+
+        // Get the site
+        var site = await graphClient
+            .Sites[$"{hostname}:{sitePath}"]
+            .GetAsync();
+
+        // Get the list items from Site Pages
+        var listItems = await graphClient
+            .Sites[site?.Id]
+            .Lists[pagesListId]
+            .Items
+            .GetAsync((a) =>
+            {
+                a.QueryParameters.Expand = ["fields"];
+                a.QueryParameters.Orderby = ["lastModifiedDateTime desc"];
+            });
+
+        // Extract title, description, webUrl from each item
+        var pages = listItems?.Value?.Select(item =>
+        {
+            IDictionary<string, object> fields = item.Fields?.AdditionalData ?? new Dictionary<string, object>();
+
+            fields.TryGetValue("Title", out var titleObj);
+            fields.TryGetValue("Description", out var descObj);
+
+            var title = titleObj?.ToString();
+            var description = descObj?.ToString();
+
+            return new
+            {
+                title,
+                description,
+                webUrl = item.WebUrl,
+                lastModifiedDateTime = item.LastModifiedDateTime
+            };
+        });
+
+        return [new FileItem() {
+            Uri = fullUrl,
+            Filename = "news.aspx",
+            MimeType = MediaTypeNames.Application.Json,
+            Contents = BinaryData.FromObjectAsJson(pages)
+        }];
+    }
+
 }
 

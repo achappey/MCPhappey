@@ -56,11 +56,11 @@ public partial class DownloadService(WebScraper webScraper,
             throw new Exception(defaultScraper.Error);
         }
 
-        var fileItem = defaultScraper.ToFileItem(url);
+      //  var fileItem = defaultScraper.ToFileItem(url);
 
         return [await transformService.DecodeAsync(url,
-                          fileItem.Contents,
-                          fileItem.MimeType, cancellationToken)];
+                          defaultScraper.Content,
+                          defaultScraper.ContentType, cancellationToken)];
     }
 
     [GeneratedRegex(@"^[^.]+\.crm\d+\.dynamics\.com$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
