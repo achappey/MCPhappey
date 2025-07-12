@@ -16,7 +16,9 @@ public static class ModelContextProtocolExtensions
                  var completionService = ctx.RequestServices.GetRequiredService<CompletionService>();
                  var serverName = ctx.Request.Path.Value!.GetServerNameFromUrl();
                  var server = servers.First(a => a.Server.ServerInfo?.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase) == true);
-                 var headers = ctx.Request.Headers
+
+                 var headers = ctx.Request.Headers.Where(a => server.Server.Headers?.ContainsKey(a.Key) == true ||
+                    (server.Server.OBO?.Any() == true && a.Key == "Authorization"))
                         .ToDictionary(h => h.Key, h => h.Value.ToString());
 
                  opts.ServerInfo = server.Server.ToServerInfo();

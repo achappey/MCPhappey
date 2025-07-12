@@ -1,90 +1,45 @@
 {
   "resourceTemplates": [
     {
-      "uriTemplate": "https://app.declaree.com/api/v4/expenses?startDate={startDate}&endDate={endDate}&limit={limit}&offset={offset}",
-      "name": "Expenses by Date Range",
-      "description": "Retrieve expenses that were created within a specific date range.",
+      "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/users",
+      "name": "List users",
+      "description": "List all users within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
       }
     },
     {
-      "uriTemplate": "https://app.declaree.com/api/v4/expenses?categoryId={categoryId}&limit={limit}&offset={offset}",
-      "name": "Expenses by Category",
-      "description": "Retrieve expenses filtered by a specific expense-category ID.",
+      "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/groups",
+      "name": "List groups",
+      "description": "Retrieve all user groups defined within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
       }
     },
     {
-      "uriTemplate": "https://app.declaree.com/api/v4/expenses?paymentMethodId={paymentMethodId}&limit={limit}&offset={offset}",
-      "name": "Expenses by Payment Method",
-      "description": "Retrieve expenses paid with a particular payment method (e.g., company card, cash).",
+      "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/reports",
+      "name": "List reports",
+      "description": "Get all expense reports belonging to the specified organization.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
       }
     },
     {
-      "uriTemplate": "https://app.declaree.com/api/v4/expenses?minAmount={minAmount}&maxAmount={maxAmount}&limit={limit}&offset={offset}",
-      "name": "Expenses by Amount Range",
-      "description": "Retrieve expenses whose amounts fall between a minimum and maximum value.",
+      "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/resources",
+      "name": "List resources",
+      "description": "List all custom resources within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
       }
     },
     {
-      "uriTemplate": "https://app.declaree.com/api/v4/reports?status={status}&limit={limit}&offset={offset}",
-      "name": "Reports by Status",
-      "description": "Retrieve expense reports filtered by workflow status (e.g., open, awaiting_approval, approved).",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://app.declaree.com/api/v4/reports?userId={userId}&status={status}&limit={limit}&offset={offset}",
-      "name": "Reports by Submitter and Status",
-      "description": "Retrieve reports submitted by a specific user and filtered by status.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://app.declaree.com/api/v4/reimbursements?startDate={startDate}&endDate={endDate}&limit={limit}&offset={offset}",
-      "name": "Reimbursements by Date Range",
-      "description": "Retrieve reimbursements that were paid within a given date range.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://app.declaree.com/api/v4/attachments?expenseId={expenseId}&limit={limit}&offset={offset}",
-      "name": "Attachments for an Expense",
-      "description": "Retrieve receipt images or other attachments associated with a particular expense.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://app.declaree.com/api/v4/notifications?type={type}&limit={limit}&offset={offset}",
-      "name": "Notifications by Type",
-      "description": "Retrieve user notifications filtered by notification type (e.g., workflow, system).",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://app.declaree.com/api/v4/users?query={query}&limit={limit}&offset={offset}",
-      "name": "Users Search",
-      "description": "Search organisation users by name or email address.",
+      "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/tags",
+      "name": "List tags",
+      "description": "Retrieve all tags defined for expenses within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
