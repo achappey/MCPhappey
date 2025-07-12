@@ -1,6 +1,98 @@
 {
   "prompts": [
     {
+      "prompt": "Toon de gemiddelde betaaltermijn van alle klanten in de maand {maand}.",
+      "template": {
+        "name": "betaaltermijn-per-maand-periode",
+        "description": "Geeft per maand de gemiddelde betaaltermijn van alle klanten binnen de opgegeven periode.",
+        "arguments": [
+          {
+            "name": "maand",
+            "description": "Maand van de periode (YYYY-MM).",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Laat zien hoe de gemiddelde betaaltermijn van {naamBedrijf} de afgelopen 12 maanden zich per maand heeft ontwikkeld.",
+      "template": {
+        "name": "betaaltermijn-trend-klant-per-maand",
+        "description": "Geeft de trend van het betaalgedrag van een specifieke klant per maand.",
+        "arguments": [
+          {
+            "name": "naamBedrijf",
+            "description": "Naam van de klant.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Laat zien hoe de gemiddelde betaaltermijn van {naamBedrijf} zich per jaar heeft ontwikkeld.",
+      "template": {
+        "name": "betaaltermijn-trend-klant",
+        "description": "Geeft de trend van het betaalgedrag van een specifieke klant per jaar.",
+        "arguments": [
+          {
+            "name": "naamBedrijf",
+            "description": "Naam van de klant.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Bereken het percentage van het totaal openstaande debiteurensaldo dat langer dan {aantalDagenOpen} dagen openstaat. Toon ook het totaalbedrag openstaand, het bedrag langer dan {min_days_open} dagen open, en geef eventueel de top 10 klanten met het grootste overdue bedrag.",
+      "template": {
+        "name": "percentage-openstaande-debiteuren-ouder-dan-x-dagen",
+        "description": "Berekent het percentage openstaand debiteurensaldo dat ouder is dan het opgegeven aantal dagen. Toon totaalbedrag, overdue-bedrag en optioneel een top-10 klanten.",
+        "arguments": [
+          {
+            "name": "aantalDagenOpen",
+            "description": "Minimum aantal dagen dat een factuur openstaat om als overdue te tellen.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Geef alle klanten met één of meer openstaande facturen die langer dan {aantalDagenOpen} dagen open staan. Toon het totaal openstaand bedrag per klant.",
+      "template": {
+        "name": "klanten-met-facturen-ouder-dan-x-dagen",
+        "description": "Selecteert klanten waar minimaal één factuur langer dan X dagen open staat.",
+        "arguments": [
+          {
+            "name": "aantalDagenOpen",
+            "description": "Minimum aantal dagen dat een factuur open mag staan.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Toon de top 10 klanten met het hoogste openstaande factuursaldo. Laat per klant het totaal openstaand bedrag, het aantal openstaande facturen en het gemiddeld aantal dagen open zien.",
+      "template": {
+        "name": "top-openstaande-klanten",
+        "description": "Geeft de top 10 debiteuren op openstaand saldo, inclusief aantal facturen en gemiddeld aantal dagen open.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Geef een overzicht van alle openstaande (verstuurd en verlopen) facturen voor projectleider {medewerkerNaam}, met factuurnummer, klant, bedrag, status en aantal dagen open of verlopen.",
+      "template": {
+        "name": "facturen-per-projectleider",
+        "description": "Geeft een overzicht van openstaande facturen voor een gekozen projectleider.",
+        "arguments": [
+          {
+            "name": "medewerkerNaam",
+            "description": "Naam van de projectmanager.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "Geef van factuur {factuurnummer} een overzicht: wat is de status, het totaalbedrag, de debiteur, de bijbehorende projectnaam en de betaaldatum (indien betaald)?",
       "template": {
         "name": "factuur-status-overzicht",

@@ -3,11 +3,14 @@
     "name": "Simplicate-Invoices",
     "version": "1.0.0"
   },
+  "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries.\nBeware of the difference between invoice_id and invoice_number.",
   "headers": {
     "Authentication-Key": "Simplicate Api Key",
     "Authentication-Secret": "Simplicate Api Secret"
   },
-  "plugins": ["MCPhappey.Simplicate.Invoices.SimplicateInvoices, MCPhappey.Simplicate"],
+  "plugins": [
+    "MCPhappey.Simplicate.Invoices.SimplicateInvoices, MCPhappey.Simplicate"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }
