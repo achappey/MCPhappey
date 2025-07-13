@@ -8,6 +8,7 @@ using MCPhappey.Common.Extensions;
 using System.Web;
 using System.Text.Json;
 using MCPhappey.Auth.Extensions;
+using System.Collections.Concurrent;
 
 namespace MCPhappey.Simplicate;
 
@@ -28,6 +29,9 @@ public class SimplicateScraper(
 {
     private readonly IHttpClientFactory _httpClientFactory = httpClientFactory;
     private readonly SecretClient? _secretClient = secretClient;
+
+    private readonly ConcurrentDictionary<string, (string Key, string Secret)> _secretsCache = new();
+
 
     public bool SupportsHost(ServerConfig currentConfig, string host)
         => new Uri(host).Host == $"{simplicateOptions.Organization}.simplicate.app";
@@ -104,6 +108,9 @@ public class SimplicateScraper(
         string oid,
         CancellationToken cancellationToken)
     {
+        if (_secretsCache.TryGetValue(oid, out var cached))
+            return cached;
+
         if (_secretClient == null)
         {
             return null;
@@ -111,15 +118,15 @@ public class SimplicateScraper(
 
         var secret = await _secretClient.GetSecretAsync(oid,
                  cancellationToken: cancellationToken);
-        var raw = secret.Value.Value;
 
         if (string.IsNullOrWhiteSpace(secret.Value.Properties.ContentType)
             || string.IsNullOrWhiteSpace(secret.Value.Value))
         {
             return null;
         }
-
-        return (secret.Value.Properties.ContentType, secret.Value.Value);
+        var creds = (secret.Value.Properties.ContentType, secret.Value.Value);
+        _secretsCache[oid] = creds;
+        return creds;
     }
 
 

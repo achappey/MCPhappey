@@ -9,7 +9,7 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Tools.Graph.Planner;
 
-public static class GraphPlanner
+public static partial class GraphPlanner
 {
     [Description("Create a new Microsoft Planner task")]
     [McpServerTool(Name = "GraphPlanner_CreateTask", ReadOnly = false)]
@@ -23,10 +23,10 @@ public static class GraphPlanner
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
         var dto = await requestContext.Server.GetElicitResponse<GraphNewPlannerTask>(cancellationToken);
-        var result = await client.Planner.Tasks.PostAsync(new Microsoft.Graph.Beta.Models.PlannerTask
+
+        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        var result = await client.Planner.Tasks.PostAsync(new PlannerTask
         {
             Title = dto?.Title,
             PlanId = plannerId,
@@ -52,8 +52,7 @@ public static class GraphPlanner
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var dto = await requestContext.Server.GetElicitResponse<GraphNewPlannerBucket>(cancellationToken);
-
-        var result = await client.Planner.Buckets.PostAsync(new Microsoft.Graph.Beta.Models.PlannerBucket
+        var result = await client.Planner.Buckets.PostAsync(new PlannerBucket
         {
             Name = dto.Name,
             PlanId = plannerId,
@@ -76,7 +75,6 @@ public static class GraphPlanner
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var dto = await requestContext.Server.GetElicitResponse<GraphNewPlannerPlan>(cancellationToken);
-
         var result = await client.Planner.Plans.PostAsync(new PlannerPlan
         {
             Title = dto.Title,
@@ -95,8 +93,6 @@ public static class GraphPlanner
         public string Title { get; set; } = default!;
     }
 
-
-
     [Description("Please fill in the Planner bucket details")]
     public class GraphNewPlannerBucket
     {
@@ -110,6 +106,26 @@ public static class GraphPlanner
         public string? OrderHint { get; set; }
     }
 
+    [Description("Copy Plan")]
+    public class GraphCopyPlanner
+    {
+
+        [JsonPropertyName("plannerId")]
+        [Required]
+        [Description("The id of the original Planner to copy.")]
+        public string PlannerId { get; set; } = default!;
+
+        [JsonPropertyName("groupId")]
+        [Required]
+        [Description("Target group id. Where the new Planner should be created.")]
+        public string GroupId { get; set; } = default!;
+
+        [JsonPropertyName("title")]
+        [Required]
+        [Description("The title of the new Planner.")]
+        public string Title { get; set; } = default!;
+
+    }
 
     [Description("Please fill in the Planner task details")]
     public class GraphNewPlannerTask

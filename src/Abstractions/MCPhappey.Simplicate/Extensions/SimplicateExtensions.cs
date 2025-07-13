@@ -8,11 +8,6 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Simplicate.Extensions;
 
-//
-// Summary:
-//     ASP-NET Core helper to register Simplicate content-scraper plus the
-//     required Azure Key Vault SecretClient.
-//
 public static class SimplicateExtensions
 {
     public static decimal ToAmount(this decimal item) =>
@@ -70,15 +65,11 @@ public static class SimplicateExtensions
             if (result == null || result.Data == null)
                 break;
 
-            if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
-            {
-                var uri = new Uri(url);
-                var domain = uri.Host;
-                var markdown =
-                      $"<details><summary><a href=\"{url}\" target=\"blank\">{domain}</a></summary>\n\n```\n{JsonSerializer.Serialize(result)}\n```\n</details>";
-
-                await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
-            }
+            var uri = new Uri(url);
+            var domain = uri.Host;
+            var markdown =
+                  $"<details><summary><a href=\"{url}\" target=\"blank\">{domain}</a></summary>\n\n```\n{JsonSerializer.Serialize(result)}\n```\n</details>";
+            await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
             results.AddRange(result.Data);
 

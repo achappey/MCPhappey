@@ -46,7 +46,7 @@ public static class AspNetCoreWebAppExtensions
                 await next();
                 return;
             }
-
+    
             var validator = context.RequestServices.GetRequiredService<IJwtValidator>();
             var oAuthSettings = context.RequestServices.GetRequiredService<OAuthSettings>();
             var matchedServer = servers.FirstOrDefault(a =>

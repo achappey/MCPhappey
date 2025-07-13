@@ -36,6 +36,30 @@ public static class GraphClientExtensions
         return new GraphServiceClient(authProvider);
     }
 
+    public static async Task<HttpClient> GetGraphHttpClient(this IServiceProvider serviceProvider, IMcpServer mcpServer)
+    {
+        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var tokenService = serviceProvider.GetRequiredService<HeaderProvider>();
+        var oAuthSettings = serviceProvider.GetRequiredService<OAuthSettings>();
+        var server = serviceProvider.GetServerConfig(mcpServer);
+
+        // Haal OBO-access token op zoals je nu doet
+        var accessToken = await httpClientFactory.GetOboToken(
+            tokenService.Bearer!,
+            Hosts.MicrosoftGraph,
+            server?.Server!,
+            oAuthSettings
+        );
+
+        // Maak Graph client (default handler)
+        var client = httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Authorization = new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", accessToken);
+        client.BaseAddress = new Uri("https://graph.microsoft.com/beta/");
+
+        return client;
+    }
+
+
     public static Task<DriveItem?> GetDriveItem(this GraphServiceClient client, string link,
            CancellationToken cancellationToken = default)
     {
