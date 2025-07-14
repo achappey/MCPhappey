@@ -171,9 +171,6 @@ public static class SimplicateHours
         [JsonPropertyName("hours")]
         public double Hours { get; set; }
 
-        //  [JsonPropertyName("invoice_status")]
-        // public InvoiceStatus? InvoiceStatus { get; set; }
-
         [JsonIgnore] // Don't serialize calculated property by default
         public decimal Amount
         {

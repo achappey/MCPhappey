@@ -1,7 +1,7 @@
 {
   "prompts": [
     {
-      "prompt": "Zoek eerst naar medewerkers van team {teamNaam} via de medewerkerlijst met een gebruikersaccount in Simplicate. Zoek daarna van het vakantieverlof totaal. Presenteer de lijst met medewerkers van {teamNaam}, de naam met resterend aantal uren dit jaar, in de vorm van een informele e-mail die we kunnen sturen aan de HR-verantwoordelijke van {teamNaam}. Geef de mail in html opmaak en het email onderwerp als losse tekst, geen andere teksten in je antwoord. Gebruik geen borders in de tabel.",
+      "prompt": "Zoek het vakantie verlof totaal voor team {teamNaam} (leaveType: 'Vakantie verlof'). Presenteer de lijst met medewerkers, de naam met resterend aantal uren dit jaar, in de vorm van een informele e-mail die we kunnen sturen aan de HR-verantwoordelijke van {teamNaam}. Geef de mail in html opmaak en het email onderwerp als losse tekst, geen andere teksten in je antwoord. Gebruik geen borders in de tabel.",
       "template": {
         "name": "hrm-resterend-verlofsaldo-team",
         "description": "Toont de resterende verlofsaldi het huidige jaar van medewerkers uit een team.",

@@ -1,13 +1,3 @@
 {
-  "resources": [
-     {
-      "uri": "https://developer.simplicate.com/swagger.json",
-      "name": "Simplicate API referentie",
-      "description": "Volledige Simplicate API referentie in Swagger formaat",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    }
-  ]
+  "resources": []
 }

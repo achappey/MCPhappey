@@ -125,7 +125,6 @@ public class SimplicateCompletion(
         public SimplicateFullNameItem? Person { get; set; } = default!;
     }
 
-
     public class SimplicateInvoiceItem
     {
         [JsonPropertyName("invoice_number")]
@@ -149,6 +148,4 @@ public class SimplicateCompletion(
         public Func<string, string> UrlFactory { get; set; } = urlFactory;
         public Func<T, string> Selector { get; set; } = selector;
     }
-
-
 }

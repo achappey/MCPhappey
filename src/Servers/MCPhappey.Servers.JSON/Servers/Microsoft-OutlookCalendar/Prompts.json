@@ -1,7 +1,7 @@
 {
   "prompts": [
     {
-      "prompt": "Give a daily agenda overview for {date}: list my first three meetings, the time and location of each, and indicate if any important emails or flagged tasks are related to these meetings.",
+      "prompt": "Give a daily agenda overview for {date}: list my meetings, the time and location of each, and indicate if any important emails or flagged tasks are related to these meetings.",
       "template": {
         "name": "daily-agenda-with-context",
         "description": "Provides a schedule for a given date, enriched with related emails and tasks to help prepare.",
@@ -33,6 +33,5 @@
         ]
       }
     }
-  
   ]
 }
