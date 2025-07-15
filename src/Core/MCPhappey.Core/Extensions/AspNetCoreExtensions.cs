@@ -17,10 +17,10 @@ public static class AspNetCoreExtensions
 
         services.AddSingleton<TransformService>();
         services.AddSingleton<DownloadService>();
-        services.AddSingleton<PromptService>();
-        services.AddSingleton<SamplingService>();
+        services.AddScoped<PromptService>();
+        services.AddScoped<SamplingService>();
         services.AddScoped<UploadService>();
-        services.AddSingleton<ResourceService>();
+        services.AddScoped<ResourceService>();
         services.AddSingleton<CompletionService>();
 
         services.AddSingleton<IReadOnlyList<ServerConfig>>(servers);

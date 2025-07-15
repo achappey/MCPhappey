@@ -1,0 +1,93 @@
+{
+  "prompts": [
+    {
+      "prompt": "List all my available MCP servers and show the number of prompts and resources for each.",
+      "template": {
+        "name": "list-my-servers",
+        "description": "Gives an overview of all MCP servers the user has access to, including counts of prompts and resources.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Add the resource {uri} to my server named {server}. The resource name is {name}.",
+      "template": {
+        "name": "add-resource-to-server",
+        "description": "Adds a resource to one of the user's servers using its URI and name.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "uri",
+            "description": "The URI of the resource",
+            "required": true
+          },
+          {
+            "name": "name",
+            "description": "The name for the resource",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Create a new MCP server named {server}.",
+      "template": {
+        "name": "create-mcp-server",
+        "description": "Creates a new MCP server instance with the specified name.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the new server",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Update the prompt named {promptName} on server {server} with this new text: {newText}.",
+      "template": {
+        "name": "update-server-prompt",
+        "description": "Updates the text of an existing prompt on a given server.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "promptName",
+            "description": "The name of the prompt to update",
+            "required": true
+          },
+          {
+            "name": "newText",
+            "description": "The new prompt text",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Delete the resource named {resourceName} from server {server}.",
+      "template": {
+        "name": "delete-resource",
+        "description": "Deletes a specific resource from a given MCP server.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "resourceName",
+            "description": "The name of the resource to delete",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -19,6 +19,10 @@ public class ServerConfig
 
     [JsonPropertyName("tools")]
     public IEnumerable<string>? ToolList { get; set; }
+
+    [JsonPropertyName("tools")]
+    public ServerSourceType SourceType { get; init; }
+
 }
 
 public class MCPServerList
@@ -118,3 +122,5 @@ public class ServerInfo
     [JsonPropertyName("version")]
     public string Version { get; set; } = null!;
 }
+
+public enum ServerSourceType { Static, Dynamic }

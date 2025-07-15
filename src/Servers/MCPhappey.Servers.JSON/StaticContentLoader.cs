@@ -26,7 +26,8 @@ public static class StaticContentLoader
 
                 ServerConfig serverConfig = new()
                 {
-                    Server = serverObj
+                    Server = serverObj,
+                    SourceType = ServerSourceType.Static,
                 };
 
             //    serverObj.Metadata ??= [];

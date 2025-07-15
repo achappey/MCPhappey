@@ -31,7 +31,7 @@ public static partial class ModelContextResourceExtensions
                     request.Services!.WithHeaders(headers);
 
                     return await scraper.GetServerResource(request.Services!,
-                        request.Server, server, request.Params?.Uri!,
+                        request.Server, request.Params?.Uri!,
                         cancellationToken);
                 },
             }

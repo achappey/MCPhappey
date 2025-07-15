@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "ModelContext-Editor",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Servers.SQL.Tools.ModelContextEditor, MCPhappey.Servers.SQL"],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

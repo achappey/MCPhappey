@@ -66,6 +66,19 @@ public static partial class PromptExtensions
         return result;
     }
 
+    public static List<string> ExtractPromptArguments(this string template)
+    {
+        ArgumentNullException.ThrowIfNull(template);
+
+        var matches = PromptArgumentRegex().Matches(template);
+
+        return matches
+            .Select(m => m.Groups[1].Value)
+            .Distinct(StringComparer.OrdinalIgnoreCase)
+            .ToList();
+    }
+
+
     //[GeneratedRegex("{(.*?)}")]
     [GeneratedRegex(@"\{([a-zA-Z0-9_-]+)\}")]
     private static partial Regex PromptArgumentRegex();

@@ -1,5 +1,7 @@
 using MCPhappey.Common.Models;
+using MCPhappey.Core.Services;
 using MCPhappey.Servers.SQL.Context;
+using MCPhappey.Servers.SQL.Providers;
 using MCPhappey.Servers.SQL.Repositories;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
@@ -16,6 +18,7 @@ public static class AspNetCoreExtensions
         builder.Services.AddDbContext<McpDatabaseContext>(options =>
             options.UseSqlServer(mcpDatabase, sqlOpts => sqlOpts.EnableRetryOnFailure()));
         builder.Services.AddScoped<ServerRepository>();
+        builder.Services.AddScoped<IServerDataProvider, SqlServerDataProvider>();
         using var tempProvider = builder.Services.BuildServiceProvider();
         using var scope = tempProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<McpDatabaseContext>();
@@ -39,6 +42,7 @@ public static class AspNetCoreExtensions
                 .Select(a => new ServerConfig()
                 {
                     Server = a.ToMcpServer(),
+                    SourceType = ServerSourceType.Dynamic,
                     ResourceList = a.Resources.ToListResourcesResult(),
                     ResourceTemplateList = a.ResourceTemplates.ToListResourceTemplatesResult(),
                     PromptList = a.Prompts.ToPromptTemplates()

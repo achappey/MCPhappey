@@ -4,7 +4,7 @@
       "prompt": "Haal per dag de betalingen op van de vorige volledige week (maandag t/m vrijdag). Geef per betaling het factuurnummer en het bedrag. Zet alle resultaten in één duidelijke tabel, gegroepeerd per dag.",
       "template": {
         "name": "betalingen-per-dag-vorige-week",
-        "description": "Geeft per werkdag (maandag t/m vrijdag) van de vorige volledige week alle betalingen weer, met per betaling het factuurnummer en bedrag, netjes gegroepeerd per dag in een tabel.",
+        "description": "Geeft alle betalingen per werkdag (maandag t/m vrijdag) van de vorige volledige week.",
         "arguments": []
       }
     },

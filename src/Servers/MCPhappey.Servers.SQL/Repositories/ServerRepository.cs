@@ -80,12 +80,31 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         return prompt;
     }
 
+    public async Task<PromptArgument> UpdatePromptArgument(PromptArgument promptArgument)
+    {
+        databaseContext.PromptArguments.Update(promptArgument);
+        await databaseContext.SaveChangesAsync();
+
+        return promptArgument;
+    }
+
     public async Task<Server> CreateServer(Server server, CancellationToken cancellationToken)
     {
         await databaseContext.Servers.AddAsync(server, cancellationToken);
         await databaseContext.SaveChangesAsync(cancellationToken);
 
         return server;
+    }
+
+    public async Task DeletePromptArgument(int id)
+    {
+        var item = await databaseContext.PromptArguments.FirstOrDefaultAsync(a => a.Id == id);
+
+        if (item != null)
+        {
+            databaseContext.PromptArguments.Remove(item);
+            await databaseContext.SaveChangesAsync();
+        }
     }
 
     public async Task DeleteServer(int id)
@@ -113,6 +132,18 @@ public class ServerRepository(McpDatabaseContext databaseContext)
     public async Task DeleteResource(int id)
     {
         var item = await databaseContext.Resources.FirstOrDefaultAsync(a => a.Id == id);
+
+        if (item != null)
+        {
+            databaseContext.Resources.Remove(item);
+            await databaseContext.SaveChangesAsync();
+
+        }
+    }
+
+    public async Task DeleteResource(string uri)
+    {
+        var item = await databaseContext.Resources.FirstOrDefaultAsync(a => a.Uri == uri);
 
         if (item != null)
         {
