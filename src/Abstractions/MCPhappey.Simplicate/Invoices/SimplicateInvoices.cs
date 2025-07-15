@@ -44,8 +44,6 @@ public static class SimplicateInvoices
             cancellationToken: cancellationToken
         );
 
-        var now = DateTime.UtcNow;
-
         return invoices
                 .GroupBy(x => x.MyOrganizationProfile?.Organization?.Name ?? string.Empty)
                 .ToDictionary(
@@ -109,6 +107,58 @@ public static class SimplicateInvoices
               g => g.Key,
               g => g.OrderBy(a => ParseDate(a.Date)).ToList()
           );
+    }
+
+    [McpServerTool(Name = "SimplicateInvoices_GetPayments", ReadOnly = true, UseStructuredContent = true)]
+    [Description("Returns a list of payments received.")]
+    public static async Task<List<SimplicateInvoicePayment>> SimplicateInvoices_GetPayments(
+          IServiceProvider serviceProvider,
+          RequestContext<CallToolRequestParams> requestContext,
+          [Description("Payment date (YYY-MM-DD)")] string paymentDate,
+          CancellationToken cancellationToken = default)
+    {
+        if (string.IsNullOrWhiteSpace(paymentDate)) throw new ArgumentException(null, nameof(paymentDate));
+
+        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+
+        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/payment";
+        var filters = new List<string>
+        {
+            $"q[date]={Uri.EscapeDataString(paymentDate)}"
+        };
+
+        var filterString = string.Join("&", filters);
+        var payments = await downloadService.GetAllSimplicatePagesAsync<SimplicatePayment>(
+            serviceProvider,
+            requestContext.Server,
+            baseUrl,
+            filterString,
+            pageNum => $"Downloading payments",
+            requestContext,
+            cancellationToken: cancellationToken
+        );
+
+        List<SimplicateInvoicePayment> invoicePayments = [];
+
+        foreach (var payment in payments)
+        {
+            string paymentsBaseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/invoice/{payment.InvoiceId}";
+            string paymentSelect = "invoice_number";
+            var paymentFilterString = $"?select={paymentSelect}";
+            var fullUrl = $"{paymentsBaseUrl}{paymentFilterString}";
+
+            var invoice = await downloadService.GetSimplicateItemAsync<SimplicateInvoice>(serviceProvider, requestContext.Server, fullUrl, cancellationToken);
+            invoicePayments.Add(new SimplicateInvoicePayment()
+            {
+                InvoiceNumber = invoice?.Data?.InvoiceNumber!,
+                Date = payment.Date,
+                Amount = payment.Amount,
+                InvoiceId = payment.InvoiceId,
+            });
+        }
+
+        return invoicePayments;
     }
 
     private static DateTime? ParseDate(string? dateString)
@@ -405,7 +455,12 @@ public static class SimplicateInvoices
 
         [JsonPropertyName("invoice_number")]
         public string? InvoiceNumber { get; set; }
+    }
 
+    public class SimplicateInvoicePayment : SimplicatePayment
+    {
+        [JsonPropertyName("invoice_number")]
+        public string InvoiceNumber { get; set; } = null!;
     }
 
     public class SimplicatePayment

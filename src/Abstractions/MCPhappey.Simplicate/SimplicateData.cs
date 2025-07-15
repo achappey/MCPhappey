@@ -2,7 +2,6 @@ using System.Text.Json.Serialization;
 
 namespace MCPhappey.Simplicate;
 
-
 public class SimplicateData<T>
 {
     [JsonPropertyName("data")]

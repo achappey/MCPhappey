@@ -1,6 +1,14 @@
 {
   "prompts": [
     {
+      "prompt": "Haal per dag de betalingen op van de vorige volledige week (maandag t/m vrijdag). Geef per betaling het factuurnummer en het bedrag. Zet alle resultaten in één duidelijke tabel, gegroepeerd per dag.",
+      "template": {
+        "name": "betalingen-per-dag-vorige-week",
+        "description": "Geeft per werkdag (maandag t/m vrijdag) van de vorige volledige week alle betalingen weer, met per betaling het factuurnummer en bedrag, netjes gegroepeerd per dag in een tabel.",
+        "arguments": []
+      }
+    },
+    {
       "prompt": "Toon de gemiddelde betaaltermijn van alle klanten in de maand {maand}.",
       "template": {
         "name": "betaaltermijn-per-maand-periode",

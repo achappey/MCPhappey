@@ -13,6 +13,7 @@ public static class SimplicateExtensions
     public static decimal ToAmount(this decimal item) =>
          Math.Round(item, 2, MidpointRounding.AwayFromZero);
 
+
     public static async Task<SimplicateData<T>?> GetSimplicatePageAsync<T>(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
@@ -27,6 +28,22 @@ public static class SimplicateExtensions
             return null;
 
         return JsonSerializer.Deserialize<SimplicateData<T>>(stringContent);
+    }
+
+    public static async Task<SimplicateItemData<T>?> GetSimplicateItemAsync<T>(
+        this DownloadService downloadService,
+        IServiceProvider serviceProvider,
+        IMcpServer mcpServer,
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        var page = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken);
+        var stringContent = page?.FirstOrDefault()?.Contents?.ToString();
+
+        if (string.IsNullOrWhiteSpace(stringContent))
+            return null;
+
+        return JsonSerializer.Deserialize<SimplicateItemData<T>>(stringContent);
     }
 
 
@@ -105,8 +122,6 @@ public static class SimplicateExtensions
          cancellationToken: cancellationToken
      );
     }
-
-
 
     public static async Task<SimplicateNewItemData?> PostSimplicateItemAsync<T>(
         this SimplicateScraper downloadService,

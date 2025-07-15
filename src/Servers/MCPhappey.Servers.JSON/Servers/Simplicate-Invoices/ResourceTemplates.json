@@ -19,7 +19,7 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/invoices/payment?q[invoice_id]=invoice:{invoiceId}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/invoices/payment?q[invoice_id]=invoice:{invoiceId}&q[date]={paymentDate}",
       "name": "Betalingen per Factuur",
       "description": "Haal betalingen op voor een specifieke factuur. Let op dat je het invoice_id veld gebruikt, niet de invoice_number.",
       "mimeType": "application/json",
