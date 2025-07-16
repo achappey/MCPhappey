@@ -6,6 +6,9 @@ namespace MCPhappey.Servers.SQL.Extensions;
 
 public static class DatabaseExtensions
 {
+    private static readonly string DEFAULT_SCOPES
+        = "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read";
+
     public static Server ToMcpServer(this Models.Server server)
     {
         // ----------------------------
@@ -45,7 +48,7 @@ public static class DatabaseExtensions
 
             if (obo.Count == 0)
             {
-                obo.TryAdd(Hosts.MicrosoftGraph, "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read");
+                obo.TryAdd(Hosts.MicrosoftGraph, DEFAULT_SCOPES);
             }
         }
 
@@ -56,9 +59,9 @@ public static class DatabaseExtensions
         {
             Capabilities = new()
             {
-                Prompts = server.Prompts.Any() ? new() : null,
-                Resources = server.ResourceTemplates.Any() || server.Resources.Any() ? new() : null,
-                Tools = server.Tools.Any() ? new() : null
+                Prompts = server.Prompts.Count != 0 ? new() : null,
+                Resources = server.ResourceTemplates.Count != 0 || server.Resources.Count != 0 ? new() : null,
+                Tools = server.Tools.Count != 0 ? new() : null
             },
             Instructions = server.Instructions,
             ServerInfo = new()
@@ -66,10 +69,10 @@ public static class DatabaseExtensions
                 Name = server.Name,
                 Version = "1.0.0"
             },
-            Groups = server.Secured && server.Groups.Any()
+            Groups = server.Secured && server.Groups.Count != 0
                      ? server.Groups.Select(g => g.Id)
                      : null,
-            Owners = server.Owners.Any()
+            Owners = server.Owners.Count != 0
                      ? server.Owners.Select(o => o.Id)
                      : null,
             OBO = obo
@@ -105,14 +108,14 @@ public static class DatabaseExtensions
        Prompts = [.. prompts.Select(a => new PromptTemplate()
             {
                 Prompt = a.PromptTemplate,
-                Template = new Prompt() {
+                Template = new() {
                     Name = a.Name,
                     Description = a.Description,
-                    Arguments = a.Arguments.Select(z => new PromptArgument() {
+                    Arguments = [.. a.Arguments.Select(z => new PromptArgument() {
                         Name = z.Name,
                         Description = z.Description,
                         Required = z.Required
-                    }).ToList()
+                    })]
                 }
             })]
    };
