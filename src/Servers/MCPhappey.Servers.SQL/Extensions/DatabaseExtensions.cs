@@ -57,7 +57,7 @@ public static class DatabaseExtensions
             Capabilities = new()
             {
                 Prompts = server.Prompts.Any() ? new() : null,
-                Resources = server.Resources.Any() ? new() : null,
+                Resources = server.ResourceTemplates.Any() || server.Resources.Any() ? new() : null,
                 Tools = server.Tools.Any() ? new() : null
             },
             Instructions = server.Instructions,
