@@ -21,6 +21,7 @@ public static class AspNetCoreExtensions
         builder.Services.AddScoped<ServerRepository>();
         builder.Services.AddScoped<IServerDataProvider, SqlServerDataProvider>();
         builder.Services.AddSingleton<IAutoCompletion, EditorCompletion>();
+        builder.Services.AddSingleton<IAutoCompletion, DefaultCompletion>();
 
         using var tempProvider = builder.Services.BuildServiceProvider();
         using var scope = tempProvider.CreateScope();
