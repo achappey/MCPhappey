@@ -20,6 +20,7 @@ public static class StaticContentLoader
             foreach (var file in serverJsonFiles)
             {
                 var jsonContent = File.ReadAllText(file);
+
                 var serverObj = JsonSerializer.Deserialize<Server>(jsonContent);
                 if (serverObj == null)
                     continue;
@@ -30,18 +31,21 @@ public static class StaticContentLoader
                     SourceType = ServerSourceType.Static,
                 };
 
-            //    serverObj.Metadata ??= [];
-             //   serverObj.Metadata.Add(ServerMetadata.McpSource, Enum.GetName(ServerMetadata.McpSources.Config)!);
-
                 // Check for Tools.json, Prompts.json, Resources.json in the same subDir
                 var promptsFile = Path.Combine(subDir, "Prompts.json");
                 var resourcesFile = Path.Combine(subDir, "Resources.json");
                 var resourceTemplatesFile = Path.Combine(subDir, "ResourceTemplates.json");
 
-                // serverConfig.Auth = auth.TryGetValue(serverObj.ServerInfo.Name, out ServerAuth? value)
-                //     ? value : null;
+                var updateTimes = new List<DateTime>
+                {
+                    File.GetLastWriteTime(file)
+                };
 
-                // If Prompts.json exists, just mark as not null
+                if (File.Exists(promptsFile)) updateTimes.Add(File.GetLastWriteTime(promptsFile));
+                if (File.Exists(resourcesFile)) updateTimes.Add(File.GetLastWriteTime(resourcesFile));
+                if (File.Exists(resourceTemplatesFile)) updateTimes.Add(File.GetLastWriteTime(resourceTemplatesFile));
+
+                var lastUpdate = updateTimes.Max();
                 if (File.Exists(promptsFile))
                 {
                     serverConfig.PromptList = JsonSerializer.Deserialize<PromptTemplates>(File.ReadAllText(promptsFile));
@@ -68,6 +72,8 @@ public static class StaticContentLoader
                             File.ReadAllText(resourceTemplatesFile));
                     serverObj.Capabilities.Resources = new();
                 }
+
+                serverConfig.Server.ServerInfo.Version = lastUpdate.ToString("yyyyMMdd");
 
                 servers.Add(serverConfig);
             }

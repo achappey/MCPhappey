@@ -1,0 +1,7 @@
+{
+  "serverInfo": {
+    "name": "Calculator",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.AI.MathPlugin, MCPhappey.Tools"]
+}
