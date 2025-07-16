@@ -12,19 +12,21 @@ namespace MCPhappey.Servers.SQL.Providers;
 public class EditorCompletion : IAutoCompletion
 {
     public bool SupportsHost(ServerConfig serverConfig)
-        => serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Editor");
+        => serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Editor")
+            || serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Security");
 
     public async Task<CompleteResult?> GetCompletion(
-     IMcpServer mcpServer,
-     IServiceProvider serviceProvider,
-     CompleteRequestParams? completeRequestParams,
-     CancellationToken cancellationToken = default)
+        IMcpServer mcpServer,
+        IServiceProvider serviceProvider,
+        CompleteRequestParams? completeRequestParams,
+        CancellationToken cancellationToken = default)
     {
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
             return new CompleteResult();
 
         IServerDataProvider sqlServerDataProvider = serviceProvider.GetRequiredService<IServerDataProvider>();
         ServerRepository serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
+        var completionServices = serviceProvider.GetServices<IAutoCompletion>();
 
         var userId = serviceProvider.GetUserId();
 
@@ -65,7 +67,18 @@ public class EditorCompletion : IAutoCompletion
                 break;
 
             default:
-                break;
+                var completionService = completionServices.First(a => a.SupportsHost(new ServerConfig()
+                {
+                    Server = new Server()
+                    {
+                        ServerInfo = new ServerInfo()
+                        {
+                            Name = "Microsoft-"
+                        }
+                    }
+                }));
+
+                return await completionService.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
         }
 
         return new CompleteResult

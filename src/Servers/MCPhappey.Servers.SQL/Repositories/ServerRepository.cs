@@ -96,6 +96,8 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         return server;
     }
 
+
+
     public async Task DeletePromptArgument(int id)
     {
         var item = await databaseContext.PromptArguments.FirstOrDefaultAsync(a => a.Id == id);
@@ -103,6 +105,28 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         if (item != null)
         {
             databaseContext.PromptArguments.Remove(item);
+            await databaseContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteServerOwner(int serverId, string ownerId)
+    {
+        var item = await databaseContext.ServerOwners.FirstOrDefaultAsync(a => a.Id == ownerId && a.ServerId == serverId);
+
+        if (item != null)
+        {
+            databaseContext.ServerOwners.Remove(item);
+            await databaseContext.SaveChangesAsync();
+        }
+    }
+
+    public async Task DeleteServerGroup(int serverId, string ownerId)
+    {
+        var item = await databaseContext.ServerGroups.FirstOrDefaultAsync(a => a.Id == ownerId && a.ServerId == serverId);
+
+        if (item != null)
+        {
+            databaseContext.ServerGroups.Remove(item);
             await databaseContext.SaveChangesAsync();
         }
     }
@@ -173,6 +197,18 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             databaseContext.Tools.Remove(item);
             await databaseContext.SaveChangesAsync();
         }
+    }
+
+    public async Task AddServerGroup(int serverId, string owner)
+    {
+
+        await databaseContext.ServerGroups.AddAsync(new()
+        {
+            Id = owner,
+            ServerId = serverId
+        });
+
+        await databaseContext.SaveChangesAsync();
     }
 
     public async Task AddServerOwner(int serverId, string owner)

@@ -1,0 +1,94 @@
+{
+  "prompts": [
+    {
+      "prompt": "Find the Entra user ID of user {userDisplayName}. When found, add the user as an owner to MCP server {server}.",
+      "template": {
+        "name": "add-server-owner",
+        "description": "Adds a specific user as an owner to the selected MCP server.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "userDisplayName",
+            "description": "The display name of the user to add as an owner",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Find the Entra user ID of user {userDisplayName}. When found, Remove the user as an owner to MCP server {server}.",
+      "template": {
+        "name": "remove-server-owner",
+        "description": "Removes a specific user from the list of owners on a MCP server.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "userDisplayName",
+            "description": "The display name of the user to remove",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Find the Entra ID of security group {securityGroupName}. When found, add the security group to server {server}.",
+      "template": {
+        "name": "add-security-group",
+        "description": "Adds a security group to the specified MCP server for access control.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "securityGroupName",
+            "description": "The name of the security group to add",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Find the Entra ID of security group {securityGroupName}. When found, remove the security group from server {server}.",
+      "template": {
+        "name": "remove-security-group",
+        "description": "Removes an existing security group from the specified MCP server.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "securityGroupName",
+            "description": "The name of the security group to remove",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Set server {server} to secured mode.",
+      "template": {
+        "name": "set-server-secured",
+        "description": "Enables security enforcement on the selected MCP server.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

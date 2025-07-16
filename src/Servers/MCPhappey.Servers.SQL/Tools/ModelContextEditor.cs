@@ -32,9 +32,6 @@ public static partial class ModelContextEditor
         var userServers = servers.Where(a => a.Owners.Any(a => a.Id == userId)).Select(z => new
         {
             z.Name,
-            Owners = z.Owners.Select(z => z.Id),
-            z.Secured,
-            SecurityGroups = z.Groups.Select(z => z.Id)
         });
 
         return JsonSerializer.Serialize(userServers).ToTextCallToolResponse();
@@ -59,7 +56,7 @@ public static partial class ModelContextEditor
         {
             Name = dto.Name.Slugify(),
             Instructions = dto.Instructions,
-            Secured = dto.Secured ?? true,
+            Secured = true,
             Owners = [new ServerOwner() {
                        Id = userId
                     }]
@@ -68,12 +65,12 @@ public static partial class ModelContextEditor
         return JsonSerializer.Serialize(new
         {
             server.Name,
-            Owners = server.Owners.Select(z => z.Id),
-            server.Secured,
-            SecurityGroups = server.Groups.Select(z => z.Id)
+         //   Owners = server.Owners.Select(z => z.Id),
+         //   server.Secured,
+        //    SecurityGroups = server.Groups.Select(z => z.Id)
         }).ToTextCallToolResponse();
     }
-
+  
     [Description("Updates a MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_UpdateServer", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateServer(
@@ -101,11 +98,6 @@ public static partial class ModelContextEditor
         if (!string.IsNullOrEmpty(dto.Instructions))
         {
             server.Instructions = dto.Instructions;
-        }
-
-        if (dto.Secured.HasValue)
-        {
-            server.Secured = dto.Secured.Value;
         }
 
         var updated = await serverRepository.UpdateServer(server);
@@ -157,12 +149,15 @@ public static partial class ModelContextEditor
         [JsonPropertyName("instructions")]
         [Description("The MCP server instructions.")]
         public string? Instructions { get; set; }
+    }
 
-        [JsonPropertyName("secured")]
-        [DefaultValue(true)]
-        [Description("Enable if you would like to secure the MCP server.")]
-        public bool? Secured { get; set; }
-
+    [Description("Please fill in the MCP Server owner details.")]
+    public class McpServerOwner
+    {
+        [JsonPropertyName("userId")]
+        [Required]
+        [Description("The user id of the MCP server owner.")]
+        public string UserId { get; set; } = default!;
     }
 
     [Description("Please fill in the MCP Server name to confirm deletion.")]
@@ -184,10 +179,6 @@ public static partial class ModelContextEditor
         [JsonPropertyName("instructions")]
         [Description("The MCP server instructions.")]
         public string? Instructions { get; set; }
-
-        [JsonPropertyName("secured")]
-        [Description("Enable if you would like to secure the MCP server.")]
-        public bool? Secured { get; set; }
     }
 }
 

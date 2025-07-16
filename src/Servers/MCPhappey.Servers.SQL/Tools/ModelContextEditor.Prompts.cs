@@ -7,6 +7,7 @@ using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
+using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Repositories;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -77,11 +78,14 @@ public static partial class ModelContextEditor
         var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
         var dto = await requestContext.Server.GetElicitResponse<AddMcpPrompt>(cancellationToken);
         var config = configs.GetServerConfig(mcpServer);
-        var item = await serverRepository.AddServerPrompt(server.Id, dto.Prompt, dto.Name, dto.Description, arguments: dto.Prompt.ExtractPromptArguments().Select(a => new Models.PromptArgument()
-        {
-            Name = a,
-            Required = true
-        }));
+        var item = await serverRepository.AddServerPrompt(server.Id, dto.Prompt,
+            dto.Name.Slugify().ToLowerInvariant(),
+            dto.Description,
+            arguments: dto.Prompt.ExtractPromptArguments().Select(a => new Models.PromptArgument()
+            {
+                Name = a,
+                Required = true
+            }));
 
         return JsonSerializer.Serialize(new
         {

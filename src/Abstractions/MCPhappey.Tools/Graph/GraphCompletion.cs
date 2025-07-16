@@ -127,6 +127,36 @@ public class GraphCompletion : IAutoCompletion
                                         .OfType<string>()
                                         .ToList() ?? [];
                 break;
+            case "securityGroupName":
+                var securityGroups = await client.Groups.GetAsync((requestConfiguration) =>
+                {
+                    var escaped = argValue?.Replace("'", "''") ?? "";
+
+                    var filters = new List<string>
+                    {
+                        "securityEnabled eq true",
+                        "mailEnabled eq false"
+                    };
+
+                    if (!string.IsNullOrWhiteSpace(escaped))
+                    {
+                        filters.Add($"startswith(displayName,'{escaped}')");
+                    }
+
+                    requestConfiguration.QueryParameters.Filter = string.Join(" and ", filters);
+
+                    // if (!string.IsNullOrWhiteSpace(argValue))
+                    //{
+
+                    //  requestConfiguration.QueryParameters.Filter = $"startswith(displayName,'{argValue.Replace("'", "''")}')";
+                    //}
+                    requestConfiguration.QueryParameters.Top = 100;
+                }, cancellationToken);
+
+                result = securityGroups?.Value?.Select(g => g.DisplayName)
+                                        .OfType<string>()
+                                        .ToList() ?? [];
+                break;
 
             default:
                 break;
