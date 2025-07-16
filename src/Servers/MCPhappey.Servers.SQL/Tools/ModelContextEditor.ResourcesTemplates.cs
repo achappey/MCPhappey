@@ -47,10 +47,10 @@ public static partial class ModelContextEditor
     public static async Task<CallToolResult> ModelContextEditor_AddResourceTemplate(
         [Description("Name of the server")]
             string serverName,
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        IMcpServer mcpServer,
-        CancellationToken cancellationToken = default)
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            IMcpServer mcpServer,
+            CancellationToken cancellationToken = default)
     {
         var userId = serviceProvider.GetUserId();
 
@@ -67,13 +67,18 @@ public static partial class ModelContextEditor
         if (server?.Owners.Any(a => a.Id == userId) == true)
         {
             var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
-
             var dto = await requestContext.Server.GetElicitResponse<AddMcpResourceTemplate>(cancellationToken);
-            var config = configs.GetServerConfig(mcpServer);
+            var usedArguments = dto.UriTemplate.ExtractPromptArguments();
 
+            if (usedArguments.Count == 0)
+            {
+                return "Invalid uriTemplate: No arguments found. Add arguments to the uriTemplate or create a reaource instead.".ToErrorCallToolResponse();
+            }
+
+            var config = configs.GetServerConfig(mcpServer);
             var item = await serverRepository.AddServerResourceTemplate(server.Id, dto.UriTemplate, dto.Name, dto.Description);
 
-            return JsonSerializer.Serialize(item).ToJsonCallToolResponse(dto.UriTemplate);
+            return JsonSerializer.Serialize(new { UriTemplate = item.TemplateUri, item.Name, item.Description }).ToJsonCallToolResponse(dto.UriTemplate);
         }
 
         return "Access denied. Only owners can add resources".ToErrorCallToolResponse();
@@ -82,11 +87,11 @@ public static partial class ModelContextEditor
     [Description("Updates a resource tempalte of a MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_UpdateResourceTemplate", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResourceTemplate(
-    [Description("Name of the server")] string serverName,
-    [Description("URI of the resource to update")] string resourceUri,
-    IServiceProvider serviceProvider,
-    RequestContext<CallToolRequestParams> requestContext,
-    CancellationToken cancellationToken = default)
+        [Description("Name of the server")] string serverName,
+        [Description("Name of the resource template to update")] string resourceTemplateName,
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
     {
         var userId = serviceProvider.GetUserId();
         if (userId == null) return "No user found".ToErrorCallToolResponse();
@@ -99,13 +104,21 @@ public static partial class ModelContextEditor
 
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpResourceTemplate>(cancellationToken);
 
-        var resource = server.ResourceTemplates.FirstOrDefault(a => a.TemplateUri == resourceUri) ?? throw new ArgumentNullException();
-        resource.Name = dto.Name?.Trim() == "" ? "" : dto.Name!;
-        resource.Description = dto.Description?.Trim() == "" ? "" : dto.Description;
+        var resource = server.ResourceTemplates.FirstOrDefault(a => a.Name == resourceTemplateName) ?? throw new ArgumentNullException();
+
+        if (!string.IsNullOrEmpty(dto.UriTemplate))
+        {
+            resource.TemplateUri = dto.UriTemplate;
+        }
+
+        if (!string.IsNullOrEmpty(dto.Description))
+        {
+            resource.Description = dto.Description;
+        }
 
         var updated = await serverRepository.UpdateResourceTemplate(resource);
 
-        return JsonSerializer.Serialize(updated).ToJsonCallToolResponse(resourceUri);
+        return JsonSerializer.Serialize(new { UriTemplate = updated.TemplateUri, updated.Name, updated.Description }).ToTextCallToolResponse();
     }
 
     [Description("Deletes a resource template from a MCP-server")]
@@ -150,9 +163,9 @@ public static partial class ModelContextEditor
     [Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
     public class UpdateMcpResourceTemplate
     {
-        [JsonPropertyName("name")]
-        [Description("New name of the resource template (optional).")]
-        public string? Name { get; set; }
+        [JsonPropertyName("uriTemplate")]
+        [Description("New uri template of the resource template (optional).")]
+        public string? UriTemplate { get; set; }
 
         [JsonPropertyName("description")]
         [Description("New description of the resource template (optional).")]

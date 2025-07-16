@@ -1,3 +1,4 @@
+using MCPhappey.Common;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
 using MCPhappey.Servers.SQL.Context;
@@ -19,6 +20,8 @@ public static class AspNetCoreExtensions
             options.UseSqlServer(mcpDatabase, sqlOpts => sqlOpts.EnableRetryOnFailure()));
         builder.Services.AddScoped<ServerRepository>();
         builder.Services.AddScoped<IServerDataProvider, SqlServerDataProvider>();
+        builder.Services.AddSingleton<IAutoCompletion, EditorCompletion>();
+
         using var tempProvider = builder.Services.BuildServiceProvider();
         using var scope = tempProvider.CreateScope();
         var db = scope.ServiceProvider.GetRequiredService<McpDatabaseContext>();

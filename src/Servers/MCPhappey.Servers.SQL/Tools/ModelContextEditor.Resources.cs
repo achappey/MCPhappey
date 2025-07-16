@@ -92,11 +92,11 @@ public static partial class ModelContextEditor
     [Description("Updates a resource of a MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_UpdateResource", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResource(
-    [Description("Name of the server")] string serverName,
-    [Description("URI of the resource to update")] string resourceUri,
-    IServiceProvider serviceProvider,
-    RequestContext<CallToolRequestParams> requestContext,
-    CancellationToken cancellationToken = default)
+        [Description("Name of the server")] string serverName,
+        [Description("Name of the resource to update")] string resourceName,
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
     {
         var userId = serviceProvider.GetUserId();
         if (userId == null) return "No user found".ToErrorCallToolResponse();
@@ -109,20 +109,28 @@ public static partial class ModelContextEditor
 
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpResource>(cancellationToken);
 
-        var resource = server.Resources.FirstOrDefault(a => a.Uri == resourceUri) ?? throw new ArgumentNullException();
-        resource.Name = dto.Name?.Trim() == "" ? "" : dto.Name!;
-        resource.Description = dto.Description?.Trim() == "" ? "" : dto.Description;
+        var resource = server.Resources.FirstOrDefault(a => a.Name == resourceName) ?? throw new ArgumentNullException();
+
+        if (!string.IsNullOrEmpty(dto.Uri))
+        {
+            resource.Uri = dto.Uri;
+        }
+
+        if (!string.IsNullOrEmpty(dto.Description))
+        {
+            resource.Description = dto.Description;
+        }
 
         var updated = await serverRepository.UpdateResource(resource);
 
-        return JsonSerializer.Serialize(updated).ToJsonCallToolResponse(resourceUri);
+        return JsonSerializer.Serialize(new { updated.Uri, updated.Name, updated.Description }).ToTextCallToolResponse();
     }
 
     [Description("Deletes a resource from a MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_DeleteResource", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteResource(
     [Description("Name of the server")] string serverName,
-    [Description("URI of the resource to delete")] string resourceUri,
+    [Description("Name of the resource to delete")] string resourceName,
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,
     CancellationToken cancellationToken = default)
@@ -138,30 +146,30 @@ public static partial class ModelContextEditor
 
         var dto = await requestContext.Server.GetElicitResponse<ConfirmDeleteResource>(cancellationToken);
 
-        if (dto.Uri?.Trim() != resourceUri.Trim())
-            return $"Confirmation does not match URI '{resourceUri}'".ToErrorCallToolResponse();
+        if (dto.Name?.Trim() != resourceName.Trim())
+            return $"Confirmation does not match name '{resourceName}'".ToErrorCallToolResponse();
+        var resource = server.Resources.FirstOrDefault(a => a.Name == resourceName) ?? throw new ArgumentNullException();
+        await serverRepository.DeleteResource(resource.Id);
 
-        await serverRepository.DeleteResource(resourceUri);
-
-        return $"Resource {resourceUri} has been deleted.".ToTextCallToolResponse();
+        return $"Resource {resourceName} has been deleted.".ToTextCallToolResponse();
     }
 
     [Description("Please confirm the URI of the resource you want to delete.")]
     public class ConfirmDeleteResource
     {
-        [JsonPropertyName("uri")]
+        [JsonPropertyName("name")]
         [Required]
-        [Description("Enter the exact URI of the resource to confirm deletion.")]
-        public string Uri { get; set; } = default!;
+        [Description("Enter the exact name of the resource to confirm deletion.")]
+        public string Name { get; set; } = default!;
     }
 
 
     [Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
     public class UpdateMcpResource
     {
-        [JsonPropertyName("name")]
-        [Description("New name of the resource (optional).")]
-        public string? Name { get; set; }
+        [JsonPropertyName("uri")]
+        [Description("New URI of the resource (optional).")]
+        public string? Uri { get; set; }
 
         [JsonPropertyName("description")]
         [Description("New description of the resource (optional).")]

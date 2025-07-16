@@ -96,11 +96,11 @@ public static partial class ModelContextEditor
     [Description("Updates a resource of a MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_UpdatePrompt", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdatePrompt(
-    [Description("Name of the server")] string serverName,
-    [Description("Name of the prompt to update")] string promptName,
-    IServiceProvider serviceProvider,
-    RequestContext<CallToolRequestParams> requestContext,
-    CancellationToken cancellationToken = default)
+        [Description("Name of the server")] string serverName,
+        [Description("Name of the prompt to update")] string promptName,
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
     {
         var userId = serviceProvider.GetUserId();
         if (userId == null) return "No user found".ToErrorCallToolResponse();
@@ -112,13 +112,19 @@ public static partial class ModelContextEditor
             return "Access denied.".ToErrorCallToolResponse();
 
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpPrompt>(cancellationToken);
-
         var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException();
-        prompt.Name = dto.Name?.Trim() == "" ? "" : dto.Name!;
-        prompt.PromptTemplate = dto.Prompt?.Trim() == "" ? "" : dto.Prompt!;
-        prompt.Description = dto.Description?.Trim() == "" ? "" : dto.Description;
-        var usedArguments = prompt.PromptTemplate.ExtractPromptArguments();
 
+        if (!string.IsNullOrEmpty(dto.Description))
+        {
+            prompt.Description = dto.Description;
+        }
+
+        if (!string.IsNullOrEmpty(dto.Prompt))
+        {
+            prompt.PromptTemplate = dto.Prompt;
+        }
+
+        var usedArguments = prompt.PromptTemplate.ExtractPromptArguments();
         var toRemove = prompt.Arguments
             .Where(a => !usedArguments.Contains(a.Name, StringComparer.OrdinalIgnoreCase))
             .ToList();
@@ -135,7 +141,7 @@ public static partial class ModelContextEditor
         {
             if (!existingNames.Contains(name))
             {
-                prompt.Arguments.Add(new MCPhappey.Servers.SQL.Models.PromptArgument
+                prompt.Arguments.Add(new Models.PromptArgument
                 {
                     Name = name,
                     Required = true // default
@@ -177,8 +183,16 @@ public static partial class ModelContextEditor
         var promptArgument = prompt.Arguments.FirstOrDefault(a => a.Name == promptArgumentName) ?? throw new ArgumentNullException();
 
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpPromptArgument>(cancellationToken);
-        promptArgument.Required = dto.Required;
-        promptArgument.Description = dto.Description?.Trim() == "" ? "" : dto.Description;
+
+        if (dto.Required.HasValue)
+        {
+            promptArgument.Required = dto.Required;
+        }
+
+        if (!string.IsNullOrEmpty(dto.Description))
+        {
+            promptArgument.Description = dto.Description;
+        }
 
         var updated = await serverRepository.UpdatePromptArgument(promptArgument);
 
@@ -232,10 +246,6 @@ public static partial class ModelContextEditor
         [Description("New prompt (optional).")]
         public string? Prompt { get; set; }
 
-        [JsonPropertyName("name")]
-        [Description("New name of the prompt (optional).")]
-        public string? Name { get; set; }
-
         [JsonPropertyName("description")]
         [Description("New description of the prompt (optional).")]
         public string? Description { get; set; }
@@ -258,7 +268,7 @@ public static partial class ModelContextEditor
     {
         [JsonPropertyName("prompt")]
         [Required]
-        [Description("The prompt to add")]
+        [Description("The prompt to add. You can use {argument} style placeholders for prompt arguments.")]
         public string Prompt { get; set; } = default!;
 
         [JsonPropertyName("name")]

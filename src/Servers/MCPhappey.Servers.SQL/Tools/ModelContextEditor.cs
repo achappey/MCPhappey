@@ -4,6 +4,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Models;
 using MCPhappey.Servers.SQL.Repositories;
 using Microsoft.Extensions.DependencyInjection;
@@ -56,7 +57,7 @@ public static partial class ModelContextEditor
         var dto = await requestContext.Server.GetElicitResponse<NewMcpServer>(cancellationToken);
         var server = await serverRepository.CreateServer(new Models.Server()
         {
-            Name = dto.Name,
+            Name = dto.Name.Slugify(),
             Instructions = dto.Instructions,
             Secured = dto.Secured ?? true,
             Owners = [new ServerOwner() {
@@ -91,9 +92,21 @@ public static partial class ModelContextEditor
             return "Access denied.".ToErrorCallToolResponse();
 
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpServer>(cancellationToken);
-        server.Name = dto.Name?.Trim() == "" ? "" : dto.Name!;
-        server.Instructions = dto.Instructions?.Trim() == "" ? "" : dto.Instructions;
-        server.Secured = dto.Secured ?? true;
+
+        if (!string.IsNullOrEmpty(dto.Name))
+        {
+            server.Name = dto.Name.Slugify();
+        }
+
+        if (!string.IsNullOrEmpty(dto.Instructions))
+        {
+            server.Instructions = dto.Instructions;
+        }
+
+        if (dto.Secured.HasValue)
+        {
+            server.Secured = dto.Secured.Value;
+        }
 
         var updated = await serverRepository.UpdateServer(server);
 
