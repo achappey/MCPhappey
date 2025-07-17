@@ -44,7 +44,7 @@ public static class GraphLicensing
             var dept = user.Department ?? "";
 
             // Only needed when departmentName is null/empty, otherwise Graph already filtered
-            if (!string.IsNullOrEmpty(departmentName) && !string.Equals(dept, departmentName, StringComparison.OrdinalIgnoreCase))
+            if (string.IsNullOrEmpty(departmentName) && !string.Equals(dept, departmentName, StringComparison.OrdinalIgnoreCase))
                 continue;
 
             if (!result.TryGetValue(dept, out var dict))

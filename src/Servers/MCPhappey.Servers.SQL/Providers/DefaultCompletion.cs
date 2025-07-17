@@ -16,14 +16,14 @@ public class DefaultCompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAut
          && serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Editor") == false
             && serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Security") == false;
 
-    public async Task<CompleteResult?> GetCompletion(
+    public async Task<Completion?> GetCompletion(
         IMcpServer mcpServer,
         IServiceProvider serviceProvider,
         CompleteRequestParams? completeRequestParams,
         CancellationToken cancellationToken = default)
     {
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
-            return new CompleteResult();
+            return new();
 
         IServerDataProvider sqlServerDataProvider = serviceProvider.GetRequiredService<IServerDataProvider>();
         ServerRepository serverRepository = serviceProvider.GetRequiredService<ServerRepository>();

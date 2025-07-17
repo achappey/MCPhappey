@@ -11,14 +11,14 @@ public class GraphCompletion : IAutoCompletion
     public bool SupportsHost(ServerConfig serverConfig)
         => serverConfig.Server.ServerInfo.Name.StartsWith("Microsoft-");
 
-    public async Task<CompleteResult?> GetCompletion(
+    public async Task<Completion?> GetCompletion(
      IMcpServer mcpServer,
      IServiceProvider serviceProvider,
      CompleteRequestParams? completeRequestParams,
      CancellationToken cancellationToken = default)
     {
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
-            return new CompleteResult();
+            return new();
 
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
@@ -162,12 +162,9 @@ public class GraphCompletion : IAutoCompletion
                 break;
         }
 
-        return new CompleteResult()
+        return new Completion()
         {
-            Completion = new Completion()
-            {
-                Values = [.. result]
-            }
+            Values = [.. result]
         };
 
     }

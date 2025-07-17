@@ -22,7 +22,7 @@ public class CompletionService(
             .Where(a => a.SupportsHost(serverConfig))
             .FirstOrDefault();
 
-        CompleteResult? fileContent = null;
+        Completion? fileContent = null;
         if (bestDecoder != null)
         {
             fileContent = await bestDecoder.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
@@ -30,12 +30,7 @@ public class CompletionService(
 
         return new CompleteResult()
         {
-            Completion = new Completion()
-            {
-                Values = fileContent?.Completion.Values.Order().ToList() ?? [],
-                Total = fileContent?.Completion.Total,
-                HasMore = fileContent?.Completion.HasMore
-            }
+            Completion = fileContent ?? new()
         };
     }
 }

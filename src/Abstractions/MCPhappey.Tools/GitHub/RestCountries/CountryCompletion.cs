@@ -11,14 +11,14 @@ public class CountryCompletion : IAutoCompletion
     public bool SupportsHost(ServerConfig serverConfig)
         => serverConfig.Server.ServerInfo.Name.Equals("GitHub-RestCountries", StringComparison.OrdinalIgnoreCase);
 
-    public async Task<CompleteResult?> GetCompletion(
+    public async Task<Completion> GetCompletion(
      IMcpServer mcpServer,
      IServiceProvider serviceProvider,
      CompleteRequestParams? completeRequestParams,
      CancellationToken cancellationToken = default)
     {
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
-            return new CompleteResult();
+            return new();
 
         IEnumerable<string> result = [];
 
@@ -62,12 +62,9 @@ public class CountryCompletion : IAutoCompletion
                 break;
         }
 
-        return await Task.FromResult(new CompleteResult()
+        return await Task.FromResult(new Completion()
         {
-            Completion = new Completion()
-            {
-                Values = [.. result]
-            }
+            Values = [.. result]
         });
 
     }

@@ -15,14 +15,14 @@ public class EditorCompletion : IAutoCompletion
         => serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Editor")
             || serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Security");
 
-    public async Task<CompleteResult?> GetCompletion(
+    public async Task<Completion> GetCompletion(
         IMcpServer mcpServer,
         IServiceProvider serviceProvider,
         CompleteRequestParams? completeRequestParams,
         CancellationToken cancellationToken = default)
     {
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
-            return new CompleteResult();
+            return new();
 
         IServerDataProvider sqlServerDataProvider = serviceProvider.GetRequiredService<IServerDataProvider>();
         ServerRepository serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
@@ -83,22 +83,11 @@ public class EditorCompletion : IAutoCompletion
                 return await completionService.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
         }
 
-        var allItems = values
-                            .Where(a => string.IsNullOrEmpty(argValue)
-                                || a.Contains(argValue, StringComparison.OrdinalIgnoreCase));
-
-        return new CompleteResult
+        return new Completion()
         {
-            Completion = new()
-            {
-                HasMore = allItems.Count() > 100,
-                Total = allItems.Count(),
-                Values = [.. allItems
-                    .Order()
-                    .Take(100)]
-            }
+            Values = [..values.Where(a => string.IsNullOrEmpty(argValue)
+                            || a.Contains(argValue, StringComparison.OrdinalIgnoreCase))]
         };
-
     }
 
 }

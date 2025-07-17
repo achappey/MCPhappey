@@ -16,17 +16,17 @@ public class SimplicateCompletion(
     public bool SupportsHost(ServerConfig serverConfig)
         => serverConfig.Server.ServerInfo.Name.StartsWith("Simplicate-");
 
-    public async Task<CompleteResult?> GetCompletion(
+    public async Task<Completion> GetCompletion(
      IMcpServer mcpServer,
      IServiceProvider serviceProvider,
      CompleteRequestParams? completeRequestParams,
      CancellationToken cancellationToken = default)
     {
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
-            return new CompleteResult();
+            return new();
 
         if (!completionSources.TryGetValue(argName, out var source))
-            return new CompleteResult();
+            return new();
 
         // Use reflection to invoke the generic helper
         var sourceType = source.GetType();
@@ -35,13 +35,13 @@ public class SimplicateCompletion(
             ?.MakeGenericMethod(tType);
 
         if (method == null)
-            return new CompleteResult();
+            return new();
 
         var urlFactory = sourceType.GetProperty(nameof(CompletionSource<object>.UrlFactory))?.GetValue(source);
         var selector = sourceType.GetProperty(nameof(CompletionSource<object>.Selector))?.GetValue(source);
 
         if (method == null || urlFactory == null || selector == null)
-            return new CompleteResult();
+            return new();
 
         var objArray = new object[]
         {
@@ -56,16 +56,13 @@ public class SimplicateCompletion(
         var result = method.Invoke(this, objArray);
 
         if (result is not Task<List<string>> task)
-            return new CompleteResult();
+            return new();
 
         var values = await task;
 
-        return new CompleteResult
+        return new()
         {
-            Completion = new()
-            {
-                Values = values
-            }
+            Values = values
         };
 
     }
