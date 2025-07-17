@@ -5,7 +5,7 @@ using OpenAI.Audio;
 
 namespace MCPhappey.Decoders;
 
-public class AudioDecoder(string openAIApiKey, string _mimeType, string extension) : IContentDecoder
+public class AudioDecoder(OpenAIClient openAIClient, string _mimeType, string extension) : IContentDecoder
 {
     public bool SupportsMimeType(string mimeType)
         => mimeType.Equals(_mimeType, StringComparison.OrdinalIgnoreCase);
@@ -31,9 +31,7 @@ public class AudioDecoder(string openAIApiKey, string _mimeType, string extensio
 
     private async Task<FileContent> DecodeAsync(Stream data, CancellationToken cancellationToken, string filename)
     {
-        var client = new OpenAIClient(openAIApiKey);
-        // Maak client aan (gebruik eventueel jouw eigen AudioClient hier)
-        AudioClient audioClient = client.GetAudioClient("gpt-4o-transcribe");
+        AudioClient audioClient = openAIClient.GetAudioClient("gpt-4o-transcribe");
 
         // Transcribe
         var transcript = await audioClient.TranscribeAudioAsync(

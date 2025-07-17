@@ -28,6 +28,14 @@ public class CompletionService(
             fileContent = await bestDecoder.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
         }
 
-        return fileContent ?? new CompleteResult();
+        return new CompleteResult()
+        {
+            Completion = new Completion()
+            {
+                Values = fileContent?.Completion.Values.Order().ToList() ?? [],
+                Total = fileContent?.Completion.Total,
+                HasMore = fileContent?.Completion.HasMore
+            }
+        };
     }
 }

@@ -1,17 +1,24 @@
 using Microsoft.KernelMemory;
+using OpenAI;
 
 namespace MCPhappey.Decoders.Extensions;
 
 public static class AspNetCoreExtensions
 {
+    private static readonly Dictionary<string, string> _audioTypes = new()
+            {
+                {"audio/mpeg", ".mp3" },
+                {"audio/x-wav", ".wav"},
+                {"audio/mp4", ".m4a"},
+                {"audio/ogg", ".ogg"},
+            };
     public static IKernelMemoryBuilder WithDecoders(
-        this IKernelMemoryBuilder builder, string openAiApiKey)
+        this IKernelMemoryBuilder builder, OpenAIClient openAIClient)
     {
-        
-        builder.WithContentDecoder(new AudioDecoder(openAiApiKey, "audio/mpeg", ".mp3"));
-        builder.WithContentDecoder(new AudioDecoder(openAiApiKey, "audio/x-wav", ".wav"));
-        builder.WithContentDecoder(new AudioDecoder(openAiApiKey, "audio/mp4", ".m4a"));
-        builder.WithContentDecoder(new AudioDecoder(openAiApiKey, "audio/ogg", ".ogg"));
+        foreach (var audioType in _audioTypes)
+        {
+            builder.WithContentDecoder(new AudioDecoder(openAIClient, audioType.Key, audioType.Value));
+        }
 
         return builder.WithContentDecoder<EpubDecoder>()
             .WithContentDecoder<JsonDecoder>()

@@ -37,7 +37,6 @@ public class EditorCompletion : IAutoCompletion
                 var servers = await serverRepository.GetServers(cancellationToken);
                 values = servers.Where(a => a.Owners.Any(a => a.Id == userId))
                     .Select(z => z.Name);
-
                 break;
             case "resourceName":
             case "promptName":
@@ -51,12 +50,15 @@ public class EditorCompletion : IAutoCompletion
                         {
                             case "resourceName":
                                 var resources = await sqlServerDataProvider.GetResourcesAsync(serverName, cancellationToken);
-                                values = resources.Resources.Select(z => z.Name);
+                                values = resources.Resources
+                                    .Select(z => z.Name);
+
                                 break;
                             case "promptName":
                                 var prompts = await sqlServerDataProvider.GetPromptsAsync(serverName, cancellationToken);
-                                values = prompts.Select(z => z.Template.Name);
-                                ;
+                                values = prompts
+                                    .Select(z => z.Template.Name);
+
                                 break;
                             default:
                                 break;
@@ -81,11 +83,18 @@ public class EditorCompletion : IAutoCompletion
                 return await completionService.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
         }
 
+        var allItems = values
+                            .Where(a => string.IsNullOrEmpty(argValue) || a.Contains(argValue, StringComparison.OrdinalIgnoreCase));
+
         return new CompleteResult
         {
             Completion = new()
             {
-                Values = [.. values.Where(a => string.IsNullOrEmpty(argValue) || a.Contains(argValue, StringComparison.OrdinalIgnoreCase))]
+                HasMore = allItems.Count() > 100,
+                Total = allItems.Count(),
+                Values = [.. allItems
+                    .Order()
+                    .Take(100)]
             }
         };
 

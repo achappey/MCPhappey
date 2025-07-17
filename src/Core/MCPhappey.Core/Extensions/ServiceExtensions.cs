@@ -5,7 +5,6 @@ using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using MCPhappey.Common;
-using ModelContextProtocol;
 using System.Collections.Concurrent;
 using MCPhappey.Common.Extensions;
 

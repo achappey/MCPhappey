@@ -11,6 +11,7 @@ using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using OpenAI;
 using MCPhappey.Agent2Agent.Extensions;
+using Microsoft.Net.Http.Headers;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -23,16 +24,20 @@ if (!string.IsNullOrEmpty(appConfig?.McpDatabase))
     servers.AddRange(builder.AddSqlMcpServers(appConfig.McpDatabase));
 }
 
+var apiKey = appConfig?.Domains?
+            .FirstOrDefault(a => a.Key == Hosts.OpenAI)
+            .Value
+            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+
+var openAiClient = !string.IsNullOrEmpty(apiKey) ?
+    new OpenAIClient(apiKey) : null;
+
 if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
-    && appConfig?.Domains?.ContainsKey(Hosts.OpenAI) == true)
+    && openAiClient != null
+    && apiKey != null)
 {
     builder.Services.AddKernelMemoryWithOptions(memoryBuilder =>
     {
-        var apiKey = appConfig?.Domains?
-                    .FirstOrDefault(a => a.Key == Hosts.OpenAI)
-                    .Value
-                    .FirstOrDefault(a => a.Key == "Authorization").Value.GetBearerToken()!;
-
         memoryBuilder
             .WithCustomWebScraper<DownloadService>()
             .WithSimpleQueuesPipeline()
@@ -44,7 +49,7 @@ if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
                 EmbeddingDimensions = 3072,
                 EmbeddingModel = "text-embedding-3-large"
             })
-            .WithDecoders(apiKey)
+            .WithDecoders(openAiClient)
             .WithSqlServerMemoryDb(new()
             {
                 ConnectionString = appConfig?.KernelMemoryDatabase!
@@ -93,9 +98,9 @@ if (appConfig?.OAuth != null)
     builder.Services.WithOboScrapers(servers, appConfig.OAuth);
 }
 
-if (appConfig?.Domains != null && appConfig.Domains.ContainsKey(Hosts.OpenAI))
+if (openAiClient != null)
 {
-    builder.Services.AddSingleton(new OpenAIClient(appConfig.Domains[Hosts.OpenAI]["Authorization"].GetBearerToken()!));
+    builder.Services.AddSingleton(openAiClient);
 }
 
 builder.Services.WithDefaultScrapers();

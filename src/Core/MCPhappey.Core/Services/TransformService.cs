@@ -11,6 +11,16 @@ public class TransformService(
     public async Task<FileItem> DecodeAsync(string uri, BinaryData binaryData, string contentType,
          CancellationToken cancellationToken = default)
     {
+        if (contentType.StartsWith("image/"))
+        {
+            return new FileItem
+            {
+                Contents = binaryData,
+                MimeType = contentType,
+                Uri = uri
+            };
+        };
+
         string? myAssemblyName = typeof(TransformService).Namespace?.Split(".").FirstOrDefault();
 
         var bestDecoder = contentDecoders

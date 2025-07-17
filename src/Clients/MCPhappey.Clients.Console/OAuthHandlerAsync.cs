@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.WebUtilities;
 using ModelContextProtocol.Client;
 using MCPhappey.Common.Models;
 using System.Net.Http.Json;
+using Microsoft.Net.Http.Headers;
 
 namespace MCPhappey.Console;
 
@@ -132,7 +133,7 @@ public static class OAuthHandlerAsync
             Endpoint = new Uri(url),   // URL of the MCP “/mcp” endpoint
             UseStreamableHttp = true,                      // <-- enable the new transport
             Name = "streamable-http",          // (optional) nice display name
-            AdditionalHeaders = new() { ["Authorization"] = "Bearer " + bearer }
+            AdditionalHeaders = new() { [HeaderNames.Authorization] = "Bearer " + bearer }
         };
 
         // 2. Create the transport – **still** SseClientTransport, just with the flag above
@@ -140,7 +141,7 @@ public static class OAuthHandlerAsync
         var t2 = new SseClientTransport(new()
         {
             Endpoint = new Uri(url),
-            AdditionalHeaders = new() { ["Authorization"] = "Bearer " + bearer }
+            AdditionalHeaders = new() { [HeaderNames.Authorization] = "Bearer " + bearer }
         });
         return await McpClientFactory.CreateAsync(clientTransport, opts);
     }
