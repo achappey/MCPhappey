@@ -84,7 +84,8 @@ public class EditorCompletion : IAutoCompletion
         }
 
         var allItems = values
-                            .Where(a => string.IsNullOrEmpty(argValue) || a.Contains(argValue, StringComparison.OrdinalIgnoreCase));
+                            .Where(a => string.IsNullOrEmpty(argValue)
+                                || a.Contains(argValue, StringComparison.OrdinalIgnoreCase));
 
         return new CompleteResult
         {

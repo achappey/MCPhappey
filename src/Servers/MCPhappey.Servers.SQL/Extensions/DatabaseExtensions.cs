@@ -63,6 +63,7 @@ public static class DatabaseExtensions
                 Resources = server.ResourceTemplates.Count != 0 || server.Resources.Count != 0 ? new() : null,
                 Tools = server.Tools.Count != 0 ? new() : null
             },
+            Plugins = server.Tools.Select(a => a.Name),
             Instructions = server.Instructions,
             ServerInfo = new()
             {
