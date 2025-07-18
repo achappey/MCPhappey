@@ -13,8 +13,7 @@ public static class CountryService
     [Description("Search country codes and names")]
     [McpServerTool(Name = "GitHubRestCountries_SearchCountryCodes", ReadOnly = true, OpenWorld = false)]
     public static async Task<EmbeddedResourceBlock> GitHubRestCountries_SearchCountryCodes(
-        [Description("Search query by name (contains)")] string name,
-        RequestContext<CallToolRequestParams> requestContext)
+        [Description("Search query by name (contains)")] string name)
     {
         var items = string.IsNullOrEmpty(name?.ToString())
                 ? RestCountriesService.GetAllCountries()

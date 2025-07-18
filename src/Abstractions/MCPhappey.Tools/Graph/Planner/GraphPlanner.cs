@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static partial class GraphPlanner
 {
     [Description("Create a new Microsoft Planner task")]
-    [McpServerTool(Name = "GraphPlanner_CreateTask", ReadOnly = false)]
+    [McpServerTool(Name = "GraphPlanner_CreateTask", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphPlanner_CreateTask(
          [Description("Planner id")]
             string plannerId,
@@ -40,33 +40,48 @@ public static partial class GraphPlanner
     }
 
     [Description("Create a new Planner bucket in a plan")]
-    [McpServerTool(Name = "GraphPlanner_CreateBucket", ReadOnly = false)]
+    [McpServerTool(Name = "GraphPlanner_CreateBucket", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphPlanner_CreateBucket(
     [Description("Planner id (plan to add bucket to)")]
         string plannerId,
+    [Description("Name of the new bucket")]
+        string bucketName,
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,
+    [Description("Order hint for bucket placement (optional, leave empty for default).")]
+        string? orderHint = null,
     CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        var planner = await client.Planner.Plans[plannerId]
+                               .GetAsync(cancellationToken: cancellationToken);
 
-        var dto = await requestContext.Server.GetElicitResponse<GraphNewPlannerBucket>(cancellationToken);
+        // Elicit details for the new list
+        var values = new Dictionary<string, string>
+        {
+            { "Planner", planner?.Title ?? string.Empty },
+            { "Name", bucketName },
+            { "Order hint", orderHint ?? string.Empty  },
+        };
+
         var result = await client.Planner.Buckets.PostAsync(new PlannerBucket
         {
-            Name = dto.Name,
+            Name = bucketName,
             PlanId = plannerId,
-            OrderHint = dto.OrderHint
+            OrderHint = orderHint
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock("https://graph.microsoft.com/beta/planner/buckets");
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{plannerId}/buckets");
     }
 
     [Description("Create a new Planner plan")]
-    [McpServerTool(Name = "GraphPlanner_CreatePlan", ReadOnly = false)]
+    [McpServerTool(Name = "GraphPlanner_CreatePlan", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphPlanner_CreatePlan(
     [Description("Group id (Microsoft 365 group that will own the plan)")]
         string groupId,
+         [Description("Title of the new Planner plan")]
+        string planTitle,
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,
     CancellationToken cancellationToken = default)
@@ -74,57 +89,25 @@ public static partial class GraphPlanner
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var dto = await requestContext.Server.GetElicitResponse<GraphNewPlannerPlan>(cancellationToken);
+        var group = await client.Groups[groupId]
+                         .GetAsync(cancellationToken: cancellationToken);
+
+        // Elicit details for the new list
+        var values = new Dictionary<string, string>
+        {
+            { "Group", group?.DisplayName ?? string.Empty },
+            { "Title", planTitle },
+        };
+
+        // AI-native: Elicit message alleen voor confirm/review
+        await requestContext.Server.GetElicitResponse(values, cancellationToken);
         var result = await client.Planner.Plans.PostAsync(new PlannerPlan
         {
-            Title = dto.Title,
+            Title = planTitle,
             Owner = groupId
         }, cancellationToken: cancellationToken);
 
         return result.ToJsonContentBlock("https://graph.microsoft.com/beta/planner/plans");
-    }
-
-    [Description("Please fill in the Planner plan details")]
-    public class GraphNewPlannerPlan
-    {
-        [JsonPropertyName("title")]
-        [Required]
-        [Description("Name of the new Planner plan.")]
-        public string Title { get; set; } = default!;
-    }
-
-    [Description("Please fill in the Planner bucket details")]
-    public class GraphNewPlannerBucket
-    {
-        [JsonPropertyName("name")]
-        [Required]
-        [Description("Name of the new bucket.")]
-        public string Name { get; set; } = default!;
-
-        [JsonPropertyName("orderHint")]
-        [Description("Order hint for bucket placement (optional, leave empty for default).")]
-        public string? OrderHint { get; set; }
-    }
-
-    [Description("Copy Plan")]
-    public class GraphCopyPlanner
-    {
-
-        [JsonPropertyName("plannerId")]
-        [Required]
-        [Description("The id of the original Planner to copy.")]
-        public string PlannerId { get; set; } = default!;
-
-        [JsonPropertyName("groupId")]
-        [Required]
-        [Description("Target group id. Where the new Planner should be created.")]
-        public string GroupId { get; set; } = default!;
-
-        [JsonPropertyName("title")]
-        [Required]
-        [Description("The title of the new Planner.")]
-        public string Title { get; set; } = default!;
-
     }
 
     [Description("Please fill in the Planner task details")]

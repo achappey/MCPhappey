@@ -10,7 +10,7 @@ namespace MCPhappey.Tools.Graph.OneDrive;
 public static class GraphOneDrive
 {
     [Description("Uploads a file to the specified OneDrive location.")]
-    [McpServerTool(Name = "GraphOneDrive_UploadFile", ReadOnly = false)]
+    [McpServerTool(Name = "GraphOneDrive_UploadFile", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphOneDrive_UploadFile(
         [Description("The OneDrive Drive ID.")] string driveId,
         [Description("The file name (e.g. foo.txt).")] string filename,

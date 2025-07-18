@@ -15,7 +15,7 @@ public static class GraphOutlookCalendar
     /// Create a new calendar event in the user's Outlook calendar.
     /// </summary>
     [Description("Create a new calendar event in the user's Outlook calendar.")]
-    [McpServerTool(Name = "GraphOutlookCalendar_CreateCalendarEvent", ReadOnly = false)]
+    [McpServerTool(Name = "GraphOutlookCalendar_CreateCalendarEvent", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphOutlookCalendar_CreateCalendarEvent(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

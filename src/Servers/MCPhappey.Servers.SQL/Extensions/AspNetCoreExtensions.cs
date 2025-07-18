@@ -18,6 +18,7 @@ public static class AspNetCoreExtensions
     {
         builder.Services.AddDbContext<McpDatabaseContext>(options =>
             options.UseSqlServer(mcpDatabase, sqlOpts => sqlOpts.EnableRetryOnFailure()));
+
         builder.Services.AddScoped<ServerRepository>();
         builder.Services.AddScoped<IServerDataProvider, SqlServerDataProvider>();
         builder.Services.AddSingleton<IAutoCompletion, EditorCompletion>();
@@ -32,12 +33,6 @@ public static class AspNetCoreExtensions
                 .Include(a => a.ResourceTemplates)
                 .Include(a => a.Prompts)
                 .ThenInclude(a => a.Arguments)
-                .Include(a => a.Prompts)
-                .ThenInclude(a => a.PromptResources)
-                .ThenInclude(a => a.Resource)
-                .Include(a => a.Prompts)
-                .ThenInclude(a => a.PromptResourceTemplates)
-                .ThenInclude(a => a.ResourceTemplate)
                 .Include(a => a.Tools)
                 .Include(a => a.Owners)
                 .Include(a => a.Groups)
@@ -47,9 +42,6 @@ public static class AspNetCoreExtensions
                 {
                     Server = a.ToMcpServer(),
                     SourceType = ServerSourceType.Dynamic,
-                    ResourceList = a.Resources.ToListResourcesResult(),
-                    ResourceTemplateList = a.ResourceTemplates.ToListResourceTemplatesResult(),
-                    PromptList = a.Prompts.ToPromptTemplates()
                 });
     }
 }

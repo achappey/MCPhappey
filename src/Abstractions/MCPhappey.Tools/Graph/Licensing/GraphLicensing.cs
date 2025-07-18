@@ -9,7 +9,7 @@ namespace MCPhappey.Tools.Graph.Licensing;
 public static class GraphLicensing
 {
     [Description("Get user SKUs grouped by department. If departmentName is set, only include that department. Users without department are grouped under empty string.")]
-    [McpServerTool(Name = "GraphUsers_GetUserSkusPerDepartment", ReadOnly = true)]
+    [McpServerTool(Name = "GraphUsers_GetUserSkusPerDepartment", ReadOnly = true, UseStructuredContent = true, OpenWorld = false)]
     public static async Task<Dictionary<string, Dictionary<string, List<string>>>> GraphUsers_GetUserSkusPerDepartment(
         string? departmentName,
         IServiceProvider serviceProvider,
@@ -34,7 +34,7 @@ public static class GraphLicensing
                 config.QueryParameters.Filter = filter;
                 config.QueryParameters.Select = ["userPrincipalName", "assignedLicenses", "department"];
                 config.QueryParameters.Top = 999;
-            });
+            }, cancellationToken);
 
         foreach (var user in users?.Value ?? [])
         {

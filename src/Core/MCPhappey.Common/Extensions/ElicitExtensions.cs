@@ -3,6 +3,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ModelContextProtocol.Protocol;
@@ -236,9 +237,29 @@ public static class ElicitExtensions
 
         if (elicitResult.Content == null)
         {
-           throw new Exception(elicitResult.Action);
+            throw new Exception(elicitResult.Action);
         }
 
         return elicitResult.Content.MapToObject<T>();
+    }
+
+    public static async Task GetElicitResponse(this IMcpServer mcpServer, Dictionary<string, string> values, CancellationToken cancellationToken)
+    {
+        var sb = new StringBuilder();
+
+        sb.AppendLine("|   |   |");
+        sb.AppendLine("|---|---|");
+
+        foreach (var pair in values)
+        {
+            sb.AppendLine($"| {pair.Key} | {pair.Value} |");
+        }
+
+        var elicitResult = await mcpServer.ElicitAsync(new ElicitRequestParams()
+        {
+            Message = sb.ToString(),
+        }, cancellationToken: cancellationToken);
+
+        elicitResult.EnsureAccept();
     }
 }

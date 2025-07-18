@@ -36,9 +36,9 @@ public static class GraphUsers
             UserPrincipalName = dto?.UserPrincipalName
         };
 
-        await client.Users.PostAsync(user, cancellationToken: cancellationToken);
+        var newUser = await client.Users.PostAsync(user, cancellationToken: cancellationToken);
 
-        return user.ToJsonContentBlock("https://graph.microsoft.com/beta/users");
+        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser.Id}");
     }
 
 

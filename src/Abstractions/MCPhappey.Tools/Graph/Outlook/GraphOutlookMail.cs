@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.Outlook;
 public static class GraphOutlookMail
 {
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
-    [McpServerTool(Name = "GraphOutlookMail_SendMail", ReadOnly = false)]
+    [McpServerTool(Name = "GraphOutlookMail_SendMail", ReadOnly = false, OpenWorld = true)]
     public static async Task<ContentBlock?> GraphOutlookMail_SendMail(
          IServiceProvider serviceProvider,
          RequestContext<CallToolRequestParams> requestContext,
@@ -30,16 +30,15 @@ public static class GraphOutlookMail
             },
             ToRecipients = dto?.ToRecipients.Split(",").Select(a => new Recipient()
             {
-                EmailAddress = new EmailAddress()
+                EmailAddress = new()
                 {
                     Address = a
                 }
             }).ToList(),
-            CcRecipients = dto?.CcRecipients
-                ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
+            CcRecipients = dto?.CcRecipients?.Split(",", StringSplitOptions.RemoveEmptyEntries)
                 .Select(a => new Recipient
                 {
-                    EmailAddress = new EmailAddress { Address = a.Trim() }
+                    EmailAddress = new() { Address = a.Trim() }
                 })
                 .ToList()
         };
@@ -58,7 +57,7 @@ public static class GraphOutlookMail
     }
 
     [Description("Create a draft e-mail message in the current user's Outlook mailbox.")]
-    [McpServerTool(Name = "GraphOutlookMail_CreateDraft", ReadOnly = false)]
+    [McpServerTool(Name = "GraphOutlookMail_CreateDraft", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphOutlookMail_CreateDraft(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

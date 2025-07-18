@@ -1,4 +1,5 @@
 using MCPhappey.Common.Extensions;
+using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Tools.Extensions;
@@ -20,4 +21,77 @@ public static class HttpExtensions
         // This is just the error shortcut method.
         return null;
     }
+
+    public static ElicitRequestParams.PrimitiveSchemaDefinition? ToElicitSchemaDef(this ColumnDefinition col)
+    {
+        var title = col.DisplayName ?? col.Name;
+        var desc = col.Description ?? "";
+
+        if (col.Text != null)
+        {
+            return new ElicitRequestParams.StringSchema
+            {
+                Title = title,
+                Description = desc,
+            };
+        }
+
+        if (col.Number != null)
+        {
+            return new ElicitRequestParams.NumberSchema
+            {
+                Title = title,
+                Description = desc,
+                Minimum = col.Number?.Minimum,
+                Maximum = col.Number?.Maximum
+            };
+        }
+
+        if (col.Choice != null)
+        {
+            return new ElicitRequestParams.EnumSchema
+            {
+                Title = title,
+                Description = desc,
+                Enum = col.Choice.Choices?.ToArray() ?? [],
+                EnumNames = null // Could map friendly names if present
+            };
+        }
+
+
+        if (col.DateTime != null)
+        {
+            return new ElicitRequestParams.StringSchema
+            {
+                Title = title,
+                Description = desc,
+                Format = "date-time"
+            };
+        }
+
+
+        if (col.Boolean != null)
+        {
+            return new ElicitRequestParams.BooleanSchema
+            {
+                Title = title,
+                Description = desc,
+                Default = col.DefaultValue?.Value == null ? (bool?)null : col.DefaultValue.Value == "1"
+            };
+        }
+
+        if (col.HyperlinkOrPicture != null)
+        {
+            return new ElicitRequestParams.StringSchema
+            {
+                Title = title,
+                Description = desc,
+                Format = "uri"
+            };
+        }
+
+        return null;
+    }
+
+
 }

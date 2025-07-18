@@ -69,6 +69,20 @@
       "description": "Retrieves all tables in a specific worksheet of the specified Excel file.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/workbook/worksheets/{worksheetId}/comments",
+      "name": "Get Excel worksheet comments",
+      "description": "Retrieves all cell comments (notes) from the specified worksheet in an Excel file (OneDrive/SharePoint).",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/workbook/worksheets/{worksheetId}/comments/{commentId}/replies",
+      "name": "Get Excel comment replies",
+      "description": "Retrieves all replies to a specific cell comment in the given worksheet of an Excel file (OneDrive/SharePoint).",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
     }
   ]
 }

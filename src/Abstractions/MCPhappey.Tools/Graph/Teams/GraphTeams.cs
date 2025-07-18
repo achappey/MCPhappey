@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Graph.Beta.Models;
@@ -32,7 +30,7 @@ public static class GraphTeams
             AdditionalData = new Dictionary<string, object>
             {
                 {
-                    "template@odata.bind" , "https://graph.microsoft.com/v1.0/teamsTemplates('standard')"
+                    "template@odata.bind" , "https://graph.microsoft.com/beta/teamsTemplates('standard')"
                 },
             },
         };
@@ -41,6 +39,47 @@ public static class GraphTeams
         var result = await client.Teams.PostAsync(newTeam, cancellationToken: cancellationToken);
 
         return (result ?? newTeam).ToJsonContentBlock("https://graph.microsoft.com/beta/teams");
+    }
+
+
+    [Description("Create a new channel in a Microsoft Teams.")]
+    [McpServerTool(Name = "GraphTeams_CreateChannel", ReadOnly = false, Destructive = false, OpenWorld = false)]
+    public static async Task<ContentBlock?> GraphTeams_CreateChannel(
+        string teamId,
+         [Description("Displayname of the new channel")]
+        string displayName,
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+         [Description("Description of the new channel")]
+        string? description = null,
+        ChannelMembershipType? membershipType = ChannelMembershipType.Standard,
+        CancellationToken cancellationToken = default)
+    {
+        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var teams = await client.Teams[teamId]
+                           .GetAsync(cancellationToken: cancellationToken);
+
+        // Elicit details for the new list
+        var values = new Dictionary<string, string>
+        {
+            { "Teams", teams?.DisplayName ?? teams?.WebUrl ?? string.Empty },
+            { "Displayname", displayName },
+            { "Description", description ?? string.Empty },
+            { "Membership type", membershipType.ToString()?? string.Empty}
+        };
+
+        // AI-native: Elicit message alleen voor confirm/review
+        await requestContext.Server.GetElicitResponse(values, cancellationToken);
+        var newItem = new Channel
+        {
+            DisplayName = displayName,
+            Description = description,
+            MembershipType = membershipType
+        };
+
+        var result = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
+
+        return (result ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels");
     }
 
     [Description("Create a new channel in a Microsoft Teams.")]
@@ -95,67 +134,4 @@ public static class GraphTeams
             .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages");
     }
 
-    [Description("Please fill in the Team details.")]
-    public class GraphNewTeam
-    {
-        [JsonPropertyName("displayName")]
-        [Required]
-        [Description("The team display name.")]
-        public string DisplayName { get; set; } = default!;
-
-        [JsonPropertyName("description")]
-        [Description("The team description.")]
-        public string? Description { get; set; }
-
-        [JsonPropertyName("firstChannelName")]
-        [Description("The team first channel name.")]
-        public string? FirstChannelName { get; set; }
-
-        [JsonPropertyName("visibility")]
-        [Description("The team visibility.")]
-        public TeamVisibilityType Visibility { get; set; }
-
-        [JsonPropertyName("allowMembersCreateUpdateChannels")]
-        [Description("If members are allowed to create and update channels.")]
-        [DefaultValue(true)]
-        public bool AllowCreateUpdateChannels { get; set; } = true;
-
-    }
-
-    [Description("Please fill in the Team channel details.")]
-    public class GraphNewTeamChannel
-    {
-        [JsonPropertyName("displayName")]
-        [Required]
-        [Description("The team channel display name.")]
-        public string DisplayName { get; set; } = default!;
-
-        [JsonPropertyName("description")]
-        [Description("The team channel description.")]
-        public string? Description { get; set; }
-
-        [JsonPropertyName("membershipType")]
-        [Required]
-        [Description("The team channel membership type.")]
-        public ChannelMembershipType MembershipType { get; set; }
-    }
-
-    [Description("Please fill in the Team channel message details.")]
-    public class GraphNewChannelMessage
-    {
-        [JsonPropertyName("subject")]
-        [Required]
-        [Description("Subject of the channel message.")]
-        public string? Subject { get; set; }
-
-        [JsonPropertyName("content")]
-        [Required]
-        [Description("Content of the channel message.")]
-        public string? Content { get; set; }
-
-        [JsonPropertyName("importance")]
-        [Description("Importance of the channel message.")]
-        public ChatMessageImportance? Importance { get; set; }
-
-    }
 }

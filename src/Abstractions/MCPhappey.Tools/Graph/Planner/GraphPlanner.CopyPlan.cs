@@ -1,5 +1,7 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Graph.Beta.Models;
@@ -132,5 +134,27 @@ public static partial class GraphPlanner
         var newPlanner = await graphClient.Planner.Plans[newPlan?.Id].GetAsync((config) => { }, cancellationToken);
 
         return newPlanner;
+    }
+
+
+    [Description("Copy Plan")]
+    public class GraphCopyPlanner
+    {
+
+        [JsonPropertyName("plannerId")]
+        [Required]
+        [Description("The id of the original Planner to copy.")]
+        public string PlannerId { get; set; } = default!;
+
+        [JsonPropertyName("groupId")]
+        [Required]
+        [Description("Target group id. Where the new Planner should be created.")]
+        public string GroupId { get; set; } = default!;
+
+        [JsonPropertyName("title")]
+        [Required]
+        [Description("The title of the new Planner.")]
+        public string Title { get; set; } = default!;
+
     }
 }
