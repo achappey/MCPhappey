@@ -4,6 +4,7 @@
       "prompt": "produce a tidy **Markdown table** with the columns **Code** and **Name** that lists every currency supported by the Frankfurter API.\n\nAfter the table:\n1. State the **total number** of currencies returned.\n2. Highlight any **non-sovereign** or otherwise notable currencies in a short bullet list.",
       "template": {
         "name": "list-supported-currencies",
+        "title": "List supported currencies",
         "description": "Returns an easy-to-read overview of all currency codes recognised by Frankfurter.",
         "arguments": []
       }
@@ -12,6 +13,7 @@
       "prompt": "Fetch the **latest exchange rates** from Frankfurter for **base currency** **{base}** (defaults to EUR if omitted) and optionally limited to **{symbols}**.\n\nPresent the rates in a **Markdown table** with columns **Currency**, **Rate**, **% Difference vs Median**. Then provide:\n- The **strongest** and **weakest** currencies versus {base}.\n- A one-sentence summary of notable moves.\n\nEndpoint to call: `https://api.frankfurter.dev/v1/latest?base={base}&symbols={symbols}` (omit unused query parameters).",
       "template": {
         "name": "latest-rates",
+        "title": "Latest rates",
         "description": "Shows up-to-date reference rates relative to a given base currency, highlighting outliers.",
         "arguments": [
           {
@@ -31,6 +33,7 @@
       "prompt": "Retrieve **historical rates** for **{date}** (UTC) with optional **base {base}** and **symbols {symbols}** using `https://api.frankfurter.dev/v1/{date}?base={base}&symbols={symbols}` (omit empty params).\n\nReturn a **Markdown table** of the rates and then compare each rate to the **previous working day's** value, adding a **Δ column** showing percentage change. Finish with a concise paragraph noting any significant shifts (>1%).",
       "template": {
         "name": "historical-rates-on-date",
+        "title": "Historical rates on date",
         "description": "Displays rates for a specific calendar date and compares them to the prior day.",
         "arguments": [
           {
@@ -55,6 +58,7 @@
       "prompt": "Analyse the **trend** of **{symbols}** against EUR between **{startDate}** and **{endDate}** inclusive using `https://api.frankfurter.dev/v1/{startDate}..{endDate}?symbols={symbols}`.\n\nFor each currency:\n1. Plot a simple **sparkline-style ASCII** trend (up to 20 points).\n2. Show **start**, **end**, **absolute change**, and **% change**.\n3. Identify the **largest single-day move** during the period.\n\nConclude with an executive summary of overall trends in <100 words.",
       "template": {
         "name": "time-series-comparison",
+        "title": "Time-series comparison",
         "description": "Evaluates historical performance of selected currencies over a date range.",
         "arguments": [
           {
@@ -79,6 +83,7 @@
       "prompt": "Convert **{amount} {from}** to **{to}** at the latest reference rate:\n\n1. Call `https://api.frankfurter.dev/v1/latest?base={from}&symbols={to}`.\n2. Multiply {amount} by the returned rate.\n3. Present the result as `X {from} = Y {to}` rounded to **2 decimals**.\n4. Add a note on whether the {to} currency has **appreciated** or **depreciated** by more than 1% in the past week.\n\nReturn a short, user-friendly sentence followed by the raw JSON used for the conversion.",
       "template": {
         "name": "convert-amount",
+        "title": "Convert amount",
         "description": "Performs a currency conversion using the latest available rate and adds contextual insight.",
         "arguments": [
           {

@@ -32,6 +32,8 @@ var apiKey = appConfig?.Domains?
 var openAiClient = !string.IsNullOrEmpty(apiKey) ?
     new OpenAIClient(apiKey) : null;
 
+builder.Services.AddApplicationInsightsTelemetry();
+
 if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
     && openAiClient != null
     && apiKey != null)

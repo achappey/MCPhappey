@@ -2,7 +2,8 @@
   "resourceTemplates": [
     {
       "uriTemplate": "https://fakton.simplicate.app/api/v2/storage/loadfile?filename={filename}",
-      "name": "Simplicate bestand",
+      "name": "simplicate-bestand",
+      "title": "Simplicate bestand",
       "description": "Leest een Simplicate bestand via een bestandsnaam.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }

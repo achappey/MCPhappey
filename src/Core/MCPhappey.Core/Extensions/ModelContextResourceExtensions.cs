@@ -1,6 +1,7 @@
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Core.Extensions;
@@ -29,6 +30,14 @@ public static partial class ModelContextResourceExtensions
                 {
                     var scraper = request.Services!.GetRequiredService<ResourceService>();
                     request.Services!.WithHeaders(headers);
+
+                    var logger = request.Services!.GetRequiredService<ILogger<ResourcesCapability>>();
+
+                    logger.LogInformation(
+                        "Action={Action} Server={Server} Resource={Resource}",
+                        "ReadResource",
+                        server.Server.ServerInfo.Name,
+                        request.Params?.Uri);
 
                     return await scraper.GetServerResource(request.Services!,
                         request.Server, request.Params?.Uri!,

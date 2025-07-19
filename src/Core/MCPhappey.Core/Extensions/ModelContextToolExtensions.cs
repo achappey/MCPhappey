@@ -3,6 +3,8 @@ using System.Reflection;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -23,7 +25,7 @@ public static partial class ModelContextToolExtensions
             tools.AddRange(kernel.GetToolsFromType(pluginTypeName) ?? []);
         }
 
-        return tools.BuildCapability(headers);
+        return tools.BuildCapability(server, headers);
     }
 
     private static IEnumerable<McpServerTool>? GetToolsFromType(this Kernel kernel, string pluginTypeName)
@@ -50,7 +52,7 @@ public static partial class ModelContextToolExtensions
     }
 
 
-    private static ToolsCapability? BuildCapability(this IEnumerable<McpServerTool>? tools,
+    private static ToolsCapability? BuildCapability(this IEnumerable<McpServerTool>? tools, Server server,
         Dictionary<string, string>? headers = null)
     {
         if (tools == null || !tools.Any())
@@ -77,11 +79,18 @@ public static partial class ModelContextToolExtensions
                     var tool = tools.FirstOrDefault(a => a.ProtocolTool.Name == request.Params?.Name);
 
                     if (tool == null)
-                    { 
+                    {
                         return JsonSerializer.Serialize($"Tool {tool?.ProtocolTool.Name} not found").ToErrorCallToolResponse();
                     }
 
                     request.Services!.WithHeaders(headers);
+
+                    var logger = request.Services!.GetRequiredService<ILogger<ToolsCapability>>();
+                    logger.LogInformation(
+                        "Action={Action} Server={Server} Tool={Tool}",
+                        "CallTool",
+                        server.ServerInfo.Name,
+                        request.Params?.Name);
 
                     try
                     {

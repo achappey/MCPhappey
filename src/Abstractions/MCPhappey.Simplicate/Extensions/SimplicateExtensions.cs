@@ -10,6 +10,29 @@ namespace MCPhappey.Simplicate.Extensions;
 
 public static class SimplicateExtensions
 {
+    
+    public static DateTime? ParseDate(this string? dateString)
+    {
+        if (string.IsNullOrWhiteSpace(dateString))
+            return null;
+        if (DateTime.TryParse(dateString, out var dt))
+            return dt;
+        // eventueel: custom parse logic als je een ISO-formaat of andere verwacht
+        return null;
+    }
+
+
+    public static int? ParseInt(this string? intString)
+    {
+        if (string.IsNullOrWhiteSpace(intString))
+            return null;
+        if (int.TryParse(intString, out var dt))
+            return dt;
+        // eventueel: custom parse logic als je een ISO-formaat of andere verwacht
+        return null;
+    }
+
+
     public static decimal ToAmount(this decimal item) =>
          Math.Round(item, 2, MidpointRounding.AwayFromZero);
 

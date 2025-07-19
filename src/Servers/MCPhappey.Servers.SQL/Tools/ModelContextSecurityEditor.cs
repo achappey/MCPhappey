@@ -23,7 +23,10 @@ public static partial class ModelContextSecurityEditor
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<McpServerOwner>(cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse(new McpServerOwner()
+        {
+            UserId = ownerUserId
+        }, cancellationToken);
 
         if (server.Owners.Any(a => a.Id == dto.UserId) == true)
         {
@@ -60,7 +63,10 @@ public static partial class ModelContextSecurityEditor
             return $"User {ownerUserId} is not an owner on server {serverName}.".ToErrorCallToolResponse();
         }
 
-        var dto = await requestContext.Server.GetElicitResponse<McpServerOwner>(cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse(new McpServerOwner()
+        {
+            UserId = ownerUserId
+        }, cancellationToken);
 
         if (!dto.UserId.Equals(ownerUserId, StringComparison.OrdinalIgnoreCase))
         {
@@ -81,8 +87,11 @@ public static partial class ModelContextSecurityEditor
       CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serviceProvider.GetServer(serverName, cancellationToken);      
-        var dto = await requestContext.Server.GetElicitResponse<UpdateMcpServerSecurity>(cancellationToken);
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse(new UpdateMcpServerSecurity()
+        {
+            Secured = server.Secured
+        }, cancellationToken);
 
         if (dto.Secured.HasValue)
         {
@@ -111,7 +120,10 @@ public static partial class ModelContextSecurityEditor
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<McpSecurityGroup>(cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse(new McpSecurityGroup()
+        {
+            GroupId = securityGroupId
+        }, cancellationToken);
 
         if (server.Groups.Any(g => g.Id == dto.GroupId))
             return $"Group {dto.GroupId} already assigned.".ToErrorCallToolResponse();
@@ -137,7 +149,10 @@ public static partial class ModelContextSecurityEditor
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<McpSecurityGroup>(cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse(new McpSecurityGroup()
+        {
+            GroupId = securityGroupId
+        }, cancellationToken);
 
         if (!server.Groups.Any(g => g.Id == dto.GroupId))
             return $"Group {dto.GroupId} not assigned.".ToErrorCallToolResponse();

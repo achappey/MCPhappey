@@ -9,12 +9,12 @@ namespace MCPhappey.Tools.Graph.Licensing;
 public static class GraphLicensing
 {
     [Description("Get user SKUs grouped by department. If departmentName is set, only include that department. Users without department are grouped under empty string.")]
-    [McpServerTool(Name = "GraphUsers_GetUserSkusPerDepartment", ReadOnly = true, UseStructuredContent = true, OpenWorld = false)]
+    [McpServerTool(Name = "GraphUsers_GetUserSkusPerDepartment", Title = "User SKUs per department", ReadOnly = true, UseStructuredContent = true, OpenWorld = false)]
     public static async Task<Dictionary<string, Dictionary<string, List<string>>>> GraphUsers_GetUserSkusPerDepartment(
-        string? departmentName,
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+            string? departmentName,
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);

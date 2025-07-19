@@ -1,9 +1,8 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Graph.Planner.Models;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -13,7 +12,7 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static partial class GraphPlanner
 {
     [Description("Copy a Planner")]
-    [McpServerTool(Name = "GraphPlanner_CopyPlan", ReadOnly = false, UseStructuredContent = true, OpenWorld = false)]
+    [McpServerTool(Name = "GraphPlanner_CopyPlan", Title = "Copy a Planner", ReadOnly = false, UseStructuredContent = true, OpenWorld = false)]
     public static async Task<PlannerPlan?> GraphPlanner_CopyPlan(
         [Description("The id of the original Planner to copy.")]
         string plannerId,
@@ -31,7 +30,7 @@ public static partial class GraphPlanner
         var plan = await graphClient.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var targetGroup = await graphClient.Groups[groupId].GetAsync((config) => { }, cancellationToken);
 
-        var dto = await requestContext.Server.GetElicitResponse<GraphCopyPlanner>(new GraphCopyPlanner()
+        var dto = await requestContext.Server.GetElicitResponse(new GraphCopyPlanner()
         {
             Title = title
         }, cancellationToken);
@@ -147,13 +146,4 @@ public static partial class GraphPlanner
         return newPlanner;
     }
 
-    [Description("Copy Plan")]
-    public class GraphCopyPlanner
-    {
-        [JsonPropertyName("title")]
-        [Required]
-        [Description("The title of the new Planner.")]
-        public string Title { get; set; } = default!;
-
-    }
 }

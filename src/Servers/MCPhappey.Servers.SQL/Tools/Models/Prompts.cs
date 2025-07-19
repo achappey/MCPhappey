@@ -41,15 +41,15 @@ public class UpdateMcpPromptArgument
 [Description("Please fill in the details to add a new prompt to the specified MCP server.")]
 public class AddMcpPrompt
 {
-    [JsonPropertyName("prompt")]
-    [Required]
-    [Description("The prompt to add. You can use {argument} style placeholders for prompt arguments.")]
-    public string Prompt { get; set; } = default!;
-
     [JsonPropertyName("name")]
     [Required]
     [Description("The name of the resource to add.")]
     public string Name { get; set; } = default!;
+
+    [JsonPropertyName("prompt")]
+    [Required]
+    [Description("The prompt to add. You can use {argument} style placeholders for prompt arguments.")]
+    public string Prompt { get; set; } = default!;
 
     [JsonPropertyName("description")]
     [Description("Optional description of the resource.")]

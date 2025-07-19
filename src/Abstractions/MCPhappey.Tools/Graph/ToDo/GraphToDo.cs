@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.ToDo;
 public static class GraphToDo
 {
     [Description("Create a new Microsoft To Do task")]
-    [McpServerTool(Name = "GraphTodo_CreateTask", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTodo_CreateTask", OpenWorld = false)]
     public static async Task<ContentBlock?> GraphTodo_CreateTask(
          [Description("ToDo list id")]
             string listId,
@@ -53,7 +53,6 @@ public static class GraphToDo
 
         [JsonPropertyName("importance")]
         [Description("Importance (low, normal, high).")]
-        //[JsonConverter(typeof(JsonStringEnumConverter))]
         public Importance? Importance { get; set; }
 
     }

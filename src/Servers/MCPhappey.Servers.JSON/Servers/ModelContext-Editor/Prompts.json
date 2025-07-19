@@ -50,6 +50,31 @@
       }
     },
     {
+      "prompt": "Add the resource template {uriTemplate} to my server named {server}. The resource template name is {name}.",
+      "template": {
+        "name": "add-resource-template-to-server",
+        "title": "Add resource template to server",
+        "description": "Adds a resource template to one of the user's servers using its URI template and name.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "uriTemplate",
+            "description": "The URI template of the resource template",
+            "required": true
+          },
+          {
+            "name": "name",
+            "description": "The name for the resource template",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "Create a new MCP server named {serverName}.",
       "template": {
         "name": "create-mcp-server",
@@ -104,6 +129,26 @@
           {
             "name": "resourceName",
             "description": "The name of the resource to delete",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Delete the resource template named {resourceTemplateName} from server {server}.",
+      "template": {
+        "name": "delete-resource-template",
+        "title": "Delete resource template",
+        "description": "Deletes a specific resource template from a given MCP server.",
+        "arguments": [
+          {
+            "name": "server",
+            "description": "The name of the MCP server",
+            "required": true
+          },
+          {
+            "name": "resourceTemplateName",
+            "description": "The name of the resource template to delete",
             "required": true
           }
         ]

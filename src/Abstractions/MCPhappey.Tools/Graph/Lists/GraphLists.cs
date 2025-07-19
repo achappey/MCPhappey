@@ -13,13 +13,13 @@ namespace MCPhappey.Tools.Graph.Lists;
 public static class GraphLists
 {
     [Description("Create a new Microsoft List item")]
-    [McpServerTool(Name = "GraphLists_CreateListItem", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphLists_CreateListItem", Title = "Create a new Microsoft List item", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphLists_CreateListItem(
-        string siteId,            // ID of the SharePoint site
-        string listId,            // ID of the Microsoft List
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+          string siteId,            // ID of the SharePoint site
+          string listId,            // ID of the Microsoft List
+          IServiceProvider serviceProvider,
+          RequestContext<CallToolRequestParams> requestContext,
+          CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
@@ -88,19 +88,19 @@ public static class GraphLists
     }
 
     [Description("Create a new Microsoft List")]
-    [McpServerTool(Name = "GraphLists_CreateList", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphLists_CreateList", Title = "Create a new Microsoft List", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphLists_CreateList(
-        [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
+            [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
         string siteId,
-        [Description("Title of the new list")]
+            [Description("Title of the new list")]
         string listTitle,
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        [Description("Title of the new list")]
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            [Description("Title of the new list")]
         SharePointListTemplate template = SharePointListTemplate.genericList,
-        [Description("Description of the new list")]
+            [Description("Description of the new list")]
         string? description = null,
-        CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
@@ -130,23 +130,23 @@ public static class GraphLists
     }
 
     [Description("Add a column to a Microsoft List")]
-    [McpServerTool(Name = "GraphLists_AddColumn", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphLists_AddColumn", Title = "Add a column to a Microsoft List", ReadOnly = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphLists_AddColumn(
-        [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
+            [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
         string siteId,
-        [Description("ID of the Microsoft List")]
+            [Description("ID of the Microsoft List")]
         string listId,
-        [Description("Column name")]
+            [Description("Column name")]
         string columnName,
-        [Description("Column display name")]
+            [Description("Column display name")]
         string? columnDisplayName,
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        [Description("Column type (e.g. text, number, boolean, dateTime, choice)")]
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            [Description("Column type (e.g. text, number, boolean, dateTime, choice)")]
         SharePointColumnType columnType = SharePointColumnType.Text,
-        [Description("Choices values. Comma seperated list.")]
+            [Description("Choices values. Comma seperated list.")]
         string? choices = null,
-        CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
