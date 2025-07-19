@@ -2,10 +2,8 @@ using MCPhappey.Common;
 using MCPhappey.Common.Models;
 using ModelContextProtocol.Server;
 using ModelContextProtocol.Protocol;
-using MCPhappey.Servers.SQL.Repositories;
-using MCPhappey.Auth.Extensions;
-using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using MCPhappey.Servers.SQL.Extensions;
 
 namespace MCPhappey.Servers.SQL.Providers;
 
@@ -24,19 +22,13 @@ public class EditorCompletion : IAutoCompletion
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
             return new();
 
-        IServerDataProvider sqlServerDataProvider = serviceProvider.GetRequiredService<IServerDataProvider>();
-        ServerRepository serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var completionServices = serviceProvider.GetServices<IAutoCompletion>();
-
-        var userId = serviceProvider.GetUserId();
 
         IEnumerable<string> values = [];
         switch (completeRequestParams?.Argument?.Name)
         {
             case "server":
-                var servers = await serverRepository.GetServers(cancellationToken);
-                values = servers.Where(a => a.Owners.Any(a => a.Id == userId))
-                    .Select(z => z.Name);
+                var servers = await serviceProvider.GetServers(cancellationToken);
+                values = servers.Select(z => z.Name);
                 break;
             case "resourceName":
             case "promptName":
@@ -46,18 +38,18 @@ public class EditorCompletion : IAutoCompletion
 
                     if (!string.IsNullOrEmpty(serverName))
                     {
+                        var serverItem = await serviceProvider.GetServer(serverName, cancellationToken);
+
                         switch (completeRequestParams?.Argument?.Name)
                         {
                             case "resourceName":
-                                var resources = await sqlServerDataProvider.GetResourcesAsync(serverName, cancellationToken);
-                                values = resources.Resources
+                                values = serverItem.Resources
                                     .Select(z => z.Name);
 
                                 break;
                             case "promptName":
-                                var prompts = await sqlServerDataProvider.GetPromptsAsync(serverName, cancellationToken);
-                                values = prompts
-                                    .Select(z => z.Template.Name);
+                                values = serverItem.Prompts
+                                    .Select(z => z.Name);
 
                                 break;
                             default:
@@ -69,7 +61,8 @@ public class EditorCompletion : IAutoCompletion
                 break;
 
             default:
-                var completionService = completionServices.First(a => a.SupportsHost(new ServerConfig()
+                var completionServices = serviceProvider.GetServices<IAutoCompletion>();
+                var completionService = completionServices.FirstOrDefault(a => a.SupportsHost(new ServerConfig()
                 {
                     Server = new Server()
                     {
@@ -80,13 +73,21 @@ public class EditorCompletion : IAutoCompletion
                     }
                 }));
 
+                if (completionService == null) return new Completion();
+
                 return await completionService.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
         }
 
+        var filtered = values.Where(a => string.IsNullOrEmpty(argValue)
+                                    || a.Contains(argValue, StringComparison.OrdinalIgnoreCase));
+
         return new Completion()
         {
-            Values = [..values.Where(a => string.IsNullOrEmpty(argValue)
-                            || a.Contains(argValue, StringComparison.OrdinalIgnoreCase))]
+            Values = [..filtered
+                            .Order()
+                            .Take(100)],
+            HasMore = filtered.Count() > 100,
+            Total = filtered.Count()
         };
     }
 

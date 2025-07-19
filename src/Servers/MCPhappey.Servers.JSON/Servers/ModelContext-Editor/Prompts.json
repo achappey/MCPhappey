@@ -4,6 +4,7 @@
       "prompt": "List all my available MCP servers and show the number of prompts and resources for each.",
       "template": {
         "name": "list-my-servers",
+        "title": "List my servers",
         "description": "Gives an overview of all MCP servers the user has access to, including counts of prompts and resources.",
         "arguments": []
       }
@@ -12,6 +13,7 @@
       "prompt": "Show all resources, resource templates, and prompts from my server named {server}.",
       "template": {
         "name": "list-server-content",
+        "title": "List server content",
         "description": "Gives a complete overview of all resources, resource templates, and prompts for a specific MCP server.",
         "arguments": [
           {
@@ -26,6 +28,7 @@
       "prompt": "Add the resource {uri} to my server named {server}. The resource name is {name}.",
       "template": {
         "name": "add-resource-to-server",
+        "title": "Add resource to server",
         "description": "Adds a resource to one of the user's servers using its URI and name.",
         "arguments": [
           {
@@ -50,6 +53,7 @@
       "prompt": "Create a new MCP server named {serverName}.",
       "template": {
         "name": "create-mcp-server",
+        "title": "Create MCP server",
         "description": "Creates a new MCP server instance with the specified name.",
         "arguments": [
           {
@@ -64,6 +68,7 @@
       "prompt": "Update the prompt named {promptName} on server {server} with this new text: {newText}.",
       "template": {
         "name": "update-server-prompt",
+        "title": "Update server prompt",
         "description": "Updates the text of an existing prompt on a given server.",
         "arguments": [
           {
@@ -88,6 +93,7 @@
       "prompt": "Delete the resource named {resourceName} from server {server}.",
       "template": {
         "name": "delete-resource",
+        "title": "Delete resource",
         "description": "Deletes a specific resource from a given MCP server.",
         "arguments": [
           {
@@ -107,6 +113,7 @@
       "prompt": "Delete the prompt named {promptName} from server {server}.",
       "template": {
         "name": "delete-prompt",
+        "title": "Delete prompt",
         "description": "Deletes a specific prompt from a given MCP server.",
         "arguments": [
           {
@@ -126,6 +133,7 @@
       "prompt": "Delete the MCP server with server name {server}.",
       "template": {
         "name": "delete-server",
+        "title": "Delete server",
         "description": "Deletes a specific MCP server by name.",
         "arguments": [
           {
@@ -140,6 +148,7 @@
       "prompt": "Add the prompt to my server named {server}. The prompt name is {name}. The full prompt is {prompt} ",
       "template": {
         "name": "add-prompt-to-server",
+        "title": "Add prompt to server",
         "description": "Adds a prompt to one of the user's servers with the full prompt and name.",
         "arguments": [
           {

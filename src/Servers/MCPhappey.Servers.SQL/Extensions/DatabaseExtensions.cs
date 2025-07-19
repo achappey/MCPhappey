@@ -80,44 +80,60 @@ public static class DatabaseExtensions
         };
     }
 
+    public static Resource ToResource(this Models.Resource resource)
+           => new()
+           {
+               Uri = resource.Uri,
+               Name = resource.Name,
+               Description = resource.Description
+           };
 
     public static ListResourcesResult ToListResourcesResult(this ICollection<Models.Resource> resources)
         => new()
         {
-            Resources = [.. resources.Select(a => new Resource()
-            {
-                Uri = a.Uri,
-                Name = a.Name,
-                Description = a.Description
-            })]
+            Resources = [.. resources.Select(a => a.ToResource())]
         };
+
+    public static ResourceTemplate ToResourceTemplate(this Models.ResourceTemplate resource)
+             => new()
+             {
+                 UriTemplate = resource.TemplateUri,
+                 Name = resource.Name,
+                 Description = resource.Description
+             };
 
     public static ListResourceTemplatesResult ToListResourceTemplatesResult(this ICollection<Models.ResourceTemplate> resources)
     => new()
     {
-        ResourceTemplates = [.. resources.Select(a => new ResourceTemplate()
-            {
-                UriTemplate = a.TemplateUri,
-                Name = a.Name,
-                Description = a.Description
-            })]
+        ResourceTemplates = [.. resources.Select(a => a.ToResourceTemplate())]
+    };
+
+    public static PromptArgument ToPromptArgument(this Models.PromptArgument promptArgument)
+      => new()
+      {
+          Name = promptArgument.Name,
+          Description = promptArgument.Description,
+          Required = promptArgument.Required
+      };
+
+    public static Prompt ToPrompt(this Models.Prompt prompt)
+       => new()
+       {
+           Name = prompt.Name,
+           Description = prompt.Description,
+           Arguments = [.. prompt.Arguments.Select(z => z.ToPromptArgument())]
+       };
+
+    public static PromptTemplate ToPromptTemplate(this Models.Prompt prompt)
+    => new()
+    {
+        Prompt = prompt.PromptTemplate,
+        Template = prompt.ToPrompt()
     };
 
     public static PromptTemplates ToPromptTemplates(this ICollection<Models.Prompt> prompts)
-   => new()
-   {
-       Prompts = [.. prompts.Select(a => new PromptTemplate()
-            {
-                Prompt = a.PromptTemplate,
-                Template = new() {
-                    Name = a.Name,
-                    Description = a.Description,
-                    Arguments = [.. a.Arguments.Select(z => new PromptArgument() {
-                        Name = z.Name,
-                        Description = z.Description,
-                        Required = z.Required
-                    })]
-                }
-            })]
-   };
+        => new()
+        {
+            Prompts = [.. prompts.Select(a => a.ToPromptTemplate())]
+        };
 }

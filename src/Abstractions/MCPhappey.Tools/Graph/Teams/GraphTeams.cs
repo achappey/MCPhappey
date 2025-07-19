@@ -12,21 +12,27 @@ public static class GraphTeams
     [Description("Create a new Microsoft Teams.")]
     [McpServerTool(Name = "GraphTeams_CreateTeam", ReadOnly = false, Destructive = false, OpenWorld = false)]
     public static async Task<ContentBlock?> GraphTeams_CreateTeam(
+        [Description("Displayname of the new channel")]
+        string displayName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        TeamVisibilityType? teamVisibilityType = TeamVisibilityType.Private,
+        [Description("Description of the new channel")]
+        string? description = null,
         CancellationToken cancellationToken = default)
     {
-        var dto = await requestContext.Server.GetElicitResponse<GraphNewTeam>(cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse(new GraphNewTeam()
+        {
+            DisplayName = displayName,
+            Description = description,
+            Visibility = teamVisibilityType ?? TeamVisibilityType.Private,
+        }, cancellationToken);
+
         var newTeam = new Team
         {
             Visibility = dto?.Visibility,
             DisplayName = dto?.DisplayName,
             Description = dto?.Description,
-            MemberSettings = new TeamMemberSettings()
-            {
-                AllowCreateUpdateChannels = dto?.AllowCreateUpdateChannels
-            },
-            FirstChannelName = dto?.FirstChannelName,
             AdditionalData = new Dictionary<string, object>
             {
                 {
@@ -40,7 +46,6 @@ public static class GraphTeams
 
         return (result ?? newTeam).ToJsonContentBlock("https://graph.microsoft.com/beta/teams");
     }
-
 
     [Description("Create a new channel in a Microsoft Teams.")]
     [McpServerTool(Name = "GraphTeams_CreateChannel", ReadOnly = false, Destructive = false, OpenWorld = false)]
@@ -59,22 +64,18 @@ public static class GraphTeams
         var teams = await client.Teams[teamId]
                            .GetAsync(cancellationToken: cancellationToken);
 
-        // Elicit details for the new list
-        var values = new Dictionary<string, string>
-        {
-            { "Teams", teams?.DisplayName ?? teams?.WebUrl ?? string.Empty },
-            { "Displayname", displayName },
-            { "Description", description ?? string.Empty },
-            { "Membership type", membershipType.ToString()?? string.Empty}
-        };
-
-        // AI-native: Elicit message alleen voor confirm/review
-        await requestContext.Server.GetElicitResponse(values, cancellationToken);
-        var newItem = new Channel
+        var resultForm = await requestContext.Server.GetElicitResponse(new GraphNewTeamChannel()
         {
             DisplayName = displayName,
             Description = description,
-            MembershipType = membershipType
+            MembershipType = membershipType ?? ChannelMembershipType.Standard
+        }, cancellationToken);
+
+        var newItem = new Channel
+        {
+            DisplayName = resultForm.DisplayName,
+            Description = resultForm.Description,
+            MembershipType = resultForm.MembershipType
         };
 
         var result = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);

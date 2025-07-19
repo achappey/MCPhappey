@@ -1,12 +1,11 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Models;
 using MCPhappey.Servers.SQL.Repositories;
+using MCPhappey.Servers.SQL.Tools.Models;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -15,33 +14,15 @@ namespace MCPhappey.Servers.SQL.Tools;
 
 public static partial class ModelContextEditor
 {
-    [Description("List MCP-servers where the current user is owner of")]
-    [McpServerTool(Name = "ModelContextEditor_ListServers", ReadOnly = true, OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextEditor_ListServers(
-       IServiceProvider serviceProvider,
-       CancellationToken cancellationToken = default)
-    {
-        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var userId = serviceProvider.GetUserId();
-        if (userId == null)
-        {
-            return "No user found".ToErrorCallToolResponse();
-        }
-
-        var servers = await serverRepository.GetServers(cancellationToken);
-        var userServers = servers.Where(a => a.Owners.Any(a => a.Id == userId)).Select(z => new
-        {
-            z.Name,
-        });
-
-        return JsonSerializer.Serialize(userServers).ToTextCallToolResponse();
-    }
-
     [Description("Create a new MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_CreateServer", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_CreateServer(
+        [Description("Name of the new server")]
+        string serverName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Instructions of thew new server")]
+        string? instructions = null,
         CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
@@ -51,8 +32,13 @@ public static partial class ModelContextEditor
             return "No user found".ToErrorCallToolResponse();
         }
 
-        var dto = await requestContext.Server.GetElicitResponse<NewMcpServer>(cancellationToken);
-        var server = await serverRepository.CreateServer(new Models.Server()
+        var dto = await requestContext.Server.GetElicitResponse(new NewMcpServer()
+        {
+            Name = serverName,
+            Instructions = instructions
+        }, cancellationToken);
+
+        var server = await serverRepository.CreateServer(new Server()
         {
             Name = dto.Name.Slugify(),
             Instructions = dto.Instructions,
@@ -65,12 +51,12 @@ public static partial class ModelContextEditor
         return JsonSerializer.Serialize(new
         {
             server.Name,
-         //   Owners = server.Owners.Select(z => z.Id),
-         //   server.Secured,
-        //    SecurityGroups = server.Groups.Select(z => z.Id)
+            Owners = server.Owners.Select(z => z.Id),
+            server.Secured,
+            SecurityGroups = server.Groups.Select(z => z.Id)
         }).ToTextCallToolResponse();
     }
-  
+
     [Description("Updates a MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_UpdateServer", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateServer(
@@ -79,15 +65,8 @@ public static partial class ModelContextEditor
       RequestContext<CallToolRequestParams> requestContext,
       CancellationToken cancellationToken = default)
     {
-        var userId = serviceProvider.GetUserId();
-        if (userId == null) return "No user found".ToErrorCallToolResponse();
-
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serverRepository.GetServer(serverName, cancellationToken);
-
-        if (server?.Owners.Any(a => a.Id == userId) != true)
-            return "Access denied.".ToErrorCallToolResponse();
-
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpServer>(cancellationToken);
 
         if (!string.IsNullOrEmpty(dto.Name))
@@ -114,71 +93,22 @@ public static partial class ModelContextEditor
     [Description("Deletes a MCP-server")]
     [McpServerTool(Name = "ModelContextEditor_DeleteServer", OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteServer(
-      RequestContext<CallToolRequestParams> requestContext,
+        [Description("Name of the server")] string serverName,
+        RequestContext<CallToolRequestParams> requestContext,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {
-        var userId = serviceProvider.GetUserId();
-        if (userId == null)
-        {
-            return "No user found".ToErrorCallToolResponse();
-        }
-
         var dto = await requestContext.Server.GetElicitResponse<DeleteMcpServer>(cancellationToken);
+
+        if (dto.Name?.Trim() != serverName.Trim())
+            return $"Confirmation does not match name '{serverName}'".ToErrorCallToolResponse();
+
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serverRepository.GetServer(dto.Name, cancellationToken);
+        var server = await serviceProvider.GetServer(dto.Name, cancellationToken);
 
-        if (server?.Owners.Any(a => a.Id == userId) == true)
-        {
-            await serverRepository.DeleteServer(server.Id);
+        await serverRepository.DeleteServer(server.Id);
 
-            return "Server deleted".ToTextCallToolResponse();
-        }
-
-        throw new UnauthorizedAccessException();
-    }
-
-    [Description("Please fill in the MCP Server details.")]
-    public class NewMcpServer
-    {
-        [JsonPropertyName("name")]
-        [Required]
-        [Description("The MCP server name.")]
-        public string Name { get; set; } = default!;
-
-        [JsonPropertyName("instructions")]
-        [Description("The MCP server instructions.")]
-        public string? Instructions { get; set; }
-    }
-
-    [Description("Please fill in the MCP Server owner details.")]
-    public class McpServerOwner
-    {
-        [JsonPropertyName("userId")]
-        [Required]
-        [Description("The user id of the MCP server owner.")]
-        public string UserId { get; set; } = default!;
-    }
-
-    [Description("Please fill in the MCP Server name to confirm deletion.")]
-    public class DeleteMcpServer
-    {
-        [JsonPropertyName("name")]
-        [Required]
-        [Description("The MCP server name.")]
-        public string Name { get; set; } = default!;
-    }
-
-    [Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
-    public class UpdateMcpServer
-    {
-        [JsonPropertyName("name")]
-        [Description("New name of the resource (optional).")]
-        public string? Name { get; set; }
-
-        [JsonPropertyName("instructions")]
-        [Description("The MCP server instructions.")]
-        public string? Instructions { get; set; }
+        return "Server deleted".ToTextCallToolResponse();
     }
 }
 

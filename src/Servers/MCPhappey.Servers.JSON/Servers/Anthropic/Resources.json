@@ -2,7 +2,8 @@
   "resources": [
     {
       "uri": "https://api.anthropic.com/v1/models",
-      "name": "List available Anthropic Claude models",
+      "name": "list-anthropic-claude-models",
+      "title": "List available Anthropic Claude models",
       "description": "List all available Anthropic Claude models",
       "mimeType": "application/json",
       "annotations": {

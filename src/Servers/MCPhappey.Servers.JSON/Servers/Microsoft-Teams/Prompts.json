@@ -4,6 +4,7 @@
       "prompt": "List all channels for the team {teamName}. Show each channel's description and whether it is private or standard.",
       "template": {
         "name": "list-team-channels",
+        "title": "List team channels",
         "description": "Lists all channels in a specified Microsoft Teams team, showing descriptions and privacy types.",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "Send the following message to the {channelName} channel in the {teamName} team: {message}.",
       "template": {
         "name": "send-team-channel-message",
+        "title": "Send team channel message",
         "description": "Sends a message to a specific channel within a specified team.",
         "arguments": [
           {
@@ -42,6 +44,7 @@
       "prompt": "List all Microsoft Teams teams I am a member of, including each team's description and number of members.",
       "template": {
         "name": "list-joined-teams",
+        "title": "List joined teams",
         "description": "Lists all Microsoft Teams teams the user has joined, including descriptions and member counts.",
         "arguments": []
       }

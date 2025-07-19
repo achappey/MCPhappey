@@ -201,16 +201,16 @@ public static class ElicitExtensions
                     else if (t == typeof(string))
                         value = el.ValueKind == JsonValueKind.String ? el.GetString() : null;
                     else if (t == typeof(int))
-                        value = el.ValueKind == JsonValueKind.Number ? el.GetInt32() : default(int);
+                        value = el.ValueKind == JsonValueKind.Number ? el.GetInt32() : default;
                     else if (t == typeof(long))
-                        value = el.ValueKind == JsonValueKind.Number ? el.GetInt64() : default(long);
+                        value = el.ValueKind == JsonValueKind.Number ? el.GetInt64() : default;
                     else if (t == typeof(bool))
                         value = el.ValueKind == JsonValueKind.True ? true :
                                 el.ValueKind == JsonValueKind.False ? false : (bool?)null;
                     else if (t == typeof(double))
-                        value = el.ValueKind == JsonValueKind.Number ? el.GetDouble() : default(double);
+                        value = el.ValueKind == JsonValueKind.Number ? el.GetDouble() : default;
                     else if (t == typeof(DateTime))
-                        value = el.ValueKind == JsonValueKind.String ? el.GetDateTime() : default(DateTime);
+                        value = el.ValueKind == JsonValueKind.String ? el.GetDateTime() : default;
                     else
                     {
                         // fallback voor complexe types (nested objects/arrays)
@@ -243,17 +243,42 @@ public static class ElicitExtensions
         return elicitResult.Content.MapToObject<T>();
     }
 
-    public static async Task GetElicitResponse(this IMcpServer mcpServer, Dictionary<string, string> values, CancellationToken cancellationToken)
+    public static async Task<T> GetElicitResponse<T>(this IMcpServer mcpServer, T defaultValues, CancellationToken cancellationToken) where T : new()
+    {
+        var elicitParams = CreateElicitRequestParamsForType<T>();
+        elicitParams.Message = JsonSerializer.Serialize(new ElicitDefaultData<T>()
+        {
+            Message = elicitParams.Message,
+            DefaultValues = defaultValues
+        }, JsonSerializerOptions.Web);
+
+        var elicitResult = await mcpServer.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
+        elicitResult.EnsureAccept();
+
+        if (elicitResult.Content == null)
+        {
+            throw new Exception(elicitResult.Action);
+        }
+
+        return elicitResult.Content.MapToObject<T>();
+    }
+/*
+    public static async Task GetElicitResponse(
+        this IMcpServer mcpServer,
+        Dictionary<string, string> values,
+        CancellationToken cancellationToken)
     {
         var sb = new StringBuilder();
-
-        sb.AppendLine("|   |   |");
-        sb.AppendLine("|---|---|");
+        sb.AppendLine("<table>");
+        sb.AppendLine("<tbody>");
 
         foreach (var pair in values)
         {
-            sb.AppendLine($"| {pair.Key} | {pair.Value} |");
+            sb.AppendLine($"<tr><td>{System.Net.WebUtility.HtmlEncode(pair.Key)}</td><td>{System.Net.WebUtility.HtmlEncode(pair.Value)}</td></tr>");
         }
+
+        sb.AppendLine("</tbody>");
+        sb.AppendLine("</table>");
 
         var elicitResult = await mcpServer.ElicitAsync(new ElicitRequestParams()
         {
@@ -261,5 +286,16 @@ public static class ElicitExtensions
         }, cancellationToken: cancellationToken);
 
         elicitResult.EnsureAccept();
+    }*/
+
+
+    public class ElicitDefaultData<T>
+    {
+        [JsonPropertyName("message")]
+        public string? Message { get; set; }
+
+        [JsonPropertyName("defaultValues")]
+        public T? DefaultValues { get; set; }
     }
+
 }

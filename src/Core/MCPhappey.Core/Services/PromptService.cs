@@ -21,7 +21,10 @@ public class PromptService(IServerDataProvider dynamicDataService)
     public async Task<ListPromptsResult> GetServerPrompts(ServerConfig serverConfig,
           CancellationToken cancellationToken = default) => new ListPromptsResult()
           {
-              Prompts = (await GetServerPromptTemplates(serverConfig, cancellationToken)).Select(a => a.Template).ToList() ?? []
+              Prompts = (await GetServerPromptTemplates(serverConfig, cancellationToken))
+                .Select(a => a.Template)
+                .OrderBy(a => a.Name)
+                .ToList() ?? []
           };
 
     public async Task<GetPromptResult> GetServerPrompt(

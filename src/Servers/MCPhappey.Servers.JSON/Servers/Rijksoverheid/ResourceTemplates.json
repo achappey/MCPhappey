@@ -2,8 +2,9 @@
   "resourceTemplates": [
     {
       "uriTemplate": "https://opendata.rijksoverheid.nl/v1/infotypes/schoolholidays/schoolyear/{startYear}-{endYear}?output=json",
-      "name": "Schoolvakanties",
-      "description": "Schoolvakanties alle regios per schooljaar. Gebruik {startYear}-{endYear} als formaat, bjvoorbeeld 2024-2025. Nooit meer dan 1 jaar tegelijkertijd.",
+      "name": "schoolvakanties-per-schooljaar",
+      "title": "Schoolvakanties per schooljaar",
+      "description": "Schoolvakanties alle regios per schooljaar. Gebruik {startYear}-{endYear} als formaat, bijvoorbeeld 2024-2025. Nooit meer dan 1 jaar tegelijkertijd.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]

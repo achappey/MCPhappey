@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
@@ -104,29 +105,21 @@ public static class GraphLists
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var site = await client.Sites[siteId]
-                             .GetAsync(cancellationToken: cancellationToken);
-
-        // Elicit details for the new list
-        var values = new Dictionary<string, string>
+        var result = await mcpServer.GetElicitResponse(new GraphNewSharePointList()
         {
-            { "Site", site?.DisplayName ?? site?.WebUrl ?? string.Empty },
-            { "Title", listTitle },
-            { "Description", description ?? string.Empty },
-            { "Template", template.ToString() }
-        };
-
-        // AI-native: Elicit message alleen voor confirm/review
-        await mcpServer.GetElicitResponse(values, cancellationToken);
+            Title = listTitle,
+            Description = description,
+            Template = template
+        }, cancellationToken);
 
         var createdList = await client.Sites[siteId].Lists.PostAsync(
             new Microsoft.Graph.Beta.Models.List
             {
-                DisplayName = listTitle,
-                Description = description,
+                DisplayName = result.Title,
+                Description = result.Description,
                 ListProp = new Microsoft.Graph.Beta.Models.ListInfo
                 {
-                    Template = template.ToString()
+                    Template = result.Template.ToString()
                 }
             },
             cancellationToken: cancellationToken
@@ -145,8 +138,8 @@ public static class GraphLists
         string listId,
         [Description("Column name")]
         string columnName,
-        [Description("Column description")]
-        string? description,
+        [Description("Column display name")]
+        string? columnDisplayName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Column type (e.g. text, number, boolean, dateTime, choice)")]
@@ -157,7 +150,6 @@ public static class GraphLists
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
         var site = await client
                       .Sites[siteId]
                       .GetAsync(cancellationToken: cancellationToken);
@@ -167,22 +159,16 @@ public static class GraphLists
             .Lists[listId]
             .GetAsync(cancellationToken: cancellationToken);
 
-        // Parameters samenvoegen tot dictionary
-        var values = new Dictionary<string, string>
+        var result = await mcpServer.GetElicitResponse(new GraphNewSharePointColumn()
         {
-            { "Site", site?.DisplayName ?? site?.WebUrl ?? string.Empty },
-            { "List", list?.DisplayName ?? string.Empty },
-            { "Column name", columnName },
-            { "Column type", columnType.ToString()! },
-            { "Description", description ?? string.Empty },
-            { "Choices", choices ?? string.Empty }
-        };
-
-        // Elicit confirm/review (geen dubbele input)
-        await mcpServer.GetElicitResponse(values, cancellationToken);
+            DisplayName = columnDisplayName,
+            Name = columnName,
+            ColumnType = columnType,
+            Choices = choices
+        }, cancellationToken);
 
         // Build column based on type (jouw bestaande logic)
-        var columnDef = GetColumnDefinition(columnName, description ?? string.Empty, columnType, choices);
+        var columnDef = GetColumnDefinition(result.Name, result.DisplayName ?? result.Name, result.ColumnType, result.Choices);
 
         var createdColumn = await client.Sites[siteId].Lists[listId].Columns.PostAsync(
             columnDef,
@@ -193,6 +179,86 @@ public static class GraphLists
             $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/columns/{createdColumn.Id}"
         );
     }
+
+    [Description("Please fill in the details for the new Microsoft List.")]
+    public class GraphNewSharePointList
+    {
+        [JsonPropertyName("title")]
+        [Required]
+        [Description("Name of the new list")]
+        public string Title { get; set; } = default!;
+
+        [JsonPropertyName("description")]
+        [Description("Description of the list (optional)")]
+        public string? Description { get; set; }
+
+        [JsonPropertyName("template")]
+        [Description("Template type for the new list")]
+        [Required]
+        public SharePointListTemplate Template { get; set; } = SharePointListTemplate.genericList;
+    }
+
+
+    [Description("Please fill in the details for the new column.")]
+    public class GraphNewSharePointColumn
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("Column name (no spaces, unique in list)")]
+        public string Name { get; set; } = default!;
+
+        [JsonPropertyName("displayName")]
+        [Description("Column display name (optional, for UI)")]
+        public string? DisplayName { get; set; }
+
+        [JsonPropertyName("columnType")]
+        [Required]
+        [Description("Type of column")]
+        public SharePointColumnType ColumnType { get; set; } = SharePointColumnType.Text;
+
+        [JsonPropertyName("choices")]
+        [Description("Choices (only for 'Choice' type), comma separated")]
+        public string? Choices { get; set; }
+
+        // You can add more props for Number, DateTime, etc.
+        public Microsoft.Graph.Beta.Models.ColumnDefinition GetColumnDefinition()
+        {
+            var col = new Microsoft.Graph.Beta.Models.ColumnDefinition
+            {
+                Name = Name,
+                DisplayName = DisplayName ?? Name
+            };
+
+            switch (ColumnType)
+            {
+                case SharePointColumnType.Text:
+                    col.Text = new Microsoft.Graph.Beta.Models.TextColumn();
+                    break;
+                case SharePointColumnType.Number:
+                    col.Number = new Microsoft.Graph.Beta.Models.NumberColumn();
+                    break;
+                case SharePointColumnType.YesNo:
+                    col.Boolean = new Microsoft.Graph.Beta.Models.BooleanColumn();
+                    break;
+                case SharePointColumnType.Choice:
+                    col.Choice = new Microsoft.Graph.Beta.Models.ChoiceColumn
+                    {
+                        Choices = Choices?.Split(',').Select(x => x.Trim()).ToList() ?? new List<string>()
+                    };
+                    break;
+                case SharePointColumnType.DateTime:
+                    col.DateTime = new Microsoft.Graph.Beta.Models.DateTimeColumn();
+                    break;
+                // Add more types as needed
+                default:
+                    throw new NotImplementedException("Unsupported column type");
+            }
+
+            return col;
+        }
+    }
+
+
 
     public static Microsoft.Graph.Beta.Models.ColumnDefinition GetColumnDefinition(string name, string displayName, SharePointColumnType columnType, string? choices = null)
     {
@@ -230,6 +296,7 @@ public static class GraphLists
         return col;
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SharePointColumnType
     {
         [Description("Text (single line)")]
@@ -245,6 +312,7 @@ public static class GraphLists
         // Add more as needed
     }
 
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum SharePointListTemplate
     {
         [Description("Custom list (genericList)")]

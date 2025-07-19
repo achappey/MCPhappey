@@ -1,0 +1,28 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "mcp-editor://server/{serverName}/resources",
+      "name": "resources-of-mcp-server",
+      "title": "Resources of MCP server",
+      "description": "Lists all resources for the MCP server specified by {serverName}.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "mcp-editor://server/{serverName}/resourceTemplates",
+      "name": "resource-templates-of-mcp-server",
+      "title": "Resource templates of MCP server",
+      "description": "Lists all resource templates (lists, folders, etc) for the MCP server specified by {serverName}.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    },
+    {
+      "uriTemplate": "mcp-editor://server/{serverName}/prompts",
+      "name": "prompts-of-mcp-server",
+      "title": "Prompts of MCP server",
+      "description": "Lists all prompts configured for the MCP server specified by {serverName}.",
+      "mimeType": "application/json",
+      "annotations": { "audience": ["assistant"] }
+    }
+  ]
+}

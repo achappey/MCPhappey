@@ -2,7 +2,8 @@
   "resources": [
     {
       "uri": "https://graph.microsoft.com/beta/me/joinedTeams?$select=displayName,id",
-      "name": "Joined Teams",
+      "name": "joined-teams",
+      "title": "Joined Teams",
       "description": "Get a list of all joined Teams",
       "mimeType": "application/json",
       "annotations": {
@@ -11,7 +12,8 @@
     },
     {
       "uri": "https://graph.microsoft.com/beta/me/chats?$select=id,topic,createdDateTime,lastUpdatedDateTime",
-      "name": "My Chats",
+      "name": "my-chats",
+      "title": "My Chats",
       "description": "Retrieves a list of the user's 1:1 and group chat threads, including basic metadata like topic and timestamps.",
       "mimeType": "application/json",
       "annotations": {
@@ -20,7 +22,8 @@
     },
     {
       "uri": "https://graph.microsoft.com/beta/me/presence",
-      "name": "My presence",
+      "name": "my-presence",
+      "title": "My presence",
       "description": "Returns the current presence status of the signed-in user (e.g., Available, Busy, Away).",
       "mimeType": "application/json",
       "annotations": {
@@ -29,7 +32,8 @@
     },
     {
       "uri": "https://graph.microsoft.com/beta/teamwork/devices?$select=id,deviceType,activityState,hardwareDetail",
-      "name": "My teamwork sevices",
+      "name": "my-teamwork-devices",
+      "title": "My teamwork devices",
       "description": "Lists devices used with Teams, such as headsets or peripherals, including device type and current activity state.",
       "mimeType": "application/json",
       "annotations": {
@@ -38,7 +42,8 @@
     },
     {
       "uri": "https://graph.microsoft.com/beta/me/teamwork/installedApps?$select=id&$expand=teamsApp($select=id,externalId,displayName,distributionMethod)",
-      "name": "My teams apps",
+      "name": "my-teams-apps",
+      "title": "My Teams apps",
       "description": "Retrieves the list of Teams apps installed for the signed-in user, including app ID and display name.",
       "mimeType": "application/json",
       "annotations": {
@@ -47,7 +52,8 @@
     },
     {
       "uri": "https://graph.microsoft.com/beta/me/teamwork/associatedTeams?$select=id,displayName,tenantId",
-      "name": "My associated teams",
+      "name": "my-associated-teams",
+      "title": "My associated teams",
       "description": "Lists Teams the user is indirectly associated with (e.g., via tags), including name and classification.",
       "mimeType": "application/json",
       "annotations": {

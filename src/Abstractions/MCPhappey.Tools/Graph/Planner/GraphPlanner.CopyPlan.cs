@@ -15,25 +15,36 @@ public static partial class GraphPlanner
     [Description("Copy a Planner")]
     [McpServerTool(Name = "GraphPlanner_CopyPlan", ReadOnly = false, UseStructuredContent = true, OpenWorld = false)]
     public static async Task<PlannerPlan?> GraphPlanner_CopyPlan(
+        [Description("The id of the original Planner to copy.")]
+        string plannerId,
+        [Description("Target group id. Where the new Planner should be created.")]
+        string groupId,
+         [Description("The title of the new Planner.")]
+        string title,
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
      CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
 
-        var dto = await requestContext.Server.GetElicitResponse<GraphCopyPlanner>(cancellationToken);
-        var httpClient = await serviceProvider.GetGraphHttpClient(mcpServer);
         var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
+        var plan = await graphClient.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
+        var targetGroup = await graphClient.Groups[groupId].GetAsync((config) => { }, cancellationToken);
 
-        var plan = await graphClient.Planner.Plans[dto.PlannerId].GetAsync((config) => { }, cancellationToken);
-        var buckets = await graphClient.Planner.Plans[dto.PlannerId].Buckets.GetAsync((config) => { }, cancellationToken);
-        var tasks = await graphClient.Planner.Plans[dto.PlannerId].Tasks.GetAsync((config) => { }, cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse<GraphCopyPlanner>(new GraphCopyPlanner()
+        {
+            Title = title
+        }, cancellationToken);
+
+        var httpClient = await serviceProvider.GetGraphHttpClient(mcpServer);
+        var buckets = await graphClient.Planner.Plans[plannerId].Buckets.GetAsync((config) => { }, cancellationToken);
+        var tasks = await graphClient.Planner.Plans[plannerId].Tasks.GetAsync((config) => { }, cancellationToken);
 
         var newPlan = await graphClient.Planner.Plans
             .PostAsync(new PlannerPlan
             {
                 Title = dto.Title,
-                Owner = dto.GroupId
+                Owner = groupId
             }, cancellationToken: cancellationToken);
 
         var bucketMap = new Dictionary<string, string>();
@@ -136,21 +147,9 @@ public static partial class GraphPlanner
         return newPlanner;
     }
 
-
     [Description("Copy Plan")]
     public class GraphCopyPlanner
     {
-
-        [JsonPropertyName("plannerId")]
-        [Required]
-        [Description("The id of the original Planner to copy.")]
-        public string PlannerId { get; set; } = default!;
-
-        [JsonPropertyName("groupId")]
-        [Required]
-        [Description("Target group id. Where the new Planner should be created.")]
-        public string GroupId { get; set; } = default!;
-
         [JsonPropertyName("title")]
         [Required]
         [Description("The title of the new Planner.")]

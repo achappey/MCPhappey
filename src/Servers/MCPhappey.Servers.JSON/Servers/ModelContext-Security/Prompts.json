@@ -4,6 +4,7 @@
       "prompt": "Find the Entra user ID of user {userDisplayName}. When found, add the user as an owner to MCP server {server}.",
       "template": {
         "name": "add-server-owner",
+        "title": "Add server owner",
         "description": "Adds a specific user as an owner to the selected MCP server.",
         "arguments": [
           {
@@ -23,6 +24,7 @@
       "prompt": "Find the Entra user ID of user {userDisplayName}. When found, Remove the user as an owner to MCP server {server}.",
       "template": {
         "name": "remove-server-owner",
+        "title": "Remove server owner",
         "description": "Removes a specific user from the list of owners on a MCP server.",
         "arguments": [
           {
@@ -42,6 +44,7 @@
       "prompt": "Find the Entra ID of security group {securityGroupName}. When found, add the security group to server {server}.",
       "template": {
         "name": "add-security-group",
+        "title": "Add security group",
         "description": "Adds a security group to the specified MCP server for access control.",
         "arguments": [
           {
@@ -61,6 +64,7 @@
       "prompt": "Find the Entra ID of security group {securityGroupName}. When found, remove the security group from server {server}.",
       "template": {
         "name": "remove-security-group",
+        "title": "Remove security group",
         "description": "Removes an existing security group from the specified MCP server.",
         "arguments": [
           {
@@ -80,6 +84,7 @@
       "prompt": "Set server {server} to secured mode.",
       "template": {
         "name": "set-server-secured",
+        "title": "Set server secured mode",
         "description": "Enables security enforcement on the selected MCP server.",
         "arguments": [
           {

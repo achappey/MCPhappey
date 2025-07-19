@@ -1,14 +1,10 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
-using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
-using MCPhappey.Core.Services;
 using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Repositories;
+using MCPhappey.Servers.SQL.Tools.Models;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -17,71 +13,35 @@ namespace MCPhappey.Servers.SQL.Tools;
 
 public static partial class ModelContextEditor
 {
-    [Description("List MCP-server prompts")]
-    [McpServerTool(Name = "ModelContextEditor_ListServerPrompts", ReadOnly = true, OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextEditor_ListServerPrompts(
-          [Description("Name of the server")]
-            string serverName,
-            IServiceProvider serviceProvider,
-            CancellationToken cancellationToken = default)
-    {
-        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var userId = serviceProvider.GetUserId();
-        if (userId == null)
-        {
-            return "No user found".ToErrorCallToolResponse();
-        }
-
-        var server = await serverRepository.GetServer(serverName, cancellationToken);
-        if (server?.Owners.Any(a => a.Id == userId) != true)
-        {
-            throw new UnauthorizedAccessException();
-        }
-
-        return JsonSerializer.Serialize(server.Prompts
-            .Select(a => new
-            {
-                Prompt = a.PromptTemplate,
-                a.Name,
-                a.Description,
-                Arguments = a.Arguments.Select(z => new { z.Name, z.Description, z.Required })
-            }))
-            .ToTextCallToolResponse();
-    }
 
     [Description("Adds a prompt to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddPrompt", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_AddPrompt", ReadOnly = false, OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddPrompt(
         [Description("Name of the server")]
             string serverName,
+        [Description("The name of the prompt to add")]
+            string promptName,
+        [Description("The prompt to add. You can use {argument} style placeholders for prompt arguments.")]
+            string prompt,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        IMcpServer mcpServer,
+        [Description("Optional description of the resource.")]
+        string? description = null,
         CancellationToken cancellationToken = default)
     {
-        var userId = serviceProvider.GetUserId();
-
-        if (userId == null)
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
+        var dto = await requestContext.Server.GetElicitResponse(new AddMcpPrompt()
         {
-            return "No user found".ToErrorCallToolResponse();
-        }
+            Name = promptName.Slugify().ToLowerInvariant(),
+            Prompt = prompt,
+            Description = description
+        }, cancellationToken);
 
-        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serverRepository.GetServer(serverName, cancellationToken);
-
-        if (server?.Owners.Any(a => a.Id == userId) != true)
-        {
-            return "Access denied. Only owners can add resources".ToErrorCallToolResponse();
-        }
-
-        var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
-        var dto = await requestContext.Server.GetElicitResponse<AddMcpPrompt>(cancellationToken);
-        var config = configs.GetServerConfig(mcpServer);
         var item = await serverRepository.AddServerPrompt(server.Id, dto.Prompt,
-            dto.Name.Slugify().ToLowerInvariant(),
+            dto.Name,
             dto.Description,
-            arguments: dto.Prompt.ExtractPromptArguments().Select(a => new Models.PromptArgument()
+            arguments: dto.Prompt.ExtractPromptArguments().Select(a => new SQL.Models.PromptArgument()
             {
                 Name = a,
                 Required = true
@@ -92,7 +52,7 @@ public static partial class ModelContextEditor
             Prompt = item.PromptTemplate,
             item.Name,
             item.Description,
-            Arguments = item.Arguments.Select(z => new { z.Name, z.Description, z.Required })
+            Arguments = item.Arguments.Select(z => z.ToPromptArgument())
         }).ToTextCallToolResponse();
 
     }
@@ -106,15 +66,8 @@ public static partial class ModelContextEditor
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var userId = serviceProvider.GetUserId();
-        if (userId == null) return "No user found".ToErrorCallToolResponse();
-
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serverRepository.GetServer(serverName, cancellationToken);
-
-        if (server?.Owners.Any(a => a.Id == userId) != true)
-            return "Access denied.".ToErrorCallToolResponse();
-
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpPrompt>(cancellationToken);
         var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException();
 
@@ -133,7 +86,6 @@ public static partial class ModelContextEditor
             .Where(a => !usedArguments.Contains(a.Name, StringComparer.OrdinalIgnoreCase))
             .ToList();
 
-        // Remove outdated arguments from EF tracking
         foreach (var arg in toRemove)
         {
             await serverRepository.DeletePromptArgument(arg.Id);
@@ -145,7 +97,7 @@ public static partial class ModelContextEditor
         {
             if (!existingNames.Contains(name))
             {
-                prompt.Arguments.Add(new Models.PromptArgument
+                prompt.Arguments.Add(new SQL.Models.PromptArgument
                 {
                     Name = name,
                     Required = true // default
@@ -172,21 +124,18 @@ public static partial class ModelContextEditor
        [Description("Name of the prompt argument to update")] string promptArgumentName,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
+       [Description("New value for the prompt required property")] bool? required = null,
+       [Description("New value for the prompt description property")] string? newDescription = null,
        CancellationToken cancellationToken = default)
     {
-        var userId = serviceProvider.GetUserId();
-        if (userId == null) return "No user found".ToErrorCallToolResponse();
-
-        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serverRepository.GetServer(serverName, cancellationToken);
-
-        if (server?.Owners.Any(a => a.Id == userId) != true)
-            return "Access denied.".ToErrorCallToolResponse();
-
-        var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException();
-        var promptArgument = prompt.Arguments.FirstOrDefault(a => a.Name == promptArgumentName) ?? throw new ArgumentNullException();
-
-        var dto = await requestContext.Server.GetElicitResponse<UpdateMcpPromptArgument>(cancellationToken);
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
+        var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException(nameof(promptName));
+        var promptArgument = prompt.Arguments.FirstOrDefault(a => a.Name == promptArgumentName) ?? throw new ArgumentNullException(nameof(promptArgumentName));
+        var dto = await requestContext.Server.GetElicitResponse(new UpdateMcpPromptArgument()
+        {
+            Required = required,
+            Description = newDescription
+        }, cancellationToken);
 
         if (dto.Required.HasValue)
         {
@@ -198,10 +147,11 @@ public static partial class ModelContextEditor
             promptArgument.Description = dto.Description;
         }
 
+        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var updated = await serverRepository.UpdatePromptArgument(promptArgument);
 
         return JsonSerializer
-            .Serialize(new { updated.Name, updated.Description, updated.Required })
+            .Serialize(updated.ToPromptArgument())
             .ToTextCallToolResponse();
     }
 
@@ -214,15 +164,8 @@ public static partial class ModelContextEditor
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var userId = serviceProvider.GetUserId();
-        if (userId == null) return "No user found".ToErrorCallToolResponse();
-
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serverRepository.GetServer(serverName, cancellationToken);
-
-        if (server?.Owners.Any(a => a.Id == userId) != true)
-            return "Access denied.".ToErrorCallToolResponse();
-
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var dto = await requestContext.Server.GetElicitResponse<ConfirmDeletePrompt>(cancellationToken);
 
         if (dto.Name?.Trim() != promptName.Trim())
@@ -231,58 +174,7 @@ public static partial class ModelContextEditor
         var prompt = server.Prompts.FirstOrDefault(z => z.Name == promptName) ?? throw new ArgumentException();
         await serverRepository.DeletePrompt(prompt.Id);
 
-        return $"Prompt {promptName} has been deleted.".ToTextCallToolResponse();
-    }
-
-    [Description("Please confirm the name of the prompt you want to delete.")]
-    public class ConfirmDeletePrompt
-    {
-        [JsonPropertyName("name")]
-        [Required]
-        [Description("Enter the exact name of the prompt to confirm deletion.")]
-        public string Name { get; set; } = default!;
-    }
-
-    [Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
-    public class UpdateMcpPrompt
-    {
-        [JsonPropertyName("prompt")]
-        [Description("New prompt (optional).")]
-        public string? Prompt { get; set; }
-
-        [JsonPropertyName("description")]
-        [Description("New description of the prompt (optional).")]
-        public string? Description { get; set; }
-    }
-
-    [Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
-    public class UpdateMcpPromptArgument
-    {
-        [JsonPropertyName("description")]
-        [Description("New description of the prompt argument (optional).")]
-        public string? Description { get; set; }
-
-        [JsonPropertyName("required")]
-        [Description("If the argument is required (optional).")]
-        public bool? Required { get; set; }
-    }
-
-    [Description("Please fill in the details to add a new prompt to the specified MCP server.")]
-    public class AddMcpPrompt
-    {
-        [JsonPropertyName("prompt")]
-        [Required]
-        [Description("The prompt to add. You can use {argument} style placeholders for prompt arguments.")]
-        public string Prompt { get; set; } = default!;
-
-        [JsonPropertyName("name")]
-        [Required]
-        [Description("The name of the resource to add.")]
-        public string Name { get; set; } = default!;
-
-        [JsonPropertyName("description")]
-        [Description("Optional description of the resource.")]
-        public string? Description { get; set; }
+        return $"Prompt {promptName} deleted.".ToTextCallToolResponse();
     }
 }
 
