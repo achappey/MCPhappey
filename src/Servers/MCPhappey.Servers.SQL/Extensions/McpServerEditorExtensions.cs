@@ -10,11 +10,6 @@ public static class McpServerEditorExtensions
      public static async Task<IEnumerable<Models.Server>> GetStatistics(this IServiceProvider serviceProvider, CancellationToken ct = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();
-        if (string.IsNullOrEmpty(tokenService?.Bearer))
-        {
-            throw new UnauthorizedAccessException();
-        }
-
         var userId = serviceProvider.GetUserId();
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
 
