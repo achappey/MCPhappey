@@ -3,7 +3,6 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using ModelContextProtocol.Protocol;
@@ -13,13 +12,24 @@ namespace MCPhappey.Common.Extensions;
 
 public static class ElicitExtensions
 {
-    public static void EnsureAccept(
-        this ElicitResult message)
+    public static async Task<(T? typedResult, CallToolResult? notAccepted)> TryElicit<T>(
+     this IMcpServer mcpServer,
+     T elicitRequest,
+     CancellationToken cancellationToken = default)
+     where T : class, new()
     {
-        if (message.Action != "accept")
+        var elicitParams = CreateElicitRequestParamsForType<T>();
+        elicitParams.Message = JsonSerializer.Serialize(new ElicitDefaultData<T>()
         {
-            throw new Exception(JsonSerializer.Serialize(message, JsonSerializerOptions.Web));
-        }
+            Message = elicitParams.Message,
+            DefaultValues = elicitRequest
+        }, JsonSerializerOptions.Web);
+
+        var result = await mcpServer.GetElicitResponse(elicitRequest, cancellationToken);
+        var notAccepted = result?.NotAccepted();
+        if (notAccepted != null) return (null, notAccepted);
+        var typed = result?.GetTypedResult<T>() ?? throw new Exception("Type cast failed!");
+        return (typed, null);
     }
 
     public static string GetJsonPropertyName(this PropertyInfo prop) =>
@@ -229,21 +239,17 @@ public static class ElicitExtensions
         return obj;
     }
 
-    public static async Task<T> GetElicitResponse<T>(this IMcpServer mcpServer, CancellationToken cancellationToken) where T : new()
+    public static async Task<ElicitResult?> GetElicitResponse<T>(this IMcpServer mcpServer, CancellationToken cancellationToken) where T : new()
     {
         var elicitParams = CreateElicitRequestParamsForType<T>();
-        var elicitResult = await mcpServer.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
-        elicitResult.EnsureAccept();
-
-        if (elicitResult.Content == null)
-        {
-            throw new Exception(elicitResult.Action);
-        }
-
-        return elicitResult.Content.MapToObject<T>();
+        return await mcpServer.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
     }
 
-    public static async Task<T> GetElicitResponse<T>(this IMcpServer mcpServer, T defaultValues, CancellationToken cancellationToken) where T : new()
+    public static CallToolResult? NotAccepted(this ElicitResult elicitResult)
+        => elicitResult.Action != "accept" ?
+        JsonSerializer.Serialize(elicitResult, JsonSerializerOptions.Web).ToErrorCallToolResponse() : null;
+
+    public static async Task<ElicitResult?> GetElicitResponse<T>(this IMcpServer mcpServer, T defaultValues, CancellationToken cancellationToken) where T : new()
     {
         var elicitParams = CreateElicitRequestParamsForType<T>();
         elicitParams.Message = JsonSerializer.Serialize(new ElicitDefaultData<T>()
@@ -252,42 +258,11 @@ public static class ElicitExtensions
             DefaultValues = defaultValues
         }, JsonSerializerOptions.Web);
 
-        var elicitResult = await mcpServer.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
-        elicitResult.EnsureAccept();
-
-        if (elicitResult.Content == null)
-        {
-            throw new Exception(elicitResult.Action);
-        }
-
-        return elicitResult.Content.MapToObject<T>();
+        return await mcpServer.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
     }
-/*
-    public static async Task GetElicitResponse(
-        this IMcpServer mcpServer,
-        Dictionary<string, string> values,
-        CancellationToken cancellationToken)
-    {
-        var sb = new StringBuilder();
-        sb.AppendLine("<table>");
-        sb.AppendLine("<tbody>");
 
-        foreach (var pair in values)
-        {
-            sb.AppendLine($"<tr><td>{System.Net.WebUtility.HtmlEncode(pair.Key)}</td><td>{System.Net.WebUtility.HtmlEncode(pair.Value)}</td></tr>");
-        }
-
-        sb.AppendLine("</tbody>");
-        sb.AppendLine("</table>");
-
-        var elicitResult = await mcpServer.ElicitAsync(new ElicitRequestParams()
-        {
-            Message = sb.ToString(),
-        }, cancellationToken: cancellationToken);
-
-        elicitResult.EnsureAccept();
-    }*/
-
+    public static T? GetTypedResult<T>(this ElicitResult elicitResult) where T : new()
+        => elicitResult.Content != null ? elicitResult.Content.MapToObject<T>() : default;
 
     public class ElicitDefaultData<T>
     {

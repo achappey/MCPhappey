@@ -1,13 +1,13 @@
 {
   "prompts": [
     {
-      "prompt": "Analyseer de meegeleverde lijst met sales op reden {reden}. Geef per reden van (niet) geaccepteerde sales een overzicht van het aantal sales, het totaal verwachte omzetbedrag en het aantal unieke verantwoordelijke medewerkers. Presenteer het resultaat als een tabel met de kolommen: Reden, Aantal Sales, Totale Verwachte Omzet en Aantal Medewerkers.",
+      "prompt": "Analyseer de meegeleverde lijst met sales op reden {salesReden}. Geef per reden van (niet) geaccepteerde sales een overzicht van het aantal sales, het totaal verwachte omzetbedrag en het aantal unieke verantwoordelijke medewerkers. Presenteer het resultaat als een tabel met de kolommen: Reden, Aantal Sales, Totale Verwachte Omzet en Aantal Medewerkers.",
       "template": {
         "name": "sales-overzicht-per-reden",
         "description": "Maakt een samenvatting van sales gegroepeerd op reden van (niet) geaccepteerd, inclusief aantal sales, totale verwachte omzet en unieke medewerkers.",
         "arguments": [
           {
-            "name": "reden",
+            "name": "salesReden",
             "description": "Reden waarom de sales (niet) geaccepteerd is. Bijvoorbeeld ervaring, etc.",
             "required": true
           }
@@ -42,7 +42,7 @@
       }
     },
     {
-      "prompt": "Genereer een sales forecast voor de komende {aantalMaandenForecast} maanden op basis van de openstaande deals in de meegeleverde data. Neem de verwachte sluitingsdatum en de gewogen waarde (waarde * scoringspercentage) per deal mee. Geef een totaal gewogen waarde per maand. Output als JSON.",
+      "prompt": "Genereer een sales forecast voor de komende {aantalMaandenForecast} maanden op basis van de openstaande deals. Neem de verwachte sluitingsdatum en de gewogen waarde (waarde * scoringspercentage) per deal mee. Geef een totaal gewogen waarde per maand en per maand de top 5 grootste deals met naam en klant.",
       "template": {
         "name": "sales-genereer-forecast",
         "description": "Creëert een sales forecast op basis van openstaande deals en hun gewogen waarde.",
@@ -56,7 +56,7 @@
       }
     },
     {
-      "prompt": "Identificeer de top {aantalDeals} deals met de hoogste waarde (veld: '{veldDealWaarde}') die momenteel in de salesfase '{faseNaam}' zitten, volgens de aangeleverde data. Geef per deal de naam, de verantwoordelijke en de exacte waarde. Presenteer als een lijst.",
+      "prompt": "Identificeer de top {aantalDeals} deals met de hoogste waarde (veld: '{veldDealWaarde}') die momenteel in de salesfase '{salesVoortgang}' zitten, volgens de aangeleverde data. Geef per deal de naam, de verantwoordelijke en de exacte waarde. Presenteer als een lijst.",
       "template": {
         "name": "sales-identificeer-top-deals-in-fase",
         "description": "Vindt de meest waardevolle deals in een specifieke salesfase uit de verstrekte data.",
@@ -72,36 +72,36 @@
             "required": true
           },
           {
-            "name": "faseNaam",
-            "description": "Het label van de salesfase (progress.label).",
+            "name": "salesVoortgang",
+            "description": "Het label van de sales voortgang.",
             "required": true
           }
         ]
       }
     },
     {
-      "prompt": "Analyseer de redenen waarom deals verloren zijn gegaan (veld: '{veldVerlorenReden}') in de meegeleverde dataset van verloren deals. Geef een top 3 van meest voorkomende verloren redenen en hun frequentie. Output als tabel: Reden, Frequentie.",
+      "prompt": "Analyseer de deals die verloren zijn gegaan vanwege '{salesReden}'. Geef een top 3 van grootste gemiste deals per maand. Geef het weer in een tabel met naam klant, sales verantworodelijke en datum.",
       "template": {
         "name": "sales-analyseer-verloren-redenen",
         "description": "Identificeert de meest voorkomende redenen voor verloren deals uit de aangeleverde data.",
         "arguments": [
           {
-            "name": "veldVerlorenReden",
-            "description": "De exacte API-naam van het veld dat de reden van verlies bevat (bijv. 'reason.name').",
+            "name": "salesReden",
+            "description": "De naam van het veld dat de reden van verlies bevat.",
             "required": true
           }
         ]
       }
     },
     {
-      "prompt": "Evalueer de effectiviteit van verschillende leadbronnen (veld: '{veldLeadBron}') op basis van de meegeleverde gewonnen deals. Geef per leadbron het aantal gewonnen deals en de totale waarde van deze deals. Presenteer als een JSON-object waarbij elke key de leadbron is.",
+      "prompt": "Evalueer de effectiviteit van salesbron {salesBron} op basis van de deals. Geef alle deals, de status, de totale waarde van deze deals en de namen van bedrijven en contactpersonen.",
       "template": {
-        "name": "sales-evalueer-leadbron-effectiviteit",
-        "description": "Analyseert welke leadbronnen de meeste en meest waardevolle gewonnen deals opleveren.",
+        "name": "sales-evalueer-salesbron-effectiviteit",
+        "description": "Analyseert een salesbron en meest de waardevolle gewonnen deals die het heeft opgeleverd.",
         "arguments": [
           {
-            "name": "veldLeadBron",
-            "description": "De exacte API-naam van het veld dat de leadbron bevat (bijv. 'source.name').",
+            "name": "salesBron",
+            "description": "De naam van de sales bron.",
             "required": true
           }
         ]

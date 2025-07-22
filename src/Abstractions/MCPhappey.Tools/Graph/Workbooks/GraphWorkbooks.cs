@@ -45,24 +45,37 @@ public static class GraphWorkbooks
     }
 
     [Description("Add a chart to an Excel worksheet using Microsoft Graph.")]
-    [McpServerTool(Name = "GraphExcel_AddChart", ReadOnly = false, OpenWorld = false, UseStructuredContent = true)]
-    public static async Task<Microsoft.Graph.Beta.Models.WorkbookChart?> GraphExcel_AddChart(
-        string driveId,              // ID of the drive (OneDrive, SharePoint doclib)
-        string itemId,               // ID of the Excel file
-        string worksheetName,        // Name of the worksheet
-            IServiceProvider serviceProvider,
-            RequestContext<CallToolRequestParams> requestContext,
-            CancellationToken cancellationToken = default)
+    [McpServerTool(Name = "GraphExcel_AddChart", ReadOnly = false, OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphExcel_AddChart(
+    IServiceProvider serviceProvider,
+    RequestContext<CallToolRequestParams> requestContext,
+    [Description("ID of the drive (OneDrive, SharePoint doclib).")] string driveId,
+    [Description("ID of the Excel file.")] string itemId,
+    [Description("Name of the worksheet.")] string worksheetName,
+    [Description("The type of chart to add. Example: ColumnStacked, Pie, Line, BarClustered, etc.")] ChartType? type = null,
+    [Description("The cell range for the chart source data, e.g. 'A1:B10' or 'Sheet1!A1:C20'.")] string? sourceData = null,
+    [Description("How the series are organized in the source data: by rows, columns, or auto.")] ChartSeriesBy? seriesBy = null,
+    CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var dto = await requestContext.Server.GetElicitResponse<GraphAddChartRequest>(cancellationToken);
+        var (typed, notAccepted) = await mcpServer.TryElicit<GraphAddChartRequest>(
+            new GraphAddChartRequest
+            {
+                Type = type ?? default,
+                SourceData = sourceData ?? string.Empty,
+                SeriesBy = seriesBy ?? default
+            },
+            cancellationToken
+        );
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var requestBody = new Microsoft.Graph.Beta.Drives.Item.Items.Item.Workbook.Worksheets.Item.Charts.Add.AddPostRequestBody
         {
-            Type = dto.Type.ToString(),
-            SourceData = new UntypedString(dto.SourceData),
-            SeriesBy = dto.SeriesBy.ToString()
+            Type = typed.Type.ToString(),
+            SourceData = new UntypedString(typed.SourceData),
+            SeriesBy = typed.SeriesBy.ToString()
         };
 
         // Example: assumes worksheet is "Sheet1" and drive/itemId known; adapt as needed
@@ -75,7 +88,9 @@ public static class GraphWorkbooks
             .Add
             .PostAsync(requestBody, cancellationToken: cancellationToken);
 
-        return chart;
+        var url = $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}/workbook/worksheets/{worksheetName}/charts/{chart.Id}";
+
+        return chart.ToJsonContentBlock(url).ToCallToolResult();
     }
 
 

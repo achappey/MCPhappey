@@ -127,7 +127,7 @@ public static class SimplicateExtensions
         return results;
     }
 
-    public static async Task<SimplicateNewItemData?> PostSimplicateItemAsync<T>(
+    public static async Task<ContentBlock?> PostSimplicateItemAsync<T>(
           this IServiceProvider serviceProvider,
           string baseUrl, // e.g. "https://{subdomain}.simplicate.nl/api/v2/project/project"
           T item,
@@ -146,7 +146,7 @@ public static class SimplicateExtensions
      );
     }
 
-    public static async Task<SimplicateNewItemData?> PostSimplicateItemAsync<T>(
+    public static async Task<ContentBlock?> PostSimplicateItemAsync<T>(
         this SimplicateScraper downloadService,
         IServiceProvider serviceProvider,
         string baseUrl, // e.g. "https://{subdomain}.simplicate.nl/api/v2/project/project"
@@ -176,6 +176,6 @@ public static class SimplicateExtensions
             );
         }
 
-        return response;
+        return response.ToJsonContentBlock($"{baseUrl}/{response?.Data.Id}");
     }
 }

@@ -13,8 +13,8 @@ namespace MCPhappey.Simplicate.CRM;
 public static class SimplicateCRM
 {
     [Description("Create a new organization in Simplicate CRM")]
-    [McpServerTool(Name = "SimplicateCRM_CreateOrganization", UseStructuredContent = true)]
-    public static async Task<SimplicateNewItemData?> SimplicateCRM_CreateOrganization(
+    [McpServerTool(Name = "SimplicateCRM_CreateOrganization")]
+    public static async Task<CallToolResult?> SimplicateCRM_CreateOrganization(
         [Description("The full name of the organization.")] string name,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -27,26 +27,31 @@ public static class SimplicateCRM
 
         // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/organization";
-        var dto = await requestContext.Server.GetElicitResponse(new SimplicateNewOrganization
-        {
-            Name = name,
-            Note = note,
-            Email = email,
-            Url = url
-        }, cancellationToken);
+        var (dtoItem, notAccepted) = await requestContext.Server.TryElicit<SimplicateNewOrganization>(
+                new SimplicateNewOrganization
+                {
+                    Name = name,
+                    Note = note,
+                    Email = email,
+                    Url = url
+                },
+                cancellationToken
+            );
+
+        if (notAccepted != null) return notAccepted;
 
         // Use your POST extension to create the org
-        return await serviceProvider.PostSimplicateItemAsync(
+        return (await serviceProvider.PostSimplicateItemAsync(
             baseUrl,
-            dto!,
+            dtoItem,
             requestContext: requestContext,
             cancellationToken: cancellationToken
-        );
+        ))?.ToCallToolResult();
     }
 
     [Description("Create a new person in Simplicate CRM")]
-    [McpServerTool(Name = "SimplicateCRM_CreatePerson", UseStructuredContent = true)]
-    public static async Task<SimplicateNewItemData?> SimplicateCRM_CreatePerson(
+    [McpServerTool(Name = "SimplicateCRM_CreatePerson")]
+    public static async Task<CallToolResult?> SimplicateCRM_CreatePerson(
         [Description("The person's first name.")] string firstName,
         [Description("The person's family name or surname.")] string familyName,
       IServiceProvider serviceProvider,
@@ -59,24 +64,28 @@ public static class SimplicateCRM
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
 
-        // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/person";
-        var dto = await requestContext.Server.GetElicitResponse(new SimplicateNewPerson()
-        {
-            FirstName = firstName,
-            FamilyName = familyName,
-            Note = note,
-            Email = email,
-            Phone = phone,
-            WebsiteUrl = websiteUrl
-        }, cancellationToken);
+        var (dtoItem, notAccepted) = await requestContext.Server.TryElicit<SimplicateNewPerson>(
+               new SimplicateNewPerson()
+               {
+                   FirstName = firstName,
+                   FamilyName = familyName,
+                   Note = note,
+                   Email = email,
+                   Phone = phone,
+                   WebsiteUrl = websiteUrl
+               },
+               cancellationToken
+           );
 
-        return await serviceProvider.PostSimplicateItemAsync(
+        if (notAccepted != null) return notAccepted;
+
+        return (await serviceProvider.PostSimplicateItemAsync(
             baseUrl,
-            dto!,
+            dtoItem,
             requestContext: requestContext,
             cancellationToken: cancellationToken
-        );
+        ))?.ToCallToolResult();
 
     }
 

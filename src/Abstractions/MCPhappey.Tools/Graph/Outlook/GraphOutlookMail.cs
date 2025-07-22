@@ -13,29 +13,45 @@ public static class GraphOutlookMail
 {
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
     [McpServerTool(Name = "GraphOutlookMail_SendMail", ReadOnly = false, OpenWorld = true)]
-    public static async Task<ContentBlock?> GraphOutlookMail_SendMail(
-         IServiceProvider serviceProvider,
-         RequestContext<CallToolRequestParams> requestContext,
-         CancellationToken cancellationToken = default)
+    public static async Task<CallToolResult?> GraphOutlookMail_SendMail(
+     IServiceProvider serviceProvider,
+     RequestContext<CallToolRequestParams> requestContext,
+     [Description("E-mail addresses of the recipients. Use a comma separated list for multiple recipients.")] string? toRecipients = null,
+     [Description("E-mail addresses for CC (carbon copy). Use a comma separated list for multiple recipients.")] string? ccRecipients = null,
+     [Description("Subject of the e-mail message.")] string? subject = null,
+     [Description("Body of the e-mail message.")] string? body = null,
+     [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
+     CancellationToken cancellationToken = default)
     {
-        var dto = await requestContext.Server.GetElicitResponse<GraphSendMail>(cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphSendMail>(
+            new GraphSendMail
+            {
+                ToRecipients = toRecipients ?? string.Empty,
+                CcRecipients = ccRecipients,
+                Subject = subject,
+                Body = body,
+                BodyType = bodyType
+            },
+            cancellationToken
+        );
+        if (notAccepted != null) return notAccepted;
 
         Message newMessage = new()
         {
-            Subject = dto?.Subject,
+            Subject = typed?.Subject,
             Body = new ItemBody
             {
-                ContentType = dto?.BodyType,
-                Content = dto?.Body
+                ContentType = typed?.BodyType,
+                Content = typed?.Body
             },
-            ToRecipients = dto?.ToRecipients.Split(",").Select(a => new Recipient()
+            ToRecipients = typed?.ToRecipients.Split(",").Select(a => new Recipient()
             {
                 EmailAddress = new()
                 {
                     Address = a
                 }
             }).ToList(),
-            CcRecipients = dto?.CcRecipients?.Split(",", StringSplitOptions.RemoveEmptyEntries)
+            CcRecipients = typed?.CcRecipients?.Split(",", StringSplitOptions.RemoveEmptyEntries)
                 .Select(a => new Recipient
                 {
                     EmailAddress = new() { Address = a.Trim() }
@@ -53,34 +69,51 @@ public static class GraphOutlookMail
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         await client.Me.SendMail.PostAsync(sendMailPostRequestBody, cancellationToken: cancellationToken);
 
-        return sendMailPostRequestBody.ToJsonContentBlock("https://graph.microsoft.com/beta/me/sendmail");
+        return sendMailPostRequestBody.ToJsonContentBlock("https://graph.microsoft.com/beta/me/sendmail").ToCallToolResult();
     }
 
     [Description("Create a draft e-mail message in the current user's Outlook mailbox.")]
     [McpServerTool(Name = "GraphOutlookMail_CreateDraft", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphOutlookMail_CreateDraft(
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+    public static async Task<CallToolResult?> GraphOutlookMail_CreateDraft(
+     IServiceProvider serviceProvider,
+     RequestContext<CallToolRequestParams> requestContext,
+     [Description("E-mail addresses of the recipients. Use a comma separated list for multiple recipients.")] string? toRecipients = null,
+     [Description("E-mail addresses for CC (carbon copy). Use a comma separated list for multiple recipients.")] string? ccRecipients = null,
+     [Description("Subject of the draft e-mail message.")] string? subject = null,
+     [Description("Body of the draft e-mail message.")] string? body = null,
+     [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
+     CancellationToken cancellationToken = default)
     {
-        var dto = await requestContext.Server.GetElicitResponse<GraphCreateMailDraft>(cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphCreateMailDraft>(
+            new GraphCreateMailDraft
+            {
+                ToRecipients = toRecipients ?? string.Empty,
+                CcRecipients = ccRecipients,
+                Subject = subject,
+                Body = body,
+                BodyType = bodyType
+            },
+            cancellationToken
+        );
+        
+        if (notAccepted != null) return notAccepted;
 
         var newMessage = new Message
         {
-            Subject = dto?.Subject,
+            Subject = typed?.Subject,
             Body = new ItemBody
             {
-                ContentType = dto?.BodyType ?? BodyType.Text,
-                Content = dto?.Body
+                ContentType = typed?.BodyType ?? BodyType.Text,
+                Content = typed?.Body
             },
-            ToRecipients = dto?.ToRecipients
+            ToRecipients = typed?.ToRecipients
                 ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
                 .Select(a => new Recipient
                 {
                     EmailAddress = new EmailAddress { Address = a.Trim() }
                 })
                 .ToList(),
-            CcRecipients = dto?.CcRecipients
+            CcRecipients = typed?.CcRecipients
                 ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
                 .Select(a => new Recipient
                 {
@@ -92,7 +125,7 @@ public static class GraphOutlookMail
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var createdMessage = await client.Me.Messages.PostAsync(newMessage, cancellationToken: cancellationToken);
 
-        return createdMessage.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{createdMessage?.Id}");
+        return createdMessage.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{createdMessage?.Id}").ToCallToolResult();
     }
 
     [Description("Please fill in the draft e-mail details")]

@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "ApplicationInsights",
+    "version": "1.0.0"
+  },
+  "headers": {
+    "x-api-key": "Application Insights API key"
+  }
+}

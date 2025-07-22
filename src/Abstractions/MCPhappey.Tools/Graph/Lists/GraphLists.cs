@@ -14,7 +14,7 @@ public static class GraphLists
 {
     [Description("Create a new Microsoft List item")]
     [McpServerTool(Name = "GraphLists_CreateListItem", Title = "Create a new Microsoft List item", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphLists_CreateListItem(
+    public static async Task<CallToolResult?> GraphLists_CreateListItem(
           string siteId,            // ID of the SharePoint site
           string listId,            // ID of the Microsoft List
           IServiceProvider serviceProvider,
@@ -59,9 +59,10 @@ public static class GraphLists
             Message = list?.DisplayName ?? list?.Name ?? "New SharePoint list item"
         }, cancellationToken: cancellationToken);
 
-        elicitResult.EnsureAccept();
+        var notAccepted = elicitResult?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
 
-        var values = elicitResult.Content;
+        var values = elicitResult?.Content;
         var fieldsPayload = new Dictionary<string, object>();
 
         foreach (var field in request.Properties)
@@ -84,12 +85,12 @@ public static class GraphLists
 
         // 6. Return success/result (customize as needed):
         return JsonSerializer.Serialize(createdItem)
-            .ToJsonContentBlock($"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/items/{createdItem.Id}");
+            .ToJsonContentBlock($"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/items/{createdItem.Id}").ToCallToolResult();
     }
 
     [Description("Create a new Microsoft List")]
     [McpServerTool(Name = "GraphLists_CreateList", Title = "Create a new Microsoft List", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphLists_CreateList(
+    public static async Task<CallToolResult?> GraphLists_CreateList(
             [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
         string siteId,
             [Description("Title of the new list")]
@@ -105,33 +106,38 @@ public static class GraphLists
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var result = await mcpServer.GetElicitResponse(new GraphNewSharePointList()
-        {
-            Title = listTitle,
-            Description = description,
-            Template = template
-        }, cancellationToken);
+        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewSharePointList>(
+      new GraphNewSharePointList
+      {
+          Title = listTitle,
+          Description = description,
+          Template = template
+      },
+      cancellationToken
+  );
+
+        if (notAccepted != null) return notAccepted;
 
         var createdList = await client.Sites[siteId].Lists.PostAsync(
             new Microsoft.Graph.Beta.Models.List
             {
-                DisplayName = result.Title,
-                Description = result.Description,
+                DisplayName = typed?.Title,
+                Description = typed?.Description,
                 ListProp = new Microsoft.Graph.Beta.Models.ListInfo
                 {
-                    Template = result.Template.ToString()
+                    Template = typed?.Template.ToString()
                 }
             },
             cancellationToken: cancellationToken
         );
 
         return createdList.ToJsonContentBlock(
-            $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{createdList.Id}");
+            $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{createdList.Id}").ToCallToolResult();
     }
 
     [Description("Add a column to a Microsoft List")]
     [McpServerTool(Name = "GraphLists_AddColumn", Title = "Add a column to a Microsoft List", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphLists_AddColumn(
+    public static async Task<CallToolResult?> GraphLists_AddColumn(
             [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
         string siteId,
             [Description("ID of the Microsoft List")]
@@ -159,25 +165,31 @@ public static class GraphLists
             .Lists[listId]
             .GetAsync(cancellationToken: cancellationToken);
 
-        var result = await mcpServer.GetElicitResponse(new GraphNewSharePointColumn()
-        {
-            DisplayName = columnDisplayName,
-            Name = columnName,
-            ColumnType = columnType,
-            Choices = choices
-        }, cancellationToken);
+        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewSharePointColumn>(
+                new GraphNewSharePointColumn
+                {
+                    DisplayName = columnDisplayName,
+                    Name = columnName,
+                    ColumnType = columnType,
+                    Choices = choices
+                },
+                cancellationToken
+            );
+
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
 
         // Build column based on type (jouw bestaande logic)
-        var columnDef = GetColumnDefinition(result.Name, result.DisplayName ?? result.Name, result.ColumnType, result.Choices);
+        var columnDef = GetColumnDefinition(typed.Name, typed.DisplayName ?? typed.Name, typed.ColumnType, typed.Choices);
 
         var createdColumn = await client.Sites[siteId].Lists[listId].Columns.PostAsync(
             columnDef,
             cancellationToken: cancellationToken
         );
 
-        return createdColumn.ToJsonContentBlock(
-            $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/columns/{createdColumn.Id}"
-        );
+        return createdColumn
+            .ToJsonContentBlock(
+            $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/columns/{createdColumn.Id}").ToCallToolResult();
     }
 
     [Description("Please fill in the details for the new Microsoft List.")]

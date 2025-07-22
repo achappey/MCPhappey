@@ -11,45 +11,63 @@ namespace MCPhappey.Tools.Graph.Outlook;
 
 public static class GraphOutlookCalendar
 {
-    /// <summary>
-    /// Create a new calendar event in the user's Outlook calendar.
-    /// </summary>
     [Description("Create a new calendar event in the user's Outlook calendar.")]
-    [McpServerTool(Name = "GraphOutlookCalendar_CreateCalendarEvent", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphOutlookCalendar_CreateCalendarEvent(
+    [McpServerTool(Name = "GraphOutlookCalendar_CreateCalendarEvent", OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphOutlookCalendar_CreateCalendarEvent(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Title or subject of the event.")] string? subject = null,
+        [Description("Description or body of the event.")] string? body = null,
+        [Description("Type of the body content (html or text).")] BodyType? bodyType = null,
+        [Description("Start date and time (yyyy-MM-ddTHH:mm:ss format).")] string? startDateTime = null,
+        [Description("End date and time (yyyy-MM-ddTHH:mm:ss format).")] string? endDateTime = null,
+        [Description("Time zone for the event.")] string? timeZone = null,
+        [Description("Location or meeting room.")] string? location = null,
+        [Description("E-mail addresses of attendees (comma separated).")] string? attendees = null,
         CancellationToken cancellationToken = default)
     {
-        // Prompt user for event details (subject, start, end, etc.)
-        var dto = await requestContext.Server.GetElicitResponse<GraphCreateCalendarEvent>(cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphCreateCalendarEvent>(
+            new GraphCreateCalendarEvent
+            {
+                Subject = subject ?? string.Empty,
+                Body = body,
+                BodyType = bodyType,
+                StartDateTime = startDateTime ?? string.Empty,
+                EndDateTime = endDateTime ?? string.Empty,
+                TimeZone = timeZone,
+                Location = location,
+                Attendees = attendees
+            },
+            cancellationToken
+        );
+        if (notAccepted != null) return notAccepted;
 
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         var newEvent = new Event
         {
-            Subject = dto.Subject,
+            Subject = typed.Subject,
             Body = new ItemBody
             {
-                ContentType = dto.BodyType ?? BodyType.Text,
-                Content = dto.Body
+                ContentType = typed.BodyType ?? BodyType.Text,
+                Content = typed.Body
             },
             Start = new DateTimeTimeZone
             {
-                DateTime = dto.StartDateTime,
-                TimeZone = dto.TimeZone ?? "UTC"
+                DateTime = typed.StartDateTime,
+                TimeZone = typed.TimeZone ?? "UTC"
             },
             End = new DateTimeTimeZone
             {
-                DateTime = dto.EndDateTime,
-                TimeZone = dto.TimeZone ?? "UTC"
+                DateTime = typed.EndDateTime,
+                TimeZone = typed.TimeZone ?? "UTC"
             },
             Location = new Location
             {
-                DisplayName = dto.Location
+                DisplayName = typed.Location
             },
-            Attendees = string.IsNullOrWhiteSpace(dto.Attendees) ? null :
-                [.. dto.Attendees.Split(',')
+            Attendees = string.IsNullOrWhiteSpace(typed.Attendees) ? null :
+                [.. typed.Attendees.Split(',')
                     .Select(a => new Attendee
                     {
                         EmailAddress = new EmailAddress { Address = a.Trim() },
@@ -59,7 +77,7 @@ public static class GraphOutlookCalendar
 
         var result = await client.Me.Events.PostAsync(newEvent, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock("https://graph.microsoft.com/beta/me/events");
+        return result.ToJsonContentBlock("https://graph.microsoft.com/beta/me/events").ToCallToolResult();
     }
 
     /// <summary>

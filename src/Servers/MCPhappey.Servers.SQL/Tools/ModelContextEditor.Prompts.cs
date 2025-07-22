@@ -36,12 +36,14 @@ public static partial class ModelContextEditor
             Prompt = prompt,
             Description = description
         }, cancellationToken);
-
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<AddMcpPrompt>() ?? throw new Exception();
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var item = await serverRepository.AddServerPrompt(server.Id, dto.Prompt,
-            dto.Name,
-            dto.Description,
-            arguments: dto.Prompt.ExtractPromptArguments().Select(a => new SQL.Models.PromptArgument()
+        var item = await serverRepository.AddServerPrompt(server.Id, typed.Prompt,
+            typed.Name,
+            typed.Description,
+            arguments: typed.Prompt.ExtractPromptArguments().Select(a => new SQL.Models.PromptArgument()
             {
                 Name = a,
                 Required = true
@@ -70,15 +72,17 @@ public static partial class ModelContextEditor
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpPrompt>(cancellationToken);
         var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException();
-
-        if (!string.IsNullOrEmpty(dto.Description))
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<UpdateMcpPrompt>() ?? throw new Exception();
+        if (!string.IsNullOrEmpty(typed.Description))
         {
-            prompt.Description = dto.Description;
+            prompt.Description = typed.Description;
         }
 
-        if (!string.IsNullOrEmpty(dto.Prompt))
+        if (!string.IsNullOrEmpty(typed.Prompt))
         {
-            prompt.PromptTemplate = dto.Prompt;
+            prompt.PromptTemplate = typed.Prompt;
         }
 
         var usedArguments = prompt.PromptTemplate.ExtractPromptArguments();
@@ -137,14 +141,18 @@ public static partial class ModelContextEditor
             Description = newDescription
         }, cancellationToken);
 
-        if (dto.Required.HasValue)
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<UpdateMcpPromptArgument>() ?? throw new Exception();
+
+        if (typed.Required.HasValue)
         {
-            promptArgument.Required = dto.Required;
+            promptArgument.Required = typed.Required;
         }
 
-        if (!string.IsNullOrEmpty(dto.Description))
+        if (!string.IsNullOrEmpty(typed.Description))
         {
-            promptArgument.Description = dto.Description;
+            promptArgument.Description = typed.Description;
         }
 
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
@@ -167,8 +175,11 @@ public static partial class ModelContextEditor
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var dto = await requestContext.Server.GetElicitResponse<ConfirmDeletePrompt>(cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<ConfirmDeletePrompt>() ?? throw new Exception();
 
-        if (dto.Name?.Trim() != promptName.Trim())
+        if (typed.Name?.Trim() != promptName.Trim())
             return $"Confirmation does not match name '{promptName}'".ToErrorCallToolResponse();
 
         var prompt = server.Prompts.FirstOrDefault(z => z.Name == promptName) ?? throw new ArgumentException();

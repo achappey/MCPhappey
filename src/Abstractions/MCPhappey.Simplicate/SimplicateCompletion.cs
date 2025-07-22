@@ -87,9 +87,33 @@ public class SimplicateCompletion(
             value => $"hrm/team?q[name]=*{value}*&sort=name&select=name",
             item => item.Name),
 
+        ["relatieSoort"] = new CompletionSource<SimplicateLabelItem>(
+            value => $"crm/relationtype?q[label]=*{value}*&sort=label&select=label",
+            item => item.Label),
+
+        ["salesBron"] = new CompletionSource<SimplicateNameItem>(
+            value => $"sales/salessource?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name),
+
+        ["salesReden"] = new CompletionSource<SimplicateNameItem>(
+            value => $"sales/salesreason?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name),
+
+        ["salesVoortgang"] = new CompletionSource<SimplicateLabelItem>(
+            value => $"sales/salesprogress?q[label]=*{value}*&sort=label&select=label",
+            item => item.Label),
+
         ["projectNaam"] = new CompletionSource<SimplicateNameItem>(
             value => $"projects/project?q[name]=*{value}*&sort=name&select=name",
             item => item.Name),
+
+        ["projectdienstNaam"] = new CompletionSource<SimplicateNameItem>(
+            value => $"projects/service?q[name]=*{value}*&sort=name&select=name",
+            item => item.Name),
+
+        ["urenType"] = new CompletionSource<SimplicateLabelItem>(
+            value => $"hours/hourstype?q[label]=*{value}*&sort=label&select=label",
+            item => item.Label),
 
         ["medewerkerNaam"] = new CompletionSource<SimplicateNameItem>(
             value => $"hrm/employee?q[name]=*{value}*&sort=name&select=name&q[is_user]=true",
@@ -138,6 +162,12 @@ public class SimplicateCompletion(
     {
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
+    }
+
+    public class SimplicateLabelItem
+    {
+        [JsonPropertyName("label")]
+        public string Label { get; set; } = string.Empty;
     }
 
     public class CompletionSource<T>(Func<string, string> urlFactory, Func<T, string> selector)

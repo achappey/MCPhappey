@@ -1,6 +1,78 @@
 {
   "prompts": [
     {
+      "prompt": "Zoek naar project met naam {projectNaam} in de projectlijst en selecteer de id. Zoek daarna naar projectdienst {projectdienstNaam} en selecteer de id. Zoek ook naar urentype {urenType} en selecteer de id. Gebruik ReadResource om te zoeken in de lijsten. Schrijf {uren} uur, gelijkmatig verdeeld over alle werkdagen van de **laatst volledig afgesloten week**. Schrijf het overzicht per dag en zorg dat het totaal exact {uren} uur is. Schrijf de uren direct nadat je alle gegevens gevonden hebt, je hoeft niet nogmaals om bevestiging te vragen. Gebruik als omschrijving: '{omschrijving}'",
+      "template": {
+        "name": "project-uren-verdelen-laatste-week",
+        "description": "Verdeelt het opgegeven aantal uren gelijkmatig over de werkdagen van de laatst afgesloten week en schrijft deze weg op het opgegeven project.",
+        "arguments": [
+          {
+            "name": "uren",
+            "description": "Het totaal aantal te schrijven uren.",
+            "required": true
+          },
+          {
+            "name": "projectNaam",
+            "description": "Naam van het project waarop uren geschreven moeten worden.",
+            "required": true
+          },
+          {
+            "name": "projectdienstNaam",
+            "description": "Naam van het projectdienst waarop uren geschreven moeten worden.",
+            "required": true
+          },
+          {
+            "name": "urenType",
+            "description": "Naam van de urentype.",
+            "required": true
+          },
+          {
+            "name": "omschrijving",
+            "description": "Omschrijving en/of notities."
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Zoek het project met naam {projectNaam} en selecteer de id. Zoek daarna de projectdienst {projectdienstNaam} en selecteer de id. Zoek ook het urentype {urenType} en selecteer de id. Gebruik ReadResource voor deze zoekacties. Schrijf {uren} uur op de opgegeven datum {datum}. Schrijf de uren direct nadat je alle gegevens gevonden hebt, je hoeft niet nogmaals om bevestiging te vragen. Gebruik als omschrijving: '{omschrijving}'.",
+      "template": {
+        "name": "project-uren-invullen-per-datum",
+        "description": "Boekt het opgegeven aantal uren op de opgegeven datum, zonder verdeling over meerdere dagen.",
+        "arguments": [
+          {
+            "name": "uren",
+            "description": "Aantal te schrijven uren.",
+            "required": true
+          },
+          {
+            "name": "datum",
+            "description": "Datum waarop de uren geboekt moeten worden (YYYY-MM-DD).",
+            "required": true
+          },
+          {
+            "name": "projectNaam",
+            "description": "Naam van het project.",
+            "required": true
+          },
+          {
+            "name": "projectdienstNaam",
+            "description": "Naam van het projectdienst.",
+            "required": true
+          },
+          {
+            "name": "urenType",
+            "description": "Naam van het urentype.",
+            "required": true
+          },
+          {
+            "name": "omschrijving",
+            "description": "Omschrijving en/of notities."
+          }
+        ]
+      }
+    },
+
+    {
       "prompt": "Geef per project het totaal aantal geregistreerde uren waarvan de goedkeuringsstatus gelijk is aan {approvalStatus}. Toon de projectnaam en het totaal aantal uur per project.",
       "template": {
         "name": "uren-per-project-goedkeuringsstatus",

@@ -23,6 +23,16 @@ public class NewMcpServer
     public bool? Secured { get; set; }
 }
 
+
+[Description("Please fill in the MCP Server details.")]
+public class CloneMcpServer
+{
+    [JsonPropertyName("name")]
+    [Required]
+    [Description("The MCP server name.")]
+    public string Name { get; set; } = default!;
+}
+
 [Description("Please fill in the MCP Server owner details.")]
 public class McpServerOwner
 {

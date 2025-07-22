@@ -13,34 +13,54 @@ public static class GraphUsers
 {
     [Description("Create a new user")]
     [McpServerTool(Name = "GraphUsers_CreateUser", ReadOnly = false)]
-    public static async Task<ContentBlock?> GraphUsers_CreateUser(
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+    public static async Task<CallToolResult?> GraphUsers_CreateUser(
+      IServiceProvider serviceProvider,
+      RequestContext<CallToolRequestParams> requestContext,
+      [Description("The users's given name.")] string? givenName = null,
+      [Description("The users's display name.")] string? displayName = null,
+      [Description("The users's principal name.")] string? userPrincipalName = null,
+      [Description("The users's mail nickname.")] string? mailNickname = null,
+      [Description("Account enabled.")] bool? accountEnabled = null,
+      [Description("Force password change.")] bool? forceChangePasswordNextSignIn = null,
+      [Description("The users's password.")] string? password = null,
+      CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
 
-        var dto = await requestContext.Server.GetElicitResponse<GraphNewUser>(cancellationToken);
+        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewUser>(
+            new GraphNewUser
+            {
+                GivenName = givenName,
+                DisplayName = displayName ?? string.Empty,
+                UserPrincipalName = userPrincipalName ?? string.Empty,
+                MailNickname = mailNickname ?? string.Empty,
+                AccountEnabled = accountEnabled ?? true,
+                ForceChangePasswordNextSignIn = forceChangePasswordNextSignIn ?? true,
+                Password = password ?? string.Empty
+            },
+            cancellationToken
+        );
+        if (notAccepted != null) return notAccepted;
+
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var user = new User()
         {
-            DisplayName = dto?.DisplayName,
-            GivenName = dto?.GivenName,
-            MailNickname = dto?.MailNickname,
-            AccountEnabled = dto?.AccountEnabled,
+            DisplayName = typed?.DisplayName,
+            GivenName = typed?.GivenName,
+            MailNickname = typed?.MailNickname,
+            AccountEnabled = typed?.AccountEnabled,
             PasswordProfile = new PasswordProfile()
             {
-                ForceChangePasswordNextSignIn = dto?.ForceChangePasswordNextSignIn,
-                Password = dto?.Password
+                ForceChangePasswordNextSignIn = typed?.ForceChangePasswordNextSignIn,
+                Password = typed?.Password
             },
-            UserPrincipalName = dto?.UserPrincipalName
+            UserPrincipalName = typed?.UserPrincipalName
         };
 
         var newUser = await client.Users.PostAsync(user, cancellationToken: cancellationToken);
 
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser.Id}");
+        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser.Id}").ToCallToolResult();
     }
-
 
     [Description("Please fill in the user details.")]
     public class GraphNewUser

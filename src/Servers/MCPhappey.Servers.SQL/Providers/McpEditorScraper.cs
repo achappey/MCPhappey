@@ -26,7 +26,6 @@ public class McpEditorScraper : IContentScraper
         {
             var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
             var servers = await serverRepository.GetServers(cancellationToken);
-            //servers.First().Owners.Select(a => a.)
             var totalServers = servers.Count;
             var totalPrompts = servers.Sum(a => a.Prompts?.Count ?? 0);
             var totalResources = servers.Sum(a => a.Resources?.Count ?? 0);

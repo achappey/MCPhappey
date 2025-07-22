@@ -11,7 +11,7 @@ public static class GraphTeams
 {
     [Description("Create a new Microsoft Teams.")]
     [McpServerTool(Name = "GraphTeams_CreateTeam", ReadOnly = false, Destructive = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphTeams_CreateTeam(
+    public static async Task<CallToolResult?> GraphTeams_CreateTeam(
         [Description("Displayname of the new channel")]
         string displayName,
         IServiceProvider serviceProvider,
@@ -21,18 +21,22 @@ public static class GraphTeams
         string? description = null,
         CancellationToken cancellationToken = default)
     {
-        var dto = await requestContext.Server.GetElicitResponse(new GraphNewTeam()
-        {
-            DisplayName = displayName,
-            Description = description,
-            Visibility = teamVisibilityType ?? TeamVisibilityType.Private,
-        }, cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+         new GraphNewTeam
+         {
+             DisplayName = displayName,
+             Description = description,
+             Visibility = teamVisibilityType ?? TeamVisibilityType.Private
+         },
+         cancellationToken
+     );
+        if (notAccepted != null) return notAccepted;
 
         var newTeam = new Team
         {
-            Visibility = dto?.Visibility,
-            DisplayName = dto?.DisplayName,
-            Description = dto?.Description,
+            Visibility = typed?.Visibility,
+            DisplayName = typed?.DisplayName,
+            Description = typed?.Description,
             AdditionalData = new Dictionary<string, object>
             {
                 {
@@ -44,12 +48,12 @@ public static class GraphTeams
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var result = await client.Teams.PostAsync(newTeam, cancellationToken: cancellationToken);
 
-        return (result ?? newTeam).ToJsonContentBlock("https://graph.microsoft.com/beta/teams");
+        return (result ?? newTeam).ToJsonContentBlock("https://graph.microsoft.com/beta/teams").ToCallToolResult();
     }
 
     [Description("Create a new channel in a Microsoft Teams.")]
     [McpServerTool(Name = "GraphTeams_CreateChannel", ReadOnly = false, Destructive = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphTeams_CreateChannel(
+    public static async Task<CallToolResult?> GraphTeams_CreateChannel(
         string teamId,
          [Description("Displayname of the new channel")]
         string displayName,
@@ -64,64 +68,63 @@ public static class GraphTeams
         var teams = await client.Teams[teamId]
                            .GetAsync(cancellationToken: cancellationToken);
 
-        var resultForm = await requestContext.Server.GetElicitResponse(new GraphNewTeamChannel()
-        {
-            DisplayName = displayName,
-            Description = description,
-            MembershipType = membershipType ?? ChannelMembershipType.Standard
-        }, cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewTeamChannel>(
+            new GraphNewTeamChannel
+            {
+                DisplayName = displayName,
+                Description = description,
+                MembershipType = membershipType ?? ChannelMembershipType.Standard
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
 
         var newItem = new Channel
         {
-            DisplayName = resultForm.DisplayName,
-            Description = resultForm.Description,
-            MembershipType = resultForm.MembershipType
+            DisplayName = typed.DisplayName,
+            Description = typed.Description,
+            MembershipType = typed.MembershipType
         };
 
         var result = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
 
-        return (result ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels");
-    }
-
-    [Description("Create a new channel in a Microsoft Teams.")]
-    [McpServerTool(Name = "GraphTeams_CreateChannel", ReadOnly = false, Destructive = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphTeams_CreateChannel(
-        string teamId,
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
-    {
-        var dto = await requestContext.Server.GetElicitResponse<GraphNewTeamChannel>(cancellationToken);
-        var newItem = new Channel
-        {
-            DisplayName = dto?.DisplayName,
-            Description = dto?.Description,
-            MembershipType = dto?.MembershipType
-        };
-
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-        var result = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
-
-        return (result ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels");
+        return (result ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels").ToCallToolResult();
     }
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
     [McpServerTool(Name = "GraphTeams_CreateChannelMessage", ReadOnly = false, Destructive = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphTeams_CreateChannelMessage(
-        string teamId,
-        string channelId,
+    public static async Task<CallToolResult?> GraphTeams_CreateChannelMessage(
+        [Description("ID of the Team.")] string teamId,
+        [Description("ID of the Channel.")] string channelId,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Subject of the message.")] string? subject = null,
+        [Description("Importance of the message.")] ChatMessageImportance? importance = ChatMessageImportance.Normal,
+        [Description("Content (body) of the message.")] string? content = null,
         CancellationToken cancellationToken = default)
     {
-        var dto = await requestContext.Server.GetElicitResponse<GraphNewChannelMessage>(cancellationToken);
+        // Vul defaults uit de parameters direct in
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewChannelMessage>(
+            new GraphNewChannelMessage
+            {
+                Subject = subject,
+                Importance = importance,
+                Content = content
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
+
         var newItem = new ChatMessage
         {
-            Subject = dto?.Subject,
-            Importance = dto?.Importance,
+            Subject = typed?.Subject,
+            Importance = typed?.Importance,
             Body = new ItemBody
             {
-                Content = dto?.Content,
+                Content = typed?.Content,
             },
         };
 
@@ -132,7 +135,7 @@ public static class GraphTeams
             .PostAsync(newItem, cancellationToken: cancellationToken);
 
         return (result ?? newItem)
-            .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages");
+            .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages").ToCallToolResult();
     }
 
 }

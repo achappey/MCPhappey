@@ -12,7 +12,7 @@ public static partial class GraphPlanner
 {
     [Description("Create a new Microsoft Planner task")]
     [McpServerTool(Name = "GraphPlanner_CreateTask", Title = "Create a new Microsoft Planner task", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphPlanner_CreateTask(
+    public static async Task<CallToolResult?> GraphPlanner_CreateTask(
             [Description("Planner id")]
             string plannerId,
             [Description("Bucket id")]
@@ -30,31 +30,36 @@ public static partial class GraphPlanner
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var plan = await client.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var bucket = await client.Planner.Plans[plannerId].Buckets[bucketId].GetAsync((config) => { }, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse(new GraphNewPlannerTask()
-        {
-            Title = title,
-            PercentComplete = percentComplete,
-            DueDateTime = dueDateTime,
-            Priority = priority,
-        }, cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewPlannerTask>(
+            new GraphNewPlannerTask
+            {
+                Title = title,
+                PercentComplete = percentComplete,
+                DueDateTime = dueDateTime,
+                Priority = priority
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
 
         var result = await client.Planner.Tasks.PostAsync(new PlannerTask
         {
-            Title = dto?.Title,
+            Title = typed?.Title,
             PlanId = plannerId,
             BucketId = bucketId,
-            Priority = dto?.Priority,
-            PercentComplete = dto?.PercentComplete,
-            DueDateTime = dto?.DueDateTime
+            Priority = typed?.Priority,
+            PercentComplete = typed?.PercentComplete,
+            DueDateTime = typed?.DueDateTime
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/tasks/{result.Id}");
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/tasks/{result.Id}").ToCallToolResult();
     }
 
 
     [Description("Create a new Planner bucket in a plan")]
     [McpServerTool(Name = "GraphPlanner_CreateBucket", Title = "Create a new Planner bucket in a plan", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphPlanner_CreateBucket(
+    public static async Task<CallToolResult?> GraphPlanner_CreateBucket(
         [Description("Planner id (plan to add bucket to)")]
         string plannerId,
         [Description("Name of the new bucket")]
@@ -70,25 +75,28 @@ public static partial class GraphPlanner
         var planner = await client.Planner.Plans[plannerId]
                                .GetAsync(cancellationToken: cancellationToken);
 
-        var resultDto = await requestContext.Server.GetElicitResponse(new GraphNewPlannerBucket()
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewPlannerBucket>(new GraphNewPlannerBucket()
         {
             Name = bucketName,
             OrderHint = orderHint
         }, cancellationToken);
 
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
+
         var result = await client.Planner.Buckets.PostAsync(new PlannerBucket
         {
-            Name = bucketName,
+            Name = typed.Name,
             PlanId = plannerId,
-            OrderHint = orderHint
+            OrderHint = typed.OrderHint
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{plannerId}/buckets");
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{plannerId}/buckets").ToCallToolResult();
     }
 
     [Description("Create a new Planner plan")]
     [McpServerTool(Name = "GraphPlanner_CreatePlan", Title = "Create a new Planner plan", ReadOnly = false, OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphPlanner_CreatePlan(
+    public static async Task<CallToolResult?> GraphPlanner_CreatePlan(
             [Description("Group id (Microsoft 365 group that will own the plan)")]
         string groupId,
             [Description("Title of the new Planner plan")]
@@ -101,18 +109,24 @@ public static partial class GraphPlanner
         var group = await client.Groups[groupId]
                          .GetAsync(cancellationToken: cancellationToken);
 
-        var resultDto = await requestContext.Server.GetElicitResponse(new GraphNewPlannerPlan()
-        {
-            Title = planTitle
-        }, cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewPlannerPlan>(
+            new GraphNewPlannerPlan
+            {
+                Title = planTitle
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
 
         var result = await client.Planner.Plans.PostAsync(new PlannerPlan
         {
-            Title = resultDto.Title,
+            Title = typed.Title,
             Owner = groupId
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{result?.Id}");
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{result?.Id}").ToCallToolResult();
     }
 
 }

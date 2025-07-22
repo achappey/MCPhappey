@@ -32,7 +32,6 @@ public static partial class ModelContextResourceExtensions
                     request.Services!.WithHeaders(headers);
 
                     var logger = request.Services!.GetRequiredService<ILogger<ResourcesCapability>>();
-
                     logger.LogInformation(
                         "Action={Action} Server={Server} Resource={Resource}",
                         "ReadResource",

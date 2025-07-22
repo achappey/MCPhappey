@@ -40,17 +40,21 @@ public static partial class ModelContextEditor
             Description = description
         }, cancellationToken);
 
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<AddMcpResource>() ?? throw new Exception();
+
         var resource = await downloadService.ScrapeContentAsync(
                 serviceProvider,
                 requestContext.Server,
-                dto.Uri, cancellationToken);
+                typed.Uri, cancellationToken);
 
         if (resource.Any())
         {
-            var item = await serverRepository.AddServerResource(server.Id, dto.Uri, dto.Name, dto.Description);
+            var item = await serverRepository.AddServerResource(server.Id, typed.Uri, typed.Name, typed.Description);
 
             return JsonSerializer.Serialize(item.ToResource())
-                .ToJsonCallToolResponse(dto.Uri);
+                .ToJsonCallToolResponse(typed.Uri);
         }
 
         return "No resource found".ToErrorCallToolResponse();
@@ -70,14 +74,18 @@ public static partial class ModelContextEditor
         var dto = await requestContext.Server.GetElicitResponse<UpdateMcpResource>(cancellationToken);
         var resource = server.Resources.FirstOrDefault(a => a.Name == resourceName) ?? throw new ArgumentNullException();
 
-        if (!string.IsNullOrEmpty(dto.Uri))
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<UpdateMcpResource>() ?? throw new Exception();
+
+        if (!string.IsNullOrEmpty(typed.Uri))
         {
-            resource.Uri = dto.Uri;
+            resource.Uri = typed.Uri;
         }
 
-        if (!string.IsNullOrEmpty(dto.Description))
+        if (!string.IsNullOrEmpty(typed.Description))
         {
-            resource.Description = dto.Description;
+            resource.Description = typed.Description;
         }
 
         var updated = await serverRepository.UpdateResource(resource);
@@ -105,8 +113,11 @@ public static partial class ModelContextEditor
             return "Access denied.".ToErrorCallToolResponse();
 
         var dto = await requestContext.Server.GetElicitResponse<ConfirmDeleteResource>(cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<ConfirmDeleteResource>() ?? throw new Exception();
 
-        if (dto.Name?.Trim() != resourceName.Trim())
+        if (typed.Name?.Trim() != resourceName.Trim())
             return $"Confirmation does not match name '{resourceName}'".ToErrorCallToolResponse();
 
         var resource = server.Resources.FirstOrDefault(a => a.Name == resourceName) ?? throw new ArgumentNullException();

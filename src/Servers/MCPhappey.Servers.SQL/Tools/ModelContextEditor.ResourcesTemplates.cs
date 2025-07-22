@@ -38,17 +38,20 @@ public static partial class ModelContextEditor
             Name = name,
             Description = description
         }, cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<AddMcpResourceTemplate>() ?? throw new Exception();
 
-        var usedArguments = dto.UriTemplate.ExtractPromptArguments();
+        var usedArguments = typed.UriTemplate.ExtractPromptArguments();
 
         if (usedArguments.Count == 0)
         {
             return "Invalid uriTemplate: No arguments found. Add arguments to the uriTemplate or create a reaource instead.".ToErrorCallToolResponse();
         }
 
-        var item = await serverRepository.AddServerResourceTemplate(server.Id, dto.UriTemplate, dto.Name, dto.Description);
+        var item = await serverRepository.AddServerResourceTemplate(server.Id, typed.UriTemplate, typed.Name, typed.Description);
 
-        return JsonSerializer.Serialize(item.ToResourceTemplate()).ToJsonCallToolResponse(dto.UriTemplate);
+        return JsonSerializer.Serialize(item.ToResourceTemplate()).ToJsonCallToolResponse(typed.UriTemplate);
     }
 
     [Description("Updates a resource template of a MCP-server")]
@@ -70,17 +73,20 @@ public static partial class ModelContextEditor
             Description = newDescription,
             UriTemplate = newUriTemplate
         }, cancellationToken);
-
+        
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<UpdateMcpResourceTemplate>() ?? throw new Exception();
         var resource = server.ResourceTemplates.FirstOrDefault(a => a.Name == resourceTemplateName) ?? throw new ArgumentNullException();
 
-        if (!string.IsNullOrEmpty(dto.UriTemplate))
+        if (!string.IsNullOrEmpty(typed.UriTemplate))
         {
-            resource.TemplateUri = dto.UriTemplate;
+            resource.TemplateUri = typed.UriTemplate;
         }
 
-        if (!string.IsNullOrEmpty(dto.Description))
+        if (!string.IsNullOrEmpty(typed.Description))
         {
-            resource.Description = dto.Description;
+            resource.Description = typed.Description;
         }
 
         var updated = await serverRepository.UpdateResourceTemplate(resource);
@@ -101,8 +107,11 @@ public static partial class ModelContextEditor
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var dto = await requestContext.Server.GetElicitResponse<ConfirmDeleteResourceTemplate>(cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<ConfirmDeleteResourceTemplate>() ?? throw new Exception();
 
-        if (dto.Name?.Trim() != resourceTemplateName.Trim())
+        if (typed.Name?.Trim() != resourceTemplateName.Trim())
             return $"Confirmation does not match name '{resourceTemplateName}'".ToErrorCallToolResponse();
 
         var resource = server.ResourceTemplates.FirstOrDefault(a => a.Name == resourceTemplateName) ?? throw new ArgumentNullException();

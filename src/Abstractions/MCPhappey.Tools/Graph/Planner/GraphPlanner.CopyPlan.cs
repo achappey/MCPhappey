@@ -12,8 +12,8 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static partial class GraphPlanner
 {
     [Description("Copy a Planner")]
-    [McpServerTool(Name = "GraphPlanner_CopyPlan", Title = "Copy a Planner", ReadOnly = false, UseStructuredContent = true, OpenWorld = false)]
-    public static async Task<PlannerPlan?> GraphPlanner_CopyPlan(
+    [McpServerTool(Name = "GraphPlanner_CopyPlan", Title = "Copy a Planner", ReadOnly = false, OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphPlanner_CopyPlan(
         [Description("The id of the original Planner to copy.")]
         string plannerId,
         [Description("Target group id. Where the new Planner should be created.")]
@@ -30,11 +30,16 @@ public static partial class GraphPlanner
         var plan = await graphClient.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var targetGroup = await graphClient.Groups[groupId].GetAsync((config) => { }, cancellationToken);
 
-        var dto = await requestContext.Server.GetElicitResponse(new GraphCopyPlanner()
-        {
-            Title = title
-        }, cancellationToken);
-
+        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphCopyPlanner>(
+            new GraphCopyPlanner
+            {
+                Title = title
+            },
+            cancellationToken
+        );
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
+        
         var httpClient = await serviceProvider.GetGraphHttpClient(mcpServer);
         var buckets = await graphClient.Planner.Plans[plannerId].Buckets.GetAsync((config) => { }, cancellationToken);
         var tasks = await graphClient.Planner.Plans[plannerId].Tasks.GetAsync((config) => { }, cancellationToken);
@@ -42,7 +47,7 @@ public static partial class GraphPlanner
         var newPlan = await graphClient.Planner.Plans
             .PostAsync(new PlannerPlan
             {
-                Title = dto.Title,
+                Title = typed.Title,
                 Owner = groupId
             }, cancellationToken: cancellationToken);
 
@@ -143,7 +148,7 @@ public static partial class GraphPlanner
 
         var newPlanner = await graphClient.Planner.Plans[newPlan?.Id].GetAsync((config) => { }, cancellationToken);
 
-        return newPlanner;
+        return newPlanner.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{newPlanner?.Id}").ToCallToolResult();
     }
 
 }

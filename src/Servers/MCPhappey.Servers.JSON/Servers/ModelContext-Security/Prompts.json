@@ -1,6 +1,24 @@
 {
   "prompts": [
     {
+      "prompt": "Get all MCP servers. For each server, look up the names of all assigned security groups and check if the server's secured option is enabled. Show a table with the server name, assigned security group names, and whether the server is secured (true/false).",
+      "template": {
+        "name": "list-servers-securitygroups",
+        "title": "List servers and security groups",
+        "description": "Retrieves all MCP servers and displays for each server the assigned security groups and whether secured mode is enabled.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Get all MCP servers. For each server, look up the Entra display names of all owners (by user ID). Show a table listing each server and its owner names.",
+      "template": {
+        "name": "list-servers-owners",
+        "title": "List servers and owners",
+        "description": "Retrieves all MCP servers and displays the display names of all owners for each server.",
+        "arguments": []
+      }
+    },
+    {
       "prompt": "Find the Entra user ID of user {userDisplayName}. When found, add the user as an owner to MCP server {server}.",
       "template": {
         "name": "add-server-owner",

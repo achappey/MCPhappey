@@ -28,19 +28,23 @@ public static partial class ModelContextSecurityEditor
             UserId = ownerUserId
         }, cancellationToken);
 
-        if (server.Owners.Any(a => a.Id == dto.UserId) == true)
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<McpServerOwner>() ?? throw new Exception();
+
+        if (server.Owners.Any(a => a.Id == typed.UserId) == true)
         {
-            return $"Owner {dto.UserId} already exists on server {serverName}.".ToErrorCallToolResponse();
+            return $"Owner {typed.UserId} already exists on server {serverName}.".ToErrorCallToolResponse();
         }
 
-        if (!dto.UserId.Equals(ownerUserId, StringComparison.OrdinalIgnoreCase))
+        if (!typed.UserId.Equals(ownerUserId, StringComparison.OrdinalIgnoreCase))
         {
-            return $"Owner {dto.UserId} does not match {ownerUserId}.".ToErrorCallToolResponse();
+            return $"Owner {typed.UserId} does not match {ownerUserId}.".ToErrorCallToolResponse();
         }
 
-        await serverRepository.AddServerOwner(server.Id, dto.UserId);
+        await serverRepository.AddServerOwner(server.Id, typed.UserId);
 
-        return $"Owner {dto.UserId} added to MCP server {serverName}".ToTextCallToolResponse();
+        return $"Owner {typed.UserId} added to MCP server {serverName}".ToTextCallToolResponse();
     }
 
     [Description("Removes an owner from a MCP-server")]
@@ -67,15 +71,18 @@ public static partial class ModelContextSecurityEditor
         {
             UserId = ownerUserId
         }, cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<McpServerOwner>() ?? throw new Exception();
 
-        if (!dto.UserId.Equals(ownerUserId, StringComparison.OrdinalIgnoreCase))
+        if (!typed.UserId.Equals(ownerUserId, StringComparison.OrdinalIgnoreCase))
         {
-            return $"Owner {dto.UserId} does not match {ownerUserId}.".ToErrorCallToolResponse();
+            return $"Owner {typed.UserId} does not match {ownerUserId}.".ToErrorCallToolResponse();
         }
 
-        await serverRepository.DeleteServerOwner(server.Id, dto.UserId);
+        await serverRepository.DeleteServerOwner(server.Id, typed.UserId);
 
-        return $"Owner {dto.UserId} deleted from MCP server {serverName}".ToTextCallToolResponse();
+        return $"Owner {typed.UserId} deleted from MCP server {serverName}".ToTextCallToolResponse();
     }
 
     [Description("Updates the security of a MCP-server")]
@@ -92,10 +99,13 @@ public static partial class ModelContextSecurityEditor
         {
             Secured = server.Secured
         }, cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<UpdateMcpServerSecurity>() ?? throw new Exception();
 
-        if (dto.Secured.HasValue)
+        if (typed.Secured.HasValue)
         {
-            server.Secured = dto.Secured.Value;
+            server.Secured = typed.Secured.Value;
         }
 
         var updated = await serverRepository.UpdateServer(server);
@@ -124,18 +134,21 @@ public static partial class ModelContextSecurityEditor
         {
             GroupId = securityGroupId
         }, cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        var typed = dto?.GetTypedResult<McpSecurityGroup>() ?? throw new Exception();
 
-        if (server.Groups.Any(g => g.Id == dto.GroupId))
-            return $"Group {dto.GroupId} already assigned.".ToErrorCallToolResponse();
+        if (server.Groups.Any(g => g.Id == typed.GroupId))
+            return $"Group {typed.GroupId} already assigned.".ToErrorCallToolResponse();
 
-        if (!dto.GroupId.Equals(securityGroupId, StringComparison.OrdinalIgnoreCase))
+        if (!typed.GroupId.Equals(securityGroupId, StringComparison.OrdinalIgnoreCase))
         {
-            return $"Group {dto.GroupId} does not match {securityGroupId}.".ToErrorCallToolResponse();
+            return $"Group {typed.GroupId} does not match {securityGroupId}.".ToErrorCallToolResponse();
         }
 
-        await serverRepository.AddServerGroup(server.Id, dto.GroupId);
+        await serverRepository.AddServerGroup(server.Id, typed.GroupId);
 
-        return $"Security group {dto.GroupId} added to MCP server {serverName}".ToTextCallToolResponse();
+        return $"Security group {typed.GroupId} added to MCP server {serverName}".ToTextCallToolResponse();
     }
 
     [Description("Removes a security group from a MCP-server")]
@@ -153,18 +166,22 @@ public static partial class ModelContextSecurityEditor
         {
             GroupId = securityGroupId
         }, cancellationToken);
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+        
+        var typed = dto?.GetTypedResult<McpSecurityGroup>() ?? throw new Exception();
 
-        if (!server.Groups.Any(g => g.Id == dto.GroupId))
-            return $"Group {dto.GroupId} not assigned.".ToErrorCallToolResponse();
+        if (!server.Groups.Any(g => g.Id == typed.GroupId))
+            return $"Group {typed.GroupId} not assigned.".ToErrorCallToolResponse();
 
-        if (!dto.GroupId.Equals(securityGroupId, StringComparison.OrdinalIgnoreCase))
+        if (!typed.GroupId.Equals(securityGroupId, StringComparison.OrdinalIgnoreCase))
         {
-            return $"Group {dto.GroupId} does not match {securityGroupId}.".ToErrorCallToolResponse();
+            return $"Group {typed.GroupId} does not match {securityGroupId}.".ToErrorCallToolResponse();
         }
 
-        await serverRepository.DeleteServerGroup(server.Id, dto.GroupId);
+        await serverRepository.DeleteServerGroup(server.Id, typed.GroupId);
 
-        return $"Security group {dto.GroupId} removed from MCP server {serverName}".ToTextCallToolResponse();
+        return $"Security group {typed.GroupId} removed from MCP server {serverName}".ToTextCallToolResponse();
     }
 }
 
