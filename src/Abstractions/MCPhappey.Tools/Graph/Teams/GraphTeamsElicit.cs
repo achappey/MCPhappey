@@ -64,6 +64,7 @@ public class GraphNewChannelMessage
     public string? Content { get; set; }
 
     [JsonPropertyName("importance")]
+    [Required]
     [Description("Importance of the channel message.")]
     public ChatMessageImportance? Importance { get; set; }
 

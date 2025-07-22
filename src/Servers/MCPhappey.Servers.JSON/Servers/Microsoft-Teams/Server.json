@@ -5,6 +5,6 @@
   },
   "plugins": ["MCPhappey.Tools.Graph.Teams.GraphTeams, MCPhappey.Tools"],
   "obo": {
-    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Team.ReadBasic.All https://graph.microsoft.com/Chat.ReadWrite.All https://graph.microsoft.com/Channel.ReadBasic.All https://graph.microsoft.com/ChannelMessage.Send https://graph.microsoft.com/ChatMessage.Send https://graph.microsoft.com/Presence.ReadWrite https://graph.microsoft.com/TeamworkDevice.ReadWrite.All https://graph.microsoft.com/TeamworkTag.ReadWrite https://graph.microsoft.com/TeamsTab.ReadWrite.All"
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Group.ReadWrite.All https://graph.microsoft.com/Chat.ReadWrite.All https://graph.microsoft.com/Channel.ReadBasic.All https://graph.microsoft.com/ChannelMessage.Send https://graph.microsoft.com/ChatMessage.Send https://graph.microsoft.com/Presence.ReadWrite https://graph.microsoft.com/TeamworkDevice.ReadWrite.All https://graph.microsoft.com/TeamworkTag.ReadWrite https://graph.microsoft.com/TeamsTab.ReadWrite.All"
   }
 }

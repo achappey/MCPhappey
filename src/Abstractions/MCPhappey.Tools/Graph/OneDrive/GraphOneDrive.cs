@@ -35,98 +35,98 @@ public static class GraphOneDrive
     }
 
     /// <summary>Create a folder (or Document Set) in OneDrive / SharePoint.</summary>
-/*    [Description("Create a folder in the specified OneDrive or SharePoint document library.")]
-    [McpServerTool(Name = "GraphDrive_CreateFolder", OpenWorld = false)]
-    public static async Task<CallToolResult?> GraphDrive_CreateFolder(
-        [Description("The OneDrive or SharePoint Drive ID.")] string driveId,
-        [Description("The name of the new folder.")] string name,
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        [Description("Folder path within the document library. Leave empty for root. Use slashes for subfolders, e.g. 'Invoices/2025'.")]
-        string? parentPath = "",
-        [Description("The ID of the content type (for Document Set, optional).")]
-        string? contentTypeId = null,
-        CancellationToken cancellationToken = default)
-    {
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
-        // -- Ask user / AI to confirm or override the draft values -----------------
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
-            new GraphNewFolder { Name = name, ContentTypeId = contentTypeId },
-            cancellationToken);
-        if (notAccepted != null) return notAccepted;
-
-        // -- Build the request body ------------------------------------------------
-        var folderItem = new DriveItem
+    /*    [Description("Create a folder in the specified OneDrive or SharePoint document library.")]
+        [McpServerTool(Name = "GraphDrive_CreateFolder", OpenWorld = false)]
+        public static async Task<CallToolResult?> GraphDrive_CreateFolder(
+            [Description("The OneDrive or SharePoint Drive ID.")] string driveId,
+            [Description("The name of the new folder.")] string name,
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            [Description("Folder path within the document library. Leave empty for root. Use slashes for subfolders, e.g. 'Invoices/2025'.")]
+            string? parentPath = "",
+            [Description("The ID of the content type (for Document Set, optional).")]
+            string? contentTypeId = null,
+            CancellationToken cancellationToken = default)
         {
-            Name = typed!.Name,
-            Folder = new Folder(),
-            AdditionalData = new Dictionary<string, object>
-            {
-                ["@microsoft.graph.conflictBehavior"] = "rename"
-            }
-        };
+            var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
-        if (!string.IsNullOrWhiteSpace(typed.ContentTypeId))
-        {
-            folderItem.AdditionalData["contentType"] = new Dictionary<string, object>
+            // -- Ask user / AI to confirm or override the draft values -----------------
+            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+                new GraphNewFolder { Name = name, ContentTypeId = contentTypeId },
+                cancellationToken);
+            if (notAccepted != null) return notAccepted;
+
+            // -- Build the request body ------------------------------------------------
+            var folderItem = new DriveItem
             {
-                ["id"] = typed.ContentTypeId!
+                Name = typed!.Name,
+                Folder = new Folder(),
+                AdditionalData = new Dictionary<string, object>
+                {
+                    ["@microsoft.graph.conflictBehavior"] = "rename"
+                }
             };
-        }
+
+            if (!string.IsNullOrWhiteSpace(typed.ContentTypeId))
+            {
+                folderItem.AdditionalData["contentType"] = new Dictionary<string, object>
+                {
+                    ["id"] = typed.ContentTypeId!
+                };
+            }
 
 
 
-        var itemPath = string.IsNullOrWhiteSpace(parentPath)
-            ? "/root/children"
-            : $"/root:/{parentPath.Trim('/')}:/children";
-var requestInfo = new RequestInformation
-{
-    HttpMethod = Method.POST,
-    UrlTemplate = "https://graph.microsoft.com/beta/drives/{driveId}/root/children",
-    PathParameters = new Dictionary<string, object> { { "driveId", driveId } },
-    Content = BinaryData.FromObjectAsJson(new { name = "Test123456", folder = new { } }).ToStream()
-};
-        var requestInfo2 = new RequestInformation
-        {
-            HttpMethod = Method.POST,
-            UrlTemplate = $"https://graph.microsoft.com/beta/drives/{{driveId}}{itemPath}",
-            PathParameters = new Dictionary<string, object> { { "driveId", driveId } },
-            Content = BinaryData.FromObjectAsJson(folderItem).ToStream()
-        };
+            var itemPath = string.IsNullOrWhiteSpace(parentPath)
+                ? "/root/children"
+                : $"/root:/{parentPath.Trim('/')}:/children";
+    var requestInfo = new RequestInformation
+    {
+        HttpMethod = Method.POST,
+        UrlTemplate = "https://graph.microsoft.com/beta/drives/{driveId}/root/children",
+        PathParameters = new Dictionary<string, object> { { "driveId", driveId } },
+        Content = BinaryData.FromObjectAsJson(new { name = "Test123456", folder = new { } }).ToStream()
+    };
+            var requestInfo2 = new RequestInformation
+            {
+                HttpMethod = Method.POST,
+                UrlTemplate = $"https://graph.microsoft.com/beta/drives/{{driveId}}{itemPath}",
+                PathParameters = new Dictionary<string, object> { { "driveId", driveId } },
+                Content = BinaryData.FromObjectAsJson(folderItem).ToStream()
+            };
 
-        // Hier voeg je de vereiste header toe!
-        if (!string.IsNullOrWhiteSpace(typed.ContentTypeId))
-        {
-            requestInfo.Headers.Add("Prefer", "IdType=\"ImmutableId\"");
-        }
+            // Hier voeg je de vereiste header toe!
+            if (!string.IsNullOrWhiteSpace(typed.ContentTypeId))
+            {
+                requestInfo.Headers.Add("Prefer", "IdType=\"ImmutableId\"");
+            }
 
-        try
-        {
-            var created = await client.RequestAdapter.SendAsync<DriveItem>(
-                requestInfo,
-                DriveItem.CreateFromDiscriminatorValue,
-                cancellationToken: cancellationToken);
-
-
+            try
+            {
+                var created = await client.RequestAdapter.SendAsync<DriveItem>(
+                    requestInfo,
+                    DriveItem.CreateFromDiscriminatorValue,
+                    cancellationToken: cancellationToken);
 
 
-            // -- Build a friendly path for the response ---------------------------
-            var fullPath = string.IsNullOrWhiteSpace(parentPath)
-                         ? typed.Name
-                         : $"{parentPath.TrimEnd('/')}/{typed.Name}";
 
-            return created
-                .ToJsonContentBlock(
-                    $"https://graph.microsoft.com/beta/drives/{driveId}/root:/{fullPath}")
-                .ToCallToolResult();
-        }
-        catch (Exception ex)
-        {
-            return JsonSerializer.Serialize(new { error = ex.Message, exception = ex.ToString() })
-                                 .ToTextCallToolResponse();
-        }
-    }*/
+
+                // -- Build a friendly path for the response ---------------------------
+                var fullPath = string.IsNullOrWhiteSpace(parentPath)
+                             ? typed.Name
+                             : $"{parentPath.TrimEnd('/')}/{typed.Name}";
+
+                return created
+                    .ToJsonContentBlock(
+                        $"https://graph.microsoft.com/beta/drives/{driveId}/root:/{fullPath}")
+                    .ToCallToolResult();
+            }
+            catch (Exception ex)
+            {
+                return JsonSerializer.Serialize(new { error = ex.Message, exception = ex.ToString() })
+                                     .ToTextCallToolResponse();
+            }
+        }*/
     // }
 
 
