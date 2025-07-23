@@ -12,7 +12,7 @@ namespace MCPhappey.Tools.Graph.Users;
 public static class GraphUsers
 {
     [Description("Create a new user")]
-    [McpServerTool(Name = "GraphUsers_CreateUser", ReadOnly = false)]
+    [McpServerTool(Name = "GraphUsers_CreateUser", ReadOnly = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_CreateUser(
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
@@ -20,6 +20,7 @@ public static class GraphUsers
       [Description("The users's display name.")] string? displayName = null,
       [Description("The users's principal name.")] string? userPrincipalName = null,
       [Description("The users's mail nickname.")] string? mailNickname = null,
+      [Description("The users's job title.")] string? jobTitle = null,
       [Description("Account enabled.")] bool? accountEnabled = null,
       [Description("Force password change.")] bool? forceChangePasswordNextSignIn = null,
       [Description("The users's password.")] string? password = null,
@@ -27,7 +28,7 @@ public static class GraphUsers
     {
         var mcpServer = requestContext.Server;
 
-        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewUser>(
+        var (typed, notAccepted) = await mcpServer.TryElicit(
             new GraphNewUser
             {
                 GivenName = givenName,
@@ -35,6 +36,7 @@ public static class GraphUsers
                 UserPrincipalName = userPrincipalName ?? string.Empty,
                 MailNickname = mailNickname ?? string.Empty,
                 AccountEnabled = accountEnabled ?? true,
+                JobTitle = jobTitle ?? string.Empty,
                 ForceChangePasswordNextSignIn = forceChangePasswordNextSignIn ?? true,
                 Password = password ?? string.Empty
             },
@@ -48,6 +50,7 @@ public static class GraphUsers
             DisplayName = typed?.DisplayName,
             GivenName = typed?.GivenName,
             MailNickname = typed?.MailNickname,
+            JobTitle = typed?.JobTitle,
             AccountEnabled = typed?.AccountEnabled,
             PasswordProfile = new PasswordProfile()
             {
@@ -84,6 +87,11 @@ public static class GraphUsers
         [Required]
         [Description("The users's mail nickname.")]
         public string MailNickname { get; set; } = default!;
+
+        [JsonPropertyName("jobTitle")]
+        [Required]
+        [Description("The users's job title.")]
+        public string JobTitle { get; set; } = default!;
 
         [JsonPropertyName("accountEnabled")]
         [Required]

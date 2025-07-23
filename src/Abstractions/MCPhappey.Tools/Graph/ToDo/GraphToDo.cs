@@ -65,6 +65,7 @@ public static class GraphToDo
         public DateTime? DueDateTime { get; set; }
 
         [JsonPropertyName("importance")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         [Description("Importance (low, normal, high).")]
         public Importance? Importance { get; set; }
 

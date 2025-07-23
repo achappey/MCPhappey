@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -23,17 +24,18 @@ public static class GraphOutlookMail
      [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
      CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphSendMail>(
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(
             new GraphSendMail
             {
                 ToRecipients = toRecipients ?? string.Empty,
                 CcRecipients = ccRecipients,
                 Subject = subject,
                 Body = body,
-                BodyType = bodyType
+                BodyType = bodyType ?? BodyType.Text
             },
             cancellationToken
         );
+        
         if (notAccepted != null) return notAccepted;
 
         Message newMessage = new()
@@ -44,19 +46,10 @@ public static class GraphOutlookMail
                 ContentType = typed?.BodyType,
                 Content = typed?.Body
             },
-            ToRecipients = typed?.ToRecipients.Split(",").Select(a => new Recipient()
-            {
-                EmailAddress = new()
-                {
-                    Address = a
-                }
-            }).ToList(),
+            ToRecipients = typed?.ToRecipients.Split(",").Select(a => a.ToRecipient()).ToList(),
             CcRecipients = typed?.CcRecipients?.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                .Select(a => new Recipient
-                {
-                    EmailAddress = new() { Address = a.Trim() }
-                })
-                .ToList()
+                .Select(a => a.ToRecipient())
+                .ToList() ?? []
         };
 
         Microsoft.Graph.Beta.Me.SendMail.SendMailPostRequestBody sendMailPostRequestBody =
@@ -91,11 +84,11 @@ public static class GraphOutlookMail
                 CcRecipients = ccRecipients,
                 Subject = subject,
                 Body = body,
-                BodyType = bodyType
+                BodyType = bodyType ?? BodyType.Text
             },
             cancellationToken
         );
-        
+
         if (notAccepted != null) return notAccepted;
 
         var newMessage = new Message
@@ -103,23 +96,17 @@ public static class GraphOutlookMail
             Subject = typed?.Subject,
             Body = new ItemBody
             {
-                ContentType = typed?.BodyType ?? BodyType.Text,
+                ContentType = typed?.BodyType,
                 Content = typed?.Body
             },
             ToRecipients = typed?.ToRecipients
                 ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                .Select(a => new Recipient
-                {
-                    EmailAddress = new EmailAddress { Address = a.Trim() }
-                })
-                .ToList(),
+                .Select(a => a.ToRecipient())
+                .ToList() ?? [],
             CcRecipients = typed?.CcRecipients
                 ?.Split(",", StringSplitOptions.RemoveEmptyEntries)
-                .Select(a => new Recipient
-                {
-                    EmailAddress = new EmailAddress { Address = a.Trim() }
-                })
-                .ToList()
+                .Select(a => a.ToRecipient())
+                .ToList() ?? []
         };
 
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
@@ -151,6 +138,7 @@ public static class GraphOutlookMail
         public string? Body { get; set; }
 
         [JsonPropertyName("bodyType")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         [Description("Type of the message body (html or text).")]
         public BodyType? BodyType { get; set; }
     }
@@ -179,6 +167,7 @@ public static class GraphOutlookMail
         public string? Body { get; set; }
 
         [JsonPropertyName("bodyType")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         [Description("Type of the message body (html or text).")]
         public BodyType? BodyType { get; set; }
 

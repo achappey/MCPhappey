@@ -13,7 +13,9 @@ namespace MCPhappey.Tools.Graph.Lists;
 public static class GraphLists
 {
     [Description("Create a new Microsoft List item")]
-    [McpServerTool(Name = "GraphLists_CreateListItem", Title = "Create a new Microsoft List item", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphLists_CreateListItem",
+        Title = "Create a new Microsoft List item", ReadOnly = false,
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphLists_CreateListItem(
           string siteId,            // ID of the SharePoint site
           string listId,            // ID of the Microsoft List
@@ -106,15 +108,15 @@ public static class GraphLists
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewSharePointList>(
-      new GraphNewSharePointList
-      {
-          Title = listTitle,
-          Description = description,
-          Template = template
-      },
-      cancellationToken
-  );
+        var (typed, notAccepted) = await mcpServer.TryElicit(
+            new GraphNewSharePointList
+            {
+                Title = listTitle,
+                Description = description,
+                Template = template
+            },
+            cancellationToken
+        );
 
         if (notAccepted != null) return notAccepted;
 
@@ -165,7 +167,7 @@ public static class GraphLists
             .Lists[listId]
             .GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewSharePointColumn>(
+        var (typed, notAccepted) = await mcpServer.TryElicit(
                 new GraphNewSharePointColumn
                 {
                     DisplayName = columnDisplayName,
@@ -231,46 +233,7 @@ public static class GraphLists
         [JsonPropertyName("choices")]
         [Description("Choices (only for 'Choice' type), comma separated")]
         public string? Choices { get; set; }
-
-        // You can add more props for Number, DateTime, etc.
-        public Microsoft.Graph.Beta.Models.ColumnDefinition GetColumnDefinition()
-        {
-            var col = new Microsoft.Graph.Beta.Models.ColumnDefinition
-            {
-                Name = Name,
-                DisplayName = DisplayName ?? Name
-            };
-
-            switch (ColumnType)
-            {
-                case SharePointColumnType.Text:
-                    col.Text = new Microsoft.Graph.Beta.Models.TextColumn();
-                    break;
-                case SharePointColumnType.Number:
-                    col.Number = new Microsoft.Graph.Beta.Models.NumberColumn();
-                    break;
-                case SharePointColumnType.YesNo:
-                    col.Boolean = new Microsoft.Graph.Beta.Models.BooleanColumn();
-                    break;
-                case SharePointColumnType.Choice:
-                    col.Choice = new Microsoft.Graph.Beta.Models.ChoiceColumn
-                    {
-                        Choices = Choices?.Split(',').Select(x => x.Trim()).ToList() ?? new List<string>()
-                    };
-                    break;
-                case SharePointColumnType.DateTime:
-                    col.DateTime = new Microsoft.Graph.Beta.Models.DateTimeColumn();
-                    break;
-                // Add more types as needed
-                default:
-                    throw new NotImplementedException("Unsupported column type");
-            }
-
-            return col;
-        }
     }
-
-
 
     public static Microsoft.Graph.Beta.Models.ColumnDefinition GetColumnDefinition(string name, string displayName, SharePointColumnType columnType, string? choices = null)
     {

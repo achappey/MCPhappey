@@ -22,6 +22,7 @@ public class GraphNewTeam
     public string? FirstChannelName { get; set; }
 
     [JsonPropertyName("visibility")]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     [Description("The team visibility.")]
     public TeamVisibilityType Visibility { get; set; }
 
@@ -46,6 +47,7 @@ public class GraphNewTeamChannel
 
     [JsonPropertyName("membershipType")]
     [Required]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     [Description("The team channel membership type.")]
     public ChannelMembershipType MembershipType { get; set; }
 }
@@ -65,6 +67,7 @@ public class GraphNewChannelMessage
 
     [JsonPropertyName("importance")]
     [Required]
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     [Description("Importance of the channel message.")]
     public ChatMessageImportance? Importance { get; set; }
 

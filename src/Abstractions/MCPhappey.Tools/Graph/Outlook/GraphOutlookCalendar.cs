@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -41,6 +42,7 @@ public static class GraphOutlookCalendar
             cancellationToken
         );
         if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
 
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
@@ -70,7 +72,7 @@ public static class GraphOutlookCalendar
                 [.. typed.Attendees.Split(',')
                     .Select(a => new Attendee
                     {
-                        EmailAddress = new EmailAddress { Address = a.Trim() },
+                        EmailAddress = a.ToEmailAddress(),
                         Type = AttendeeType.Required
                     })]
         };
@@ -96,6 +98,7 @@ public static class GraphOutlookCalendar
         public string? Body { get; set; }
 
         [JsonPropertyName("bodyType")]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
         [Description("Type of the body content (html or text).")]
         public BodyType? BodyType { get; set; }
 

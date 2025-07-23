@@ -109,7 +109,8 @@ public static class GraphTeams
             new GraphNewChannelMessage
             {
                 Subject = subject,
-                Content = content
+                Content = content,
+                Importance = ChatMessageImportance.Normal
             },
             cancellationToken
         );

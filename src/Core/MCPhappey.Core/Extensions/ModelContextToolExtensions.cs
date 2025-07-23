@@ -92,16 +92,7 @@ public static partial class ModelContextToolExtensions
                         server.ServerInfo.Name,
                         request.Params?.Name);
 
-                    try
-                    {
-                        return await tool.InvokeAsync(request, cancellationToken);
-                    }
-                    catch (Exception e)
-                    {
-                        await request.Server.SendMessageNotificationAsync(e.ToString(), LoggingLevel.Error);
-
-                        return JsonSerializer.Serialize(e).ToErrorCallToolResponse();
-                    }
+                    return await tool.InvokeAsync(request, cancellationToken);
                 }
         };
     }

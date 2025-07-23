@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 
 namespace MCPhappey.Servers.SQL.Tools.Models;
 
-[Description("Please confirm the URI of the resource you want to delete.")]
+[Description("Please confirm the name of the resource you want to delete.")]
 public class ConfirmDeleteResource
 {
     [JsonPropertyName("name")]
