@@ -21,6 +21,12 @@ public class NewMcpServer
     [DefaultValue(true)]
     [Description("If the MCP server is secured and needs authentication")]
     public bool? Secured { get; set; }
+
+    [JsonPropertyName("hidden")]
+    [DefaultValue(false)]
+    [Description("If the MCP server should be hidden from listings and named statistics")]
+    public bool? Hidden { get; set; }
+
 }
 
 
@@ -51,16 +57,21 @@ public class DeleteMcpServer
     public string Name { get; set; } = default!;
 }
 
-[Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
+[Description("Update the MCP server.")]
 public class UpdateMcpServer
 {
     [JsonPropertyName("name")]
-    [Description("New name of the resource (optional).")]
+    [Description("New name of the server (optional).")]
     public string? Name { get; set; }
 
     [JsonPropertyName("instructions")]
     [Description("The MCP server instructions.")]
     public string? Instructions { get; set; }
+
+    [JsonPropertyName("hidden")]
+    [DefaultValue(false)]
+    [Description("If the MCP server should be hidden from listings and names statistics")]
+    public bool? Hidden { get; set; }
 }
 
 [Description("Please fill in the security group details.")]

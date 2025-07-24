@@ -20,8 +20,9 @@ public class ServerConfig
     [JsonPropertyName("tools")]
     public IEnumerable<string>? ToolList { get; set; }
 
-    [JsonPropertyName("tools")]
+    [JsonPropertyName("sourceType")]
     public ServerSourceType SourceType { get; init; }
+
 
 }
 
@@ -112,6 +113,10 @@ public class Server
     [JsonPropertyName("instructions")]
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Instructions { get; set; }
+
+    [JsonPropertyName("hidden")]
+    public bool? Hidden { get; set; }
+
 }
 
 public class ServerInfo

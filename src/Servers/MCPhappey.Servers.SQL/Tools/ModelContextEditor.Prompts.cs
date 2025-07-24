@@ -25,24 +25,28 @@ public static partial class ModelContextEditor
             string prompt,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Optional description of the resource.")]
+        [Description("Optional title of the prompt.")]
+        string? title = null,
+        [Description("Optional description of the prompt.")]
         string? description = null,
         CancellationToken cancellationToken = default)
     {
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse(new AddMcpPrompt()
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new AddMcpPrompt()
         {
             Name = promptName.Slugify().ToLowerInvariant(),
             Prompt = prompt,
+            Title = title,
             Description = description
         }, cancellationToken);
-        var notAccepted = dto?.NotAccepted();
         if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<AddMcpPrompt>() ?? throw new Exception();
+        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
+
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var item = await serverRepository.AddServerPrompt(server.Id, typed.Prompt,
             typed.Name,
             typed.Description,
+            typed.Title,
             arguments: typed.Prompt.ExtractPromptArguments().Select(a => new SQL.Models.PromptArgument()
             {
                 Name = a,
@@ -53,6 +57,7 @@ public static partial class ModelContextEditor
         {
             Prompt = item.PromptTemplate,
             item.Name,
+            item.Title,
             item.Description,
             Arguments = item.Arguments.Select(z => z.ToPromptArgument())
         }).ToTextCallToolResponse();
@@ -66,19 +71,25 @@ public static partial class ModelContextEditor
         [Description("Name of the prompt to update")] string promptName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("New value for the prompt property")] string? newPrompt = null,
+        [Description("New value for the title property")] string? newTitle = null,
+        [Description("New value for the description property")] string? newDescription = null,
         CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<UpdateMcpPrompt>(cancellationToken);
         var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException();
-        var notAccepted = dto?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<UpdateMcpPrompt>() ?? throw new Exception();
-        if (!string.IsNullOrEmpty(typed.Description))
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpPrompt()
         {
-            prompt.Description = typed.Description;
-        }
+            Prompt = newPrompt ?? prompt.PromptTemplate,
+            Description = newDescription ?? prompt.Description,
+            Title = newTitle ?? prompt.Title,
+        }, cancellationToken);
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
+
+        prompt.Description = typed.Description;
+        prompt.Title = typed.Title;
 
         if (!string.IsNullOrEmpty(typed.Prompt))
         {
@@ -115,6 +126,7 @@ public static partial class ModelContextEditor
         {
             Prompt = updated.PromptTemplate,
             updated.Name,
+            updated.Title,
             updated.Description,
             Arguments = updated.Arguments.Select(z => new { z.Name, z.Description, z.Required })
         }).ToTextCallToolResponse();
@@ -135,25 +147,17 @@ public static partial class ModelContextEditor
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException(nameof(promptName));
         var promptArgument = prompt.Arguments.FirstOrDefault(a => a.Name == promptArgumentName) ?? throw new ArgumentNullException(nameof(promptArgumentName));
-        var dto = await requestContext.Server.GetElicitResponse(new UpdateMcpPromptArgument()
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpPromptArgument()
         {
-            Required = required,
-            Description = newDescription
+            Required = required ?? promptArgument.Required,
+            Description = newDescription ?? promptArgument.Description
         }, cancellationToken);
 
-        var notAccepted = dto?.NotAccepted();
         if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<UpdateMcpPromptArgument>() ?? throw new Exception();
+        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
 
-        if (typed.Required.HasValue)
-        {
-            promptArgument.Required = typed.Required;
-        }
-
-        if (!string.IsNullOrEmpty(typed.Description))
-        {
-            promptArgument.Description = typed.Description;
-        }
+        promptArgument.Required = typed.Required;
+        promptArgument.Description = typed.Description;
 
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var updated = await serverRepository.UpdatePromptArgument(promptArgument);

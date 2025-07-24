@@ -223,13 +223,14 @@ public class ServerRepository(McpDatabaseContext databaseContext)
     }
 
     public async Task<Resource> AddServerResource(int serverId, string uri,
-        string? name = null, string? description = null)
+        string? name = null, string? description = null, string? title = null)
     {
         var item = await databaseContext.Resources.AddAsync(new()
         {
             Uri = uri,
             Name = name ?? string.Empty,
             Description = description,
+            Title = title,
             ServerId = serverId
         });
 
@@ -242,13 +243,15 @@ public class ServerRepository(McpDatabaseContext databaseContext)
     public async Task<ResourceTemplate> AddServerResourceTemplate(int serverId,
         string uri,
         string? name = null,
-        string? description = null)
+        string? description = null,
+        string? title = null)
     {
         var item = await databaseContext.ResourceTemplates.AddAsync(new()
         {
             TemplateUri = uri,
             Name = name ?? string.Empty,
             Description = description,
+            Title = title,
             ServerId = serverId
         });
 
@@ -261,6 +264,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         string prompt,
         string name,
         string? description = null,
+        string? title = null,
         IEnumerable<PromptArgument>? arguments = null,
         IEnumerable<PromptResource>? promptResources = null)
     {
@@ -269,6 +273,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             PromptTemplate = prompt,
             Name = name ?? string.Empty,
             Description = description,
+            Title = title,
             Arguments = arguments?.ToList() ?? [],
             ServerId = serverId,
             PromptResources = promptResources?.ToList() ?? [],

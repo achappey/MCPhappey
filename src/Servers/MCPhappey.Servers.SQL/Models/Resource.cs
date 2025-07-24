@@ -12,6 +12,8 @@ public class Resource
 
     public string Name { get; set; } = null!;
 
+    public string? Title { get; set; }
+
     public string? Description { get; set; }
 
     public ICollection<PromptResource> PromptResources { get; set; } = [];

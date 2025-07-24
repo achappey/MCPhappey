@@ -11,6 +11,155 @@ namespace MCPhappey.Tools.Graph.Workbooks;
 
 public static class GraphWorkbooks
 {
+    [Description("Get filtered rows from an Excel table on OneDrive or SharePoint via Microsoft Graph, without persisting changes.")]
+    [McpServerTool(Name = "GraphWorkbooks_GetFilteredRows", ReadOnly = true, OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphWorkbooks_GetFilteredRows(
+        string driveId,
+        string itemId,
+        string worksheetName,
+        string tableName,
+        string filterColumn,
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("First filter value, e.g. '2024-07-01'")]
+        string? filterValue = null,
+        [Description("Optional operator between values, e.g. 'And' or 'Or'")]
+        string? operatorValue = null,
+        [Description("Second filter value, for ranges (e.g. '2024-07-31')")]
+        string? criterion2 = null,
+        CancellationToken cancellationToken = default)
+    {
+        var mcpServer = requestContext.Server;
+        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+
+        try
+        {
+            // 1. Start session (persistChanges = false)
+            var session = await client.Drives[driveId]
+                .Items[itemId]
+                .Workbook
+                .CreateSession
+                .PostAsync(new()
+                {
+                    PersistChanges = false
+                }, cancellationToken: cancellationToken);
+
+            var sessionId = session?.Id
+                ?? throw new Exception("Failed to create workbook session.");
+
+            var criteria = new Microsoft.Graph.Beta.Models.WorkbookFilterCriteria
+            {
+                FilterOn = "custom",
+                Criterion1 = filterValue
+            };
+
+            if (!string.IsNullOrEmpty(operatorValue))
+                criteria.Operator = operatorValue;
+            if (!string.IsNullOrEmpty(criterion2))
+                criteria.Criterion2 = criterion2;
+
+
+            // 2. Apply filter
+            await client.Drives[driveId]
+                .Items[itemId]
+                .Workbook
+                .Worksheets[worksheetName]
+                .Tables[tableName]
+                .Columns[filterColumn]
+                .Filter
+                .Apply
+                .PostAsync(
+                    new()
+                    {
+                        Criteria = criteria
+                    },
+                    requestConfiguration =>
+                    {
+                        requestConfiguration.Headers.Add("workbook-session-id", sessionId);
+                    },
+                    cancellationToken);
+
+            var columns = await client.Drives[driveId]
+                .Items[itemId]
+                .Workbook
+                .Tables[tableName]
+                .Columns
+                .GetAsync(requestConfiguration =>
+                {
+                    requestConfiguration.Headers.Add("workbook-session-id", sessionId);
+                }, cancellationToken);
+
+            var columnNames = columns?.Value?.Select(c => c.Name).ToList() ?? [];
+            var bodyRange = await client.Drives[driveId]
+                .Items[itemId]
+                .Workbook
+                .Tables[tableName]
+                .DataBodyRange
+                .GetAsync(rc => rc.Headers.Add("workbook-session-id", sessionId), cancellationToken);
+
+            var addressOnly = (bodyRange?.AddressLocal ?? bodyRange?.Address)!.Split('!').Last(); // "A2:D999"
+            var url =
+                $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}" +
+                $"/workbook/worksheets('{worksheetName}')" +
+                $"/range(address='{addressOnly}')/visibleView" +
+                "?$select=values,rowCount,columnCount,rows&$expand=rows";
+
+            var reqInfo = new Microsoft.Kiota.Abstractions.RequestInformation
+            {
+                HttpMethod = Microsoft.Kiota.Abstractions.Method.GET,
+                UrlTemplate = url
+            };
+            reqInfo.Headers.Add("workbook-session-id", sessionId);
+
+            var view = await client.RequestAdapter.SendAsync(
+                reqInfo,
+                Microsoft.Graph.Beta.Models.WorkbookRangeView.CreateFromDiscriminatorValue,
+                cancellationToken: cancellationToken);
+
+            // 3) UntypedNode helpers
+            static List<List<object?>> ToMatrix(UntypedNode? n)
+            {
+                if (n == null) return new();
+                var w = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory()
+                    .GetSerializationWriter("application/json");
+                w.WriteObjectValue(null, n);
+                using var s = w.GetSerializedContent();
+                return System.Text.Json.JsonSerializer.Deserialize<List<List<object?>>>(s) ?? new();
+            }
+
+            // 4) Pak alle zichtbare rijen (view.Values én view.Rows[*].Values)
+            var matrices = new List<List<object?>>();
+            if (view?.Rows is { Count: > 0 })
+            {
+                foreach (var rv in view.Rows)
+                    matrices.AddRange(ToMatrix(rv.Values));   // alleen rows
+            }
+            else
+            {
+                matrices.AddRange(ToMatrix(view?.Values));    // fallback
+            }
+
+            // 5) Map naar dicts o.b.v. columnNames
+            var rowObjs = matrices.Select(cells =>
+            {
+                var dict = new Dictionary<string, object?>(columnNames.Count);
+                for (int i = 0; i < columnNames.Count; i++)
+                    dict[columnNames[i]!] = i < cells.Count ? cells[i] : null;
+                return dict;
+            }).ToList();
+
+            var workbookGraphUrl = $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}/workbook";
+
+            return rowObjs.ToJsonContentBlock(workbookGraphUrl).ToCallToolResult();
+
+        }
+        catch (Exception e)
+        {
+            return e.Message.ToErrorCallToolResponse();
+        }
+    }
+
+
     [Description("Get an Excel chart as an image from a user's OneDrive or SharePoint via Microsoft Graph.")]
     [McpServerTool(Name = "GraphUsers_GetWorkbookChart", ReadOnly = true, OpenWorld = false)]
     public static async Task<ImageContentBlock> GraphWorkbooks_GetWorkbookChart(
@@ -24,10 +173,6 @@ public static class GraphWorkbooks
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
-        // Example Graph call:
-        // GET /drives/{drive-id}/items/{item-id}/workbook/worksheets/{worksheet-name}/charts/{chart-name}/image
-
         var imageResponse = await client
             .Drives[driveId]
             .Items[itemId]
@@ -58,7 +203,7 @@ public static class GraphWorkbooks
     CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var (typed, notAccepted) = await mcpServer.TryElicit<GraphAddChartRequest>(
+        var (typed, notAccepted) = await mcpServer.TryElicit(
             new GraphAddChartRequest
             {
                 Type = type ?? default,

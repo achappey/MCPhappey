@@ -14,12 +14,17 @@ public class ConfirmDeleteResourceTemplate
     public string Name { get; set; } = default!;
 }
 
-[Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
+[Description("Update the resource template.")]
 public class UpdateMcpResourceTemplate
 {
     [JsonPropertyName("uriTemplate")]
-    [Description("New uri template of the resource template (optional).")]
-    public string? UriTemplate { get; set; }
+    [Required]
+    [Description("The uri template of the resource template.")]
+    public string UriTemplate { get; set; } = default!;
+
+    [JsonPropertyName("title")]
+    [Description("The resource template title.")]
+    public string? Title { get; set; }
 
     [JsonPropertyName("description")]
     [Description("New description of the resource template (optional).")]
@@ -38,6 +43,10 @@ public class AddMcpResourceTemplate
     [Required]
     [Description("The name of the resource template to add.")]
     public string Name { get; set; } = default!;
+
+    [JsonPropertyName("title")]
+    [Description("The resource template title.")]
+    public string? Title { get; set; }
 
     [JsonPropertyName("description")]
     [Description("Optional description of the resource template.")]

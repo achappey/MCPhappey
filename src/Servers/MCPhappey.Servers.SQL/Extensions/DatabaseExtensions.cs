@@ -76,17 +76,19 @@ public static class DatabaseExtensions
             Owners = server.Owners.Count != 0
                      ? server.Owners.Select(o => o.Id)
                      : null,
-            OBO = obo
+            OBO = obo,
+            Hidden = server.Hidden
         };
     }
 
     public static Resource ToResource(this Models.Resource resource)
-           => new()
-           {
-               Uri = resource.Uri,
-               Name = resource.Name,
-               Description = resource.Description
-           };
+        => new()
+        {
+            Uri = resource.Uri,
+            Name = resource.Name,
+            Title = resource.Title,
+            Description = resource.Description
+        };
 
     public static ListResourcesResult ToListResourcesResult(this ICollection<Models.Resource> resources)
         => new()
@@ -95,18 +97,19 @@ public static class DatabaseExtensions
         };
 
     public static ResourceTemplate ToResourceTemplate(this Models.ResourceTemplate resource)
-             => new()
-             {
-                 UriTemplate = resource.TemplateUri,
-                 Name = resource.Name,
-                 Description = resource.Description
-             };
+        => new()
+        {
+            UriTemplate = resource.TemplateUri,
+            Name = resource.Name,
+            Title = resource.Title,
+            Description = resource.Description
+        };
 
     public static ListResourceTemplatesResult ToListResourceTemplatesResult(this ICollection<Models.ResourceTemplate> resources)
-    => new()
-    {
-        ResourceTemplates = [.. resources.Select(a => a.ToResourceTemplate())]
-    };
+        => new()
+        {
+            ResourceTemplates = [.. resources.Select(a => a.ToResourceTemplate())]
+        };
 
     public static PromptArgument ToPromptArgument(this Models.PromptArgument promptArgument)
       => new()
@@ -120,6 +123,7 @@ public static class DatabaseExtensions
        => new()
        {
            Name = prompt.Name,
+           Title = prompt.Title,
            Description = prompt.Description,
            Arguments = [.. prompt.Arguments.Select(z => z.ToPromptArgument())]
        };

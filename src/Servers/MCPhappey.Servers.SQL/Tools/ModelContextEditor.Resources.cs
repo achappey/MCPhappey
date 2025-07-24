@@ -26,6 +26,8 @@ public static partial class ModelContextEditor
             string name,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Optional title of the resource.")]
+        string? title = null,
         [Description("Optional description of the resource.")]
         string? description = null,
         CancellationToken cancellationToken = default)
@@ -33,16 +35,16 @@ public static partial class ModelContextEditor
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse(new AddMcpResource()
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new AddMcpResource()
         {
             Uri = uri,
-            Name = name,
+            Name = name.Slugify().ToLowerInvariant(),
+            Title = title,
             Description = description
         }, cancellationToken);
 
-        var notAccepted = dto?.NotAccepted();
         if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<AddMcpResource>() ?? throw new Exception();
+        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
 
         var resource = await downloadService.ScrapeContentAsync(
                 serviceProvider,
@@ -51,7 +53,10 @@ public static partial class ModelContextEditor
 
         if (resource.Any())
         {
-            var item = await serverRepository.AddServerResource(server.Id, typed.Uri, typed.Name, typed.Description);
+            var item = await serverRepository.AddServerResource(server.Id, typed.Uri,
+                typed.Name.Slugify().ToLowerInvariant(),
+                typed.Description,
+                typed.Title);
 
             return JsonSerializer.Serialize(item.ToResource())
                 .ToJsonCallToolResponse(typed.Uri);
@@ -67,27 +72,30 @@ public static partial class ModelContextEditor
         [Description("Name of the resource to update")] string resourceName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("New value for the uri property")] string? newUri = null,
+        [Description("New value for the title property")] string? newTitle = null,
+        [Description("New value for the description property")] string? newDescription = null,
         CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<UpdateMcpResource>(cancellationToken);
         var resource = server.Resources.FirstOrDefault(a => a.Name == resourceName) ?? throw new ArgumentNullException();
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpResource()
+        {
+            Description = newDescription ?? resource.Description,
+            Title = newTitle ?? resource.Title,
+            Uri = newUri ?? resource.Uri
+        }, cancellationToken);
 
-        var notAccepted = dto?.NotAccepted();
         if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<UpdateMcpResource>() ?? throw new Exception();
-
-        if (!string.IsNullOrEmpty(typed.Uri))
+        if (!string.IsNullOrEmpty(typed?.Uri))
         {
             resource.Uri = typed.Uri;
         }
 
-        if (!string.IsNullOrEmpty(typed.Description))
-        {
-            resource.Description = typed.Description;
-        }
-
+        resource.Description = typed?.Description;
+        resource.Title = typed?.Title;
+        
         var updated = await serverRepository.UpdateResource(resource);
 
         return JsonSerializer.Serialize(updated.ToResource())

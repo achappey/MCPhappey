@@ -230,7 +230,7 @@ public static partial class ModelContextEditor
         string serverName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Instructions of thew new server")]
+        [Description("Instructions of the new server")]
         string? instructions = null,
         CancellationToken cancellationToken = default)
     {
@@ -241,10 +241,11 @@ public static partial class ModelContextEditor
             return "No user found".ToErrorCallToolResponse();
         }
 
-        var (typedResult, notAccepted) = await requestContext.Server.TryElicit<NewMcpServer>(new NewMcpServer()
+        var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new NewMcpServer()
         {
             Name = serverName,
-            Instructions = instructions
+            Instructions = instructions,
+            Secured = true,
         }, cancellationToken);
         if (notAccepted != null) return notAccepted;
         if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
@@ -253,7 +254,7 @@ public static partial class ModelContextEditor
         {
             Name = typedResult.Name.Slugify(),
             Instructions = typedResult.Instructions,
-            Secured = true,
+            Secured = typedResult.Secured ?? true,
             Owners = [new ServerOwner() {
                        Id = userId
                     }]
@@ -274,23 +275,29 @@ public static partial class ModelContextEditor
       [Description("Name of the server")] string serverName,
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
+        [Description("Updated instructions for the server")]
+        string? instructions = null,
+        [Description("If the server should be hidden")]
+        bool? hidden = null,
       CancellationToken cancellationToken = default)
     {
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<UpdateMcpServer>(cancellationToken);
-        var notAccepted = dto?.NotAccepted();
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpServer()
+        {
+            Name = serverName,
+            Instructions = instructions ?? server.Instructions,
+            Hidden = hidden ?? server.Hidden
+        }, cancellationToken);
         if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<UpdateMcpServer>() ?? throw new Exception();
+        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
 
         if (!string.IsNullOrEmpty(typed.Name))
         {
             server.Name = typed.Name.Slugify();
         }
 
-        if (!string.IsNullOrEmpty(typed.Instructions))
-        {
-            server.Instructions = typed.Instructions;
-        }
+        server.Instructions = typed.Instructions;
+        server.Hidden = typed.Hidden;
 
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var updated = await serverRepository.UpdateServer(server);
@@ -300,7 +307,8 @@ public static partial class ModelContextEditor
             server.Name,
             Owners = server.Owners.Select(z => z.Id),
             server.Secured,
-            SecurityGroups = server.Groups.Select(z => z.Id)
+            SecurityGroups = server.Groups.Select(z => z.Id),
+            server.Hidden
         }).ToTextCallToolResponse();
     }
 

@@ -14,19 +14,25 @@ public class ConfirmDeletePrompt
     public string Name { get; set; } = default!;
 }
 
-[Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
+[Description("Update the prompt.")]
 public class UpdateMcpPrompt
 {
     [JsonPropertyName("prompt")]
-    [Description("New prompt (optional).")]
-    public string? Prompt { get; set; }
+    [Required]
+    [Description("The prompt.")]
+    public string Prompt { get; set; } = default!;
+
+    [JsonPropertyName("title")]
+    [Description("The prompt title.")]
+    public string? Title { get; set; }
 
     [JsonPropertyName("description")]
-    [Description("New description of the prompt (optional).")]
+    [Description("The prompt description.")]
     public string? Description { get; set; }
+
 }
 
-[Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
+[Description("Update a prompt argument")]
 public class UpdateMcpPromptArgument
 {
     [JsonPropertyName("description")]
@@ -43,13 +49,17 @@ public class AddMcpPrompt
 {
     [JsonPropertyName("name")]
     [Required]
-    [Description("The name of the resource to add.")]
+    [Description("The name of the prompt to add.")]
     public string Name { get; set; } = default!;
 
     [JsonPropertyName("prompt")]
     [Required]
     [Description("The prompt to add. You can use {argument} style placeholders for prompt arguments.")]
     public string Prompt { get; set; } = default!;
+
+    [JsonPropertyName("title")]
+    [Description("The prompt title.")]
+    public string? Title { get; set; }
 
     [JsonPropertyName("description")]
     [Description("Optional description of the resource.")]

@@ -12,6 +12,8 @@ public class ResourceTemplate
 
     public string Name { get; set; } = null!;
 
+    public string? Title { get; set; }
+
     public string? Description { get; set; }
 
     public ICollection<PromptResourceTemplate> PromptResourceTemplates { get; set; } = [];

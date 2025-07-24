@@ -39,7 +39,9 @@ public static class AspNetCoreWebAppExtensions
                    => Results.Json(servers.ToMcpServerSettingsList($"{context.Request.Scheme}://{context.Request.Host}")));
 
         webApp.MapGet("/gradio.json", (HttpContext ctw)
-                   => Results.Json(servers.Select(a => a.ToGradio(ctw))));
+                   => Results.Json(servers
+                    .WithoutHiddenServers()
+                    .Select(a => a.ToGradio(ctw))));
 
         foreach (var server in servers)
         {

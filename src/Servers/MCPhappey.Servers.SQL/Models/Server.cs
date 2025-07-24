@@ -11,6 +11,8 @@ public class Server
 
     public bool Secured { get; set; }
 
+    public bool? Hidden { get; set; }
+
     public ICollection<Prompt> Prompts { get; set; } = [];
 
     public ICollection<Resource> Resources { get; set; } = [];

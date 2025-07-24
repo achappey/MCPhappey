@@ -1,6 +1,5 @@
 using MCPhappey.Common.Models;
 using Microsoft.AspNetCore.Http;
-using ModelContextProtocol;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -26,21 +25,28 @@ public static partial class ModelContextServerExtensions
        => servers.FirstOrDefault(s =>
                   name?.Equals(s.Server.ServerInfo.Name,
                     StringComparison.OrdinalIgnoreCase) == true);
+
+    public static IEnumerable<ServerConfig> WithoutHiddenServers(this IEnumerable<ServerConfig> servers)
+        => servers.Where(a => a.Server.Hidden != true);
+
+
     public static MCPServerList ToMcpServerList(this IEnumerable<ServerConfig> servers, string baseUrl, bool sse = false)
      => new()
      {
          Servers = servers
-                .OrderBy(a => a.Server.ServerInfo.Name)
-                    .ToDictionary(a => a.Server.ServerInfo.Name, a => sse ? a.ToSseMcpServer(baseUrl)
-                        : a.ToMcpServer(baseUrl))
+            .WithoutHiddenServers()
+            .OrderBy(a => a.Server.ServerInfo.Name)
+            .ToDictionary(a => a.Server.ServerInfo.Name, a => sse ? a.ToSseMcpServer(baseUrl)
+                    : a.ToMcpServer(baseUrl))
      };
 
     public static MCPServerSettingsList ToMcpServerSettingsList(this IEnumerable<ServerConfig> servers, string baseUrl)
      => new()
      {
          McpServers = servers
-                    .OrderBy(a => a.Server.ServerInfo.Name)
-                    .ToDictionary(a => a.Server.ServerInfo.Name, a => a.ToMcpServerSettings(baseUrl))
+                .WithoutHiddenServers()
+                .OrderBy(a => a.Server.ServerInfo.Name)
+                .ToDictionary(a => a.Server.ServerInfo.Name, a => a.ToMcpServerSettings(baseUrl))
      };
 
     public static MCPServer ToMcpServer(this ServerConfig server, string baseUrl)
@@ -76,5 +82,5 @@ public static partial class ModelContextServerExtensions
     public static string GetUrl(this Server server, HttpContext httpContext) =>
         $"{httpContext.Request.Scheme}://{httpContext.Request.Host}{server.GetServerRelativeUrl()}";
 
-   
+
 }

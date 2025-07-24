@@ -14,12 +14,16 @@ public class ConfirmDeleteResource
     public string Name { get; set; } = default!;
 }
 
-[Description("Update one or more fields. Leave blank to skip updating that field. Use a single space to clear the value.")]
+[Description("Update the resource.")]
 public class UpdateMcpResource
 {
     [JsonPropertyName("uri")]
-    [Description("New URI of the resource (optional).")]
+    [Description("The URI of the resource (optional).")]
     public string? Uri { get; set; }
+
+    [JsonPropertyName("title")]
+    [Description("The resource title.")]
+    public string? Title { get; set; }
 
     [JsonPropertyName("description")]
     [Description("New description of the resource (optional).")]
@@ -39,6 +43,10 @@ public class AddMcpResource
     [Required]
     [Description("The name of the resource to add.")]
     public string Name { get; set; } = default!;
+
+    [JsonPropertyName("title")]
+    [Description("The resource title.")]
+    public string? Title { get; set; }
 
     [JsonPropertyName("description")]
     [Description("Optional description of the resource.")]

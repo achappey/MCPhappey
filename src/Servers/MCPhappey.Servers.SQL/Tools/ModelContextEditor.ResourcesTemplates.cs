@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.Text.Json;
-using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Servers.SQL.Extensions;
@@ -9,7 +8,6 @@ using MCPhappey.Servers.SQL.Tools.Models;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using Std;
 
 namespace MCPhappey.Servers.SQL.Tools;
 
@@ -26,22 +24,23 @@ public static partial class ModelContextEditor
         string name,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Optional title of the resource template.")]
+        string? title = null,
         [Description("Optional description of the resource template.")]
         string? description = null,
         CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse(new AddMcpResourceTemplate()
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new AddMcpResourceTemplate()
         {
             UriTemplate = uriTemplate,
-            Name = name,
+            Title = title,
+            Name = name.Slugify().ToLowerInvariant(),
             Description = description
         }, cancellationToken);
-        var notAccepted = dto?.NotAccepted();
         if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<AddMcpResourceTemplate>() ?? throw new Exception();
-
+        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
         var usedArguments = typed.UriTemplate.ExtractPromptArguments();
 
         if (usedArguments.Count == 0)
@@ -49,7 +48,11 @@ public static partial class ModelContextEditor
             return "Invalid uriTemplate: No arguments found. Add arguments to the uriTemplate or create a reaource instead.".ToErrorCallToolResponse();
         }
 
-        var item = await serverRepository.AddServerResourceTemplate(server.Id, typed.UriTemplate, typed.Name, typed.Description);
+        var item = await serverRepository.AddServerResourceTemplate(server.Id,
+            typed.UriTemplate,
+            typed.Name.Slugify().ToLowerInvariant(),
+            typed.Description,
+            typed.Title);
 
         return JsonSerializer.Serialize(item.ToResourceTemplate()).ToJsonCallToolResponse(typed.UriTemplate);
     }
@@ -61,33 +64,30 @@ public static partial class ModelContextEditor
         [Description("Name of the resource template to update")] string resourceTemplateName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-       [Description("New value for the uri template property")] string? newUriTemplate = null,
-       [Description("New value for the description property")] string? newDescription = null,
-
+        [Description("New value for the uri template property")] string? newUriTemplate = null,
+        [Description("New value for the title property")] string? newTitle = null,
+        [Description("New value for the description property")] string? newDescription = null,
         CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse(new UpdateMcpResourceTemplate()
-        {
-            Description = newDescription,
-            UriTemplate = newUriTemplate
-        }, cancellationToken);
-        
-        var notAccepted = dto?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<UpdateMcpResourceTemplate>() ?? throw new Exception();
         var resource = server.ResourceTemplates.FirstOrDefault(a => a.Name == resourceTemplateName) ?? throw new ArgumentNullException();
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpResourceTemplate()
+        {
+            Description = newDescription ?? resource.Description,
+            Title = newTitle ?? resource.Title,
+            UriTemplate = newUriTemplate ?? resource.TemplateUri
+        }, cancellationToken);
 
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
         if (!string.IsNullOrEmpty(typed.UriTemplate))
         {
             resource.TemplateUri = typed.UriTemplate;
         }
 
-        if (!string.IsNullOrEmpty(typed.Description))
-        {
-            resource.Description = typed.Description;
-        }
+        resource.Description = typed.Description;
+        resource.Title = typed.Title;
 
         var updated = await serverRepository.UpdateResourceTemplate(resource);
 

@@ -10,15 +10,15 @@
       }
     },
     {
-      "prompt": "Show all resources, resource templates, and prompts from my server named {server}.",
+      "prompt": "Search and retrieve all resources, resource templates, prompts, and general server information from my server named {server}, and display everything together in a complete and well-structured overview.",
       "template": {
         "name": "list-server-content",
-        "title": "List server content",
-        "description": "Gives a complete overview of all resources, resource templates, and prompts for a specific MCP server.",
+        "title": "Fetch server content",
+        "description": "Searches and retrieves all resources, resource templates, prompts, and general information from a specified MCP server.",
         "arguments": [
           {
             "name": "server",
-            "description": "The name of the MCP server",
+            "description": "The name of the MCP server to search and retrieve all content from",
             "required": true
           }
         ]
