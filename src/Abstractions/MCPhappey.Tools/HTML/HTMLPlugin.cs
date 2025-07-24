@@ -46,11 +46,16 @@ public static class HTMLPlugin
     public static async Task<CallToolResult?> HTMLPlugin_FillTemplate(
         [Description("Url to the source HTML file")] string sourceUrl,
         [Description("Name of the new HTML file that should be created (without extension)")] string newFilename,
-        [Description("Dictionary of placeholder replacements. Format: key is argument name (without braces), value is replacement.")] Dictionary<string, string> replacements,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Dictionary of placeholder replacements. Format: key is argument name (without braces), value is replacement.")] Dictionary<string, string>? replacements = null,
         CancellationToken cancellationToken = default)
     {
+        if (replacements == null || replacements.Count == 0)
+        {
+            return "Invalid replacements. Make sure you use replacements key/value pairs for fields that should be replaced in the html.".ToErrorCallToolResponse();
+        }
+
         var (typed, notAccepted) = await requestContext.Server.TryElicit(
               new HtmlNewFile { Name = newFilename },
               cancellationToken);

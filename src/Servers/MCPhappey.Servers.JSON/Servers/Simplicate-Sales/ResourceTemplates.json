@@ -10,7 +10,7 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales?q[reason.name]={reasonName}&q[source.name]={sourceName}&q[or][source.name]={sourceName}&q[subject]=*{dealName}*&q[progress.label]={dealStageLabel}&q[status.label]={statusLabel}&q[or][status.label]={statusLabel}&q[responsible_employee.name]=*{responsibleEmployeeName}*&q[organization.name]=*{organisationName}*&q[person.full_name]={personName}&q[expected_revenue][ge]={expectedRevenueGE}&q[expected_revenue][le]={expectedRevenueLE}&q[chance_to_score][ge]={probabilityGE}&q[chance_to_score][le]={probabilityLE}&q[expected_closing_date][ge]={expectedClosingDateGE}&q[expected_closing_date][le]={expectedClosingDateLE}&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&limit={limit}&offset={offset}&sort={sortColumn}&select=subject,contact.,start_date,note,expected_closing_date,expected_revenue,chance_to_score,responsible_employee.,organization.,status.,source.,progress.",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales?q[reason.name]={reasonName}&q[source.name]={sourceName}&q[or][source.name]={sourceName}&q[subject]=*{dealName}*&q[progress.label]={dealStageLabel}&q[teams.name]=*{teamName}*&q[status.label]={statusLabel}&q[or][status.label]={statusLabel}&q[responsible_employee.name]=*{responsibleEmployeeName}*&q[organization.name]=*{organisationName}*&q[person.full_name]={personName}&q[expected_revenue][ge]={expectedRevenueGE}&q[expected_revenue][le]={expectedRevenueLE}&q[chance_to_score][ge]={probabilityGE}&q[chance_to_score][le]={probabilityLE}&q[expected_closing_date][ge]={expectedClosingDateGE}&q[expected_closing_date][le]={expectedClosingDateLE}&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&limit={limit}&offset={offset}&sort={sortColumn}&select=subject,contact.,start_date,note,expected_closing_date,expected_revenue,chance_to_score,responsible_employee.,organization.,status.,source.,progress.,teams.",
       "name": "Sales (alle filters)",
       "description": "Haal sales op, gefilterd op onderwerp, fase, status ('open', 'scored' of 'missed'), verantwoordelijke, organisatie, persoon, verwachte omzet/sluitingsdatum, kans, aanmaak-/wijzigingsdatum. Ondersteunt paginering en sortering.",
       "mimeType": "application/json",
@@ -49,15 +49,6 @@
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/document?q[title]={title}&q[description]={description}&q[document_type.label]={documentTypeLabel}&q[created_by.name]={createdByName}&q[linked_to.label]={linkedLabel}&q[linked_to.type]={linkedType}&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&limit={limit}&offset={offset}&sort={sortColumn}",
       "name": "Sales Documenten (alle filters)",
       "description": "Haal sales documenten op, gefilterd op titel, beschrijving, documenttype, gekoppeld item, maker, aanmaak-/wijzigingsdatum. Ondersteunt paginering en sortering.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/sales/sales?limit=25&sort=-created_at",
-      "name": "Recente Deals",
-      "description": "Haal een lijst op van de 25 meest recent aangemaakte sales deals.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
