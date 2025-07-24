@@ -2,7 +2,8 @@
   "resourceTemplates": [
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/root/microsoft.graph.search(q='{searchTerm}')?$top={maxResults}&$select=id,name,webUrl,lastModifiedDateTime,size,file,createdBy",
-      "name": "Search files by keyword",
+      "name": "search-files-by-keyword",
+      "title": "Search files by keyword",
       "description": "Search for files using any keyword or file extension",
       "mimeType": "application/json",
       "annotations": {
@@ -11,7 +12,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/children?$select=id,name,webUrl,lastModifiedDateTime,size,file,folder,createdBy",
-      "name": "Folder contents",
+      "name": "folder-contents",
+      "title": "Folder contents",
       "description": "Get contents of any folder by its ID",
       "mimeType": "application/json",
       "annotations": {
@@ -20,7 +22,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/versions?$select=id,lastModifiedDateTime,size,lastModifiedBy",
-      "name": "File versions",
+      "name": "file-versions",
+      "title": "File versions",
       "description": "Get version history of any file",
       "mimeType": "application/json",
       "annotations": {
@@ -29,7 +32,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/permissions?$select=id,roles,grantedTo,link,inheritedFrom",
-      "name": "Sharing permissions",
+      "name": "sharing-permissions",
+      "title": "Sharing permissions",
       "description": "Get sharing details and permissions for any item",
       "mimeType": "application/json",
       "annotations": {
@@ -38,7 +42,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/root/delta?$select=id,name,webUrl,lastModifiedDateTime,file,folder,deleted&token={deltaToken}",
-      "name": "Changes since token",
+      "name": "changes-since-token",
+      "title": "Changes since token",
       "description": "Track changes since a specific delta token",
       "mimeType": "application/json",
       "annotations": {
@@ -47,7 +52,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/root/search(q='{searchTerm}')?$filter=lastModifiedDateTime ge {startDate} and lastModifiedDateTime le {endDate}&$select=id,name,webUrl,lastModifiedDateTime,size,file",
-      "name": "Date range search",
+      "name": "date-range-search",
+      "title": "Date range search",
       "description": "Search files modified within a specific date range",
       "mimeType": "application/json",
       "annotations": {
@@ -56,7 +62,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/workbook/worksheets/{sheetName}/range(address='{cellRange}')",
-      "name": "Excel range reader",
+      "name": "excel-range-reader",
+      "title": "Excel range reader",
       "description": "Read specific ranges from Excel files without downloading",
       "mimeType": "application/json",
       "annotations": {
@@ -65,7 +72,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/thumbnails?$select=id,large,medium,small",
-      "name": "File thumbnails",
+      "name": "file-thumbnails",
+      "title": "File thumbnails",
       "description": "Get thumbnail previews in different sizes for any file",
       "mimeType": "application/json",
       "annotations": {
@@ -74,7 +82,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/root:/Shared Documents/{folderPath}:/children?$expand=thumbnails&$select=id,name,webUrl,lastModifiedDateTime,size,file,thumbnails",
-      "name": "Rich folder listing",
+      "name": "rich-folder-listing",
+      "title": "Rich folder listing",
       "description": "Get folder contents with thumbnail previews",
       "mimeType": "application/json",
       "annotations": {
@@ -83,7 +92,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{itemId}/analytics/lastsevendays?$select=id,itemActionStats,incompleteData",
-      "name": "File analytics",
+      "name": "file-analytics",
+      "title": "File analytics",
       "description": "Get usage statistics for any file over the last week",
       "mimeType": "application/json",
       "annotations": {
@@ -92,7 +102,8 @@
     },
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/drive/items/{parentId}/children?$filter=size ge {minSize} and size le {maxSize}&$select=id,name,webUrl,size,file",
-      "name": "Size based search",
+      "name": "size-based-search",
+      "title": "Size based search",
       "description": "Find files within specific size ranges in a folder",
       "mimeType": "application/json",
       "annotations": {

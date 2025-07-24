@@ -2,7 +2,8 @@
   "resourceTemplates": [
     {
       "uriTemplate": "https://graph.microsoft.com/beta/me/calendar/calendarView?startDateTime={startDateTime}&endDateTime={endDateTime}&$select=subject,start,end,location,organizer,isOnlineMeeting",
-      "name": "Events in date range",
+      "name": "events-in-date-range",
+      "title": "Events in date range",
       "description": "Get all calendar events between a specific start and end date/time (e.g. 'today', 'next week').",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }

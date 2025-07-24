@@ -3,6 +3,7 @@
     "name": "HTML",
     "version": "1.0.0"
   },
+  "instructions": "Always add the replacements argument on the HTMLPlugin_FillTemplate, otherwise it will fail",
   "plugins": ["MCPhappey.Tools.HTML.HTMLPlugin, MCPhappey.Tools"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

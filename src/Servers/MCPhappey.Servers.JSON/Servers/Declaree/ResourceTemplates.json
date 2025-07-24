@@ -2,7 +2,8 @@
   "resourceTemplates": [
     {
       "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/users",
-      "name": "List users",
+      "name": "list-users",
+      "title": "List users",
       "description": "List all users within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
@@ -11,7 +12,8 @@
     },
     {
       "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/groups",
-      "name": "List groups",
+      "name": "list-groups",
+      "title": "List groups",
       "description": "Retrieve all user groups defined within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
@@ -20,7 +22,8 @@
     },
     {
       "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/reports",
-      "name": "List reports",
+      "name": "list-reports",
+      "title": "List reports",
       "description": "Get all expense reports belonging to the specified organization.",
       "mimeType": "application/json",
       "annotations": {
@@ -29,7 +32,8 @@
     },
     {
       "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/resources",
-      "name": "List resources",
+      "name": "list-resources",
+      "title": "List resources",
       "description": "List all custom resources within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
@@ -38,7 +42,8 @@
     },
     {
       "uriTemplate": "https://app.declaree.com/api/v4/organizations/{organizationId}/tags",
-      "name": "List tags",
+      "name": "list-tags",
+      "title": "List tags",
       "description": "Retrieve all tags defined for expenses within the specified organization.",
       "mimeType": "application/json",
       "annotations": {

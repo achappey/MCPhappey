@@ -4,6 +4,7 @@
       "prompt": "Find all countries matching: {query}. Show for each country: name, capital, region, population, and country code.",
       "template": {
         "name": "find-countries-by-query",
+        "title": "Find countries by query",
         "description": "Searches countries by name, code, or other keywords.",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "Show all available details for the country: {countryName}. Include at least: capital, region, subregion, population, area, official languages, currency, and flag image.",
       "template": {
         "name": "show-country-details",
+        "title": "Show country details",
         "description": "Displays detailed info for a single country.",
         "arguments": [
           {
@@ -32,6 +34,7 @@
       "prompt": "Compare the following two countries: {countryA} and {countryB}. Show for both: capital, population, area, region, and currency. Highlight key differences.",
       "template": {
         "name": "compare-two-countries",
+        "title": "Compare two countries",
         "description": "Compares main facts between two countries.",
         "arguments": [
           {
@@ -51,6 +54,7 @@
       "prompt": "List the top {count} countries in the {region} region, ranked by {feature}. Show name, capital, and value of the chosen feature.",
       "template": {
         "name": "top-countries-by-feature",
+        "title": "Top countries by feature",
         "description": "Shows a ranking of countries within a region based on a chosen feature (e.g. population, area).",
         "arguments": [
           {
@@ -75,6 +79,7 @@
       "prompt": "Show all official languages spoken in countries within the {region} region. List each language and the countries where it is official.",
       "template": {
         "name": "list-languages-by-region",
+        "title": "List languages by region",
         "description": "Lists official languages for all countries in a given region.",
         "arguments": [
           {

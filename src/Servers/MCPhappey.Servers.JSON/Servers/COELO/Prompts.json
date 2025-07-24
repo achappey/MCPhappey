@@ -4,6 +4,7 @@
       "prompt": "Zoek alle COELO-pagina's waarin '{zoekwoord}' voorkomt. Toon voor elke pagina: titel, korte omschrijving en URL.",
       "template": {
         "name": "vind-coelo-paginas-op-zoekwoord",
+        "title": "Vind COELO-pagina's op zoekwoord",
         "description": "Zoekt binnen alle COELO pagina's op een gegeven zoekwoord.",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "Geef een overzicht van de gemeentelijke belastingtarieven voor {jaar} voor gemeente {gemeentenaam}. Vermeld de belangrijkste heffingen en de totale verandering t.o.v. vorig jaar.",
       "template": {
         "name": "belastingen-per-gemeente-en-jaar",
+        "title": "Belastingen per gemeente en jaar",
         "description": "Toont de belangrijkste gemeentelijke belastingtarieven en mutaties per jaar per gemeente.",
         "arguments": [
           {
@@ -37,6 +39,7 @@
       "prompt": "Vind het meest recente nieuwsbericht van COELO over het onderwerp: {onderwerp}. Toon de titel, publicatiedatum en een korte samenvatting.",
       "template": {
         "name": "nieuwsbericht-op-onderwerp",
+        "title": "Nieuwsbericht op onderwerp",
         "description": "Zoekt in COELO nieuwsberichten naar het meest recente bericht op onderwerp.",
         "arguments": [
           {
@@ -51,6 +54,7 @@
       "prompt": "Vergelijk de lokale lasten voor huishoudens in {jaar} tussen gemeente {gemeenteA} en gemeente {gemeenteB}. Geef per gemeente het totaalbedrag en noem de grootste verschillen.",
       "template": {
         "name": "vergelijk-lokale-lasten-huishoudens",
+        "title": "Vergelijk lokale lasten huishoudens",
         "description": "Vergelijkt de totale lokale lasten voor huishoudens tussen twee gemeenten.",
         "arguments": [
           {
@@ -75,6 +79,7 @@
       "prompt": "Geef voor provincie {provincienaam} in {jaar} de belangrijkste provinciale belastingtarieven en hoeveel deze zijn veranderd t.o.v. het jaar ervoor.",
       "template": {
         "name": "provinciale-belastingen-per-jaar",
+        "title": "Provinciale belastingen per jaar",
         "description": "Toont de belastingtarieven per provincie per jaar, inclusief mutaties.",
         "arguments": [
           {
@@ -94,6 +99,7 @@
       "prompt": "Zoek in het rapport 'Atlas lokale lasten {jaar}' naar de drie opvallendste landelijke trends in lokale belastingen. Vat de bevindingen kort samen.",
       "template": {
         "name": "samenvatting-atlas-lokale-lasten-trends",
+        "title": "Samenvatting Atlas lokale lasten trends",
         "description": "Vat de opvallendste landelijke trends uit de Atlas lokale lasten samen voor een gekozen jaar.",
         "arguments": [
           {
@@ -108,6 +114,7 @@
       "prompt": "Geef voor waterschap {waterschapsnaam} in {jaar} de belangrijkste waterschapsbelastingtarieven en licht toe hoe deze zijn veranderd t.o.v. het vorige jaar.",
       "template": {
         "name": "waterschapsbelasting-tarieven-wijziging",
+        "title": "Waterschapsbelasting tarieven wijziging",
         "description": "Toont voor een waterschap de belastingtarieven en hun mutaties per jaar.",
         "arguments": [
           {
@@ -127,6 +134,7 @@
       "prompt": "Toon voor {jaar} het totaalbedrag aan lokale lasten voor een standaard bedrijf in gemeente {gemeentenaam}. Geef aan welke heffingen het grootste aandeel hebben.",
       "template": {
         "name": "lokale-lasten-bedrijf-gemeente",
+        "title": "Lokale lasten bedrijf gemeente",
         "description": "Geeft per gemeente het totaal en de verdeling van lokale lasten voor bedrijven.",
         "arguments": [
           {
@@ -146,6 +154,7 @@
       "prompt": "Zoek in alle COELO-rapporten naar het antwoord op deze vraag: {vraag}. Geef een korte, heldere samenvatting met bronvermelding.",
       "template": {
         "name": "antwoord-uit-coelo-rapporten",
+        "title": "Antwoord uit COELO-rapporten",
         "description": "Zoekt in alle COELO-rapporten naar een antwoord op een specifieke vraag.",
         "arguments": [
           {

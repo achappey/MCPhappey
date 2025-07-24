@@ -11,6 +11,36 @@ namespace MCPhappey.Tools.HTML;
 
 public static class HTMLPlugin
 {
+    [Description("Reads an HTML file from OneDrive and returns all unique argument placeholders (like {name}) found in the file.")]
+    [McpServerTool(Name = "HTMLPlugin_ListTemplateArguments", OpenWorld = false)]
+    public static async Task<CallToolResult?> HTMLPlugin_ListTemplateArguments(
+      [Description("Url to the source HTML file")] string sourceUrl,
+      IServiceProvider serviceProvider,
+      RequestContext<CallToolRequestParams> requestContext,
+      CancellationToken cancellationToken = default)
+    {
+        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var driveItem = await client.GetDriveItem(sourceUrl, cancellationToken);
+        var contentStream = await client
+                .Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
+                .Content
+                .GetAsync(cancellationToken: cancellationToken) ?? throw new Exception();
+
+        string html;
+        using (var reader = new StreamReader(contentStream))
+            html = await reader.ReadToEndAsync(cancellationToken);
+
+        // Find all {argument} tags with regex
+        var matches = System.Text.RegularExpressions.Regex.Matches(html, @"\{([a-zA-Z0-9_]+)\}");
+        var arguments = matches
+            .Select(m => m.Groups[1].Value)
+            .Distinct()
+            .ToList();
+
+        return arguments.ToJsonContentBlock(sourceUrl).ToCallToolResult();
+    }
+
     [Description("Reads an HTML file from OneDrive, replaces {argument} tags with provided values, and uploads the result as a new HTML file.")]
     [McpServerTool(Name = "HTMLPlugin_FillTemplate", OpenWorld = false)]
     public static async Task<CallToolResult?> HTMLPlugin_FillTemplate(

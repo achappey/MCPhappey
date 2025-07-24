@@ -4,6 +4,7 @@
       "prompt": "User:\n\n###\n{userMessage}\n###\n\nAnalyze the above user message very well. Come up with a name for this conversation. Max 3-6 words. The name should be in the conversartion locale. Answer with the name of the conversation only. Don't include quotes.",
       "template": {
         "name": "conversation-name",
+        "title": "Conversation name",
         "description": "Generate a name for a conversation",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "You are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words. Vary the wording, tone, and mood—be upbeat, curious, or playful.\nOutput the message in the language specified below.\nMake sure the message is suitable for a business or professional context (work-appropriate).\nOnly output the welcome message itself, no quotes or extra text.\nLanguage: {language}",
       "template": {
         "name": "welcome-message",
+        "title": "Welcome message",
         "description": "Generate a concise, friendly chatbot welcome message mentioning the user by name.",
         "arguments": [
           {

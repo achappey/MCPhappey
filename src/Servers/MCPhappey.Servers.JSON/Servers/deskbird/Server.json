@@ -3,7 +3,7 @@
     "name": "deskbird",
     "version": "1.0.0"
   },
-  "headers": {
+  "headers2": {
     "Authorization": "Bearer [deskbird_API_key]"
   },
   "roles": ["deskbird.ReadAll"],
