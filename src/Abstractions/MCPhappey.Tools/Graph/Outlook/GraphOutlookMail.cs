@@ -13,7 +13,8 @@ namespace MCPhappey.Tools.Graph.Outlook;
 public static class GraphOutlookMail
 {
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
-    [McpServerTool(Name = "GraphOutlookMail_SendMail", ReadOnly = false, OpenWorld = true)]
+    [McpServerTool(Name = "GraphOutlookMail_SendMail", Title = "Send e-mail via Outlook",
+        ReadOnly = false, OpenWorld = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_SendMail(
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
@@ -35,7 +36,7 @@ public static class GraphOutlookMail
             },
             cancellationToken
         );
-        
+
         if (notAccepted != null) return notAccepted;
 
         Message newMessage = new()
@@ -66,7 +67,8 @@ public static class GraphOutlookMail
     }
 
     [Description("Create a draft e-mail message in the current user's Outlook mailbox.")]
-    [McpServerTool(Name = "GraphOutlookMail_CreateDraft", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphOutlookMail_CreateDraft", Title = "Create draft e-mail in Outlook",
+        ReadOnly = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphOutlookMail_CreateDraft(
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,

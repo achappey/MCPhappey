@@ -11,7 +11,9 @@ namespace MCPhappey.Simplicate.Invoices;
 
 public static partial class SimplicateInvoices
 {
-    [McpServerTool(Name = "SimplicateInvoices_GetOpenInvoicesWithDaysOpenByMyOrganization", ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateInvoices_GetOpenInvoicesWithDaysOpenByMyOrganization",
+        Title = "Get open invoices by customer (KPI dashboard)",
+        ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns, per own organization profile, a grouped summary of outstanding debtors: for each customer, shows the total outstanding amount, number of open invoices, and the average number of days invoices have been open (as of today). Perfect for actionable debtor KPI dashboards without hardcoded periods.")]
     public static async Task<Dictionary<string, List<SimplicateOpenInvoiceWithDaysOpen>>?>
         SimplicateInvoices_GetOpenInvoicesWithDaysOpenByMyOrganization(
@@ -65,7 +67,9 @@ public static partial class SimplicateInvoices
                 );
     }
 
-    [McpServerTool(Name = "SimplicateInvoices_GetInvoicesByProjectManager", ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateInvoices_GetInvoicesByProjectManager",
+        Title = "Get invoices by project manager",
+        ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns, per project manager, a list of invoices with invoice number and amount. Ideal for project control and cashflow management.")]
     public static async Task<Dictionary<string, List<SimplicateInvoice>>?>
         SimplicateInvoices_GetExpiredInvoicesByProjectManager(

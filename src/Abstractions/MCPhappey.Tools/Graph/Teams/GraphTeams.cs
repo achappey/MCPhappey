@@ -10,7 +10,8 @@ namespace MCPhappey.Tools.Graph.Teams;
 public static class GraphTeams
 {
     [Description("Create a new Microsoft Teams.")]
-    [McpServerTool(Name = "GraphTeams_CreateTeam", ReadOnly = false, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_CreateTeam", Title = "Create Microsoft Team",
+        ReadOnly = false, Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateTeam(
         [Description("Displayname of the new channel")]
         string displayName,
@@ -52,7 +53,8 @@ public static class GraphTeams
     }
 
     [Description("Create a new channel in a Microsoft Teams.")]
-    [McpServerTool(Name = "GraphTeams_CreateChannel", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_CreateChannel", Title = "Create channel in Microsoft Team",
+        ReadOnly = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateChannel(
         string teamId,
          [Description("Displayname of the new channel")]
@@ -94,7 +96,9 @@ public static class GraphTeams
     }
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
-    [McpServerTool(Name = "GraphTeams_CreateChannelMessage", ReadOnly = false, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_CreateChannelMessage",
+        Title = "Create message in Teams channel",
+        ReadOnly = false, Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateChannelMessage(
         [Description("ID of the Team.")] string teamId,
         [Description("ID of the Channel.")] string channelId,
@@ -138,7 +142,9 @@ public static class GraphTeams
     }
 
     [Description("Create a reply to a Teams channel message, mentioning specified users.")]
-    [McpServerTool(Name = "GraphTeams_ReplyWithMentions", ReadOnly = false, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_ReplyWithMentions",
+        Title = "Reply in Teams channel with mentions",
+        ReadOnly = false, Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_ReplyWithMentions(
         [Description("ID of the Team.")] string teamId,
         [Description("ID of the Channel.")] string channelId,

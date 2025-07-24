@@ -12,7 +12,8 @@ namespace MCPhappey.Tools.Graph.Users;
 public static class GraphUsers
 {
     [Description("Create a new user")]
-    [McpServerTool(Name = "GraphUsers_CreateUser", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphUsers_CreateUser", Title = "Create new user",
+        ReadOnly = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_CreateUser(
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,

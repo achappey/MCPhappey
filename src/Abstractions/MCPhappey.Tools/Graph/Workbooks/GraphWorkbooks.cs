@@ -12,17 +12,18 @@ namespace MCPhappey.Tools.Graph.Workbooks;
 public static class GraphWorkbooks
 {
     [Description("Get filtered rows from an Excel table on OneDrive or SharePoint via Microsoft Graph, without persisting changes.")]
-    [McpServerTool(Name = "GraphWorkbooks_GetFilteredRows", ReadOnly = true, OpenWorld = false)]
+    [McpServerTool(Name = "GraphWorkbooks_GetFilteredRows", Title = "Get filtered rows from Excel table",
+        ReadOnly = true, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_GetFilteredRows(
         string driveId,
         string itemId,
         string worksheetName,
         string tableName,
         string filterColumn,
+        [Description("First filter value, e.g. '2024-07-01'")]
+        string criterion1,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("First filter value, e.g. '2024-07-01'")]
-        string? filterValue = null,
         [Description("Optional operator between values, e.g. 'And' or 'Or'")]
         string? operatorValue = null,
         [Description("Second filter value, for ranges (e.g. '2024-07-31')")]
@@ -50,7 +51,7 @@ public static class GraphWorkbooks
             var criteria = new Microsoft.Graph.Beta.Models.WorkbookFilterCriteria
             {
                 FilterOn = "custom",
-                Criterion1 = filterValue
+                Criterion1 = criterion1
             };
 
             if (!string.IsNullOrEmpty(operatorValue))
@@ -161,7 +162,8 @@ public static class GraphWorkbooks
 
 
     [Description("Get an Excel chart as an image from a user's OneDrive or SharePoint via Microsoft Graph.")]
-    [McpServerTool(Name = "GraphUsers_GetWorkbookChart", ReadOnly = true, OpenWorld = false)]
+    [McpServerTool(Name = "GraphUsers_GetWorkbookChart", Title = "Get Excel chart as image",
+        ReadOnly = true, OpenWorld = false)]
     public static async Task<ImageContentBlock> GraphWorkbooks_GetWorkbookChart(
         string driveId,              // ID of the drive (OneDrive, SharePoint doclib)
         string itemId,               // ID of the Excel file
@@ -190,7 +192,8 @@ public static class GraphWorkbooks
     }
 
     [Description("Add a chart to an Excel worksheet using Microsoft Graph.")]
-    [McpServerTool(Name = "GraphExcel_AddChart", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphExcel_AddChart", Title = "Add chart to Excel worksheet",
+        ReadOnly = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphExcel_AddChart(
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,

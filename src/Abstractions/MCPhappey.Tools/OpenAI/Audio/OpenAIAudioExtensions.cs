@@ -37,6 +37,7 @@ public static class OpenAIAudioExtensions
        AudioTranscriptionOptions? options = null,
        CancellationToken cancellationToken = default) =>
         await audioClient.TranscribeAudioAsync(content.ToStream(), filename,
+            options: options,
             cancellationToken: cancellationToken);
 
 }

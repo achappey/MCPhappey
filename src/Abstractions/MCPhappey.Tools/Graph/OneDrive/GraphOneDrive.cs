@@ -15,8 +15,8 @@ namespace MCPhappey.Tools.Graph.OneDrive;
 public static class GraphOneDrive
 {
     [Description("Uploads a file to the specified OneDrive location.")]
-    [McpServerTool(Name = "GraphOneDrive_UploadFile", OpenWorld = false)]
-    public static async Task<ContentBlock?> GraphOneDrive_UploadFile(
+    [McpServerTool(Name = "GraphOneDrive_UploadFile", Title = "Upload file to OneDrive", OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphOneDrive_UploadFile(
         [Description("The OneDrive Drive ID.")] string driveId,
         [Description("The file name (e.g. foo.txt).")] string filename,
         [Description("The folder path in OneDrive (e.g. docs).")] string path,
@@ -25,13 +25,25 @@ public static class GraphOneDrive
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+              new GraphUploadFile
+              {
+                  Name = filename,
+                  Path = path,
+                  Content = content
+              },
+              cancellationToken);
+
+        if (notAccepted != null) return notAccepted;
+
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var result = await client.Drives[driveId]
-                .Items["root"].ItemWithPath($"/{path}/{filename}")
-                .Content.PutAsync(BinaryData.FromString(content).ToStream(),
+                .Items["root"].ItemWithPath($"/{typed?.Path}/{typed?.Name}")
+                .Content.PutAsync(BinaryData.FromString(typed?.Content ?? string.Empty).ToStream(),
                    cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/drives/{driveId}/items/root:/{path}/{filename}:/content");
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/drives/{driveId}/items/root:/{path}/{filename}:/content")
+         .ToCallToolResult();
     }
 
     /// <summary>Create a folder (or Document Set) in OneDrive / SharePoint.</summary>
@@ -130,6 +142,27 @@ public static class GraphOneDrive
     // }
 
 
+
+
+    [Description("Please fill in the new File details.")]
+    public class GraphUploadFile
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("The name of the new file.")]
+        public string Name { get; set; } = default!;
+
+        [JsonPropertyName("path")]
+        [Required]
+        [Description("The path of the new file.")]
+        public string Path { get; set; } = default!;
+
+        [JsonPropertyName("content")]
+        [Required]
+        [Description("The content of the new file.")]
+        public string Content { get; set; } = default!;
+
+    }
 
     [Description("Please fill in the new Folder details.")]
     public class GraphNewFolder

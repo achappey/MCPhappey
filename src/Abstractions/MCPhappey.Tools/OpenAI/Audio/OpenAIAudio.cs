@@ -25,7 +25,8 @@ public static class OpenAIAudio
     }
 
     [Description("Generate audio from the input text")]
-    [McpServerTool(Name = "OpenAIAudio_CreateSpeech", ReadOnly = true)]
+    [McpServerTool(Name = "OpenAIAudio_CreateSpeech", Title = "Generate speech from text",
+        ReadOnly = true)]
     public static async Task<CallToolResult> OpenAIAudio_CreateSpeech(
         [Description("The text to generate audio for")]
         [MaxLength(4096)]
@@ -77,7 +78,8 @@ public static class OpenAIAudio
     }
 
     [Description("Generate text from an audio input file")]
-    [McpServerTool(Name = "OpenAIAudio_CreateTranscription", ReadOnly = true)]
+    [McpServerTool(Name = "OpenAIAudio_CreateTranscription", Title = "Transcribe audio to text",
+        ReadOnly = true)]
     public static async Task<CallToolResult> OpenAIAudio_CreateTranscription(
        [Description("Url of the audio file")]
         string url,

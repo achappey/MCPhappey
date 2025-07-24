@@ -14,7 +14,8 @@ namespace MCPhappey.Simplicate.Projects;
 public static class SimplicateProjects
 {
     [Description("Create a new project in Simplicate")]
-    [McpServerTool(Name = "SimplicateProjects_CreateProject", ReadOnly = false, Idempotent = false)]
+    [McpServerTool(Name = "SimplicateProjects_CreateProject", Title = "Create new Simplicate project",
+        ReadOnly = false, Idempotent = false)]
     public static async Task<CallToolResult?> SimplicateProjects_CreateProject(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -38,7 +39,9 @@ public static class SimplicateProjects
     }
 
     [Description("Get projects grouped by project manager filtered by my organization profile, optionally filtered by date (equal or greater than), project.")]
-    [McpServerTool(Name = "SimplicateProjects_GetProjectNamesByProjectManager", ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "SimplicateProjects_GetProjectNamesByProjectManager",
+        Title = "Get projects by project manager",
+        ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, IEnumerable<string>>?> SimplicateProjects_GetProjectNamesByProjectManager(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

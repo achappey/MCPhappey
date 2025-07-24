@@ -9,17 +9,13 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Tools.HTML;
 
-public static class HTMLPlugin
+public static partial class HTMLPlugin
 {
-    [Description("Reads an HTML file from OneDrive and returns all unique argument placeholders (like {name}) found in the file.")]
-    [McpServerTool(Name = "HTMLPlugin_ListTemplateArguments", OpenWorld = false)]
-    public static async Task<CallToolResult?> HTMLPlugin_ListTemplateArguments(
-      [Description("Url to the source HTML file")] string sourceUrl,
-      IServiceProvider serviceProvider,
-      RequestContext<CallToolRequestParams> requestContext,
+    private static async Task<IEnumerable<string>?> GetArguments(
+      string sourceUrl,
+      GraphServiceClient client,
       CancellationToken cancellationToken = default)
     {
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var driveItem = await client.GetDriveItem(sourceUrl, cancellationToken);
         var contentStream = await client
                 .Drives[driveItem?.ParentReference?.DriveId]
@@ -32,11 +28,22 @@ public static class HTMLPlugin
             html = await reader.ReadToEndAsync(cancellationToken);
 
         // Find all {argument} tags with regex
-        var matches = System.Text.RegularExpressions.Regex.Matches(html, @"\{([a-zA-Z0-9_]+)\}");
-        var arguments = matches
+        var matches = HtmlArgumentsRegex().Matches(html);
+        return [.. matches
             .Select(m => m.Groups[1].Value)
-            .Distinct()
-            .ToList();
+            .Distinct()];
+    }
+
+    [Description("Reads an HTML file from OneDrive and returns all unique argument placeholders (like {name}) found in the file.")]
+    [McpServerTool(Name = "HTMLPlugin_ListTemplateArguments", OpenWorld = false, ReadOnly = true)]
+    public static async Task<CallToolResult?> HTMLPlugin_ListTemplateArguments(
+      [Description("Url to the source HTML file")] string sourceUrl,
+      IServiceProvider serviceProvider,
+      RequestContext<CallToolRequestParams> requestContext,
+      CancellationToken cancellationToken = default)
+    {
+        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var arguments = await GetArguments(sourceUrl, client, cancellationToken);
 
         return arguments.ToJsonContentBlock(sourceUrl).ToCallToolResult();
     }
@@ -48,20 +55,34 @@ public static class HTMLPlugin
         [Description("Name of the new HTML file that should be created (without extension)")] string newFilename,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Dictionary of placeholder replacements. Format: key is argument name (without braces), value is replacement.")] Dictionary<string, string>? replacements = null,
+        [Description("Default values for the replacements. Format: key is argument name (without braces), value is replacement.")] Dictionary<string, string>? replacements = null,
         CancellationToken cancellationToken = default)
     {
-        if (replacements == null || replacements.Count == 0)
-        {
-            return "Invalid replacements. Make sure you use replacements key/value pairs for fields that should be replaced in the html.".ToErrorCallToolResponse();
-        }
+        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var arguments = await GetArguments(sourceUrl, client, cancellationToken);
+        var values = await requestContext.Server.ElicitAsync(
+            new ElicitRequestParams
+            {
+                Message = "Please fill in the values of the HTML template".ToElicitDefaultData(replacements),
+                RequestedSchema = new ElicitRequestParams.RequestSchema
+                {
+                    Properties = arguments?.ToDictionary(
+                        a => a,
+                        a => (ElicitRequestParams.PrimitiveSchemaDefinition)new ElicitRequestParams.StringSchema
+                        {
+                            Title = a,
+                        }
+                    ) ?? [],
+                    Required = arguments?.ToList()
+                }
+            }, cancellationToken);
 
         var (typed, notAccepted) = await requestContext.Server.TryElicit(
               new HtmlNewFile { Name = newFilename },
               cancellationToken);
+
         if (notAccepted != null) return notAccepted;
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var driveItem = await client.GetDriveItem(sourceUrl, cancellationToken);
         var contentStream = await client
                 .Drives[driveItem?.ParentReference?.DriveId]
@@ -74,8 +95,8 @@ public static class HTMLPlugin
             html = await reader.ReadToEndAsync(cancellationToken);
 
         // 2. Replace all {argument} tags
-        foreach (var pair in replacements)
-            html = html.Replace($"{{{pair.Key}}}", pair.Value ?? string.Empty);
+        foreach (var pair in values?.Content?.ToList() ?? [])
+            html = html.Replace($"{{{pair.Key}}}", pair.Value.ToString() ?? string.Empty);
 
         // 4. Upload as new HTML file in root of the drive
         var outputName = $"{typed?.Name}.html";
@@ -100,4 +121,6 @@ public static class HTMLPlugin
         public string Name { get; set; } = default!;
     }
 
+    [System.Text.RegularExpressions.GeneratedRegex(@"\{([a-zA-Z0-9_]+)\}")]
+    private static partial System.Text.RegularExpressions.Regex HtmlArgumentsRegex();
 }

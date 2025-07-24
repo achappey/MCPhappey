@@ -52,7 +52,7 @@ public static class ResourceExtensions
         contents.ToTextResourceContent(uri, MediaTypeNames.Application.Json);
 
 
-    public static EmbeddedResourceBlock ToContent(this ResourceContents contents) => new EmbeddedResourceBlock()
+    public static EmbeddedResourceBlock ToContent(this ResourceContents contents) => new()
     {
         Resource = contents
     };
