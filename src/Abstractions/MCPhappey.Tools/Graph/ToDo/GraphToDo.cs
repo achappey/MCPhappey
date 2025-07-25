@@ -12,7 +12,9 @@ namespace MCPhappey.Tools.Graph.ToDo;
 public static class GraphToDo
 {
     [Description("Create a new Microsoft To Do task")]
-    [McpServerTool(Name = "GraphTodo_CreateTask", Title = "Create Microsoft To Do task", OpenWorld = false)]
+    [McpServerTool(Name = "GraphTodo_CreateTask",
+        Title = "Create Microsoft To Do task",
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTodo_CreateTask(
      [Description("ToDo list id")] string listId,
      IServiceProvider serviceProvider,
@@ -25,7 +27,7 @@ public static class GraphToDo
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewTodoTask>(
+        var (typed, notAccepted) = await mcpServer.TryElicit(
             new GraphNewTodoTask
             {
                 Title = title ?? string.Empty,
@@ -49,7 +51,41 @@ public static class GraphToDo
                 } : null
             }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{listId}/tasks").ToCallToolResult();
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{listId}/tasks")
+            .ToCallToolResult();
+    }
+
+    [Description("Create a new Microsoft To Do task list")]
+    [McpServerTool(Name = "GraphTodo_CreateTaskList",
+        Title = "Create Microsoft To Do task list",
+        OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphTodo_CreateTaskList(
+     [Description("The task display name.")] string displayName,
+     IServiceProvider serviceProvider,
+     RequestContext<CallToolRequestParams> requestContext,
+     CancellationToken cancellationToken = default)
+    {
+        var mcpServer = requestContext.Server;
+        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+
+        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewTodoTaskList>(
+            new GraphNewTodoTaskList
+            {
+                DisplayName = displayName ?? string.Empty,
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
+
+        var result = await client.Me.Todo.Lists
+            .PostAsync(new TodoTaskList
+            {
+                DisplayName = typed?.DisplayName,
+            }, cancellationToken: cancellationToken);
+
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{result?.Id}")
+            .ToCallToolResult();
     }
 
     [Description("Please fill in the To Do task details")]
@@ -69,5 +105,14 @@ public static class GraphToDo
         [Description("Importance (low, normal, high).")]
         public Importance? Importance { get; set; }
 
+    }
+
+    [Description("Please fill in the To Do task list details")]
+    public class GraphNewTodoTaskList
+    {
+        [JsonPropertyName("displayName")]
+        [Required]
+        [Description("The task display name.")]
+        public string DisplayName  { get; set; } = default!;
     }
 }

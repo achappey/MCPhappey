@@ -1,5 +1,6 @@
 using MCPhappey.Auth.Models;
 using MCPhappey.Simplicate.Options;
+using MCPhappey.Tools.AI;
 
 namespace MCPhappey.WebApi;
 
@@ -12,6 +13,8 @@ public class Config
     public SimplicateOptions? Simplicate { get; set; }
 
     public OAuthSettings? OAuth { get; set; }
+
+    public McpApplicationInsights? ApplicationInsights { get; set; }
 
     public string? KernelMemoryDatabase { get; set; }
 

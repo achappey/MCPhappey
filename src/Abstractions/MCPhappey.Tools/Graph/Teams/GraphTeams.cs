@@ -11,7 +11,8 @@ public static class GraphTeams
 {
     [Description("Create a new Microsoft Teams.")]
     [McpServerTool(Name = "GraphTeams_CreateTeam", Title = "Create Microsoft Team",
-        ReadOnly = false, Destructive = false, OpenWorld = false)]
+        Destructive = false,
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateTeam(
         [Description("Displayname of the new channel")]
         string displayName,
@@ -53,8 +54,9 @@ public static class GraphTeams
     }
 
     [Description("Create a new channel in a Microsoft Teams.")]
-    [McpServerTool(Name = "GraphTeams_CreateChannel", Title = "Create channel in Microsoft Team",
-        ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "GraphTeams_CreateChannel",
+        Title = "Create channel in Microsoft Team",
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateChannel(
         string teamId,
          [Description("Displayname of the new channel")]
@@ -92,7 +94,8 @@ public static class GraphTeams
 
         var result = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
 
-        return (result ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels").ToCallToolResult();
+        return (result ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels")
+            .ToCallToolResult();
     }
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
@@ -138,7 +141,8 @@ public static class GraphTeams
             .PostAsync(newItem, cancellationToken: cancellationToken);
 
         return (result ?? newItem)
-            .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages").ToCallToolResult();
+            .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages")
+            .ToCallToolResult();
     }
 
     [Description("Create a reply to a Teams channel message, mentioning specified users.")]

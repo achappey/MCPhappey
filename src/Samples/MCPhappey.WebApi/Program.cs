@@ -33,6 +33,7 @@ var openAiClient = !string.IsNullOrEmpty(apiKey) ?
     new OpenAIClient(apiKey) : null;
 
 builder.Services.AddApplicationInsightsTelemetry();
+builder.Logging.AddApplicationInsights();
 
 if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
     && openAiClient != null
@@ -88,6 +89,11 @@ builder.WithCompletion();
 if (!string.IsNullOrEmpty(appConfig?.PrivateKey))
 {
     builder.AddAuthServices(appConfig.PrivateKey);
+}
+
+if (appConfig?.ApplicationInsights != null)
+{
+    builder.Services.AddSingleton(appConfig.ApplicationInsights);
 }
 
 if (appConfig?.Domains != null)
