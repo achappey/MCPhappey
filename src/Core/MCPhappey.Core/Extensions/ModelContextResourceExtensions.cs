@@ -38,9 +38,23 @@ public static partial class ModelContextResourceExtensions
                         server.Server.ServerInfo.Name,
                         request.Params?.Uri);
 
+                    //    try
+                    //   {
                     return await scraper.GetServerResource(request.Services!,
                         request.Server, request.Params?.Uri!,
                         cancellationToken);
+                    /*   }
+                       catch (Exception e)
+                       {
+                           return new ReadResourceResult()
+                           {
+                               Contents = [new TextResourceContents() {
+                                   Text = e.Message,
+                                   MimeType = MimeTypes.PlainText,
+                                   Uri = request.Params?.Uri ?? string.Empty
+                               }]
+                           };
+                       }*/
                 },
             }
             : null;

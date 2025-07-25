@@ -57,7 +57,7 @@ public static class SharePointSearch
             hits = searchItems,
             hitContainer?.MoreResultsAvailable,
             hitContainer?.Total
-        }, JsonSerializerOptions.Web);
+        }, ResourceExtensions.JsonSerializerOptions);
     }
 
     /// <summary>

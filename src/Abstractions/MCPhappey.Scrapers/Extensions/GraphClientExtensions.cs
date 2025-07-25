@@ -81,7 +81,7 @@ public static class GraphClientExtensions
         {
             Contents = BinaryData.FromString(htmlString),
             MimeType = MediaTypeNames.Text.Html,
-            Filename = System.IO.Path.ChangeExtension(sitePage?.Name, ".html"),
+            Filename = Path.ChangeExtension(sitePage?.Name, ".html"),
             Uri = sitePage?.WebUrl ?? string.Empty,
         };
     }
@@ -152,7 +152,7 @@ public static class GraphClientExtensions
             var items = await graphServiceClient.Drives[driveItem?.ParentReference?.DriveId!].Items[driveItem?.Id!].Children.GetAsync();
 
             return JsonSerializer
-                            .Serialize(items?.Value?.Select(t => t.ToResource()))
+                            .Serialize(items?.Value?.Select(t => t.ToResource()), ResourceExtensions.JsonSerializerOptions)
                             .ToJsonFileItem(driveItem?.WebUrl!);
         }
 

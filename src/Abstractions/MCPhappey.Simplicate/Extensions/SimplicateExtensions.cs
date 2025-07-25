@@ -171,7 +171,8 @@ public static class SimplicateExtensions
         if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
         {
             await requestContext.Server.SendMessageNotificationAsync(
-                $"<details><summary>RESPONSE</summary>\n\n```\n{JsonSerializer.Serialize(response, JsonSerializerOptions.Web)}\n```\n</details>",
+                $"<details><summary>RESPONSE</summary>\n\n```\n{JsonSerializer.Serialize(response,
+                    ResourceExtensions.JsonSerializerOptions)}\n```\n</details>",
                 LoggingLevel.Debug
             );
         }

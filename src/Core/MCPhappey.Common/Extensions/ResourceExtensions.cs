@@ -6,13 +6,18 @@ namespace MCPhappey.Common.Extensions;
 
 public static class ResourceExtensions
 {
+    public static readonly JsonSerializerOptions JsonSerializerOptions = new(JsonSerializerDefaults.Web)
+    {
+        DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
+    };
+
     public static EmbeddedResourceBlock ToJsonContentBlock<T>(this T content, string uri)
             => new()
             {
                 Resource = new TextResourceContents()
                 {
                     MimeType = "application/json",
-                    Text = JsonSerializer.Serialize(content, JsonSerializerOptions.Web),
+                    Text = JsonSerializer.Serialize(content, JsonSerializerOptions),
                     Uri = uri
                 }
             };

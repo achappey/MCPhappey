@@ -8,7 +8,7 @@ public class JsonDecoder : IContentDecoder
     public bool SupportsMimeType(string mimeType)
     {
         return mimeType != null &&
-               (mimeType.Equals(MimeTypes.Json, StringComparison.OrdinalIgnoreCase)); // fallback
+               mimeType.Equals(MimeTypes.Json, StringComparison.OrdinalIgnoreCase); // fallback
     }
 
     public Task<FileContent> DecodeAsync(string filename, CancellationToken cancellationToken = default)
@@ -25,7 +25,7 @@ public class JsonDecoder : IContentDecoder
 
     public async Task<FileContent> DecodeAsync(Stream data, CancellationToken cancellationToken = default)
     {
-        var binaryData = await BinaryData.FromStreamAsync(data);
+        var binaryData = await BinaryData.FromStreamAsync(data, cancellationToken);
 
         var result = new FileContent(MimeTypes.Json);
         result.Sections.Add(new Chunk(binaryData.ToString(), 0, Chunk.Meta(sentencesAreComplete: true)));
