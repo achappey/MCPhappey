@@ -22,6 +22,8 @@ public static class GoogleImagen
         string imageModel = "imagen-3.0-generate-002",
         [Description("The aspect ratio of the generated image. 1:1, 9:16, 16:9, 3:4, or 4:3")]
         string aspectRatio = "1:1",
+        [Description("The number of images to generate. Max. 4.")]
+        int numberOfImages = 1,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
@@ -35,7 +37,7 @@ public static class GoogleImagen
             {
                 Parameters = new()
                 {
-                    SampleCount = 1,
+                    SampleCount = numberOfImages,
                     AspectRatio = aspectRatio,
                     OutputOptions = new Mscc.GenerativeAI.OutputOptions()
                     {

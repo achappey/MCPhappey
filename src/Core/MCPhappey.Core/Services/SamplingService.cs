@@ -15,6 +15,7 @@ public class SamplingService(PromptService promptService)
         float? temperature = null,
         string? systemPrompt = null,
         ContextInclusion includeContext = ContextInclusion.None,
+        Dictionary<string, object>? metadata = null,
         CancellationToken cancellationToken = default)
     {
         var prompt = await promptService.GetServerPrompt(serviceProvider, mcpServer, name,
@@ -31,7 +32,8 @@ public class SamplingService(PromptService promptService)
             MaxTokens = 4096,
             SystemPrompt = systemPrompt,
             ModelPreferences = modelHint?.ToModelPreferences(),
-            Temperature = temperature
+            Temperature = temperature,
+            Metadata = metadata != null ? JsonSerializer.SerializeToElement(metadata) : null
         }, cancellationToken);
     }
 

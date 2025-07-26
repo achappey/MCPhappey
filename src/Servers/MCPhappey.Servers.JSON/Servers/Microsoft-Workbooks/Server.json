@@ -3,6 +3,7 @@
     "name": "Microsoft-Workbooks",
     "version": "1.0.0"
   },
+  "instructions": "Always use the ReadResource tool with Graph API urls to search and find information. Only use other tools when items need to be created, updated or deleted.",
   "plugins": [
     "MCPhappey.Tools.Graph.Workbooks.GraphWorkbooks, MCPhappey.Tools"
   ],
