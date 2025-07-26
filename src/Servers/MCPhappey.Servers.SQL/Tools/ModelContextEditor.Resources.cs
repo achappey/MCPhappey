@@ -16,7 +16,9 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Adds a resource to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddResource", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_AddResource",
+        Title = "Add a resource to an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddResource(
         [Description("Name of the server")]
             string serverName,
@@ -58,15 +60,18 @@ public static partial class ModelContextEditor
                 typed.Description,
                 typed.Title);
 
-            return JsonSerializer.Serialize(item.ToResource())
-                .ToJsonCallToolResponse(typed.Uri);
+            return item.ToResource()
+                   .ToJsonContentBlock($"mcp-editor://server/{serverName}/resources/{item.Name}")
+                   .ToCallToolResult();
         }
 
         return "No resource found".ToErrorCallToolResponse();
     }
 
     [Description("Updates a resource of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdateResource", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_UpdateResource",
+        Title = "Update a resource of an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResource(
         [Description("Name of the server")] string serverName,
         [Description("Name of the resource to update")] string resourceName,
@@ -84,6 +89,7 @@ public static partial class ModelContextEditor
         {
             Description = newDescription ?? resource.Description,
             Title = newTitle ?? resource.Title,
+            Name = resource.Name,
             Uri = newUri ?? resource.Uri
         }, cancellationToken);
 
@@ -93,17 +99,25 @@ public static partial class ModelContextEditor
             resource.Uri = typed.Uri;
         }
 
+        if (!string.IsNullOrEmpty(typed?.Name))
+        {
+            resource.Name = typed.Name.Slugify().ToLowerInvariant();
+        }
+
         resource.Description = typed?.Description;
         resource.Title = typed?.Title;
-        
+
         var updated = await serverRepository.UpdateResource(resource);
 
-        return JsonSerializer.Serialize(updated.ToResource())
-            .ToTextCallToolResponse();
+        return updated.ToResource()
+               .ToJsonContentBlock($"mcp-editor://server/{serverName}/resources/{updated.Name}")
+               .ToCallToolResult();
     }
 
     [Description("Deletes a resource from a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeleteResource", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_DeleteResource",
+        Title = "Delete a resource from an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteResource(
         [Description("Name of the server")] string serverName,
         [Description("Name of the resource to delete")] string resourceName,
@@ -111,27 +125,19 @@ public static partial class ModelContextEditor
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var userId = serviceProvider.GetUserId();
-        if (userId == null) return "No user found".ToErrorCallToolResponse();
-
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serverRepository.GetServer(serverName, cancellationToken);
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
 
-        if (server?.Owners.Any(a => a.Id == userId) != true)
-            return "Access denied.".ToErrorCallToolResponse();
-
-        var dto = await requestContext.Server.GetElicitResponse<ConfirmDeleteResource>(cancellationToken);
-        var notAccepted = dto?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<ConfirmDeleteResource>() ?? throw new Exception();
-
-        if (typed.Name?.Trim() != resourceName.Trim())
-            return $"Confirmation does not match name '{resourceName}'".ToErrorCallToolResponse();
-
-        var resource = server.Resources.FirstOrDefault(a => a.Name == resourceName) ?? throw new ArgumentNullException();
-        await serverRepository.DeleteResource(resource.Id);
-
-        return $"Resource {resourceName} has been deleted.".ToTextCallToolResponse();
+        return await requestContext.ConfirmAndDeleteAsync<ConfirmDeleteResource>(
+            expectedName: resourceName,
+            deleteAction: async _ =>
+            {
+                var resource = server.Resources.First(z => z.Name == resourceName);
+                await serverRepository.DeleteResource(resource.Id);
+            },
+            successText: $"Resource {resourceName} has been deleted.",
+            ct: cancellationToken);
     }
+
 }
 

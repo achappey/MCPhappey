@@ -20,7 +20,9 @@ public class Config
 
     public Agent2AgentStorage? Agent2AgentStorage { get; set; }
 
-    public Dictionary<string, Dictionary<string, string>>? Domains { get; set; }
+    public Dictionary<string, Dictionary<string, string>>? DomainHeaders { get; set; }
+    
+    public Dictionary<string, Dictionary<string, string>>? DomainQueryStrings { get; set; }
 
 }
 

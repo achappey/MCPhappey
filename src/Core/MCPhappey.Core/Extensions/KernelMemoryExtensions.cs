@@ -1,4 +1,3 @@
-using System.Net.Mime;
 using MCPhappey.Common.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory;

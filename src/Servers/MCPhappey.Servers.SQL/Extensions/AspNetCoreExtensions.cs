@@ -38,6 +38,7 @@ public static class AspNetCoreExtensions
                 .Include(a => a.Owners)
                 .Include(a => a.Groups)
                 .AsNoTracking()
+                .AsSplitQuery()
                 .ToList()
                 .Select(a => new ServerConfig()
                 {

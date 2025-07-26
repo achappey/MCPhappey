@@ -1,9 +1,5 @@
 
-using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
-using ModelContextProtocol;
-using ModelContextProtocol.Protocol;
-using ModelContextProtocol.Server;
 
 namespace MCPhappey.Scrapers.Extensions;
 

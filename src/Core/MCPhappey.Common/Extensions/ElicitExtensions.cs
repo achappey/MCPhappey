@@ -1,4 +1,5 @@
 using System.Text.Json;
+using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using static MCPhappey.Common.Extensions.ElicitFormExtensions;
@@ -27,9 +28,11 @@ public static class ElicitExtensions
         return (typed, null);
     }
 
-    public static async Task<ElicitResult?> GetElicitResponse<T>(this IMcpServer mcpServer, CancellationToken cancellationToken) where T : new()
+    public static async Task<ElicitResult?> GetElicitResponse<T>(this IMcpServer mcpServer,
+        string? message = null,
+        CancellationToken cancellationToken = default) where T : new()
     {
-        var elicitParams = CreateElicitRequestParamsForType<T>();
+        var elicitParams = CreateElicitRequestParamsForType<T>(message);
         return await mcpServer.ElicitAsync(elicitParams, cancellationToken: cancellationToken);
     }
 

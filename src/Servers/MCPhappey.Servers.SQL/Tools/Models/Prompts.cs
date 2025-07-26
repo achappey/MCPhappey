@@ -2,11 +2,12 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 
 namespace MCPhappey.Servers.SQL.Tools.Models;
 
-[Description("Please confirm the name of the prompt you want to delete.")]
-public class ConfirmDeletePrompt
+[Description("Please confirm the name of the prompt you want to delete: {0}")]
+public class ConfirmDeletePrompt : IHasName
 {
     [JsonPropertyName("name")]
     [Required]
@@ -17,6 +18,11 @@ public class ConfirmDeletePrompt
 [Description("Update the prompt.")]
 public class UpdateMcpPrompt
 {
+    [JsonPropertyName("name")]
+    [Required]
+    [Description("The prompt name.")]
+    public string Name { get; set; } = default!;
+
     [JsonPropertyName("prompt")]
     [Required]
     [Description("The prompt.")]
@@ -35,6 +41,7 @@ public class UpdateMcpPrompt
 [Description("Update a prompt argument")]
 public class UpdateMcpPromptArgument
 {
+
     [JsonPropertyName("description")]
     [Description("New description of the prompt argument (optional).")]
     public string? Description { get; set; }

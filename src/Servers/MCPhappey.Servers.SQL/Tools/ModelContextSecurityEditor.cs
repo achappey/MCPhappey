@@ -13,7 +13,9 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextSecurityEditor
 {
     [Description("Adds an owner to a MCP-server")]
-    [McpServerTool(Name = "ModelContextSecurityEditor_AddOwner", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextSecurityEditor_AddOwner",
+        Title = "Add an owner to an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_AddOwner(
        [Description("Name of the server")] string serverName,
        [Description("User id of new owner")] string ownerUserId,
@@ -48,7 +50,9 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Removes an owner from a MCP-server")]
-    [McpServerTool(Name = "ModelContextSecurityEditor_RemoveOwner", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextSecurityEditor_RemoveOwner",
+        Title = "Remove an owner from an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_RemoveOwner(
        [Description("Name of the server")] string serverName,
        [Description("User id of owner")] string ownerUserId,
@@ -86,7 +90,9 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Updates the security of a MCP-server")]
-    [McpServerTool(Name = "ModelContextSecurityEditor_UpdateServerSecurity", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextSecurityEditor_UpdateServerSecurity",
+        Title = "Update the security of an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_UpdateServerSecurity(
       [Description("Name of the server")] string serverName,
       IServiceProvider serviceProvider,
@@ -120,7 +126,9 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Adds a security group to a MCP-server")]
-    [McpServerTool(Name = "ModelContextSecurityEditor_AddSecurityGroup", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextSecurityEditor_AddSecurityGroup",
+        Title = "Add a security group to an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_AddSecurityGroup(
         [Description("Name of the server")] string serverName,
         [Description("Entra id of security group to add")] string securityGroupId,
@@ -152,7 +160,9 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Removes a security group from a MCP-server")]
-    [McpServerTool(Name = "ModelContextSecurityEditor_RemoveSecurityGroup", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextSecurityEditor_RemoveSecurityGroup",
+        Title = "Remove a security group from an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_RemoveSecurityGroup(
         [Description("Name of the server")] string serverName,
         [Description("Entra id of security group to remove")] string securityGroupId,

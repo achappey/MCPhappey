@@ -2,11 +2,12 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 
 namespace MCPhappey.Servers.SQL.Tools.Models;
 
-[Description("Please confirm the name of the resource template you want to delete.")]
-public class ConfirmDeleteResourceTemplate
+[Description("Please confirm the name of the resource template you want to delete: {0}")]
+public class ConfirmDeleteResourceTemplate : IHasName
 {
     [JsonPropertyName("name")]
     [Required]
@@ -21,6 +22,11 @@ public class UpdateMcpResourceTemplate
     [Required]
     [Description("The uri template of the resource template.")]
     public string UriTemplate { get; set; } = default!;
+
+    [JsonPropertyName("name")]
+    [Required]
+    [Description("New name of the resource template.")]
+    public string Name { get; set; } = default!;
 
     [JsonPropertyName("title")]
     [Description("The resource template title.")]

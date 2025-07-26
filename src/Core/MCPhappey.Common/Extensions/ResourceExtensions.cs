@@ -12,15 +12,8 @@ public static class ResourceExtensions
     };
 
     public static EmbeddedResourceBlock ToJsonContentBlock<T>(this T content, string uri)
-            => new()
-            {
-                Resource = new TextResourceContents()
-                {
-                    MimeType = "application/json",
-                    Text = JsonSerializer.Serialize(content, JsonSerializerOptions),
-                    Uri = uri
-                }
-            };
+            => JsonSerializer.Serialize(content, JsonSerializerOptions)
+            .ToTextResourceContent(uri, MediaTypeNames.Application.Json);
 
     public static ReadResourceResult ToReadResourceResult(this string content,
         string uri,
@@ -29,33 +22,29 @@ public static class ResourceExtensions
         {
             Contents =
                 [
-                    new TextResourceContents()
-                    {
-                        Text = content,
-                        MimeType = mimeType,
-                        Uri = uri,
-                    }
+                    content.ToTextResourceContents(uri, mimeType)
                 ]
         };
-
 
     public static ReadResourceResult ToJsonReadResourceResult(this string content, string uri)
         => content.ToReadResourceResult(uri, MediaTypeNames.Application.Json);
 
+    public static TextResourceContents ToTextResourceContents(this string contents, string uri,
+           string mimeType = MediaTypeNames.Text.Plain) => new()
+           {
+               Uri = uri,
+               Text = contents,
+               MimeType = mimeType
+           };
+
     public static EmbeddedResourceBlock ToTextResourceContent(this string contents, string uri,
         string mimeType = MediaTypeNames.Text.Plain) => new()
         {
-            Resource = new TextResourceContents()
-            {
-                Uri = uri,
-                Text = contents,
-                MimeType = mimeType
-            }
+            Resource = contents.ToTextResourceContents(uri, mimeType)
         };
 
     public static ContentBlock ToJsonContent(this string contents, string uri) =>
         contents.ToTextResourceContent(uri, MediaTypeNames.Application.Json);
-
 
     public static EmbeddedResourceBlock ToContent(this ResourceContents contents) => new()
     {

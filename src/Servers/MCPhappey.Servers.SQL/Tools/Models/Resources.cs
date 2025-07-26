@@ -2,15 +2,16 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 
 namespace MCPhappey.Servers.SQL.Tools.Models;
 
 [Description("Please confirm the name of the resource you want to delete.")]
-public class ConfirmDeleteResource
+public class ConfirmDeleteResource : IHasName
 {
     [JsonPropertyName("name")]
     [Required]
-    [Description("Enter the exact name of the resource to confirm deletion.")]
+    [Description("Enter the exact name of the resource to confirm deletion: {0}")]
     public string Name { get; set; } = default!;
 }
 
@@ -18,15 +19,21 @@ public class ConfirmDeleteResource
 public class UpdateMcpResource
 {
     [JsonPropertyName("uri")]
-    [Description("The URI of the resource (optional).")]
-    public string? Uri { get; set; }
+    [Required]
+    [Description("The URI of the resource.")]
+    public string Uri { get; set; } = default!;
+
+    [JsonPropertyName("name")]
+    [Required]
+    [Description("The resource name.")]
+    public string Name { get; set; } = default!;
 
     [JsonPropertyName("title")]
     [Description("The resource title.")]
     public string? Title { get; set; }
 
     [JsonPropertyName("description")]
-    [Description("New description of the resource (optional).")]
+    [Description("New description of the resource.")]
     public string? Description { get; set; }
 }
 

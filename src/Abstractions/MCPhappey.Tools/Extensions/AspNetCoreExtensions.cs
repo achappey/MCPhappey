@@ -17,5 +17,13 @@ public static class AspNetCoreExtensions
         return builder;
     }
 
-
+    public static WebApplicationBuilder WithGoogleAI(
+            this WebApplicationBuilder builder,
+            string apiKey)
+    {
+        Mscc.GenerativeAI.GoogleAI googleAI = new(apiKey);
+        builder.Services.AddSingleton(googleAI);
+        
+        return builder;
+    }
 }

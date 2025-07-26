@@ -5,6 +5,47 @@ using Microsoft.Graph.Beta.Models;
 
 namespace MCPhappey.Tools.Graph.Teams;
 
+[Description(@"Set a Teams status message. 
+You can provide an optional expiry date/time. Leave expiry empty for no automatic removal.")]
+public class GraphSetStatusMessage
+{
+    [JsonPropertyName("message")]
+    [Required]
+    [Description("The status message text. Example: 'Hey I am currently in a meeting.'")]
+    public string Message { get; set; } = default!;
+
+    [JsonPropertyName("bodyType")]
+    [Required]
+    [Description("Body type")]
+    public BodyType BodyType { get; set; } = BodyType.Text;
+
+    [JsonPropertyName("expiryDateTime")]
+    [Description("Expiry date/time in ISO8601 (e.g. 2025-07-26T12:00:00). Optional.")]
+    public string? ExpiryDateTime { get; set; }
+
+    [JsonPropertyName("timeZone")]
+    [Description("Timezone for expiry (e.g. 'W. Europe Standard Time', 'Pacific Standard Time'). Optional, default is UTC.")]
+    public string? TimeZone { get; set; }
+}
+
+[Description("Please provide the presence status to set for Teams.")]
+public class GraphSetPresence
+{
+    [JsonPropertyName("availability")]
+    [Required]
+    [Description("Base presence status. Examples: Available, Busy, Away, DoNotDisturb, Offline.")]
+    public string Availability { get; set; } = default!;
+
+    [JsonPropertyName("activity")]
+    [Required]
+    [Description("Supplemental activity. Examples: Available, InACall, InAConferenceCall, Presenting, Away.")]
+    public string Activity { get; set; } = default!;
+
+    [JsonPropertyName("expirationDuration")]
+    [Description("Expiration in ISO8601 duration format (e.g. PT1H for 1 hour).")]
+    public string? ExpirationDuration { get; set; }
+}
+
 [Description("Please fill in the Team details.")]
 public class GraphNewTeam
 {

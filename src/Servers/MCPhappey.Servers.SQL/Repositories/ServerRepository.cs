@@ -34,6 +34,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             .Include(r => r.Tools)
             .Include(r => r.Groups)
             .Include(r => r.ResourceTemplates)
+            .AsSplitQuery()
             .ToListAsync(cancellationToken);
 
     public async Task<Server> UpdateServer(Server server)
@@ -265,8 +266,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         string name,
         string? description = null,
         string? title = null,
-        IEnumerable<PromptArgument>? arguments = null,
-        IEnumerable<PromptResource>? promptResources = null)
+        IEnumerable<PromptArgument>? arguments = null)
     {
         var item = await databaseContext.Prompts.AddAsync(new Prompt()
         {
@@ -276,7 +276,6 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             Title = title,
             Arguments = arguments?.ToList() ?? [],
             ServerId = serverId,
-            PromptResources = promptResources?.ToList() ?? [],
         });
 
         await databaseContext.SaveChangesAsync();

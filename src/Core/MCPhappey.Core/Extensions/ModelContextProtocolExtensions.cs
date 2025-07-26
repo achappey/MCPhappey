@@ -18,7 +18,7 @@ public static class ModelContextProtocolExtensions
                  var server = servers.First(a => a.Server.ServerInfo?.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase) == true);
 
                  var headers = ctx.Request.Headers.Where(a => server.Server.Headers?.ContainsKey(a.Key) == true ||
-                    (server.Server.OBO?.Any() == true && a.Key == "Authorization"))
+                    (server.Server.OBO?.Count > 0 && a.Key == "Authorization"))
                         .ToDictionary(h => h.Key, h => h.Value.ToString());
 
                  opts.ServerInfo = server.Server.ToServerInfo();

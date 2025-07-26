@@ -63,14 +63,24 @@ public static class AspNetCoreExtensions
 
     public static IServiceCollection WithHostScrapers(
         this IServiceCollection services,
-        Dictionary<string, Dictionary<string, string>> hosts)
+        Dictionary<string, Dictionary<string, string>>? domainHeaders = null,
+        Dictionary<string, Dictionary<string, string>>? domainQueries = null)
     {
-        foreach (var host in hosts)
+        foreach (var host in domainHeaders ?? [])
         {
             services.AddSingleton<IContentScraper>(sp =>
             {
                 var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
                 return new StaticHeaderScraper(httpClientFactory, host.Key, host.Value);
+            });
+        }
+
+        foreach (var host in domainQueries ?? [])
+        {
+            services.AddSingleton<IContentScraper>(sp =>
+            {
+                var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                return new StaticQueryScraper(httpClientFactory, host.Key, host.Value);
             });
         }
 

@@ -5,13 +5,13 @@ using System.Reflection;
 using System.Runtime.Serialization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Common.Extensions;
 
 public static class ElicitFormExtensions
 {
-   
     public static string GetJsonPropertyName(this PropertyInfo prop) =>
            prop.GetCustomAttribute<JsonPropertyNameAttribute>()?.Name ?? prop.Name;
 
@@ -34,11 +34,33 @@ public static class ElicitFormExtensions
                 return jsonAttr?.Name ?? p.Name;
             })];
 
-    public static ElicitRequestParams CreateElicitRequestParamsForType<T>()
+    public static string GetElicitDescription<T>(string? message = null)
     {
         var type = typeof(T);
-        var description = type.GetCustomAttribute<DescriptionAttribute>()?.Description
-           ?? $"Please fill in the details for {type.Name}";
+        var descAttr = type.GetCustomAttribute<DescriptionAttribute>();
+        string description;
+
+        if (!string.IsNullOrEmpty(descAttr?.Description))
+        {
+            // Only use string.Format if message is not null/empty
+            if (!string.IsNullOrEmpty(message))
+                description = string.Format(descAttr.Description, message);
+            else
+                description = descAttr.Description;
+        }
+        else
+        {
+            description = $"Please fill in the details for {type.Name}";
+        }
+
+        return description;
+    }
+
+
+    public static ElicitRequestParams CreateElicitRequestParamsForType<T>(string? message = null)
+    {
+        var type = typeof(T);
+        var description = GetElicitDescription<T>(message);
 
         var properties = typeof(T)
             .GetProperties(BindingFlags.Public | BindingFlags.Instance)
@@ -216,6 +238,31 @@ public static class ElicitFormExtensions
         return obj;
     }
 
+    public static async Task<CallToolResult> ConfirmAndDeleteAsync<TConfirm>(
+        this ModelContextProtocol.Server.RequestContext<CallToolRequestParams> ctx,
+        string expectedName,
+        Func<CancellationToken, Task> deleteAction,
+        string successText,
+        CancellationToken ct = default)
+         where TConfirm : class, IHasName, new()
+    {
+        var dto = await ctx.Server.GetElicitResponse<TConfirm>(expectedName, ct);
+
+        var notAccepted = dto?.NotAccepted();
+        if (notAccepted != null) return notAccepted;
+
+        // Parsed DTO
+        var typed = (dto)?.GetTypedResult<TConfirm>() ?? throw new Exception();
+
+        // Name must match exactly (case-insensitive is usually more user-friendly)
+        if (!string.Equals(typed.Name?.Trim(), expectedName.Trim(), StringComparison.OrdinalIgnoreCase))
+            return $"Confirmation does not match name '{expectedName}'".ToErrorCallToolResponse();
+
+        // All good – run the provided delete delegate and send success
+        await deleteAction(ct);
+        return successText.ToTextCallToolResponse();
+    }
+
     public static string ToElicitDefaultData<T>(this string message,
         T defaultValues) where T : new()
         => JsonSerializer.Serialize(new ElicitDefaultData<T>()
@@ -227,13 +274,6 @@ public static class ElicitFormExtensions
     public static T? GetTypedResult<T>(this ElicitResult elicitResult) where T : new()
         => elicitResult.Content != null ? elicitResult.Content.MapToObject<T>() : default;
 
-    public class ElicitDefaultData<T>
-    {
-        [JsonPropertyName("message")]
-        public string? Message { get; set; }
 
-        [JsonPropertyName("defaultValues")]
-        public T? DefaultValues { get; set; }
-    }
 
 }

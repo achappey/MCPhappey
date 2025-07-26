@@ -26,14 +26,6 @@ public static partial class ModelContextPromptExtensions
                 {
                     var service = request.Services!.GetRequiredService<PromptService>();
                     request.Services!.WithHeaders(headers);
-
-                    var logger = request.Services!.GetRequiredService<ILogger<PromptsCapability>>();
-
-                    logger.LogInformation(
-                        "Action={Action} Server={Server} Prompt={Prompt}",
-                        "GetPrompt",
-                        serverConfig.Server.ServerInfo.Name, request.Params?.Name);
-
                     return await service.GetServerPrompt(request.Services!, request.Server,
                         request.Params?.Name!,
                         request.Params?.Arguments ?? new Dictionary<string, JsonElement>());

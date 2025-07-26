@@ -31,13 +31,6 @@ public static partial class ModelContextResourceExtensions
                     var scraper = request.Services!.GetRequiredService<ResourceService>();
                     request.Services!.WithHeaders(headers);
 
-                    var logger = request.Services!.GetRequiredService<ILogger<ResourcesCapability>>();
-                    logger.LogInformation(
-                        "Action={Action} Server={Server} Resource={Resource}",
-                        "ReadResource",
-                        server.Server.ServerInfo.Name,
-                        request.Params?.Uri);
-
                     //    try
                     //   {
                     return await scraper.GetServerResource(request.Services!,

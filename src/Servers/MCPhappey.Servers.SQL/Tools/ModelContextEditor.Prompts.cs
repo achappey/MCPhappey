@@ -15,7 +15,9 @@ public static partial class ModelContextEditor
 {
 
     [Description("Adds a prompt to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddPrompt", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_AddPrompt",
+        Title = "Add a prompt to an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddPrompt(
         [Description("Name of the server")]
             string serverName,
@@ -53,19 +55,15 @@ public static partial class ModelContextEditor
                 Required = true
             }));
 
-        return JsonSerializer.Serialize(new
-        {
-            Prompt = item.PromptTemplate,
-            item.Name,
-            item.Title,
-            item.Description,
-            Arguments = item.Arguments.Select(z => z.ToPromptArgument())
-        }).ToTextCallToolResponse();
-
+        return item.ToPromptTemplate()
+                   .ToJsonContentBlock($"mcp-editor://server/{serverName}/prompts/{item.Name}")
+                   .ToCallToolResult();
     }
 
     [Description("Updates a resource of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdatePrompt", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_UpdatePrompt",
+        Title = "Update a prompt of an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdatePrompt(
         [Description("Name of the server")] string serverName,
         [Description("Name of the prompt to update")] string promptName,
@@ -83,6 +81,7 @@ public static partial class ModelContextEditor
         {
             Prompt = newPrompt ?? prompt.PromptTemplate,
             Description = newDescription ?? prompt.Description,
+            Name = prompt.Name,
             Title = newTitle ?? prompt.Title,
         }, cancellationToken);
         if (notAccepted != null) return notAccepted;
@@ -94,6 +93,11 @@ public static partial class ModelContextEditor
         if (!string.IsNullOrEmpty(typed.Prompt))
         {
             prompt.PromptTemplate = typed.Prompt;
+        }
+
+        if (!string.IsNullOrEmpty(typed.Name))
+        {
+            prompt.Name = typed.Name.Slugify().ToLowerInvariant();
         }
 
         var usedArguments = prompt.PromptTemplate.ExtractPromptArguments();
@@ -122,18 +126,15 @@ public static partial class ModelContextEditor
 
         var updated = await serverRepository.UpdatePrompt(prompt);
 
-        return JsonSerializer.Serialize(new
-        {
-            Prompt = updated.PromptTemplate,
-            updated.Name,
-            updated.Title,
-            updated.Description,
-            Arguments = updated.Arguments.Select(z => new { z.Name, z.Description, z.Required })
-        }).ToTextCallToolResponse();
+        return updated.ToPromptTemplate()
+            .ToJsonContentBlock($"mcp-editor://server/{serverName}/prompts/{updated.Name}")
+            .ToCallToolResult();
     }
 
     [Description("Updates a prompt argument of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdatePromptArgument", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_UpdatePromptArgument",
+        Title = "Update a prompt argument of an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdatePromptArgument(
        [Description("Name of the server")] string serverName,
        [Description("Name of the prompt to update")] string promptName,
@@ -168,7 +169,9 @@ public static partial class ModelContextEditor
     }
 
     [Description("Deletes a prompt from a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeletePrompt", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_DeletePrompt",
+        Title = "Delete a prompt from an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeletePrompt(
         [Description("Name of the server")] string serverName,
         [Description("Name of the prompt to delete")] string promptName,
@@ -178,18 +181,17 @@ public static partial class ModelContextEditor
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<ConfirmDeletePrompt>(cancellationToken);
-        var notAccepted = dto?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<ConfirmDeletePrompt>() ?? throw new Exception();
 
-        if (typed.Name?.Trim() != promptName.Trim())
-            return $"Confirmation does not match name '{promptName}'".ToErrorCallToolResponse();
-
-        var prompt = server.Prompts.FirstOrDefault(z => z.Name == promptName) ?? throw new ArgumentException();
-        await serverRepository.DeletePrompt(prompt.Id);
-
-        return $"Prompt {promptName} deleted.".ToTextCallToolResponse();
+        // One-liner – the helper does the rest
+        return await requestContext.ConfirmAndDeleteAsync<ConfirmDeletePrompt>(
+            promptName,
+            async _ =>
+            {
+                var prompt = server.Prompts.First(z => z.Name == promptName);
+                await serverRepository.DeletePrompt(prompt.Id);
+            },
+            $"Prompt {promptName} deleted.",
+            cancellationToken);
     }
 }
 

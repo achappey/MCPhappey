@@ -17,7 +17,9 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Clone a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_CloneServer", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_CloneServer",
+        Title = "Clone an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_CloneServer(
      [Description("Name of the server to clone")]
         string cloneServerName,
@@ -220,11 +222,14 @@ public static partial class ModelContextEditor
             Owners = fullServer.Owners.Select(z => z.Id),
             fullServer.Secured,
             SecurityGroups = fullServer.Groups.Select(z => z.Id)
-        }).ToJsonContentBlock(fullServer.Name).ToCallToolResult();
+        })
+        .ToJsonCallToolResponse($"mcp-editor://server/{fullServer.Name}");
     }
 
     [Description("Create a new MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_CreateServer", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_CreateServer",
+        Title = "Create a new MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_CreateServer(
         [Description("Name of the new server")]
         string serverName,
@@ -255,6 +260,7 @@ public static partial class ModelContextEditor
             Name = typedResult.Name.Slugify(),
             Instructions = typedResult.Instructions,
             Secured = typedResult.Secured ?? true,
+            Hidden = typedResult.Hidden,
             Owners = [new ServerOwner() {
                        Id = userId
                     }]
@@ -265,12 +271,16 @@ public static partial class ModelContextEditor
             server.Name,
             Owners = server.Owners.Select(z => z.Id),
             server.Secured,
+            server.Hidden,
             SecurityGroups = server.Groups.Select(z => z.Id)
-        }).ToTextCallToolResponse();
+        })
+        .ToJsonCallToolResponse($"mcp-editor://server/{serverName}");
     }
 
     [Description("Updates a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdateServer", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_UpdateServer",
+        Title = "Update an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateServer(
       [Description("Name of the server")] string serverName,
       IServiceProvider serviceProvider,
@@ -309,30 +319,32 @@ public static partial class ModelContextEditor
             server.Secured,
             SecurityGroups = server.Groups.Select(z => z.Id),
             server.Hidden
-        }).ToTextCallToolResponse();
+        })
+        .ToJsonCallToolResponse($"mcp-editor://server/{serverName}");
     }
 
     [Description("Deletes a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeleteServer", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_DeleteServer",
+        Title = "Delete an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteServer(
         [Description("Name of the server")] string serverName,
         RequestContext<CallToolRequestParams> requestContext,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
     {
-        var dto = await requestContext.Server.GetElicitResponse<DeleteMcpServer>(cancellationToken);
-        var notAccepted = dto?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<DeleteMcpServer>() ?? throw new Exception();
-        if (typed.Name?.Trim() != serverName.Trim())
-            return $"Confirmation does not match name '{serverName}'".ToErrorCallToolResponse();
+        var repo = serviceProvider.GetRequiredService<ServerRepository>();
 
-        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
-        var server = await serviceProvider.GetServer(typed.Name, cancellationToken);
-
-        await serverRepository.DeleteServer(server.Id);
-
-        return "Server deleted".ToTextCallToolResponse();
+        // One-liner again
+        return await requestContext.ConfirmAndDeleteAsync<DeleteMcpServer>(
+            serverName,
+            async _ =>
+            {
+                var server = await serviceProvider.GetServer(serverName, cancellationToken);
+                await repo.DeleteServer(server.Id);
+            },
+            "Server deleted.",
+            cancellationToken);
     }
 }
 

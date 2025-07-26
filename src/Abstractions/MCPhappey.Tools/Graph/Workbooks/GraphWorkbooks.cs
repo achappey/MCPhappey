@@ -304,7 +304,8 @@ public static class GraphWorkbooks
 
 
     [Description("Get an Excel chart as an image from a user's OneDrive or SharePoint via Microsoft Graph.")]
-    [McpServerTool(Name = "GraphUsers_GetWorkbookChart", Title = "Get Excel chart as image",
+    [McpServerTool(Name = "GraphUsers_GetWorkbookChart",
+        Title = "Get Excel chart as image",
         ReadOnly = true, OpenWorld = false)]
     public static async Task<ImageContentBlock> GraphWorkbooks_GetWorkbookChart(
         string driveId,              // ID of the drive (OneDrive, SharePoint doclib)
@@ -334,7 +335,8 @@ public static class GraphWorkbooks
     }
 
     [Description("Add a chart to an Excel worksheet using Microsoft Graph.")]
-    [McpServerTool(Name = "GraphExcel_AddChart", Title = "Add chart to Excel worksheet",
+    [McpServerTool(Name = "GraphExcel_AddChart",
+        Title = "Add chart to Excel worksheet",
         ReadOnly = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphExcel_AddChart(
     IServiceProvider serviceProvider,

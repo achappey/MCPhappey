@@ -24,7 +24,7 @@ if (!string.IsNullOrEmpty(appConfig?.McpDatabase))
     servers.AddRange(builder.AddSqlMcpServers(appConfig.McpDatabase));
 }
 
-var apiKey = appConfig?.Domains?
+var apiKey = appConfig?.DomainHeaders?
             .FirstOrDefault(a => a.Key == Hosts.OpenAI)
             .Value
             .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
@@ -96,10 +96,7 @@ if (appConfig?.ApplicationInsights != null)
     builder.Services.AddSingleton(appConfig.ApplicationInsights);
 }
 
-if (appConfig?.Domains != null)
-{
-    builder.Services.WithHostScrapers(appConfig.Domains);
-}
+builder.Services.WithHostScrapers(appConfig?.DomainHeaders, appConfig?.DomainQueryStrings);
 
 if (appConfig?.OAuth != null)
 {
@@ -109,6 +106,16 @@ if (appConfig?.OAuth != null)
 if (openAiClient != null)
 {
     builder.Services.AddSingleton(openAiClient);
+}
+
+var googleApiKey = appConfig?.DomainQueryStrings?
+            .FirstOrDefault(a => a.Key == "generativelanguage.googleapis.com")
+            .Value
+            .FirstOrDefault(a => a.Key == "key").Value.GetBearerToken();
+
+if (googleApiKey != null)
+{
+    builder.WithGoogleAI(googleApiKey);
 }
 
 builder.Services.WithDefaultScrapers();

@@ -1,10 +1,7 @@
-
 using System.Reflection;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using Microsoft.SemanticKernel;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -84,13 +81,6 @@ public static partial class ModelContextToolExtensions
                     }
 
                     request.Services!.WithHeaders(headers);
-
-                    var logger = request.Services!.GetRequiredService<ILogger<ToolsCapability>>();
-                    logger.LogInformation(
-                        "Action={Action} Server={Server} Tool={Tool}",
-                        "CallTool",
-                        server.ServerInfo.Name,
-                        request.Params?.Name);
 
                     return await tool.InvokeAsync(request, cancellationToken);
                 }

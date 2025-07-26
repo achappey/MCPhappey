@@ -71,7 +71,7 @@ public class McpEditorScraper : IContentScraper
                 MaxServersPerOwner = maxServersPerOwner
             };
 
-            return await Task.FromResult<IEnumerable<FileItem>>([stats.ToFileItem(url)]);
+            return [stats.ToFileItem(url)];
         }
 
         if (url.Equals("mcp-editor://servers"))
@@ -87,23 +87,41 @@ public class McpEditorScraper : IContentScraper
 
         if (url.EndsWith("/prompts", StringComparison.OrdinalIgnoreCase))
         {
-            return [.. server.Prompts.Select(z => z.ToPromptTemplate())
+            return [.. server.Prompts
+                .Select(z => z.ToPromptTemplate())
                 .Select(p => p.ToFileItem(url))];
         }
 
         if (url.EndsWith("/resources", StringComparison.OrdinalIgnoreCase))
         {
-            return [.. server.Resources.Select(z => z.ToResource())
+            return [.. server.Resources
+                .Select(z => z.ToResource())
                 .Select(r => r.ToFileItem(url))];
         }
 
         if (url.EndsWith("/resourceTemplates", StringComparison.OrdinalIgnoreCase))
         {
-            return [.. server.ResourceTemplates.Select(z => z.ToResourceTemplate())
+            return [.. server.ResourceTemplates
+                .Select(z => z.ToResourceTemplate())
                 .Select(r => r.ToFileItem(url))];
         }
 
-        throw new Exception("Uri not supported");
+        string itemType = GetServerNameFromEditorUrl(url);
+        string itemName = GetServerNameFromEditorUrl(url);
+
+        return itemType switch
+        {
+            "resources" => [.. server.Resources.Where(a => a.Name == itemName)
+                .Select(z => z.ToResource())
+                .Select(r => r.ToFileItem(url))],
+            "prompts" => [.. server.Prompts.Where(a => a.Name == itemName)
+                .Select(z => z.ToPromptTemplate())
+                .Select(r => r.ToFileItem(url))],
+            "resourceTemplates" => [.. server.ResourceTemplates.Where(a => a.Name == itemName)
+                .Select(z => z.ToResourceTemplate())
+                .Select(r => r.ToFileItem(url))],
+            _ => throw new Exception("Uri not supported"),
+        };
     }
 
     private static string GetServerNameFromEditorUrl(string url)
@@ -111,5 +129,19 @@ public class McpEditorScraper : IContentScraper
         var uri = new Uri(url);
         // Segments: ["/", "server/", "{serverName}/", ...]
         return uri.Segments.Length >= 3 ? uri.Segments[1].TrimEnd('/') : "";
+    }
+
+    private static string GetItemNameFromEditorUrl(string url)
+    {
+        var uri = new Uri(url);
+        // Segments: ["/", "server/", "{serverName}/", ...]
+        return uri.Segments.Length >= 4 ? uri.Segments[3].TrimEnd('/') : "";
+    }
+
+    private static string GetItemTypeFromEditorUrl(string url)
+    {
+        var uri = new Uri(url);
+        // Segments: ["/", "server/", "{serverName}/", ...]
+        return uri.Segments.Length >= 3 ? uri.Segments[2].TrimEnd('/') : "";
     }
 }

@@ -17,6 +17,7 @@ public static class SimplicateProjects
     [McpServerTool(Name = "SimplicateProjects_CreateProject", Title = "Create new Simplicate project",
         ReadOnly = false, Idempotent = false)]
     public static async Task<CallToolResult?> SimplicateProjects_CreateProject(
+        [Description("Name of the new project")] string name,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
@@ -25,9 +26,11 @@ public static class SimplicateProjects
 
         // Simplicate CRM Organization endpoint
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/projects/project";
-        var dto = await requestContext.Server.GetElicitResponse<SimplicateNewProject>(cancellationToken);
+        var (dto, notAccepted) = await requestContext.Server.TryElicit(new SimplicateNewProject()
+        {
+            Name = name,
+        }, cancellationToken);
 
-        var notAccepted = dto?.NotAccepted();
         if (notAccepted != null) return notAccepted;
         // Use your POST extension to create the org
         return (await serviceProvider.PostSimplicateItemAsync(
@@ -113,6 +116,7 @@ public static class SimplicateProjects
         [Required]
         [Description("The name of the project.")]
         public string? Name { get; set; }
+
     }
 
 

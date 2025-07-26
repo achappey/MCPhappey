@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 
 namespace MCPhappey.Servers.SQL.Tools.Models;
 
@@ -48,8 +49,8 @@ public class McpServerOwner
     public string UserId { get; set; } = default!;
 }
 
-[Description("Please fill in the MCP Server name to confirm deletion.")]
-public class DeleteMcpServer
+[Description("Please fill in the MCP Server name to confirm deletion: {0}")]
+public class DeleteMcpServer : IHasName
 {
     [JsonPropertyName("name")]
     [Required]

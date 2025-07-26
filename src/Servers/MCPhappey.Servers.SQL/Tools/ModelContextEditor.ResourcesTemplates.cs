@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Servers.SQL.Extensions;
@@ -14,7 +13,9 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Adds a resource template to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddResourceTemplate", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_AddResourceTemplate",
+        Title = "Add a resource template to an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddResourceTemplate(
         [Description("Name of the server")]
         string serverName,
@@ -54,11 +55,15 @@ public static partial class ModelContextEditor
             typed.Description,
             typed.Title);
 
-        return JsonSerializer.Serialize(item.ToResourceTemplate()).ToJsonCallToolResponse(typed.UriTemplate);
+        return item.ToResourceTemplate()
+                      .ToJsonContentBlock($"mcp-editor://server/{serverName}/resourceTemplates/{item.Name}")
+                      .ToCallToolResult();
     }
 
     [Description("Updates a resource template of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdateResourceTemplate", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_UpdateResourceTemplate",
+        Title = "Update a resource template of an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResourceTemplate(
         [Description("Name of the server")] string serverName,
         [Description("Name of the resource template to update")] string resourceTemplateName,
@@ -76,6 +81,7 @@ public static partial class ModelContextEditor
         {
             Description = newDescription ?? resource.Description,
             Title = newTitle ?? resource.Title,
+            Name = resourceTemplateName,
             UriTemplate = newUriTemplate ?? resource.TemplateUri
         }, cancellationToken);
 
@@ -86,17 +92,25 @@ public static partial class ModelContextEditor
             resource.TemplateUri = typed.UriTemplate;
         }
 
+        if (!string.IsNullOrEmpty(typed.Name))
+        {
+            resource.Name = typed.Name.Slugify().ToLowerInvariant();
+        }
+
         resource.Description = typed.Description;
         resource.Title = typed.Title;
 
         var updated = await serverRepository.UpdateResourceTemplate(resource);
 
-        return JsonSerializer.Serialize(updated.ToResourceTemplate())
-            .ToJsonCallToolResponse(updated.TemplateUri);
+        return updated.ToResourceTemplate()
+                      .ToJsonContentBlock($"mcp-editor://server/{serverName}/resourceTemplates/{updated.Name}")
+                      .ToCallToolResult();
     }
 
     [Description("Deletes a resource template from a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeleteResourceTemplate", OpenWorld = false)]
+    [McpServerTool(Name = "ModelContextEditor_DeleteResourceTemplate",
+        Title = "Delete a resource template from an MCP-server",
+        OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteResourceTemplate(
         [Description("Name of the server")] string serverName,
         [Description("Name of the resource template to delete")] string resourceTemplateName,
@@ -106,19 +120,17 @@ public static partial class ModelContextEditor
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var dto = await requestContext.Server.GetElicitResponse<ConfirmDeleteResourceTemplate>(cancellationToken);
-        var notAccepted = dto?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<ConfirmDeleteResourceTemplate>() ?? throw new Exception();
 
-        if (typed.Name?.Trim() != resourceTemplateName.Trim())
-            return $"Confirmation does not match name '{resourceTemplateName}'".ToErrorCallToolResponse();
-
-        var resource = server.ResourceTemplates.FirstOrDefault(a => a.Name == resourceTemplateName) ?? throw new ArgumentNullException();
-
-        await serverRepository.DeleteResourceTemplate(resource.Id);
-
-        return $"Resource {resourceTemplateName} has been deleted.".ToTextCallToolResponse();
+        return await requestContext.ConfirmAndDeleteAsync<ConfirmDeleteResourceTemplate>(
+            expectedName: resourceTemplateName,
+            deleteAction: async _ =>
+            {
+                var template = server.ResourceTemplates.First(z => z.Name == resourceTemplateName);
+                await serverRepository.DeleteResourceTemplate(template.Id);
+            },
+            successText: $"Resource {resourceTemplateName} has been deleted.",
+            ct: cancellationToken);
     }
+
 }
 
