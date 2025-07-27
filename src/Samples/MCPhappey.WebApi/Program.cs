@@ -17,7 +17,7 @@ var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
 
 var basePath = Path.Combine(AppContext.BaseDirectory, "Servers");
-var servers = basePath.GetServers().ToList();
+var servers = basePath.GetServers(appConfig?.Simplicate?.Organization ?? "").ToList();
 
 if (!string.IsNullOrEmpty(appConfig?.McpDatabase))
 {

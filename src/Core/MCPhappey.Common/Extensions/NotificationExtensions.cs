@@ -35,7 +35,7 @@ public static class NotificationExtensions
                         Message = message
                     }
                 },
-                cancellationToken: cancellationToken
+                cancellationToken: CancellationToken.None
             );
 
             progressCounter++;

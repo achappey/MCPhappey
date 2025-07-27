@@ -109,7 +109,7 @@
       }
     },
     {
-      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfolderbyserverrelativeurl('{folderRelativeUrl}')/HasUniqueRoleAssignments",
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfolderbyserverrelativeurl('/sites/{siteUrl}/{folderRelativeUrl}')/ListItemAllFields/HasUniqueRoleAssignments",
       "name": "Folder has unique permissions",
       "description": "Indicates whether the folder has unique (non-inherited) permissions.",
       "mimeType": "application/json",
@@ -118,16 +118,7 @@
       }
     },
     {
-      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfolderbyserverrelativeurl('{folderRelativeUrl}')/roleassignments?$expand=Member,RoleDefinitionBindings",
-      "name": "Folder role assignments",
-      "description": "Retrieves all role assignments for a folder, showing unique permissions if present.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfilebyserverrelativeurl('{fileRelativeUrl}')/HasUniqueRoleAssignments",
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfilebyserverrelativeurl('/sites/{siteUrl}/{fileRelativeUrl}')/ListItemAllFields/HasUniqueRoleAssignments",
       "name": "File has unique permissions",
       "description": "Indicates whether the file has unique (non-inherited) permissions.",
       "mimeType": "application/json",
@@ -136,9 +127,18 @@
       }
     },
     {
-      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfilebyserverrelativeurl('{fileRelativeUrl}')/roleassignments?$expand=Member,RoleDefinitionBindings",
-      "name": "File role assignments",
-      "description": "Retrieves all role assignments for a file, showing unique permissions if present.",
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/lists/getbytitle('{listTitle}')/items({listItemId})/roleassignments?$expand=Member,RoleDefinitionBindings",
+      "name": "Item role assignments",
+      "description": "Retrieves all role assignments for a list item, showing unique permissions if present.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "https://{tenantName}.sharepoint.com/sites/{siteUrl}/_api/web/getfilebyserverrelativeurl('/sites/{siteUrl}/{fileRelativeUrl}')/ListItemAllFields",
+      "name": "File list item",
+      "description": "Retrieves the ListItem object for a specific file in a SharePoint document library, enabling access to metadata and permission details associated with that file.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]

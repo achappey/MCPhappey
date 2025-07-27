@@ -15,7 +15,8 @@ public class OboClientScraper(IHttpClientFactory httpClientFactory, ServerConfig
         =>
             currentConfig.Server.ServerInfo.Name == serverConfig.Server.ServerInfo.Name
             &&
-            serverConfig.Server.OBO?.Keys.Any(a => a == new Uri(url).Host || new Uri(url).Host.EndsWith(a)) == true;
+            serverConfig.Server.OBO?.Keys.Any(a => a == new Uri(url).Host
+                || new Uri(url).Host.EndsWith(a)) == true;
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider,
          string url, CancellationToken cancellationToken = default)

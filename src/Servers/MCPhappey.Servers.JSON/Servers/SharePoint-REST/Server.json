@@ -4,6 +4,6 @@
     "version": "1.0.0"
   },
   "obo": {
-    "*.sharepoint.com": "https://{tenantName}.sharepoint.com/.default"
+    ".sharepoint.com": "https://{tenantName}.sharepoint.com/.default"
   }
 }

@@ -16,8 +16,7 @@ public static partial class GraphWorkbooks
         Title = "Get Excel chart as image",
         ReadOnly = true, OpenWorld = false)]
     public static async Task<ImageContentBlock> GraphWorkbooks_GetWorkbookChart(
-        string driveId,              // ID of the drive (OneDrive, SharePoint doclib)
-        string itemId,               // ID of the Excel file
+        string excelFileUrl,
         string worksheetName,        // Name of the worksheet
         string chartName,            // Name or ID of the chart
         IServiceProvider serviceProvider,
@@ -25,10 +24,12 @@ public static partial class GraphWorkbooks
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
+
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
         var imageResponse = await client
-            .Drives[driveId]
-            .Items[itemId]
+            .Drives[driveItem?.ParentReference?.DriveId]
+            .Items[driveItem?.Id]
             .Workbook
             .Worksheets[worksheetName]
             .Charts[chartName]
@@ -49,8 +50,7 @@ public static partial class GraphWorkbooks
     public static async Task<CallToolResult?> GraphExcel_AddChart(
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,
-    [Description("ID of the drive (OneDrive, SharePoint doclib).")] string driveId,
-    [Description("ID of the Excel file.")] string itemId,
+    [Description("SharePoint URL to the Excel file")] string excelFileUrl,
     [Description("Name of the worksheet.")] string worksheetName,
     [Description("The type of chart to add. Example: ColumnStacked, Pie, Line, BarClustered, etc.")] ChartType? type = null,
     [Description("The cell range for the chart source data, e.g. 'A1:B10' or 'Sheet1!A1:C20'.")] string? sourceData = null,
@@ -70,7 +70,7 @@ public static partial class GraphWorkbooks
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid result".ToErrorCallToolResponse();
         var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
+        var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
         var requestBody = new Microsoft.Graph.Beta.Drives.Item.Items.Item.Workbook.Worksheets.Item.Charts.Add.AddPostRequestBody
         {
             Type = typed.Type.ToString(),
@@ -80,15 +80,15 @@ public static partial class GraphWorkbooks
 
         // Example: assumes worksheet is "Sheet1" and drive/itemId known; adapt as needed
         var chart = await client
-            .Drives[driveId] // TODO: parameterize if needed
-            .Items[itemId]   // TODO: parameterize if needed
+            .Drives[driveItem?.ParentReference?.DriveId] // TODO: parameterize if needed
+            .Items[driveItem?.Id]   // TODO: parameterize if needed
             .Workbook
             .Worksheets[worksheetName] // TODO: parameterize if needed
             .Charts
             .Add
             .PostAsync(requestBody, cancellationToken: cancellationToken);
 
-        var url = $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}/workbook/worksheets/{worksheetName}/charts/{chart.Id}";
+        var url = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook/worksheets/{worksheetName}/charts/{chart.Id}";
 
         return chart.ToJsonContentBlock(url).ToCallToolResult();
     }

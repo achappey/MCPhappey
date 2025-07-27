@@ -33,21 +33,35 @@ public static partial class ModelContextResourceExtensions
 
                     //    try
                     //   {
-                    return await scraper.GetServerResource(request.Services!,
-                        request.Server, request.Params?.Uri!,
-                        cancellationToken);
+                    try
+                    {
+                        return await scraper.GetServerResource(request.Services!,
+                            request.Server, request.Params?.Uri!,
+                            cancellationToken);
+                    }
+                    catch (Exception e)
+                    {
+                        return new ReadResourceResult()
+                        {
+                            Contents = [new TextResourceContents() {
+                                MimeType = "text/plain",
+                                Text = e.Message,
+                                Uri = request.Params?.Uri!
+                            }]
+                        };
+                    }
                     /*   }
-                       catch (Exception e)
-                       {
-                           return new ReadResourceResult()
+                           catch (Exception e)
                            {
-                               Contents = [new TextResourceContents() {
-                                   Text = e.Message,
-                                   MimeType = MimeTypes.PlainText,
-                                   Uri = request.Params?.Uri ?? string.Empty
-                               }]
-                           };
-                       }*/
+                               return new ReadResourceResult()
+                               {
+                                   Contents = [new TextResourceContents() {
+                                       Text = e.Message,
+                                       MimeType = MimeTypes.PlainText,
+                                       Uri = request.Params?.Uri ?? string.Empty
+                                   }]
+                               };
+                           }*/
                 },
             }
             : null;

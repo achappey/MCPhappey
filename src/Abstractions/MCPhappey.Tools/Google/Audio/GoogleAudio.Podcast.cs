@@ -73,8 +73,7 @@ public static partial class GoogleAudio
                      cancellationToken: cancellationToken
                  );
 
-        var scriptResultValue = scriptResult.Content is TextContentBlock textScriptContentBlock ?
-                   textScriptContentBlock.Text : "";
+        var scriptResultValue = scriptResult.ToText() ?? string.Empty;
 
         return scriptResultValue.ToTextCallToolResponse();
     }

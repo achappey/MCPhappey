@@ -2,6 +2,7 @@ using System.Text.Json;
 using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
+using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -10,7 +11,86 @@ namespace MCPhappey.Simplicate.Extensions;
 
 public static class SimplicateExtensions
 {
-    
+
+    public static async Task<SimplicateData<JsonElement>?> GetSimplicatePageAsync(
+        this DownloadService downloadService,
+        IServiceProvider serviceProvider,
+        IMcpServer mcpServer,
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        var page = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken);
+        var stringContent = page?.FirstOrDefault()?.Contents?.ToString();
+        if (string.IsNullOrWhiteSpace(stringContent))
+            return null;
+
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        return JsonSerializer.Deserialize<SimplicateData<JsonElement>>(stringContent, options);
+    }
+
+    public static async Task<List<JsonElement>> GetAllSimplicatePagesAsync(
+        this DownloadService downloadService,
+        IServiceProvider serviceProvider,
+        IMcpServer mcpServer,
+        string baseUrl,
+        //string filterString,
+        Func<int, string> progressTextSelector,
+        RequestContext<CallToolRequestParams> requestContext,
+        int pageSize = 100,
+        CancellationToken cancellationToken = default)
+    {
+        var results = new List<JsonElement>();
+        int offset = 0;
+        int? totalCount = null;
+        int? totalPages = null;
+
+        while (true)
+        {
+            int pageNumber = (offset / pageSize) + 1;
+            var builder = new UriBuilder(baseUrl);
+            var queryDict = QueryHelpers.ParseQuery(builder.Query);
+            queryDict["limit"] = pageSize.ToString();
+            queryDict["offset"] = offset.ToString();
+            queryDict["metadata"] = "count";
+            builder.Query = string.Join("&", queryDict.SelectMany(kvp => kvp.Value.Select(v => $"{kvp.Key}={Uri.EscapeDataString(v)}")));
+            string url = builder.Uri.ToString();
+
+            //  string url = $"{baseUrl}?&limit={pageSize}&offset={offset}&metadata=count";
+
+            await requestContext.Server.SendProgressNotificationAsync(
+                requestContext,
+                pageNumber,
+                progressTextSelector(pageNumber),
+                totalPages > 0 ? totalPages : (int?)null,
+                cancellationToken);
+
+            var result = await downloadService.GetSimplicatePageAsync(
+                serviceProvider, mcpServer, url, cancellationToken);
+
+            if (result?.Data == null)
+                break;
+
+            var markdown =
+                $"<details><summary><a href=\"{url}\" target=\"blank\">{new Uri(url).Host}</a></summary>\n\n```\n{JsonSerializer.Serialize(result)}\n```\n</details>";
+            await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
+
+            results.AddRange(result.Data);
+
+            if (totalCount == null && result.Metadata != null)
+            {
+                totalCount = result.Metadata.Count;
+                totalPages = (int)Math.Ceiling((double)totalCount.Value / pageSize);
+            }
+
+            offset += pageSize;
+            if (totalCount.HasValue && offset >= totalCount.Value)
+                break;
+        }
+
+        return results;
+    }
+
+
     public static DateTime? ParseDate(this string? dateString)
     {
         if (string.IsNullOrWhiteSpace(dateString))

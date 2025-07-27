@@ -102,9 +102,9 @@ public static class HttpExtensions
       throw new UnauthorizedAccessException($"No OBO config for host: {host}");
 
     // Replace [tenantName] placeholder if present
-    var scopeString = rawScopeString.Replace("{tenantName}", host.Split('.')[0], StringComparison.OrdinalIgnoreCase);
+    //var scopeString = rawScopeString.Replace("{tenantName}", host.Split('.')[0], StringComparison.OrdinalIgnoreCase);
 
-    var scopes = scopeString
+    var scopes = rawScopeString
         .Split(' ', StringSplitOptions.RemoveEmptyEntries)
         .ToArray();
 

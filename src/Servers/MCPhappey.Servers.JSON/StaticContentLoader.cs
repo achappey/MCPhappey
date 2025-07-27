@@ -7,7 +7,7 @@ namespace MCPhappey.Servers.JSON;
 
 public static class StaticContentLoader
 {
-    public static IEnumerable<ServerConfig> GetServers(this string basePath)
+    public static IEnumerable<ServerConfig> GetServers(this string basePath, string? tenantName = null)
     {
         var servers = new List<ServerConfig>();
 
@@ -31,6 +31,20 @@ public static class StaticContentLoader
                     SourceType = ServerSourceType.Static,
                 };
 
+                if (!string.IsNullOrEmpty(tenantName))
+                {
+                    foreach (var key in serverConfig.Server.OBO?.Keys?.ToList() ?? [])
+                    {
+                        var value = serverConfig.Server.OBO![key];
+                        if (value != null && value.Contains("{tenantName}"))
+                        {
+                            serverConfig.Server.OBO[key] = value.Replace("{tenantName}", tenantName);
+                        }
+                    }
+
+                }
+
+                //serverConfig.Server.OBO.
                 // Check for Tools.json, Prompts.json, Resources.json in the same subDir
                 var promptsFile = Path.Combine(subDir, "Prompts.json");
                 var resourcesFile = Path.Combine(subDir, "Resources.json");

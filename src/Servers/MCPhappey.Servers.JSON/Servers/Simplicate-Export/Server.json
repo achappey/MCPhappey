@@ -1,0 +1,17 @@
+{
+  "serverInfo": {
+    "name": "Simplicate-Export",
+    "version": "1.0.0"
+  },
+  "headers": {
+    "Authentication-Key": "Simplicate Api Key",
+    "Authentication-Secret": "Simplicate Api Secret"
+  },
+  "plugins": [
+    "MCPhappey.Simplicate.Export.SimplicateExport, MCPhappey.Simplicate"
+  ],
+  "instructions": "Use the locale delimeter from user context when known. Always use the select query parameter for the fields needed.",
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

@@ -16,8 +16,7 @@ public static partial class GraphWorkbooks
         ReadOnly = true,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_GetRowsByValuesFilter(
-            string driveId,
-            string itemId,
+            string excelFileUrl,
             string worksheetName,
             string tableName,
             string filterColumn,
@@ -32,9 +31,11 @@ public static partial class GraphWorkbooks
 
         try
         {
+            var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
+
             // 1. Start session
-            var session = await client.Drives[driveId]
-                .Items[itemId]
+            var session = await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .CreateSession
                 .PostAsync(new() { PersistChanges = false }, cancellationToken: cancellationToken);
@@ -54,8 +55,8 @@ public static partial class GraphWorkbooks
             };
 
             // 3. Pas de filter toe
-            await client.Drives[driveId]
-                .Items[itemId]
+            await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .Worksheets[worksheetName]
                 .Tables[tableName]
@@ -71,8 +72,8 @@ public static partial class GraphWorkbooks
                     cancellationToken);
 
             // 4. Haal alle kolomnamen op
-            var columns = await client.Drives[driveId]
-                .Items[itemId]
+            var columns = await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .Tables[tableName]
                 .Columns
@@ -81,8 +82,8 @@ public static partial class GraphWorkbooks
             var columnNames = columns?.Value?.Select(c => c.Name).ToList() ?? [];
 
             // 5. Haal de gefilterde data op (zelfde als in je bestaande tool)
-            var bodyRange = await client.Drives[driveId]
-                .Items[itemId]
+            var bodyRange = await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .Tables[tableName]
                 .DataBodyRange
@@ -91,7 +92,7 @@ public static partial class GraphWorkbooks
             var addressOnly = (bodyRange?.AddressLocal ?? bodyRange?.Address)!.Split('!').Last();
 
             var url =
-                $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}" +
+                $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}" +
                 $"/workbook/worksheets('{worksheetName}')" +
                 $"/range(address='{addressOnly}')/visibleView" +
                 "?$select=values,rowCount,columnCount,rows&$expand=rows";
@@ -141,7 +142,7 @@ public static partial class GraphWorkbooks
                 return dict;
             }).ToList();
 
-            var workbookGraphUrl = $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}/workbook";
+            var workbookGraphUrl = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook";
             return rowObjs.ToJsonContentBlock(workbookGraphUrl).ToCallToolResult();
 
         }
@@ -158,8 +159,7 @@ public static partial class GraphWorkbooks
         ReadOnly = true,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_GetFilteredRows(
-        string driveId,
-        string itemId,
+        string excelFileUrl,
         string worksheetName,
         string tableName,
         string filterColumn,
@@ -178,9 +178,10 @@ public static partial class GraphWorkbooks
 
         try
         {
+            var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
             // 1. Start session (persistChanges = false)
-            var session = await client.Drives[driveId]
-                .Items[itemId]
+            var session = await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .CreateSession
                 .PostAsync(new()
@@ -204,8 +205,8 @@ public static partial class GraphWorkbooks
 
 
             // 2. Apply filter
-            await client.Drives[driveId]
-                .Items[itemId]
+            await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .Worksheets[worksheetName]
                 .Tables[tableName]
@@ -223,8 +224,8 @@ public static partial class GraphWorkbooks
                     },
                     cancellationToken);
 
-            var columns = await client.Drives[driveId]
-                .Items[itemId]
+            var columns = await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .Tables[tableName]
                 .Columns
@@ -234,8 +235,8 @@ public static partial class GraphWorkbooks
                 }, cancellationToken);
 
             var columnNames = columns?.Value?.Select(c => c.Name).ToList() ?? [];
-            var bodyRange = await client.Drives[driveId]
-                .Items[itemId]
+            var bodyRange = await client.Drives[driveItem?.ParentReference?.DriveId]
+                .Items[driveItem?.Id]
                 .Workbook
                 .Tables[tableName]
                 .DataBodyRange
@@ -243,7 +244,7 @@ public static partial class GraphWorkbooks
 
             var addressOnly = (bodyRange?.AddressLocal ?? bodyRange?.Address)!.Split('!').Last(); // "A2:D999"
             var url =
-                $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}" +
+                $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}" +
                 $"/workbook/worksheets('{worksheetName}')" +
                 $"/range(address='{addressOnly}')/visibleView" +
                 "?$select=values,rowCount,columnCount,rows&$expand=rows";
@@ -292,7 +293,7 @@ public static partial class GraphWorkbooks
                 return dict;
             }).ToList();
 
-            var workbookGraphUrl = $"https://graph.microsoft.com/beta/drives/{driveId}/items/{itemId}/workbook";
+            var workbookGraphUrl = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook";
 
             return rowObjs.ToJsonContentBlock(workbookGraphUrl).ToCallToolResult();
 
