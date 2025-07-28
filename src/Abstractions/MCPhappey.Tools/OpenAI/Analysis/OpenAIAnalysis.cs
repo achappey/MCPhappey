@@ -4,13 +4,13 @@ using System.Text;
 using CsvHelper;
 using CsvHelper.Configuration;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Kiota.Abstractions.Serialization;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using static MCPhappey.Core.Extensions.DataQueryExtenions;
 
 namespace MCPhappey.Tools.OpenAI.Analysis;
 
@@ -61,9 +61,6 @@ public static class OpenAIAnalysis
 
             if (table is null)
                 return $"Table '{tableName}' not found.".ToErrorCallToolResponse();
-
-            await requestContext.Server.SendProgressNotificationAsync(
-                requestContext, 2, "Fetching header and data ranges", 4, cancellationToken);
 
             // Header row (names)
             var headerRange = await graphClient
@@ -217,7 +214,7 @@ public static class OpenAIAnalysis
         return result?.ToTextCallToolResponse();
     }
 
-    public static Core.Extensions.DataQueryExtenions.GenericTable LoadCsvToGenericTable(string csvRaw)
+    public static GenericTable LoadCsvToGenericTable(string csvRaw)
     {
         using var reader = new StringReader(csvRaw);
         var delimiters = new[] { ';', ',', '\t', '|' };
@@ -237,7 +234,7 @@ public static class OpenAIAnalysis
 
         using var csv = new CsvReader(reader, config);
 
-        var table = new Core.Extensions.DataQueryExtenions.GenericTable();
+        var table = new GenericTable();
         csv.Read();
         csv.ReadHeader();
         table.Columns = csv.HeaderRecord?.ToList() ?? [];

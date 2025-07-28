@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "Audio",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Tools.AI.AudioPlugin, MCPhappey.Tools"],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

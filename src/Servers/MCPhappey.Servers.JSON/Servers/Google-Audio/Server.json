@@ -3,6 +3,7 @@
     "name": "Google-Audio",
     "version": "1.0.0"
   },
+  "instructions": "Do not include more than 4 speaker turns in a single TTS tool call. Creating Audio Speech, especially multi speaker TTS, can be slow. ",
   "plugins": ["MCPhappey.Tools.Google.Audio.GoogleAudio, MCPhappey.Tools"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

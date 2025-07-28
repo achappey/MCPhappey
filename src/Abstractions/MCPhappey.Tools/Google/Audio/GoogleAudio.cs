@@ -112,7 +112,7 @@ public static partial class GoogleAudio
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         var outputName = $"{filename}.mp3";
-        var uploadStream = new MemoryStream(Convert.FromBase64String(audio.Data));
+        using  var uploadStream = new MemoryStream(Convert.FromBase64String(audio.Data));
 
         var myDrive = await client.Me.Drive.GetAsync(cancellationToken: cancellationToken);
         var uploadedItem = await client.Drives[myDrive?.Id].Root.ItemWithPath($"/{outputName}")
@@ -120,5 +120,6 @@ public static partial class GoogleAudio
 
         return uploadedItem?.WebUrl?.ToTextCallToolResponse();
     }
+
 }
 

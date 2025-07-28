@@ -4,6 +4,7 @@
       "prompt": "Geef alle contactpersonen die het afgelopen jaar zijn toegevoegd met een specifiek e-mailadresdomein {emailDomein}. Toon maximaal 50 resultaten met naam, e-mail en gekoppelde organisatie.",
       "template": {
         "name": "crm-contacten-op-emaildomein",
+        "title": "Contactpersonen met specifiek e-maildomein",
         "description": "Overzicht van contactpersonen met een specifiek e-maildomein, maximaal 50 stuks.",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "Toon de tien laatst toegevoegde organisaties in het CRM, met naam, branche, datum van toevoegen en hoofdcontactpersoon (indien bekend).",
       "template": {
         "name": "crm-laatst-toegevoegde-organisaties",
+        "title": "Tien laatst toegevoegde organisaties",
         "description": "Geeft een overzicht van de tien meest recent aangemaakte organisaties in Simplicate.",
         "arguments": []
       }
@@ -26,6 +28,7 @@
       "prompt": "Geef van bedrijf {naamBedrijf} een kort profiel: toon de kerngegevens (naam, branche, relatiemanager, e-mail, telefoon, website) en maximaal vijf recente contactpersonen met hun functie.",
       "template": {
         "name": "crm-organisatie-kort-profiel",
+        "title": "Kort profiel van bedrijf",
         "description": "Toont een compact profiel van een bedrijf, plus een beknopte lijst van de belangrijkste contactpersonen.",
         "arguments": [
           {
@@ -40,6 +43,7 @@
       "prompt": "Zoek alle actieve contactpersonen met de functie {functie} en het e-maildomein {emailDomein}. Beperk je tot maximaal 10 resultaten. Geef inzicht: is deze combinatie typisch voor een bepaald team of organisatie, of valt iets anders op?",
       "template": {
         "name": "crm-contacten-analyse-functie-en-domein",
+        "title": "Contactanalyse op functie en domein",
         "description": "Analyse van contactpersonen op basis van functie en e-maildomein, met inzicht in patronen.",
         "arguments": [
           {
@@ -59,6 +63,7 @@
       "prompt": "Bekijk de contactpersonen van bedrijf {naamBedrijf} en geef inzicht: zijn er functiegroepen die sterk vertegenwoordigd zijn? Noem maximaal drie meest voorkomende functies en geef een korte uitleg bij het resultaat.",
       "template": {
         "name": "crm-functieverdeling-contactpersonen",
+        "title": "Functieverdeling contactpersonen binnen bedrijf",
         "description": "Geeft een verdeling van de meest voorkomende functies onder contactpersonen binnen een bedrijf.",
         "arguments": [
           {
@@ -73,6 +78,7 @@
       "prompt": "Analyseer de laatste 25 toegevoegde bedrijven binnen branche {brancheNaam}. Geef per bedrijf aan wie de relatiemanager is, en meld opvallende patronen, zoals meerdere bedrijven bij dezelfde relatiemanager of een plotselinge toename binnen deze branche.",
       "template": {
         "name": "crm-patroonanalyse-nieuwe-organisaties",
+        "title": "Patronen in nieuwe organisaties per branche",
         "description": "Analyse van patronen in nieuwe organisaties binnen een branche.",
         "arguments": [
           {
@@ -87,6 +93,7 @@
       "prompt": "Voor branche {brancheNaam}: welke drie organisaties hebben de meeste actieve contactpersonen? Geef per organisatie het aantal actieve contacten, en beschrijf kort wat deze organisaties typeert volgens hun profiel.",
       "template": {
         "name": "crm-top-organisaties-op-actieve-contacten",
+        "title": "Toporganisaties op actieve contactpersonen per branche",
         "description": "Vindt de top 3 organisaties per branche op basis van aantal actieve contactpersonen en beschrijft opvallende kenmerken.",
         "arguments": [
           {
@@ -101,6 +108,7 @@
       "prompt": "Vergelijk voor bedrijf {naamBedrijf} de vijf laatst toegevoegde contactpersonen met de vijf oudste contactpersonen. Wat valt op in functietitel, afdeling of e-maildomein? Benoem opvallende verschillen of trends.",
       "template": {
         "name": "crm-vergelijk-contactpersoon-groepen",
+        "title": "Vergelijk nieuwste en oudste contactpersonen bedrijf",
         "description": "Vergelijkt de nieuwste en oudste contactpersonen binnen een bedrijf om trends te signaleren.",
         "arguments": [
           {

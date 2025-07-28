@@ -24,7 +24,7 @@
       "uri": "https://storage.googleapis.com/deepmind-media/Model-Cards/Imagen-4-Model-Card.pdf",
       "name": "imagen-4-model-card",
       "title": "Imagen 4 Model Card",
-      "description": "Official model card PDF for Imagen 4, DeepMind’s advanced text-to-image diffusion model, covering model design, data, capabilities, and limitations.",
+      "description": "Official model card PDF for Imagen 4, DeepMind's advanced text-to-image diffusion model, covering model design, data, capabilities, and limitations.",
       "mimeType": "text/plain",
       "annotations": {
         "audience": ["assistant", "user"]

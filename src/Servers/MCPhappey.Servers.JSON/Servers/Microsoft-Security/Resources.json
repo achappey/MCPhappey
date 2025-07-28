@@ -2,35 +2,40 @@
   "resources": [
     {
       "uri": "https://graph.microsoft.com/beta/security/alerts?$top=10&$select=id,title,severity,status,createdDateTime",
-      "name": "Recent Security Alerts",
+      "name": "recent-security-alerts",
+      "title": "Recent security alerts",
       "description": "Gets the 10 most recent alerts with title, severity, status and timestamp.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uri": "https://graph.microsoft.com/beta/security/incidents?$top=5&$select=id,displayName,status",
-      "name": "Recent Security incidents",
+      "name": "recent-security-incidents",
+      "title": "Recent security incidents",
       "description": "Retrieves five latest incidents with basic status and timestamp info.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uri": "https://graph.microsoft.com/beta/security/secureScores?$top=7&$select=id,createdDateTime,currentScore,maxScore",
-      "name": "Last 7 Secure scores",
+      "name": "last-7-secure-scores",
+      "title": "Last 7 secure scores",
       "description": "Fetches seven days of secure score snapshots for trend analysis.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uri": "https://graph.microsoft.com/beta/security/threatIndicators?$top=10&$select=id,indicatorType,displayName",
-      "name": "Recent threat indicators",
+      "name": "recent-threat-indicators",
+      "title": "Recent threat indicators",
       "description": "Gets the latest 10 IoCs by type and name.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uri": "https://graph.microsoft.com/beta/security/secureScoreControlProfiles?$select=id,controlName,controlCategory,actionType",
-      "name": "All Secure Score controls",
+      "name": "all-secure-score-controls",
+      "title": "All secure score controls",
       "description": "Retrieves all control profiles with their names, categories and action types.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }

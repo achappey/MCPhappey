@@ -56,11 +56,54 @@ public partial class DownloadService(WebScraper webScraper,
             throw new Exception(defaultScraper.Error);
         }
 
-      //  var fileItem = defaultScraper.ToFileItem(url);
+        //  var fileItem = defaultScraper.ToFileItem(url);
 
         return [await transformService.DecodeAsync(url,
                           defaultScraper.Content,
                           defaultScraper.ContentType, cancellationToken)];
+    }
+
+    public async Task<IEnumerable<FileItem>> DownloadContentAsync(IServiceProvider serviceProvider,
+        ModelContextProtocol.Server.IMcpServer mcpServer,
+        string url,
+        CancellationToken cancellationToken = default)
+    {
+        Uri uri = new(url);
+        var serverConfig = serviceProvider.GetServerConfig(mcpServer)
+            ?? throw new Exception();
+
+        var supportedScrapers = scrapers
+            .Where(a => a.SupportsHost(serverConfig, url));
+
+        IEnumerable<FileItem>? fileContent = null;
+
+        var domain = new Uri(url).Host; // e.g., "example.com"
+        var markdown = $"GET [{domain}]({url})";
+
+        await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Info);
+
+        foreach (var decoder in supportedScrapers)
+        {
+            fileContent = await decoder.GetContentAsync(mcpServer, serviceProvider, url, cancellationToken);
+
+            if (fileContent != null)
+            {
+                return fileContent;
+            }
+        }
+
+        var defaultScraper = await webScraper.GetContentAsync(url, cancellationToken);
+
+        if (!defaultScraper.Success)
+        {
+            throw new Exception(defaultScraper.Error);
+        }
+
+        return [new FileItem() {
+            MimeType = defaultScraper?.ContentType!,
+            Contents = defaultScraper?.Content!,
+            Uri = url,
+        }];
     }
 
     [GeneratedRegex(@"^[^.]+\.crm\d+\.dynamics\.com$", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]

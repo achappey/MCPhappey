@@ -4,6 +4,7 @@
       "prompt": "Geef voor project {projectNaam} een samenvatting van de status: wie is de projectmanager, wat is de huidige status, wat is het begindatum en einddatum? Voeg maximaal drie belangrijkste medewerkers toe, indien bekend.",
       "template": {
         "name": "project-samenvatting-status",
+        "title": "Projectstatus samenvatting",
         "description": "Toont een overzicht van kerngegevens van een project met een snapshot van de projectorganisatie.",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "Geef een overzicht van alle projectleiders en hun actieve projecten. Als een projectleider veel actieve projecten heeft geef je alleen het aantal projecten van de betreffende projectleider.",
       "template": {
         "name": "projecten-per-projectleider",
+        "title": "Projecten per projectleider",
         "description": "Toont per projectleider een overzicht van alle projecten waarvan hij of zij projectleider is.",
         "arguments": []
       }
@@ -26,6 +28,7 @@
       "prompt": "Welke drie projecten van bedrijf {naamBedrijf} zijn het laatst gestart? Geef per project de naam, startdatum, status en projectmanager.",
       "template": {
         "name": "recent-gestarte-projecten-bedrijf",
+        "title": "Recent gestarte projecten (bedrijf)",
         "description": "Toont een overzicht van de meest recent gestarte projecten van een bedrijf.",
         "arguments": [
           {
@@ -40,6 +43,7 @@
       "prompt": "Voor project {projectNaam}: welke documenttypes zijn aan het project gekoppeld, en zijn er recente documenten toegevoegd (binnen de laatste maand)? Geef het antwoord met type, titel en datum van toevoegen.",
       "template": {
         "name": "project-documenttypes-recent",
+        "title": "Documenttypes en recente documenten",
         "description": "Overzicht van documenttypes en recente documenten binnen een project.",
         "arguments": [
           {
@@ -54,6 +58,7 @@
       "prompt": "Analyseer de projecttoewijzingen van project {projectNaam}. Welke medewerker heeft het hoogste geplande budget en wat is hun status? Geef alleen de top 1.",
       "template": {
         "name": "top-medewerker-budget-toewijzing",
+        "title": "Medewerker met hoogste budget",
         "description": "Vindt de medewerker met het grootste geplande budget binnen een project en geeft hun status.",
         "arguments": [
           {
@@ -68,6 +73,7 @@
       "prompt": "Voor team {teamNaam}: welke lopende projecten hebben een einddatum in de komende 30 dagen? Geef een lijst met projectnaam, status, projectmanager en einddatum.",
       "template": {
         "name": "lopende-projecten-team-aflopend",
+        "title": "Binnenkort aflopende teamprojecten",
         "description": "Lijst van lopende teamprojecten die binnenkort aflopen.",
         "arguments": [
           {
@@ -82,6 +88,7 @@
       "prompt": "Welke medewerker is de afgelopen maand aan de meeste nieuwe projecttoewijzingen gekoppeld? Noem deze medewerker en de drie meest recente projecten waar hij of zij op is toegewezen.",
       "template": {
         "name": "meest-actieve-medewerker-nieuwe-toewijzingen",
+        "title": "Meest actieve medewerker (nieuwe toewijzingen)",
         "description": "Zoekt de medewerker met de meeste nieuwe toewijzingen en geeft de nieuwste projecten.",
         "arguments": []
       }
@@ -90,6 +97,7 @@
       "prompt": "Geef voor project {projectNaam} een overzicht van alle actieve projectdocumenten, gegroepeerd op documenttype. Benoem het aantal per type en noem van elk type het meest recent toegevoegde document.",
       "template": {
         "name": "project-documenten-overzicht",
+        "title": "Overzicht projectdocumenten",
         "description": "Toont per documenttype het aantal documenten en de meest recente titel binnen een project.",
         "arguments": [
           {
@@ -100,6 +108,5 @@
         ]
       }
     }
-    
   ]
 }

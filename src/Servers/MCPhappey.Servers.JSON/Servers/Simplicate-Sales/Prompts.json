@@ -4,6 +4,7 @@
       "prompt": "Analyseer de meegeleverde lijst met sales op reden {salesReden}. Geef per reden van (niet) geaccepteerde sales een overzicht van het aantal sales, het totaal verwachte omzetbedrag en het aantal unieke verantwoordelijke medewerkers. Presenteer het resultaat als een tabel met de kolommen: Reden, Aantal Sales, Totale Verwachte Omzet en Aantal Medewerkers.",
       "template": {
         "name": "sales-overzicht-per-reden",
+        "title": "Salesoverzicht per reden",
         "description": "Maakt een samenvatting van sales gegroepeerd op reden van (niet) geaccepteerd, inclusief aantal sales, totale verwachte omzet en unieke medewerkers.",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "Analyseer de meegeleverde sales pipeline data. Geef een samenvatting van de totale waarde en het aantal deals per salesfase. Welke fase bevat de hoogste totale waarde? Presenteer als een tabel: Fase, Aantal Deals, Totale Waarde.",
       "template": {
         "name": "sales-analyseer-pipeline-samenvatting",
+        "title": "Pipeline samenvatting",
         "description": "Genereert een samenvatting van de sales pipeline per fase, gebaseerd op de aangeleverde dealdata.",
         "arguments": []
       }
@@ -26,6 +28,7 @@
       "prompt": "Bereken de winrate voor deals die gesloten zijn in de periode van {startDatum} tot {eindDatum}, op basis van de verstrekte dealdata. Toon het percentage gewonnen deals versus het totaal aantal gesloten deals (gewonnen + verloren).",
       "template": {
         "name": "sales-bereken-winrate-periode",
+        "title": "Winrate per periode",
         "description": "Berekent de winrate voor een specifieke periode uit de aangeleverde dealinformatie.",
         "arguments": [
           {
@@ -45,6 +48,7 @@
       "prompt": "Genereer een sales forecast voor de komende {aantalMaandenForecast} maanden op basis van de openstaande deals. Neem de verwachte sluitingsdatum en de gewogen waarde (waarde * scoringspercentage) per deal mee. Geef een totaal gewogen waarde per maand en per maand de top 5 grootste deals met naam en klant.",
       "template": {
         "name": "sales-genereer-forecast",
+        "title": "Sales forecast",
         "description": "Creëert een sales forecast op basis van openstaande deals en hun gewogen waarde.",
         "arguments": [
           {
@@ -59,6 +63,7 @@
       "prompt": "Identificeer de top {aantalDeals} deals met de hoogste waarde (veld: '{veldDealWaarde}') die momenteel in de salesfase '{salesVoortgang}' zitten, volgens de aangeleverde data. Geef per deal de naam, de verantwoordelijke en de exacte waarde. Presenteer als een lijst.",
       "template": {
         "name": "sales-identificeer-top-deals-in-fase",
+        "title": "Topdeals in fase",
         "description": "Vindt de meest waardevolle deals in een specifieke salesfase uit de verstrekte data.",
         "arguments": [
           {
@@ -83,6 +88,7 @@
       "prompt": "Analyseer de deals die verloren zijn gegaan vanwege '{salesReden}'. Geef een top 3 van grootste gemiste deals per maand. Geef het weer in een tabel met naam klant, sales verantworodelijke en datum.",
       "template": {
         "name": "sales-analyseer-verloren-redenen",
+        "title": "Verloren deals analyse",
         "description": "Identificeert de meest voorkomende redenen voor verloren deals uit de aangeleverde data.",
         "arguments": [
           {
@@ -97,6 +103,7 @@
       "prompt": "Evalueer de effectiviteit van salesbron {salesBron} op basis van de deals. Geef alle deals, de status, de totale waarde van deze deals en de namen van bedrijven en contactpersonen.",
       "template": {
         "name": "sales-evalueer-salesbron-effectiviteit",
+        "title": "Effectiviteit salesbron",
         "description": "Analyseert een salesbron en meest de waardevolle gewonnen deals die het heeft opgeleverd.",
         "arguments": [
           {

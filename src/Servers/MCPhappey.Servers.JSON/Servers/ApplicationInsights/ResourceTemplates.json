@@ -2,65 +2,65 @@
   "resourceTemplates": [
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=traces%20%7C%20where%20customDimensions.Action%20%3D%3D%20%22{action}%22%20%7C%20project%20timestamp%2C%20{dimension1}%20%3D%20customDimensions.{dimension1}%2C%20{dimension2}%20%3D%20customDimensions.{dimension2}",
-      "name": "app-insights-action-dimensions",
-      "title": "App Insights - action (dimensions)",
-      "description": "Returns all traces for action={action} and dimensions {dimension1}, {dimension2}.",
+      "name": "action-dimensions-traces",
+      "title": "Traces by action and dimensions",
+      "description": "Returns all traces for the specified action and two custom dimensions.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=requests%20%7C%20project%20timestamp%2C%20name%2C%20url%2C%20duration%2C%20resultCode%20%7C%20order%20by%20timestamp%20desc",
-      "name": "app-insights-recent-requests",
-      "title": "App Insights - recent requests",
-      "description": "Toont de laatste requests met timestamp, naam, url, duur en HTTP code.",
+      "name": "recent-requests",
+      "title": "Recent requests",
+      "description": "Shows the most recent requests with timestamp, name, URL, duration, and HTTP code.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=traces%20%7C%20project%20timestamp%2C%20message%20%7C%20order%20by%20timestamp%20desc",
-      "name": "app-insights-recent-traces",
-      "title": "App Insights - recent traces",
-      "description": "Toont de laatste traces (logging).",
+      "name": "recent-traces",
+      "title": "Recent trace logs",
+      "description": "Shows the most recent trace log entries (application logs).",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=exceptions%20%7C%20project%20timestamp%2C%20type%2C%20outerMessage%20%7C%20order%20by%20timestamp%20desc",
-      "name": "app-insights-recent-exceptions",
-      "title": "App Insights - recent exceptions",
-      "description": "Toont alle recente exceptions met timestamp, type en foutmelding.",
+      "name": "recent-exceptions",
+      "title": "Recent exceptions",
+      "description": "Shows all recent exceptions with timestamp, type, and error message.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=exceptions%20%7C%20where%20timestamp%20%3E%20ago(7d)%20%7C%20summarize%20Count%20%3D%20count()%20by%20type%20%7C%20order%20by%20Count%20desc",
-      "name": "app-insights-exception-count-by-type-7d",
-      "title": "App Insights - exception count by type (7d)",
+      "name": "exception-count-by-type",
+      "title": "Exception count by type (7d)",
       "description": "Returns the number of exceptions by type for the last 7 days.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=requests%20%7C%20where%20timestamp%20%3E%20ago(7d)%20%7C%20summarize%20Count%20%3D%20count()%20by%20resultCode%20%7C%20order%20by%20Count%20desc",
-      "name": "app-insights-requests-by-response-code-7d",
-      "title": "App Insights - requests by response code (7d)",
-      "description": "Returns count of requests by HTTP response code for the last 7 days.",
+      "name": "requests-by-response-code",
+      "title": "Requests by response code (7d)",
+      "description": "Returns the count of requests by HTTP response code for the last 7 days.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=requests%20%7C%20where%20timestamp%20%3E%20ago(7d)%20and%20duration%20%3E%201s%20%7C%20project%20timestamp%2C%20name%2C%20url%2C%20duration%2C%20resultCode%20%7C%20order%20by%20duration%20desc",
-      "name": "app-insights-slowest-requests-7d",
-      "title": "App Insights - slowest requests (7d, >1s)",
-      "description": "Returns the slowest requests over 1 second in the last 7 days.",
+      "name": "slowest-requests",
+      "title": "Slowest requests (7d, >1s)",
+      "description": "Returns the slowest requests (over 1 second) from the last 7 days.",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     },
     {
       "uriTemplate": "https://api.applicationinsights.io/v1/apps/{appId}/query?query=traces%20%7C%20summarize%20Count%20%3D%20count()%20by%20Action%20%3D%20tostring(customDimensions.Action)%20%7C%20order%20by%20Count%20desc",
-      "name": "app-insights-most-called-actions",
-      "title": "App Insights - most called actions",
-      "description": "Aantal traces per Action (met dynamic-cast fix).",
+      "name": "most-called-actions",
+      "title": "Most called actions",
+      "description": "Shows the number of traces per action (includes dynamic-cast fix).",
       "mimeType": "application/json",
       "annotations": { "audience": ["assistant"] }
     }

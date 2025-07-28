@@ -3,6 +3,7 @@ using System.Text;
 using System.Text.Json;
 using System.Text.RegularExpressions;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -125,13 +126,6 @@ public static partial class DataQueryExtenions
         return deepAnswerResult.ToText();
     }
 
-
-    public class GenericTable
-    {
-        public List<string> Columns { get; set; } = [];
-        public List<Dictionary<string, object?>> Rows { get; set; } = [];
-    }
-
     public static string MarkdownTable(List<string> headers, List<Dictionary<string, object?>> rows)
     {
         var sb = new StringBuilder();
@@ -141,9 +135,6 @@ public static partial class DataQueryExtenions
             sb.AppendLine("| " + string.Join(" | ", headers.Select(h => row.TryGetValue(h, out var v) ? v?.ToString() ?? "" : "")) + " |");
         return sb.ToString();
     }
-
-
-
 
     public static List<Dictionary<string, object?>> ExecuteGenericQuery(
         GenericTable table,

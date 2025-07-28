@@ -4,6 +4,7 @@
       "prompt": "Haal per dag de betalingen op van de vorige volledige week (maandag t/m vrijdag). Geef per betaling het factuurnummer en het bedrag. Zet alle resultaten in één duidelijke tabel, gegroepeerd per dag.",
       "template": {
         "name": "betalingen-per-dag-vorige-week",
+        "title": "Betalingen per dag vorige week",
         "description": "Geeft alle betalingen per werkdag (maandag t/m vrijdag) van de vorige volledige week.",
         "arguments": []
       }
@@ -12,6 +13,7 @@
       "prompt": "Toon de gemiddelde betaaltermijn van alle klanten in de maand {maand}.",
       "template": {
         "name": "betaaltermijn-per-maand-periode",
+        "title": "Gemiddelde betaaltermijn per maand",
         "description": "Geeft per maand de gemiddelde betaaltermijn van alle klanten binnen de opgegeven periode.",
         "arguments": [
           {
@@ -26,6 +28,7 @@
       "prompt": "Laat zien hoe de gemiddelde betaaltermijn van {naamBedrijf} de afgelopen 12 maanden zich per maand heeft ontwikkeld.",
       "template": {
         "name": "betaaltermijn-trend-klant-per-maand",
+        "title": "Betaaltermijn trend klant per maand",
         "description": "Geeft de trend van het betaalgedrag van een specifieke klant per maand.",
         "arguments": [
           {
@@ -40,6 +43,7 @@
       "prompt": "Laat zien hoe de gemiddelde betaaltermijn van {naamBedrijf} zich per jaar heeft ontwikkeld.",
       "template": {
         "name": "betaaltermijn-trend-klant",
+        "title": "Betaaltermijn trend klant per jaar",
         "description": "Geeft de trend van het betaalgedrag van een specifieke klant per jaar.",
         "arguments": [
           {
@@ -54,6 +58,7 @@
       "prompt": "Bereken het percentage van het totaal openstaande debiteurensaldo dat langer dan {aantalDagenOpen} dagen openstaat. Toon ook het totaalbedrag openstaand, het bedrag langer dan {min_days_open} dagen open, en geef eventueel de top 10 klanten met het grootste overdue bedrag.",
       "template": {
         "name": "percentage-openstaande-debiteuren-ouder-dan-x-dagen",
+        "title": "Percentage openstaande debiteuren ouder dan X dagen",
         "description": "Berekent het percentage openstaand debiteurensaldo dat ouder is dan het opgegeven aantal dagen. Toon totaalbedrag, overdue-bedrag en optioneel een top-10 klanten.",
         "arguments": [
           {
@@ -68,6 +73,7 @@
       "prompt": "Geef alle klanten met één of meer openstaande facturen die langer dan {aantalDagenOpen} dagen open staan. Toon het totaal openstaand bedrag per klant.",
       "template": {
         "name": "klanten-met-facturen-ouder-dan-x-dagen",
+        "title": "Klanten met facturen ouder dan X dagen",
         "description": "Selecteert klanten waar minimaal één factuur langer dan X dagen open staat.",
         "arguments": [
           {
@@ -82,6 +88,7 @@
       "prompt": "Toon de top 10 klanten met het hoogste openstaande factuursaldo. Laat per klant het totaal openstaand bedrag, het aantal openstaande facturen en het gemiddeld aantal dagen open zien.",
       "template": {
         "name": "top-openstaande-klanten",
+        "title": "Top 10 openstaande klanten",
         "description": "Geeft de top 10 debiteuren op openstaand saldo, inclusief aantal facturen en gemiddeld aantal dagen open.",
         "arguments": []
       }
@@ -90,6 +97,7 @@
       "prompt": "Geef een overzicht van alle openstaande (verstuurd en verlopen) facturen voor projectleider {medewerkerNaam}, met factuurnummer, klant, bedrag, status en aantal dagen open of verlopen.",
       "template": {
         "name": "facturen-per-projectleider",
+        "title": "Facturen per projectleider",
         "description": "Geeft een overzicht van openstaande facturen voor een gekozen projectleider.",
         "arguments": [
           {
@@ -104,6 +112,7 @@
       "prompt": "Geef van factuur {factuurnummer} een overzicht: wat is de status, het totaalbedrag, de debiteur, de bijbehorende projectnaam en de betaaldatum (indien betaald)?",
       "template": {
         "name": "factuur-status-overzicht",
+        "title": "Factuur status overzicht",
         "description": "Toont kerngegevens van een factuur, zoals status, bedragen, project en betaaldatum.",
         "arguments": [
           {
@@ -118,6 +127,7 @@
       "prompt": "Welke tien facturen van debiteur {debiteurNaam} zijn het laatst aangemaakt? Toon per factuur het factuurnummer, de status, het totaalbedrag (inclusief BTW) en de factuurdatum.",
       "template": {
         "name": "laatste-facturen-per-debiteur",
+        "title": "Laatste facturen per debiteur",
         "description": "Overzicht van de tien nieuwste facturen per debiteur met kerninfo.",
         "arguments": [
           {
@@ -132,6 +142,7 @@
       "prompt": "Geef voor project {projectNaam} een lijst van openstaande facturen met het hoogste bedrag. Toon het factuurnummer, bedrag, status en vervaldatum.",
       "template": {
         "name": "openstaande-facturen-project",
+        "title": "Openstaande facturen per project",
         "description": "Geeft per project de grootste openstaande facturen.",
         "arguments": [
           {
@@ -146,6 +157,7 @@
       "prompt": "Analyseer de recentste facturen met status {factuurStatus}. Wat valt op in betaaldatum, debiteur of project? Benoem opvallende trends of bijzonderheden.",
       "template": {
         "name": "factuurstatus-analyse-recent",
+        "title": "Analyse recente facturenstatus",
         "description": "Analyseert recente facturen op status, met trends in betaling of bedrijf/project.",
         "arguments": [
           {
@@ -160,6 +172,7 @@
       "prompt": "Bekijk van factuur {factuurnummer} de betalingscondities en BTW-klasse. Zijn deze conform de standaard voor deze debiteur en het betreffende project?",
       "template": {
         "name": "factuur-condities-check",
+        "title": "Factuur condities check",
         "description": "Checkt of de betalingsconditie en BTW-klasse van een factuur overeenkomen met de gebruikelijke waarden.",
         "arguments": [
           {
@@ -174,6 +187,7 @@
       "prompt": "Welke facturen zijn de afgelopen week aangemaakt met een totaalbedrag boven {bedragEur}? Geef per factuur het factuurnummer, debiteur, totaalbedrag en status.",
       "template": {
         "name": "grote-facturen-recent",
+        "title": "Grote facturen recent",
         "description": "Lijst van recent aangemaakte facturen boven een bepaald bedrag.",
         "arguments": [
           {
