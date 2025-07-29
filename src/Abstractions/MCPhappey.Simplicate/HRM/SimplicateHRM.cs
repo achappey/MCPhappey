@@ -11,7 +11,6 @@ namespace MCPhappey.Simplicate.HRM;
 
 public static class SimplicateHRM
 {
-
     [Description("Get Simplicate leaves totals grouped on employee and leave type")]
     [McpServerTool(Name = "SimplicateHRM_GetLeaveTotals", ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, List<LeaveTotals>>?> SimplicateHRM_GetLeaveTotals(
@@ -48,8 +47,29 @@ public static class SimplicateHRM
 
         var selectedId = employees.OfType<SimplicateIdItem>().Select(a => a.Id);
 
+
+
+        string timetableUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/timetable";
+        string timetableSelect = "even_week,odd_week,employee.,end_date";
+        var timetableFilters = new List<string>
+        {
+            $"q[end_date]=null",
+            $"select={timetableSelect}"
+        };
+
+        var timetableFilterString = string.Join("&", timetableFilters);
+        var timetables = await downloadService.GetAllSimplicatePagesAsync<SimplicateTimetable>(
+                  serviceProvider,
+                  requestContext.Server,
+                  timetableUrl,
+                  timetableFilterString,
+                  pageNum => $"Downloading timetables page {pageNum}",
+                  requestContext,
+                  cancellationToken: cancellationToken
+              );
+
         string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/leave";
-        string select = "employee.,hours,leavetype.";
+        string select = "employee.,hours,leavetype.,start_date";
         var filters = new List<string>
         {
             $"select={select}"
@@ -74,23 +94,103 @@ public static class SimplicateHRM
             leaves = [.. leaves.Where(a => a.LeaveType?.Label?.Contains(leaveType, StringComparison.OrdinalIgnoreCase) == true)];
         }
 
+        var timetableLookup = timetables
+              .GroupBy(t => t.Employee.Id)
+              .ToDictionary(g => g.Key, g => g.Average(z => z.AverageWorkdayHours));
+
         return leaves
             .Where(a => selectedId.Contains(a.Employee?.Id))
-            .GroupBy(x => new { Employee = x.Employee?.Name ?? "" })
-            .OrderBy(x => x.Key.Employee)
+            .GroupBy(x => new
+            {
+                EmployeeId = x.Employee?.Id,
+                EmployeeName = x.Employee?.Name ?? "",
+                AverageWorkdayHours = timetableLookup.TryGetValue(x.Employee?.Id ?? "", out var t)
+                    ? t : 0
+            })
+            .OrderBy(x => x.Key.EmployeeName)
             .ToDictionary(
-                g => g.Key.Employee,
+                g => g.Key.EmployeeName,
                 g => g.GroupBy(x => x.LeaveType?.Label ?? "")
-                        .Select(lg => new LeaveTotals
-                        {
-                            LeaveType = lg.Key,
-                            TotalHours = lg.Sum(x => x.Hours)
-                        })
-                        .ToList()
-        );
+                    .Select(lg => new LeaveTotals
+                    {
+                        LeaveType = lg.Key,
+                        TotalHours = lg.Sum(x => x.Hours),
+                        TotalHoursPlanned = lg
+                            .Where(a => a.StartDate != null
+                                && DateTime.Parse(a.StartDate) > DateTime.Now)
+                            .Sum(x => x.Hours),
+                        TotalDays = g.Key.AverageWorkdayHours > 0 ?
+                            lg.Sum(x => x.Hours) / g.Key.AverageWorkdayHours
+                            : 0
+                    })
+                    .ToList()
+            );
+
     }
 
-    // ---------------------- DTOs ------------------------
+    public class SimplicateTimetable
+    {
+        [JsonPropertyName("employee")]
+        public Employee Employee { get; set; } = null!;
+
+        [JsonPropertyName("even_week")]
+        public WeekSchedule EvenWeek { get; set; } = null!;
+
+        [JsonPropertyName("odd_week")]
+        public WeekSchedule OddWeek { get; set; } = null!;
+
+        [JsonIgnore]
+        public double AverageWorkdayHours
+        {
+            get
+            {
+                var allDays = EvenWeek.AllDays.Concat(OddWeek.AllDays).ToList();
+                var workedDays = allDays.Where(d => d.Hours > 0).ToList();
+                if (workedDays.Count == 0) return 0;
+                return workedDays.Sum(d => d.Hours) / workedDays.Count;
+            }
+        }
+    }
+
+    public class WeekSchedule
+    {
+        [JsonIgnore]
+        public DaySchedule[] AllDays =>
+            [Day1, Day2, Day3, Day4, Day5, Day6, Day7];
+
+        [JsonPropertyName("day_1")]
+        public DaySchedule Day1 { get; set; } = null!;
+
+        [JsonPropertyName("day_2")]
+        public DaySchedule Day2 { get; set; } = null!;
+
+        [JsonPropertyName("day_3")]
+        public DaySchedule Day3 { get; set; } = null!;
+
+        [JsonPropertyName("day_4")]
+        public DaySchedule Day4 { get; set; } = null!;
+
+        [JsonPropertyName("day_5")]
+        public DaySchedule Day5 { get; set; } = null!;
+
+        [JsonPropertyName("day_6")]
+        public DaySchedule Day6 { get; set; } = null!;
+
+        [JsonPropertyName("day_7")]
+        public DaySchedule Day7 { get; set; } = null!;
+    }
+
+    public class DaySchedule
+    {
+        [JsonPropertyName("start_time")]
+        public double StartTime { get; set; }
+
+        [JsonPropertyName("end_time")]
+        public double EndTime { get; set; }
+
+        [JsonPropertyName("hours")]
+        public double Hours { get; set; }
+    }
 
     public class SimplicateLeave
     {
@@ -99,6 +199,9 @@ public static class SimplicateHRM
 
         [JsonPropertyName("leavetype")]
         public LeaveType? LeaveType { get; set; }
+
+        [JsonPropertyName("start_date")]
+        public string? StartDate { get; set; }
 
         [JsonPropertyName("hours")]
         public double Hours { get; set; }
@@ -130,8 +233,16 @@ public static class SimplicateHRM
         [JsonPropertyName("leavetype")]
         public string LeaveType { get; set; } = string.Empty;
 
+        [JsonPropertyName("totalDays")]
+        public double TotalDays { get; set; }
+
         [JsonPropertyName("totalHours")]
         public double TotalHours { get; set; }
+
+        [JsonPropertyName("totalHoursPlanned")]
+        public double TotalHoursPlanned { get; set; }
+
+
     }
 }
 

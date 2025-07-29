@@ -1,9 +1,9 @@
 {
   "serverInfo": {
-    "name": "SemanticKernel-Memory",
+    "name": "OpenMemory",
     "version": "1.0.0"
   },
-  "plugins": ["MCPhappey.Tools.KernelMemory.KernelMemory, MCPhappey.Tools"],
+  "plugins": ["MCPhappey.Tools.OpenMemory.OpenMemory, MCPhappey.Tools"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }
