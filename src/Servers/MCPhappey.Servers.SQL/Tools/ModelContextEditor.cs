@@ -241,10 +241,10 @@ public static partial class ModelContextEditor
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var userId = serviceProvider.GetUserId();
-        if (userId == null)
-        {
-            return "No user found".ToErrorCallToolResponse();
-        }
+        if (userId == null) return "No user found".ToErrorCallToolResponse();
+
+        var serverExists = await serviceProvider.ServerExists(serverName, cancellationToken);
+        if (serverExists) return "Servername already in use".ToErrorCallToolResponse();
 
         var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new NewMcpServer()
         {

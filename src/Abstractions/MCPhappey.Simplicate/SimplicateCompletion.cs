@@ -48,6 +48,7 @@ public class SimplicateCompletion(
                 urlFactory,
                 selector,
                 argValue,
+                completeRequestParams!.Context?.Arguments ?? new Dictionary<string, string>(),
                 mcpServer,
                 serviceProvider,
                 cancellationToken
@@ -67,73 +68,86 @@ public class SimplicateCompletion(
 
     }
 
+    // Signature now takes context:
     private async Task<List<string>> CompleteAsync<T>(
-        Func<string, string> urlFactory,
-        Func<T, string> selector,
+        Func<string, Dictionary<string, string>?, string> urlFactory,
+        Func<T, Dictionary<string, string>?, string> selector,
         string argValue,
+        Dictionary<string, string>? context, // <--- new param
         IMcpServer mcpServer,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
-        var url = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/{urlFactory(argValue)}";
+        var url = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/{urlFactory(argValue, context)}";
         var items = await downloadService.GetSimplicatePageAsync<T>(serviceProvider, mcpServer, url, cancellationToken);
-        return items?.Data?.Take(100).Select(selector).Where(a => !string.IsNullOrEmpty(a)).ToList() ?? [];
+        return items?.Data?.Take(100).Select(item => selector(item, context)).Where(a => !string.IsNullOrEmpty(a)).ToList() ?? [];
     }
-
 
     private readonly Dictionary<string, object> completionSources = new()
     {
         ["teamNaam"] = new CompletionSource<SimplicateNameItem>(
-            value => $"hrm/team?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name),
+            (value, _) => $"hrm/team?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name),
 
         ["relatieSoort"] = new CompletionSource<SimplicateLabelItem>(
-            value => $"crm/relationtype?q[label]=*{value}*&sort=label&select=label",
-            item => item.Label),
+            (value, _) => $"crm/relationtype?q[label]=*{value}*&sort=label&select=label",
+            (item, _) => item.Label),
+
+        ["salesNaam"] = new CompletionSource<SimplicateSales>(
+            (value, _) => $"sales/sales?q[subject]=*{value}*&sort=subject&select=subject",
+            (item, _) => item.Subject),
+
+        ["offerteOnderwerp"] = new CompletionSource<SimplicateQuote>(
+            (value, _) => $"sales/quote?q[quote_subject]=*{value}*&sort=quote_subject&select=quote_subject",
+            (item, _) => item.QuoteSubject),
+
+        ["offertenummer"] = new CompletionSource<SimplicateQuote>(
+            (value, _) => $"sales/quote?q[quote_number]=*{value}*&sort=quote_number&select=quote_number",
+            (item, _) => item.QuoteNumber),
 
         ["salesBron"] = new CompletionSource<SimplicateNameItem>(
-            value => $"sales/salessource?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name),
+            (value, _) => $"sales/salessource?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name),
 
         ["salesReden"] = new CompletionSource<SimplicateNameItem>(
-            value => $"sales/salesreason?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name),
+            (value, _) => $"sales/salesreason?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name),
 
         ["salesVoortgang"] = new CompletionSource<SimplicateLabelItem>(
-            value => $"sales/salesprogress?q[label]=*{value}*&sort=label&select=label",
-            item => item.Label),
+            (value, _) => $"sales/salesprogress?q[label]=*{value}*&sort=label&select=label",
+            (item, _) => item.Label),
 
         ["projectNaam"] = new CompletionSource<SimplicateNameItem>(
-            value => $"projects/project?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name),
+            (value, _) => $"projects/project?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name),
 
         ["projectdienstNaam"] = new CompletionSource<SimplicateNameItem>(
-            value => $"projects/service?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name),
+            (value, _) => $"projects/service?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name),
 
         ["urenType"] = new CompletionSource<SimplicateLabelItem>(
-            value => $"hours/hourstype?q[label]=*{value}*&sort=label&select=label",
-            item => item.Label),
+            (value, _) => $"hours/hourstype?q[label]=*{value}*&sort=label&select=label",
+            (item, _) => item.Label),
 
         ["medewerkerNaam"] = new CompletionSource<SimplicateNameItem>(
-            value => $"hrm/employee?q[name]=*{value}*&sort=name&select=name&q[is_user]=true",
-            item => item.Name),
+            (value, _) => $"hrm/employee?q[name]=*{value}*&sort=name&select=name&q[is_user]=true",
+            (item, _) => item.Name),
 
         ["brancheNaam"] = new CompletionSource<SimplicateNameItem>(
-            value => $"crm/industry?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name),
+            (value, _) => $"crm/industry?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name),
 
         ["naamBedrijf"] = new CompletionSource<SimplicateNameItem>(
-            value => $"crm/organization?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name),
+            (value, _) => $"crm/organization?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name),
 
         ["factuurnummer"] = new CompletionSource<SimplicateInvoiceItem>(
-            value => $"invoices/invoice?q[invoice_number]={value}*&sort=invoice_number&select=invoice_number",
-            item => item.InvoiceNumber),
+            (value, _) => $"invoices/invoice?q[invoice_number]={value}*&sort=invoice_number&select=invoice_number",
+            (item, _) => item.InvoiceNumber),
 
         ["factuurStatus"] = new CompletionSource<SimplicateNameItem>(
-            value => $"invoices/invoicestatus?q[name]=*{value}*&sort=name&select=name",
-            item => item.Name.Replace("label_", string.Empty)),
+            (value, _) => $"invoices/invoicestatus?q[name]=*{value}*&sort=name&select=name",
+            (item, _) => item.Name.Replace("label_", string.Empty)),
 
     };
 
@@ -164,15 +178,34 @@ public class SimplicateCompletion(
         public string Name { get; set; } = string.Empty;
     }
 
+    public class SimplicateSales
+    {
+        [JsonPropertyName("subject")]
+        public string Subject { get; set; } = string.Empty;
+    }
+
+    public class SimplicateQuote
+    {
+        [JsonPropertyName("quote_subject")]
+        public string QuoteSubject { get; set; } = string.Empty;
+
+        [JsonPropertyName("quote_number")]
+        public string QuoteNumber { get; set; } = string.Empty;
+    }
+
     public class SimplicateLabelItem
     {
         [JsonPropertyName("label")]
         public string Label { get; set; } = string.Empty;
     }
 
-    public class CompletionSource<T>(Func<string, string> urlFactory, Func<T, string> selector)
+    // Change to:
+    public class CompletionSource<T>(
+        Func<string, Dictionary<string, string>?, string> urlFactory,   // takes (value, context)
+        Func<T, Dictionary<string, string>?, string> selector)         // takes (item, context)
     {
-        public Func<string, string> UrlFactory { get; set; } = urlFactory;
-        public Func<T, string> Selector { get; set; } = selector;
+        public Func<string, Dictionary<string, string>?, string> UrlFactory { get; set; } = urlFactory;
+        public Func<T, Dictionary<string, string>?, string> Selector { get; set; } = selector;
     }
+
 }

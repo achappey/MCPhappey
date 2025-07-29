@@ -7,7 +7,7 @@ namespace MCPhappey.Servers.SQL.Extensions;
 
 public static class McpServerEditorExtensions
 {
-     public static async Task<IEnumerable<Models.Server>> GetStatistics(this IServiceProvider serviceProvider, CancellationToken ct = default)
+    public static async Task<IEnumerable<Models.Server>> GetStatistics(this IServiceProvider serviceProvider, CancellationToken ct = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();
         var userId = serviceProvider.GetUserId();
@@ -15,6 +15,15 @@ public static class McpServerEditorExtensions
 
         var servers = await serverRepository.GetServers(ct);
         return servers.Where(a => a.CanEdit(userId));
+    }
+
+    public static async Task<bool> ServerExists(this IServiceProvider serviceProvider,
+     string serverName,
+     CancellationToken ct = default)
+    {
+        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
+        var server = await serverRepository.GetServer(serverName, ct);
+        return server != null;
     }
 
     public static async Task<IEnumerable<Models.Server>> GetServers(this IServiceProvider serviceProvider, CancellationToken ct = default)

@@ -1,12 +1,10 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Graph.Beta;
 using Microsoft.Graph.Beta.Models;
-using Microsoft.Kiota.Abstractions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -46,10 +44,9 @@ public static class GraphOneDrive
          .ToCallToolResult();
     }
 
-    /// <summary>Create a folder (or Document Set) in OneDrive / SharePoint.</summary>
-    /*    [Description("Create a folder in the specified OneDrive or SharePoint document library.")]
-        [McpServerTool(Name = "GraphDrive_CreateFolder", OpenWorld = false)]
-        public static async Task<CallToolResult?> GraphDrive_CreateFolder(
+    [Description("Create a folder in the specified OneDrive or SharePoint document library.")]
+    [McpServerTool(Name = "GraphOneDrive_CreateFolder", OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphOneDrive_CreateFolder(
             [Description("The OneDrive or SharePoint Drive ID.")] string driveId,
             [Description("The name of the new folder.")] string name,
             IServiceProvider serviceProvider,
@@ -59,19 +56,27 @@ public static class GraphOneDrive
             [Description("The ID of the content type (for Document Set, optional).")]
             string? contentTypeId = null,
             CancellationToken cancellationToken = default)
+    {
+        try
         {
-            var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
-            // -- Ask user / AI to confirm or override the draft values -----------------
+            var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+
             var (typed, notAccepted) = await requestContext.Server.TryElicit(
-                new GraphNewFolder { Name = name, ContentTypeId = contentTypeId },
-                cancellationToken);
+            new GraphNewFolder
+            {
+                Name = name,
+                ContentTypeId = contentTypeId,
+            },
+            cancellationToken);
+
             if (notAccepted != null) return notAccepted;
 
-            // -- Build the request body ------------------------------------------------
+
+            // Maak de DriveItem voor de folder
             var folderItem = new DriveItem
             {
-                Name = typed!.Name,
+                Name = typed?.Name,
                 Folder = new Folder(),
                 AdditionalData = new Dictionary<string, object>
                 {
@@ -79,70 +84,66 @@ public static class GraphOneDrive
                 }
             };
 
-            if (!string.IsNullOrWhiteSpace(typed.ContentTypeId))
+            DriveItem? createdFolder;
+
+            if (string.IsNullOrWhiteSpace(parentPath))
             {
-                folderItem.AdditionalData["contentType"] = new Dictionary<string, object>
-                {
-                    ["id"] = typed.ContentTypeId!
-                };
+                // Voor root: eerst de root DriveItem ophalen
+                var rootItem = await graphClient.Drives[driveId].Root.GetAsync(cancellationToken: cancellationToken);
+
+                // Dan children toevoegen via Items[rootId]
+                createdFolder = await graphClient.Drives[driveId]
+                    .Items[rootItem?.Id]
+                    .Children
+                    .PostAsync(folderItem, cancellationToken: cancellationToken);
+            }
+            else
+            {
+                // Voor specifiek pad: gebruik ItemWithPath
+                createdFolder = await graphClient.Drives[driveId]
+                    .Root
+                    .ItemWithPath(parentPath.Trim('/'))
+                    .Children
+                    .PostAsync(folderItem, cancellationToken: cancellationToken);
+            }
+            // ContentType instellen als nodig
+            if (!string.IsNullOrEmpty(contentTypeId))
+            {
+                await SetFolderContentType(graphClient, createdFolder, contentTypeId, cancellationToken);
             }
 
+            return createdFolder
+                .ToJsonContentBlock($"https://graph.microsoft.com/beta/drives/{driveId}/items/root:/{typed?.Name}")
+                .ToCallToolResult();
+        }
+        catch (Exception ex)
+        {
+            return ex.Message.ToErrorCallToolResponse();
+        }
+    }
 
-
-            var itemPath = string.IsNullOrWhiteSpace(parentPath)
-                ? "/root/children"
-                : $"/root:/{parentPath.Trim('/')}:/children";
-    var requestInfo = new RequestInformation
+    // Helper voor contenttype
+    private static async Task SetFolderContentType(
+        GraphServiceClient graphClient,
+        DriveItem? folder,
+        string contentTypeId,
+        CancellationToken cancellationToken)
     {
-        HttpMethod = Method.POST,
-        UrlTemplate = "https://graph.microsoft.com/beta/drives/{driveId}/root/children",
-        PathParameters = new Dictionary<string, object> { { "driveId", driveId } },
-        Content = BinaryData.FromObjectAsJson(new { name = "Test123456", folder = new { } }).ToStream()
-    };
-            var requestInfo2 = new RequestInformation
+        var updatedFolder = await graphClient.Drives[folder?.ParentReference?.DriveId]
+               .Items[folder?.Id]
+               .GetAsync(requestConfiguration =>
+               {
+                   requestConfiguration.QueryParameters.Expand = ["listItem"];
+               }, cancellationToken);
+
+        await graphClient.Sites[folder?.ParentReference?.SharepointIds?.SiteId]
+            .Lists[folder?.ParentReference?.SharepointIds?.ListId]
+            .Items[updatedFolder?.ListItem?.Id]
+            .PatchAsync(new ListItem
             {
-                HttpMethod = Method.POST,
-                UrlTemplate = $"https://graph.microsoft.com/beta/drives/{{driveId}}{itemPath}",
-                PathParameters = new Dictionary<string, object> { { "driveId", driveId } },
-                Content = BinaryData.FromObjectAsJson(folderItem).ToStream()
-            };
-
-            // Hier voeg je de vereiste header toe!
-            if (!string.IsNullOrWhiteSpace(typed.ContentTypeId))
-            {
-                requestInfo.Headers.Add("Prefer", "IdType=\"ImmutableId\"");
-            }
-
-            try
-            {
-                var created = await client.RequestAdapter.SendAsync<DriveItem>(
-                    requestInfo,
-                    DriveItem.CreateFromDiscriminatorValue,
-                    cancellationToken: cancellationToken);
-
-
-
-
-                // -- Build a friendly path for the response ---------------------------
-                var fullPath = string.IsNullOrWhiteSpace(parentPath)
-                             ? typed.Name
-                             : $"{parentPath.TrimEnd('/')}/{typed.Name}";
-
-                return created
-                    .ToJsonContentBlock(
-                        $"https://graph.microsoft.com/beta/drives/{driveId}/root:/{fullPath}")
-                    .ToCallToolResult();
-            }
-            catch (Exception ex)
-            {
-                return JsonSerializer.Serialize(new { error = ex.Message, exception = ex.ToString() })
-                                     .ToTextCallToolResponse();
-            }
-        }*/
-    // }
-
-
-
+                ContentType = new ContentTypeInfo { Id = contentTypeId }
+            }, cancellationToken: cancellationToken);
+    }
 
     [Description("Please fill in the new File details.")]
     public class GraphUploadFile

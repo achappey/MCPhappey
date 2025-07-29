@@ -1,4 +1,4 @@
-namespace MCPhappey.Servers.SQL.Extensions;
+namespace MCPhappey.Common.Extensions;
 
 public static partial class StringExtensions
 {

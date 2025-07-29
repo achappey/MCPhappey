@@ -16,7 +16,7 @@ public class DefaultCompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAut
          && serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Editor") == false
             && serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Security") == false;
 
-    public async Task<Completion?> GetCompletion(
+    public async Task<Completion> GetCompletion(
         IMcpServer mcpServer,
         IServiceProvider serviceProvider,
         CompleteRequestParams? completeRequestParams,
@@ -43,8 +43,26 @@ public class DefaultCompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAut
             }
         }));
 
-        return await completionService.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
+        var result = await completionService.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
 
+
+        if (result.Values.Count > 0)
+        {
+            return result;
+        }
+
+        var simplicateCompletion = completionServices.First(a => a.SupportsHost(new ServerConfig()
+        {
+            Server = new Server()
+            {
+                ServerInfo = new ServerInfo()
+                {
+                    Name = "Simplicate-"
+                }
+            }
+        }));
+
+        return await simplicateCompletion.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
     }
 
 }
