@@ -117,6 +117,7 @@ public static class ChatApp
         [Description("Language of the requested welcome message")] string language,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Current date and time")] string? currentDateTime = null,
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
@@ -133,7 +134,43 @@ public static class ChatApp
             serviceProvider,
             mcpServer,
             "welcome-message",
-            arguments: new Dictionary<string, JsonElement>() { { "language", JsonSerializer.SerializeToElement(language) } },
+            arguments: new Dictionary<string, JsonElement>() {
+                { "language", JsonSerializer.SerializeToElement(language) },
+                { "currentDateTime", JsonSerializer.SerializeToElement(currentDateTime ?? DateTime.UtcNow.ToString()) }
+            },
+            modelHint: modelName,
+            cancellationToken: cancellationToken);
+
+        return result.Content;
+    }
+
+    [Description("Explain a tool call to an end user in simple words")]
+    [McpServerTool(Name = "ChatApp_ExplainToolCall", ReadOnly = true)]
+    public static async Task<ContentBlock> ChatApp_ExplainToolCall(
+       [Description("Stringified json of all toolcall data")] string toolcall,
+       [Description("Language of the requested welcome message")] string language,
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       CancellationToken cancellationToken = default)
+    {
+        var mcpServer = requestContext.Server;
+        var samplingService = serviceProvider.GetRequiredService<SamplingService>();
+
+        // Pick the model you want
+        var modelName = "gpt-4.1-nano"; // or set to your preferred model
+
+        // Optional: Logging/notification
+        var markdown = $"Explain tool call";
+        await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
+
+        var result = await samplingService.GetPromptSample(
+            serviceProvider,
+            mcpServer,
+            "toolcall-explanation",
+            arguments: new Dictionary<string, JsonElement>() {
+                { "language", JsonSerializer.SerializeToElement(language) },
+                { "toolcall", JsonSerializer.SerializeToElement(toolcall) }
+                },
             modelHint: modelName,
             cancellationToken: cancellationToken);
 

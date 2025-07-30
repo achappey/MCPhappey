@@ -1,6 +1,26 @@
 {
   "prompts": [
     {
+      "prompt": "Explain in plain, simple language directly to the user what this tool call did and what the result means. Write as if you are talking to the user, not about them. Be clear and brief, using no more than two short paragraphs. Do not use bullet points, headings, or technical terms. Focus only on what happened because of this tool call, so any user can understand the outcome. Always answer in the specified language.\n\nTool call details:\n{toolcall}\n\nLanguage: {language}",
+      "template": {
+        "name": "toolcall-explanation",
+        "title": "Tool call explanation for end users",
+        "description": "Short, simple explanation of a tool call and its result, in the requested language.",
+        "arguments": [
+          {
+            "name": "toolcall",
+            "description": "Information about the tool call, its action, and its output/result.",
+            "required": true
+          },
+          {
+            "name": "language",
+            "description": "Language for the explanation, e.g., 'en', 'nl', 'de', 'fr'.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "User:\n\n###\n{userMessage}\n###\n\nAnalyze the above user message very well. Come up with a name for this conversation. Max 3-6 words. The name should be in the conversartion locale. Answer with the name of the conversation only. Don't include quotes.",
       "template": {
         "name": "conversation-name",
@@ -16,7 +36,7 @@
       }
     },
     {
-      "prompt": "You are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words. Vary the wording, tone, and mood—be upbeat, curious, or playful.\nOutput the message in the language specified below.\nMake sure the message is suitable for a business or professional context (work-appropriate).\nOnly output the welcome message itself, no quotes or extra text.\nLanguage: {language}",
+      "prompt": "Current date and time: {currentDateTime}\nYou are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words. Vary the wording, tone, and mood—be upbeat, curious, or playful.\nOutput the message in the language specified below.\nMake sure the message is suitable for a business or professional context (work-appropriate).\nOnly output the welcome message itself, no quotes or extra text.\nLanguage: {language}",
       "template": {
         "name": "welcome-message",
         "title": "Welcome message",
@@ -25,6 +45,11 @@
           {
             "name": "language",
             "description": "The language for the welcome message, e.g., 'en', 'nl', 'fr', or a full language name.",
+            "required": true
+          },
+          {
+            "name": "currentDateTime",
+            "description": "The current date and time.",
             "required": true
           }
         ]
