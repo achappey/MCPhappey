@@ -2,8 +2,8 @@
   "resourceTemplates": [
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/person/person:{personId}",
-      "name": "persoonsdetails",
-      "title": "Persoonsdetails",
+      "name": "persoon-details",
+      "title": "Details van één persoon",
       "description": "Haal alle details van één persoon op.",
       "mimeType": "application/json",
       "annotations": {
@@ -12,8 +12,8 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/organization/organization:{organizationId}",
-      "name": "organisatiedetails",
-      "title": "Organisatiedetails",
+      "name": "bedrijf-details",
+      "title": "Details van één bedrijf",
       "description": "Haal alle details van één bedrijf op.",
       "mimeType": "application/json",
       "annotations": {
@@ -22,8 +22,8 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/contactperson/contactperson:{contactpersonId}",
-      "name": "contactpersoondetails",
-      "title": "Contactpersoondetails",
+      "name": "contactpersoon-details",
+      "title": "Details van één contactpersoon",
       "description": "Haal alle details van één contactpersoon op.",
       "mimeType": "application/json",
       "annotations": {
@@ -32,9 +32,9 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/myorganizationprofile",
-      "name": "mijn-organisatieprofielen",
-      "title": "Mijn organisatieprofielen",
-      "description": "Haal al mijn bedrijfsprofielen op.",
+      "name": "mijn-bedrijfsprofielen",
+      "title": "Mijn bedrijfsprofielen",
+      "description": "Haal al mijn bedrijfsprofielen op. Met 'mijn bedrijf' worden interne organisaties bedoeld, dus geen klanten.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
@@ -42,9 +42,9 @@
     },
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/organization?q[name]=*{organizationName}*&q[relation_type.label]=*{relationTypeLabel}*&q[visiting_address.postal_code]=*{partialPostalCode}*&q[industry.name]=*{industryName}*&q[relation_manager.name]=*{relationManagerName}*&q[teams.name]=*{teamName}*&q[note]=*{partialNote}*&q[bank_account]=*{partialBankAccount}*&q[relation_number]=*{partialRelationNumber}*&q[vat_number]=*{partialVatNumber}*&q[visiting_address.line_1]=*{partialAddressLine}*&q[visiting_address.locality]=*{city}*&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&q[allow_autocollect]={autocollectEnabled}&q[has_different_postal_address]=true&q[is_active]={isActive}&q[phone]=*{partialPhone}*&offset={offset}&limit={limit}&sort={sortColumn}&select=visiting_address.,postal_address.,relation_type.,relation_manager.,customer_group.,teams.,debtor.,organizationsize.,linked_persons_contacts.,accountancy.,created_at,updated_at,simplicate_url,is_active,name,coc_code,vat_number,email,phone,url,note,linkedin_url,has_different_postal_address,industry.,invoice_receiver,allow_autocollect,bank_account,bank_bic,relation_number",
-      "name": "organisaties-alle-filters",
-      "title": "Organisaties (alle filters)",
-      "description": "Haal organisaties op, gefilterd op naam, branche, relatietype/-manager, teams, postcode, adres, telefoon, bank-/relatie-/BTW-nummers, notities, datums (aangemaakt/gewijzigd), status automatische incasso, en paginering/sortering.",
+      "name": "bedrijven-alle-filters",
+      "title": "Bedrijven (alle filters)",
+      "description": "Haal bedrijven op, gefilterd op naam, branche, relatietype/-manager, teams, postcode, adres, telefoon, bank-/relatie-/BTW-nummers, notities, datums (aangemaakt/gewijzigd), status automatische incasso, en paginering/sortering.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
@@ -105,16 +105,6 @@
       "name": "geslachten",
       "title": "Geslachten",
       "description": "Haal alle beschikbare geslachtsopties op.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/organizationsize",
-      "name": "organisatiegroottes",
-      "title": "Organisatiegroottes",
-      "description": "Haal alle beschikbare organisatiegrootte-opties op.",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]
