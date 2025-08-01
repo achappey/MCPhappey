@@ -80,7 +80,7 @@ public static class GraphOneDrive
                 Folder = new Folder(),
                 AdditionalData = new Dictionary<string, object>
                 {
-                    ["@microsoft.graph.conflictBehavior"] = "rename"
+                    ["@microsoft.graph.conflictBehavior"] = "fail"
                 }
             };
 

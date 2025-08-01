@@ -1,5 +1,7 @@
+using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -81,6 +83,22 @@ public static partial class ModelContextServerExtensions
 
     public static string GetUrl(this Server server, HttpContext httpContext) =>
         $"{httpContext.Request.Scheme}://{httpContext.Request.Host}{server.GetServerRelativeUrl()}";
+
+
+    public static async Task<ResourceLinkBlock?> Upload(this IMcpServer mcpServer,
+                IServiceProvider serviceProvider,
+                string filename,
+                BinaryData binaryData,
+                CancellationToken cancellationToken = default)
+    {
+        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+
+        var sizeInKb = binaryData.Length / 1024.0;
+        var markdown = $"Upload {filename} ({sizeInKb:F1} KB)";
+        await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Info);
+
+        return await client.Upload(filename, binaryData, cancellationToken);
+    }
 
 
 }

@@ -72,6 +72,7 @@ public static class SimplicateExtensions
 
             var markdown =
                 $"<details><summary><a href=\"{url}\" target=\"blank\">{new Uri(url).Host}</a></summary>\n\n```\n{JsonSerializer.Serialize(result)}\n```\n</details>";
+                
             await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
             results.AddRange(result.Data);

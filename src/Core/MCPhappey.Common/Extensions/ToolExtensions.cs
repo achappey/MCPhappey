@@ -11,11 +11,23 @@ public static class ToolExtensions
              Content = [content.ToTextContentBlock()]
          };
 
+
     public static CallToolResult ToTextCallToolResponse(this string content)
+            => new()
+            {
+                Content = [content.ToTextContentBlock()]
+            };
+    public static CallToolResult ToResourceLinkCallToolResponse(this ResourceLinkBlock resourceLinkBlock)
          => new()
          {
-             Content = [content.ToTextContentBlock()]
+             Content = [resourceLinkBlock]
          };
+
+    public static CallToolResult ToResourceLinkCallToolResponse(this IEnumerable<ResourceLinkBlock> resourceLinkBlocks)
+            => new()
+            {
+                Content = [.. resourceLinkBlocks]
+            };
 
     public static CallToolResult ToJsonCallToolResponse(this string content, string uri)
          => new()
@@ -26,6 +38,15 @@ public static class ToolExtensions
     public static TextContentBlock ToTextContentBlock(this string contents) => new()
     {
         Text = contents
+    };
+
+    public static ResourceLinkBlock ToResourceLinkBlock(this string uri, string name, string? mimeType = null, string? description = null, long? size = null) => new()
+    {
+        Uri = uri,
+        Name = name,
+        Description = description,
+        MimeType = mimeType,
+        Size = size
     };
 
     public static CallToolResult ToCallToolResult(this ReadResourceResult result) => new()

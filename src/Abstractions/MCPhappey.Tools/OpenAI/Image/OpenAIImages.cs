@@ -1,8 +1,10 @@
 using System.ComponentModel;
-using System.Text.Json;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using OpenAI;
@@ -22,13 +24,12 @@ public static class OpenAIImages
     }
 
     [Description("Create a image with OpenAI image generator")]
-    [McpServerTool(Name = "OpenAIImages_CreateImage", Title = "Generate image with OpenAI",
-        ReadOnly = true)]
-    public static async Task<List<ContentBlock>> OpenAIImages_CreateImage(
+    [McpServerTool(Name = "OpenAIImages_CreateImage", Title = "Generate image with OpenAI")]
+    public static async Task<CallToolResult?> OpenAIImages_CreateImage(
         [Description("prompt")]
         string prompt,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        RequestContext<CallToolRequestParams> requestContext,
         [Description("Size of the image (1024x1024, 1536x1024 or 1024x1536)")]
         string? size = "1024x1024",
         CancellationToken cancellationToken = default)
@@ -58,23 +59,29 @@ public static class OpenAIImages
                 Data = Convert.ToBase64String(item.Value.ImageBytes)
             }];
 
-        var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Image-{DateTime.Now.Ticks}.png",
-            item.Value.ImageBytes, cancellationToken);
+        var outputName = $"OpenAIImages_CreateImage_{DateTime.Now.Ticks}.png";
+        var result = await requestContext.Server.Upload(serviceProvider, outputName, item.Value.ImageBytes, cancellationToken);
 
-        if (uploaded != null)
-        {
-            content.Add(new EmbeddedResourceBlock()
-            {
-                Resource = new TextResourceContents()
+        return result?.ToResourceLinkCallToolResponse();
+
+        /*
+                var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Image-{DateTime.Now.Ticks}.png",
+                    item.Value.ImageBytes, cancellationToken);
+
+                if (uploaded != null)
                 {
-                    MimeType = uploaded.MimeType,
-                    Uri = uploaded.Uri,
-                    Text = JsonSerializer.Serialize(uploaded)
+                    content.Add(new EmbeddedResourceBlock()
+                    {
+                        Resource = new TextResourceContents()
+                        {
+                            MimeType = uploaded.MimeType,
+                            Uri = uploaded.Uri,
+                            Text = JsonSerializer.Serialize(uploaded)
+                        }
+                    });
                 }
-            });
-        }
 
-        return content;
+                return content;*/
     }
 }
 

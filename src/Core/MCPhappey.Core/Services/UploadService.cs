@@ -20,7 +20,7 @@ public class UploadService(
         var roots = await mcpServer.RequestRootsAsync(new(), cancellationToken);
         var server = servers.GetServerConfig(mcpServer);
         var oneDriveRoots = roots.Roots.Where(a => new Uri(a.Uri).Host.EndsWith(".sharepoint.com"));
-      
+
         if (oneDriveRoots.Any())
         {
             using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
@@ -55,4 +55,7 @@ public class UploadService(
 
         return null;
     }
+
+    
+
 }

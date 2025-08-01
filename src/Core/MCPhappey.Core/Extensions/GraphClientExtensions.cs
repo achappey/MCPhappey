@@ -9,6 +9,7 @@ using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Constants;
 using ModelContextProtocol.Protocol;
 using MCPhappey.Common;
+using MCPhappey.Common.Extensions;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -79,5 +80,25 @@ public static class GraphClientExtensions
                 MimeType = driveItem?.File?.MimeType ?? (driveItem?.Folder != null
                     ? MediaTypeNames.Application.Json : driveItem?.File?.MimeType)
             };
+
+
+    public static ResourceLinkBlock ToResourceLinkBlock(this DriveItem driveItem)
+            => driveItem.WebUrl!.ToResourceLinkBlock(driveItem?.Name!, driveItem?.File?.MimeType, driveItem?.Description, driveItem?.Size);
+
+
+      public static async Task<ResourceLinkBlock?> Upload(this GraphServiceClient  graphServiceClient,
+                string filename,
+                BinaryData binaryData,
+                CancellationToken cancellationToken = default)
+    {
+        using var uploadStream = new MemoryStream(binaryData.ToArray());
+
+        var myDrive = await graphServiceClient.Me.Drive.GetAsync(cancellationToken: cancellationToken);
+        var uploadedItem = await graphServiceClient.Drives[myDrive?.Id].Root.ItemWithPath($"/{filename}")
+            .Content.PutAsync(uploadStream, cancellationToken: cancellationToken);
+
+        return uploadedItem?.ToResourceLinkBlock();
+    }
+
 }
 
