@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Text.Json;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -40,8 +39,18 @@ public static class KernelMemory
             limit: limit ?? int.MaxValue,
             cancellationToken: cancellationToken);
 
-        return answer.ToJsonContentBlock(index)
-            .ToCallToolResult();
+        return new
+        {
+            answer.Query,
+            answer.NoResult,
+            Results = answer.Results.Select(b => new
+            {
+                b.SourceUrl,
+                b.Partitions.OrderByDescending(y => y.LastUpdate).FirstOrDefault()?.LastUpdate,
+                Citations = b.Partitions.Select(z => z.Text)
+            })
+        }.ToJsonContentBlock(index)
+        .ToCallToolResult();
     }
 
     [Description("Ask Microsoft Kernel Memory")]
@@ -68,8 +77,19 @@ public static class KernelMemory
         var answer = await memory.AskAsync(prompt, index, minRelevance: minRelevance ?? 0,
             cancellationToken: cancellationToken);
 
-        return answer.ToJsonContentBlock(index)
-            .ToCallToolResult();
+        return new
+        {
+            answer.Question,
+            answer.NoResult,
+            Text = answer.Result,
+            RelevantSources = answer.RelevantSources.Select(b => new
+            {
+                b.SourceUrl,
+                b.Partitions.OrderByDescending(y => y.LastUpdate).FirstOrDefault()?.LastUpdate,
+                Citations = b.Partitions.Select(z => z.Text)
+            })
+        }.ToJsonContentBlock(index)
+                    .ToCallToolResult();
     }
 
     [Description("List available Microsoft Kernel Memory indexes")]

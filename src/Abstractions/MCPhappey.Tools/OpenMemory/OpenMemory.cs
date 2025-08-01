@@ -96,7 +96,17 @@ public static class OpenMemory
             filter: memFilter,
             cancellationToken: cancellationToken);
 
-        return answer.ToJsonContentBlock(appSettings.ClientId)
+        return new
+        {
+            answer.Question,
+            answer.NoResult,
+            Text = answer.Result,
+            RelevantMemories = answer.RelevantSources.Select(b => new
+            {
+                Date = b.Partitions.OrderByDescending(y => y.LastUpdate).FirstOrDefault()?.LastUpdate,
+                Memory = string.Join("\n\n", b.Partitions.Select(z => z.Text))
+            })
+        }.ToJsonContentBlock(appSettings.ClientId)
             .ToCallToolResult();
     }
 

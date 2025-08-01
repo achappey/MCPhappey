@@ -12,9 +12,164 @@ namespace MCPhappey.Tools.Graph.Outlook;
 
 public static class GraphOutlookMail
 {
+    [Description("Set or update the follow-up flag for a mail message in Outlook.")]
+    [McpServerTool(Name = "GraphOutlookMail_FlagMail", Title = "Flag mail for follow-up in Outlook", OpenWorld = true)]
+    public static async Task<CallToolResult?> GraphOutlookMail_FlagMail(
+     IServiceProvider serviceProvider,
+     RequestContext<CallToolRequestParams> requestContext,
+     [Description("ID of the message to flag.")][Required] string messageId,
+     [Description("Flag status. Use Flagged, Complete, or NotFlagged. Defaults to Flagged.")]
+        FlagStatusEnum? flagStatus = FlagStatusEnum.Flagged,
+     [Description("Start date/time for the flag in ISO format (optional).")] string? startDateTime = null,
+     [Description("Due date/time for the flag in ISO format (optional).")] string? dueDateTime = null,
+     CancellationToken cancellationToken = default)
+    {
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            new GraphFlagMail
+            {
+                FlagStatus = flagStatus ?? FlagStatusEnum.Flagged,
+                StartDateTime = startDateTime != null ? DateTimeOffset.Parse(startDateTime) : null,
+                DueDateTime = dueDateTime != null ? DateTimeOffset.Parse(dueDateTime) : null,
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
+
+        var flag = new FollowupFlag
+        {
+            FlagStatus = typed?.FlagStatus switch
+            {
+                FlagStatusEnum.Flagged => FollowupFlagStatus.Flagged,
+                FlagStatusEnum.Complete => FollowupFlagStatus.Complete,
+                _ => FollowupFlagStatus.NotFlagged
+            }
+        };
+
+        if (typed?.StartDateTime.HasValue == true)
+        {
+            flag.StartDateTime = new DateTimeTimeZone
+            {
+                DateTime = typed.StartDateTime.Value.ToString("yyyy-MM-ddTHH:mm:ss"),
+                TimeZone = typed.StartDateTime.Value.ToDateTimeTimeZone().TimeZone
+            };
+        }
+
+        if (typed?.DueDateTime.HasValue == true)
+        {
+            flag.DueDateTime = new DateTimeTimeZone
+            {
+                DateTime = typed.DueDateTime.Value.ToString("yyyy-MM-ddTHH:mm:ss"),
+                TimeZone = typed.DueDateTime.Value.ToDateTimeTimeZone().TimeZone
+            };
+        }
+
+        var updatedMessage = new Message
+        {
+            Flag = flag
+        };
+
+        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        await client.Me.Messages[messageId].PatchAsync(updatedMessage, cancellationToken: cancellationToken);
+
+        return typed.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{messageId}").ToCallToolResult();
+    }
+
+    public enum FlagStatusEnum
+    {
+        [Description("Not flagged")]
+        NotFlagged,
+        [Description("Flagged (for follow-up)")]
+        Flagged,
+        [Description("Complete")]
+        Complete
+    }
+
+    [Description("Please fill in the mail flagging details")]
+    public class GraphFlagMail
+    {
+        [JsonPropertyName("flagStatus")]
+        [Required]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [Description("Flag status. Use Flagged, Complete, or NotFlagged. Defaults to Flagged.")]
+        public FlagStatusEnum FlagStatus { get; set; } = FlagStatusEnum.Flagged;
+
+        [JsonPropertyName("startDateTime")]
+        [Description("Start date/time for the flag in ISO format (optional).")]
+        public DateTimeOffset? StartDateTime { get; set; }
+
+        [JsonPropertyName("dueDateTime")]
+        [Description("Due date/time for the flag in ISO format (optional).")]
+        public DateTimeOffset? DueDateTime { get; set; }
+
+    }
+
+
+    [Description("Reply to an e-mail message in Outlook.")]
+    [McpServerTool(Name = "GraphOutlookMail_Reply", Title = "Reply to e-mail via Outlook",
+       OpenWorld = true)]
+    public static async Task<CallToolResult?> GraphOutlookMail_Reply(
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       [Description("ID of the message to reply to.")][Required] string messageId,
+       [Description("Reply type: Reply or ReplyAll. Defaults to Reply.")] ReplyTypeEnum? replyType = ReplyTypeEnum.Reply,
+       [Description("Content of the reply message.")] string? content = null,
+       CancellationToken cancellationToken = default)
+    {
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            new GraphReplyMail
+            {
+                Comment = content ?? string.Empty,
+                ReplyType = replyType ?? ReplyTypeEnum.Reply,
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
+
+        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+
+        if (typed?.ReplyType == ReplyTypeEnum.ReplyAll)
+        {
+            await client.Me.Messages[messageId].ReplyAll.PostAsync(
+                new Microsoft.Graph.Beta.Me.Messages.Item.ReplyAll.ReplyAllPostRequestBody { Comment = typed.Comment },
+                cancellationToken: cancellationToken);
+        }
+        else
+        {
+            await client.Me.Messages[messageId].Reply.PostAsync(
+                new Microsoft.Graph.Beta.Me.Messages.Item.Reply.ReplyPostRequestBody { Comment = typed?.Comment },
+                cancellationToken: cancellationToken);
+        }
+
+        return typed.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{messageId}/reply")
+             .ToCallToolResult();
+    }
+
+    public enum ReplyTypeEnum
+    {
+        Reply,
+        ReplyAll
+    }
+
+    [Description("Please fill in the reply details")]
+    public class GraphReplyMail
+    {
+        [JsonPropertyName("replyType")]
+        [Required]
+        [JsonConverter(typeof(JsonStringEnumConverter))]
+        [Description("Reply type: Reply or ReplyAll. Defaults to Reply.")]
+        public ReplyTypeEnum ReplyType { get; set; } = ReplyTypeEnum.Reply;
+
+        [JsonPropertyName("comment")]
+        [Required]
+        [Description("Reply content")]
+        public string Comment { get; set; } = string.Empty;
+    }
+
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
     [McpServerTool(Name = "GraphOutlookMail_SendMail", Title = "Send e-mail via Outlook",
-        ReadOnly = false, OpenWorld = true)]
+        OpenWorld = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_SendMail(
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
@@ -79,7 +234,7 @@ public static class GraphOutlookMail
      [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
      CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphCreateMailDraft>(
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(
             new GraphCreateMailDraft
             {
                 ToRecipients = toRecipients ?? string.Empty,
@@ -113,7 +268,6 @@ public static class GraphOutlookMail
 
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var createdMessage = await client.Me.Messages.PostAsync(newMessage, cancellationToken: cancellationToken);
-
         return createdMessage.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{createdMessage?.Id}").ToCallToolResult();
     }
 

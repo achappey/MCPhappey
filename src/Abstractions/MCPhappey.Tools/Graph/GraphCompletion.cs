@@ -11,7 +11,7 @@ public class GraphCompletion : IAutoCompletion
     public bool SupportsHost(ServerConfig serverConfig)
         => serverConfig.Server.ServerInfo.Name.StartsWith("Microsoft-");
 
-    public async Task<Completion?> GetCompletion(
+    public async Task<Completion> GetCompletion(
      IMcpServer mcpServer,
      IServiceProvider serviceProvider,
      CompleteRequestParams? completeRequestParams,
@@ -26,6 +26,66 @@ public class GraphCompletion : IAutoCompletion
 
         switch (completeRequestParams.Argument.Name)
         {
+            case "appName":
+                var apps = await client.Applications.GetAsync(requestConfiguration =>
+                {
+                    if (!string.IsNullOrWhiteSpace(argValue))
+                        requestConfiguration.QueryParameters.Filter = $"startswith(displayName,'{argValue.Replace("'", "''")}')";
+                    requestConfiguration.QueryParameters.Top = 100;
+                }, cancellationToken);
+
+                result = apps?.Value?.Select(a => a.DisplayName)
+                                        .OfType<string>()
+                                        .Order()
+                                        .ToList() ?? [];
+                break;
+
+
+            case "roleName":
+                var roles = await client.DirectoryRoles.GetAsync(requestConfiguration =>
+                {
+                    if (!string.IsNullOrWhiteSpace(argValue))
+                        requestConfiguration.QueryParameters.Filter = $"startswith(displayName,'{argValue.Replace("'", "''")}')";
+                 //   requestConfiguration.Quer yParameters.Top = 100;
+                }, cancellationToken);
+
+                result = roles?.Value?.Select(r => r.DisplayName)
+                                        .OfType<string>()
+                                        .Order()
+                                        .ToList() ?? [];
+                break;
+
+
+            case "siteName":
+                var sites = await client.Sites.GetAsync(requestConfiguration =>
+                {
+                    if (!string.IsNullOrWhiteSpace(argValue))
+                        requestConfiguration.QueryParameters.Filter = $"startswith(displayName,'{argValue.Replace("'", "''")}')";
+                    requestConfiguration.QueryParameters.Top = 100;
+                }, cancellationToken);
+
+                result = sites?.Value?.Select(s => s.DisplayName)
+                                       .OfType<string>()
+                                       .Order()
+                                       .ToList() ?? [];
+                break;
+
+
+            case "driveName":
+                var drives = await client.Drives.GetAsync(requestConfiguration =>
+                {
+                    if (!string.IsNullOrWhiteSpace(argValue))
+                        requestConfiguration.QueryParameters.Filter = $"startswith(name,'{argValue.Replace("'", "''")}')";
+                    requestConfiguration.QueryParameters.Top = 100;
+                }, cancellationToken);
+
+                result = drives?.Value?.Select(d => d.Name)
+                                        .OfType<string>()
+                                        .Order()
+                                        .ToList() ?? [];
+                break;
+
+
             case "teamName":
                 var teams = await client.Teams.GetAsync((requestConfiguration) =>
                 {
@@ -145,11 +205,6 @@ public class GraphCompletion : IAutoCompletion
 
                     requestConfiguration.QueryParameters.Filter = string.Join(" and ", filters);
 
-                    // if (!string.IsNullOrWhiteSpace(argValue))
-                    //{
-
-                    //  requestConfiguration.QueryParameters.Filter = $"startswith(displayName,'{argValue.Replace("'", "''")}')";
-                    //}
                     requestConfiguration.QueryParameters.Top = 100;
                 }, cancellationToken);
 
