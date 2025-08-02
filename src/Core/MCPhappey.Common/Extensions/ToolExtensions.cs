@@ -1,4 +1,5 @@
 using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
 
 namespace MCPhappey.Common.Extensions;
 
@@ -63,5 +64,9 @@ public static class ToolExtensions
     {
         Content = [.. results],
     };
+
+    public static string ToOutputFileName(this RequestContext<CallToolRequestParams> context, string extension)
+      => $"{context.Params?.Name ?? context.Server.ServerOptions.ServerInfo?.Name}_{DateTime.Now.Ticks}.{extension.ToLower()}";
+
 
 }

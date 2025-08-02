@@ -54,13 +54,9 @@ public static class OpenAIImages
             Size = sizeValue,
         }, cancellationToken);
 
-        List<ContentBlock> content = [new ImageContentBlock(){
-                MimeType = "image/png",
-                Data = Convert.ToBase64String(item.Value.ImageBytes)
-            }];
-
-        var outputName = $"OpenAIImages_CreateImage_{DateTime.Now.Ticks}.png";
-        var result = await requestContext.Server.Upload(serviceProvider, outputName, item.Value.ImageBytes, cancellationToken);
+        var result = await requestContext.Server.Upload(serviceProvider,
+            requestContext.ToOutputFileName("png"),
+            item.Value.ImageBytes, cancellationToken);
 
         return result?.ToResourceLinkCallToolResponse();
 

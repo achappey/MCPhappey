@@ -6,7 +6,6 @@ using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -52,16 +51,11 @@ public static class SimplicateExport
 
         string csv = JsonCsvConverter.ToCsv(JsonSerializer.Serialize(items), options);
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var result = await requestContext.Server.Upload(serviceProvider,
+                        requestContext.ToOutputFileName("csv"),
+                        BinaryData.FromString(csv), cancellationToken);
 
-        var outputName = $"Simplicate_Export_{DateTime.Now.Ticks}.csv";
-        var uploadStream = new MemoryStream(BinaryData.FromString(csv).ToArray());
-
-        var myDrive = await client.Me.Drive.GetAsync(cancellationToken: cancellationToken);
-        var uploadedItem = await client.Drives[myDrive?.Id].Root.ItemWithPath($"/{outputName}")
-            .Content.PutAsync(uploadStream, cancellationToken: cancellationToken);
-
-        return uploadedItem?.WebUrl?.ToTextCallToolResponse();
+        return result?.ToResourceLinkCallToolResponse();
     }
 
 

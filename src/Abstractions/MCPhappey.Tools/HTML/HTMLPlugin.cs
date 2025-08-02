@@ -102,17 +102,11 @@ public static partial class HTMLPlugin
         foreach (var pair in values?.Content?.ToList() ?? [])
             html = html.Replace($"{{{pair.Key}}}", pair.Value.ToString() ?? string.Empty);
 
-        // 4. Upload as new HTML file in root of the drive
-        var outputName = $"{typed?.Name}.html";
-        var uploadStream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(html));
+        var result = await requestContext.Server.Upload(serviceProvider,
+                               requestContext.ToOutputFileName("html"),
+                               BinaryData.FromString(html), cancellationToken);
 
-        var myDrive = await client.Me.Drive.GetAsync(cancellationToken: cancellationToken);
-        var uploadedItem = await client.Drives[myDrive?.Id].Root.ItemWithPath($"/{outputName}")
-            .Content.PutAsync(uploadStream, cancellationToken: cancellationToken);
-
-        // 5. Return content block with download URL
-        var url = $"https://graph.microsoft.com/beta/drives/{myDrive?.Id}/root:/{outputName}:/content";
-        return uploadedItem.ToJsonContentBlock(url).ToCallToolResult();
+        return result?.ToResourceLinkCallToolResponse();
     }
 
 

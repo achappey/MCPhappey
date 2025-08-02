@@ -3,8 +3,7 @@ using MCPhappey.Common;
 using MCPhappey.Common.Constants;
 using MCPhappey.Common.Models;
 using MCPhappey.Scrapers.Generic;
-using MCPhappey.Scrapers.Outlook;
-using MCPhappey.Scrapers.SharePoint;
+using MCPhappey.Scrapers.Microsoft;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace MCPhappey.Scrapers.Extensions;
@@ -51,6 +50,16 @@ public static class AspNetCoreExtensions
                             var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
 
                             return new OutlookScraper(httpClientFactory, server, oAuthSettings);
+                        });
+                    }
+
+                    if (scopes.Contains("ChannelMessage.") || scopes.Contains("Chat."))
+                    {
+                        services.AddSingleton<IContentScraper>(sp =>
+                        {
+                            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+
+                            return new TeamsScraper(httpClientFactory, server, oAuthSettings);
                         });
                     }
                 }

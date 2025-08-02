@@ -3,7 +3,6 @@ using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using NAudio.Wave;
@@ -49,16 +48,13 @@ public static partial class AudioPlugin
                 }
             }
 
-            var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+            var result = await requestContext.Server.Upload(serviceProvider,
+                                        requestContext.ToOutputFileName("mp3"),
+                                        await BinaryData.FromStreamAsync(outputStream,
+                                            cancellationToken),
+                                                cancellationToken);
 
-            var outputName = $"AudioPlugin_ConcatMp3Files_{DateTime.Now.Ticks}.mp3";
-            using var uploadStream = new MemoryStream(outputStream.ToArray());
-
-            var myDrive = await client.Me.Drive.GetAsync(cancellationToken: cancellationToken);
-            var uploadedItem = await client.Drives[myDrive?.Id].Root.ItemWithPath($"/{outputName}")
-                .Content.PutAsync(uploadStream, cancellationToken: cancellationToken);
-
-            return uploadedItem?.WebUrl?.ToTextCallToolResponse();
+            return result?.ToResourceLinkCallToolResponse();
         }
         catch (Exception ex)
         {

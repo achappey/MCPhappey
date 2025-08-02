@@ -32,7 +32,7 @@ public static class GoogleImagen
         var googleAI = serviceProvider.GetRequiredService<Mscc.GenerativeAI.GoogleAI>();
 
         var imageClient = googleAI.ImageGenerationModel(imageModel);
-        
+
         try
         {
             var item = await imageClient.GenerateImages(new Mscc.GenerativeAI.ImageGenerationRequest(prompt, 1)
@@ -52,8 +52,8 @@ public static class GoogleImagen
 
             foreach (var imageItem in item.Predictions)
             {
-                var outputName = $"GoogleImagen_CreateImage_{DateTime.Now.Ticks}.png";
-                var result = await requestContext.Server.Upload(serviceProvider, outputName,
+                var result = await requestContext.Server.Upload(serviceProvider,
+                    requestContext.ToOutputFileName("png"),
                     BinaryData.FromBytes(Convert.FromBase64String(imageItem.BytesBase64Encoded!)), cancellationToken);
 
                 if (result != null) resourceLinks.Add(result);

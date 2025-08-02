@@ -22,6 +22,44 @@ public static partial class OutlookExtensions
             !uri.Host.EndsWith("outlook.office365.com", StringComparison.OrdinalIgnoreCase))
             throw new ArgumentException("Geen Outlook-Web URL.", nameof(url));
 
+        // 1. mailbox (next segment after “mail” or “owa”)
+        var segments = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var anchor = Array.FindIndex(segments,
+                         s => s.Equals("mail", StringComparison.OrdinalIgnoreCase) ||
+                              s.Equals("owa", StringComparison.OrdinalIgnoreCase));
+        if (anchor >= 0 && anchor + 1 < segments.Length)
+        {
+            var candidate = Uri.UnescapeDataString(segments[anchor + 1]);
+            if (candidate.Contains('@')) mailbox = candidate;
+        }
+
+        // 2a. /id/<ItemId>
+        var m = PathIdRegex().Match(uri.AbsolutePath);
+        if (m.Success)
+        {
+            itemId = m.Groups["id"].Value;   // ← keep the encoded form
+            return true;
+        }
+
+        // 2b. ?ItemID=… or ?id=…
+        var qs = HttpUtility.ParseQueryString(uri.Query);
+        itemId = qs["ItemID"] ?? qs["id"]; // already encoded
+        return !string.IsNullOrEmpty(itemId);
+    }
+
+
+    public static bool TryParse22(string url, out string? mailbox, out string? itemId)
+    {
+        mailbox = null;
+        itemId = null;
+
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            throw new ArgumentException("Geen geldige URL.", nameof(url));
+
+        if (!uri.Host.EndsWith("outlook.office.com", StringComparison.OrdinalIgnoreCase) &&
+            !uri.Host.EndsWith("outlook.office365.com", StringComparison.OrdinalIgnoreCase))
+            throw new ArgumentException("Geen Outlook-Web URL.", nameof(url));
+
         // 1. mailbox uit pad
         var segments = uri.AbsolutePath.Split('/', StringSplitOptions.RemoveEmptyEntries);
         var anchor = Array.FindIndex(segments,
@@ -112,7 +150,10 @@ public static partial class OutlookExtensions
         };
     }
 
-    [GeneratedRegex(@"/id/(?<id>[A-Za-z0-9\-._~%]+=*)", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
+    [GeneratedRegex(@"/id/(?<id>[^/?#]+)", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
     private static partial Regex PathIdRegex();
+
+    //   [GeneratedRegex(@"/id/(?<id>[A-Za-z0-9\-._~%]+=*)", RegexOptions.IgnoreCase | RegexOptions.Compiled, "nl-NL")]
+    //  private static partial Regex PathIdRegex();
 }
 

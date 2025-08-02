@@ -6,7 +6,7 @@ using MCPhappey.Scrapers.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Server;
 
-namespace MCPhappey.Scrapers.SharePoint;
+namespace MCPhappey.Scrapers.Microsoft;
 
 public class SharePointScraper(IHttpClientFactory httpClientFactory, ServerConfig serverConfig,
     OAuthSettings oAuthSettings) : IContentScraper

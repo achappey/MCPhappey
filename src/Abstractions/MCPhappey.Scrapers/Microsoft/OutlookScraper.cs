@@ -6,7 +6,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Server;
 
-namespace MCPhappey.Scrapers.Outlook;
+namespace MCPhappey.Scrapers.Microsoft;
 
 /// <summary>
 /// Scrapes a single Outlook-web message (outlook.office.com / outlook.office365.com).

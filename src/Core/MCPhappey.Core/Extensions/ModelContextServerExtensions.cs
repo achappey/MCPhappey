@@ -1,7 +1,9 @@
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Beta;
+using Microsoft.KernelMemory.DataFormats;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -101,4 +103,43 @@ public static partial class ModelContextServerExtensions
     }
 
 
+    public static async Task<FileItem> DecodeAsync(this ServiceProvider serviceProvider, string uri, BinaryData binaryData, string contentType,
+           CancellationToken cancellationToken = default)
+    {
+        var contentDecoders = serviceProvider.GetService<IEnumerable<IContentDecoder>>();
+
+        if (contentType.StartsWith("image/"))
+        {
+            return new FileItem
+            {
+                Contents = binaryData,
+                MimeType = contentType,
+                Uri = uri
+            };
+        }
+
+        string? myAssemblyName = typeof(ModelContextServerExtensions).Namespace?.Split(".").FirstOrDefault();
+
+        var bestDecoder = contentDecoders?
+            .Where(a => a.SupportsMimeType(contentType))
+            .OrderBy(d => myAssemblyName != null
+                && d.GetType().Namespace?.Contains(myAssemblyName) == true ? 0 : 1)
+            .FirstOrDefault();
+
+        FileContent? fileContent = null;
+        if (bestDecoder != null)
+        {
+            fileContent = await bestDecoder.DecodeAsync(binaryData, cancellationToken);
+        }
+
+        // Fallback: original content if nothing could decode
+        return fileContent != null
+            ? fileContent.GetFileItemFromFileContent(uri)
+            : new FileItem
+            {
+                Contents = binaryData,
+                MimeType = contentType,
+                Uri = uri
+            };
+    }
 }

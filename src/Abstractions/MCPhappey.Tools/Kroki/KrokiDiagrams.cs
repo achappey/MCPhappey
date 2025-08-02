@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -63,6 +64,11 @@ public static class KrokiDiagrams
             "pdf" => "application/pdf",
             _ => "application/octet-stream"
         };
+
+        var result = await requestContext.Server.Upload(serviceProvider,
+            requestContext.ToOutputFileName(fileType),
+            BinaryData.FromBytes(fileBytes),
+            cancellationToken);
 
         List<ContentBlock> content = [new ImageContentBlock(){
                 MimeType = contentType,

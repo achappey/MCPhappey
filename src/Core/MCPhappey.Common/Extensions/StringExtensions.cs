@@ -2,6 +2,9 @@ namespace MCPhappey.Common.Extensions;
 
 public static partial class StringExtensions
 {
+    public static string ToFileName(this string name, string extension)
+        => $"{name}_{DateTime.Now.Ticks}.{extension.ToLower()}";
+
     public static string Slugify(this string input)
     {
         if (string.IsNullOrWhiteSpace(input)) return string.Empty;
