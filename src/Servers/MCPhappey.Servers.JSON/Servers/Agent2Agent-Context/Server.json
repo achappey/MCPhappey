@@ -1,9 +1,9 @@
 {
   "serverInfo": {
-    "name": "Agent2Agent-Utils",
+    "name": "Agent2Agent-Context",
     "version": "1.0.0"
   },
-  "plugins": ["MCPhappey.Agent2Agent.Agent2AgentUtils, MCPhappey.Agent2Agent"],
+  "plugins": ["MCPhappey.Agent2Agent.Agent2AgentContextPlugin, MCPhappey.Agent2Agent"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }

@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text.Json;
 using MCPhappey.Auth.Cache;
 using MCPhappey.Auth.Models;
+using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MCPhappey.Auth.Controllers;
@@ -55,6 +56,93 @@ public static class TokenController
         var codeVerifier = form["code_verifier"].ToString();
         var grantType = form["grant_type"].ToString();
         var resource = form["resource"].ToString();
+        var subjectTok = form["subject_token"].ToString();
+        var subjectType = form["subject_token_type"].ToString();
+        var actTok = form["act_token"].ToString();
+
+        if (grantType == "urn:ietf:params:oauth:grant-type:token-exchange")
+        {
+            if (string.IsNullOrEmpty(subjectTok) ||
+                subjectType != "urn:ietf:params:oauth:token-type:access_token")
+                return Results.BadRequest("Missing or wrong subject_token(_type)");
+
+            var handler111 = new JwtSecurityTokenHandler();
+
+            // STEP 0: Decode token header/payload without validation to check issuer.
+            JwtSecurityToken? jwt111 = handler111.ReadJwtToken(subjectTok);
+
+            string? tokenIssuer = jwt111?.Issuer;
+
+            var outerKeys = await JwksCache.GetAsync(
+                 $"https://login.microsoftonline.com/{oauth.TenantId}/discovery/v2.0/keys",
+                 httpClientFactory);
+
+            // STEP 1: Pick correct JWKS endpoint based on issuer.
+            /*    string jwksUrl;
+                if (tokenIssuer != null &&
+                    (tokenIssuer.StartsWith("https://sts.windows.net/") ||
+                     tokenIssuer.StartsWith("https://login.microsoftonline.com/")))
+                {
+                    // Azure AD token
+                    jwksUrl = $"https://login.microsoftonline.com/{oauth.TenantId}/discovery/v2.0/keys";
+                }
+                else
+                {
+                    // Your own tokens
+                    jwksUrl = $"{tokenIssuer}/.well-known/jwks.json";
+                }
+
+                var keys = await JwksCache.GetAsync(jwksUrl, httpClientFactory);*/
+            // 0-a) Validate the incoming Azure-AD access token (signature, exp, aud …)
+            var tvp = new TokenValidationParameters
+            {
+                ValidIssuers =
+                    [
+                //   issuer, // your own issuer
+                    $"https://sts.windows.net/{oauth.TenantId}/",
+                    $"https://login.microsoftonline.com/{oauth.TenantId}/v2.0"
+                ],
+                IssuerSigningKeys = outerKeys,
+                //   ValidIssuers = $"https://login.microsoftonline.com/{oauth.TenantId}/v2.0",
+                ValidateIssuerSigningKey = true,
+                ValidateAudience = false,          // you may want to lock this down
+                ValidateLifetime = true
+            };
+
+            var handler1 = new JwtSecurityTokenHandler();
+            handler1.ValidateToken(subjectTok, tvp, out var validated);
+            var jwt1 = (JwtSecurityToken)validated;
+
+            var sub1 = jwt1.Subject;
+            var oid1 = jwt1.Claims.First(c => c.Type == "oid").Value;
+            var exp1 = jwt1.ValidTo.AddMinutes(-2); // clip a bit
+
+            // 0-b) Choose scopes:  “scope” parameter wins, otherwise default set
+            var scopes = form["scope"].ToString();
+            var scopeList = string.IsNullOrEmpty(scopes)
+                            ? oauth.Scopes.Split(' ', StringSplitOptions.RemoveEmptyEntries)
+                            : scopes.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            // 0-c) Mint the MCP token, embedding the inbound token as act
+            var mcpToken1 = CreateJwt($"{ctx.Request.Scheme}://{ctx.Request.Host}",
+                                     sub1!, resource,
+                                     scopeList,
+                                     signingCredentials,
+                                     new Dictionary<string, object>
+                                     {
+                                         ["obo"] = subjectTok,   // aud = MCP (for hop-3 OBO)
+                                         ["act"] = actTok,
+                                         ["oid"] = oid1
+                                     }, expires: exp1);
+
+            return Results.Json(new
+            {
+                access_token = mcpToken1,
+                token_type = "Bearer",
+                resource,
+                expires_in = (int)(exp1 - DateTime.UtcNow).TotalSeconds
+            });
+        }
 
         if (string.IsNullOrEmpty(code) || string.IsNullOrEmpty(codeVerifier))
         {
@@ -67,6 +155,7 @@ public static class TokenController
         {
             return Results.BadRequest("Unknown or expired code");
         }
+
 
         if (grantType == "client_credentials")
         {

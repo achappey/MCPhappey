@@ -1,0 +1,13 @@
+{
+  "resources": [
+    {
+      "uri": "a2a://context",
+      "name": "List all available Agent2Agent contexts",
+      "description": "Lists all available Agent2Agent contexts for the current user",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

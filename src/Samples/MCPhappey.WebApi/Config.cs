@@ -31,4 +31,5 @@ public class Agent2AgentStorage
     public string ConnectionString { get; set; } = default!;
     public string TaskContainer { get; set; } = default!;
     public string ContextContainer { get; set; } = default!;
+    public string Database { get; set; } = default!;
 }

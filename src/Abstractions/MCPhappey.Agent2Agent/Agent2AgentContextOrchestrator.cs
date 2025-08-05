@@ -13,7 +13,7 @@ namespace MCPhappey.Agent2Agent;
 
 public static class Agent2AgentContextOrchestrator
 {
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    /*[McpServerTool(Name = "Agent2AgentContextOrchestrator_GetTasks", ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns all tasks associated with the specified context. Only tasks for which the current user or their security groups have access are included.")]
     public static async Task<IEnumerable<TaskRecord>> Agent2AgentContextOrchestrator_GetTasks(
       IServiceProvider serviceProvider,
@@ -46,7 +46,7 @@ public static class Agent2AgentContextOrchestrator
         return tasks;
     }
 
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "Agent2AgentContextOrchestrator_GetTask", ReadOnly = true, UseStructuredContent = true)]
     [Description("Retrieves the specified task by ID if the current user or their security groups have access to its context.")]
     public static async Task<TaskRecord> Agent2AgentContextOrchestrator_GetTask(
      IServiceProvider serviceProvider,
@@ -84,7 +84,7 @@ public static class Agent2AgentContextOrchestrator
         return task;
     }
 
-    [McpServerTool(ReadOnly = false, UseStructuredContent = true)]
+    [McpServerTool(Name = "Agent2AgentContextOrchestrator_CreateTask", ReadOnly = false, UseStructuredContent = true)]
     [Description("Create a new task.")]
     public static async Task<TaskRecord> Agent2AgentContextOrchestrator_CreateTask(
             IServiceProvider serviceProvider,
@@ -144,7 +144,7 @@ public static class Agent2AgentContextOrchestrator
 
     }
 
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "Agent2AgentContextOrchestrator_GetArtifact", ReadOnly = true, UseStructuredContent = true)]
     [Description("Retrieves the specified artifact by ID if the current user or their security groups have access to its context.")]
     public static async Task<Artifact?> Agent2AgentContextOrchestrator_GetArtifact(
         IServiceProvider serviceProvider,
@@ -183,6 +183,6 @@ public static class Agent2AgentContextOrchestrator
         return task.Artifacts?.FirstOrDefault(a => a.ArtifactId == artifactId);
 
     }
-
+*/
 }
 

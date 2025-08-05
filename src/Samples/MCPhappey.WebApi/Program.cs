@@ -130,7 +130,8 @@ if (appConfig?.Agent2AgentStorage != null)
 {
     builder.WithAgent2Agent(appConfig.Agent2AgentStorage.ConnectionString,
     appConfig.Agent2AgentStorage.TaskContainer,
-    appConfig.Agent2AgentStorage.ContextContainer);
+    appConfig.Agent2AgentStorage.ContextContainer,
+    appConfig.Agent2AgentStorage.Database);
 }
 
 builder.Services.AddMcpCoreServices(servers);

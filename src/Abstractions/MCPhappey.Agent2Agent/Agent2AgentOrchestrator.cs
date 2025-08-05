@@ -11,7 +11,7 @@ namespace MCPhappey.Agent2Agent;
 
 public static class Agent2AgentOrchestrator
 {
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+ /*   [McpServerTool(Name = "Agent2AgentOrchestrator_GetContexts", ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns all agent contexts accessible to the current user, based on their user ID or security group memberships. Contexts contain metadata and task references for agent orchestration.")]
     public static async Task<IEnumerable<Agent2AgentContext>> Agent2AgentOrchestrator_GetContexts(
         IServiceProvider serviceProvider,
@@ -28,7 +28,7 @@ public static class Agent2AgentOrchestrator
         return contexts;
     }
 
-    [McpServerTool(ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Name = "Agent2AgentOrchestrator_CreateContext", ReadOnly = true, UseStructuredContent = true)]
     [Description("Create a new A2A context")]
     public static async Task<Agent2AgentContext> Agent2AgentOrchestrator_CreateContext(
        [Description("Name of the new context")] string name,
@@ -80,6 +80,6 @@ public static class Agent2AgentOrchestrator
         [JsonPropertyName("metadata")]
         public Dictionary<string, object> Metadata { get; set; } = [];
 
-    }
+    }*/
 }
 

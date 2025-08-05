@@ -1,0 +1,31 @@
+{
+  "resourceTemplates": [
+    {
+      "uriTemplate": "a2a://context/{contextId}",
+      "name": "Get Agent2Agent context by ID",
+      "description": "Gets a single Agent2Agent context by contextId.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "a2a://task/{taskId}/artifact/{artifactId}",
+      "name": "Get Agent2Agent task artifact by ID",
+      "description": "Get a specific artifact belonging to a given Agent2Agent task.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },
+    {
+      "uriTemplate": "a2a://task/{taskId}",
+      "name": "Get Agent2Agent task by ID",
+      "description": "Retrieve a specific Agent2Agent task by its unique taskId.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

@@ -27,6 +27,17 @@ public static class HttpExtensions
     return jwt.Claims.FirstOrDefault(c => c.Type == "act")?.Value;
   }
 
+  public static string? GetOboClaimFromMcpToken(string rawMcpToken)
+  {
+    var handler = new JwtSecurityTokenHandler();
+
+    // Decode the token (without validating signature)
+    var jwt = handler.ReadJwtToken(rawMcpToken);
+
+    // Extract the 'act' claim
+    return jwt.Claims.FirstOrDefault(c => c.Type == "obo")?.Value;
+  }
+
   public static async Task<string?> ExchangeOnBehalfOfTokenAsync(this IHttpClientFactory httpClientFactory,
      string incomingAccessToken,
      string clientId,
@@ -36,9 +47,12 @@ public static class HttpExtensions
   {
     using var http = httpClientFactory.CreateClient();
     string? azureAccessToken = GetActClaimFromMcpToken(incomingAccessToken);
+    string? oboToken = GetOboClaimFromMcpToken(incomingAccessToken);
 
-    if (string.IsNullOrEmpty(azureAccessToken))
-      throw new Exception("No 'act' claim found in MCP token");
+    var assertion = oboToken ?? azureAccessToken;
+
+    if (string.IsNullOrEmpty(assertion))
+      throw new Exception("No assertion claim found in MCP token");
 
     var body = new Dictionary<string, string>
             {
@@ -46,7 +60,7 @@ public static class HttpExtensions
                 { "client_secret", clientSecret },
                 { "grant_type", "urn:ietf:params:oauth:grant-type:jwt-bearer" },
                 { "requested_token_use", "on_behalf_of" },
-                { "assertion", azureAccessToken },
+                { "assertion", assertion },
                 { "scope", string.Join(" ", scopes) }
             };
 

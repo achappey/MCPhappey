@@ -24,7 +24,8 @@ public static partial class ModelContextResourceExtensions
                 =>
                 {
                     var service = request.Services!.GetRequiredService<ResourceService>();
-                    return await service.GetServerResourceTemplates(server);
+                    
+                    return await service.GetServerResourceTemplates(server, cancellationToken);
                 },
                 ReadResourceHandler = async (request, cancellationToken) =>
                 {

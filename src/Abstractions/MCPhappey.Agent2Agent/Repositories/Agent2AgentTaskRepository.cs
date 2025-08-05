@@ -25,7 +25,7 @@ public class Agent2AgentTaskRepository : IAgent2AgentTaskRepository
     public async Task<TaskRecord?> GetTaskAsync(string taskId, CancellationToken ct = default)
     {
         var blob = _container.GetBlobClient($"{taskId}.json");
-        if (!(await blob.ExistsAsync(ct))) return null;
+        if (!await blob.ExistsAsync(ct)) return null;
         var stream = await blob.OpenReadAsync(cancellationToken: ct);
         return await JsonSerializer.DeserializeAsync<TaskRecord>(stream, cancellationToken: ct);
     }

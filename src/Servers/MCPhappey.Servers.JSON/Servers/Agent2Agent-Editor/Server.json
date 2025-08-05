@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "Agent2Agent-Editor",
+    "version": "1.0.0"
+  },
+  "plugins": ["MCPhappey.Agent2Agent.Agent2AgentEditor, MCPhappey.Agent2Agent"],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}
