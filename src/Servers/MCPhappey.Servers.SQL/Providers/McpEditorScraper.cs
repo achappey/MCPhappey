@@ -1,9 +1,11 @@
 using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 using ModelContextProtocol.Server;
 
 namespace MCPhappey.Servers.SQL.Providers;
@@ -74,12 +76,29 @@ public class McpEditorScraper : IContentScraper
             return [stats.ToFileItem(url)];
         }
 
+        if (url.Equals("mcp-editor://plugins"))
+        {
+            var repo = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
+
+            return [repo.GetAllPlugins()
+                .ToFileItem(url)];
+        }
+
         if (url.Equals("mcp-editor://servers"))
         {
             var servers = await serviceProvider.GetServers(cancellationToken);
             var userServers = servers.Select(z => z.ToMcpServer());
 
             return [userServers.ToFileItem(url)];
+        }
+
+        if (url.StartsWith("mcp-editor://plugins/", StringComparison.OrdinalIgnoreCase)
+            && url.EndsWith("/tools", StringComparison.OrdinalIgnoreCase))
+        {
+            // Extract plugin name
+            string pluginName = GetServerNameFromEditorUrl(url);
+            var kernel = serviceProvider.GetRequiredService<Kernel>();
+            return [(kernel.GetToolsFromType(pluginName ?? string.Empty) ?? []).ToFileItem(url)];
         }
 
         string serverName = GetServerNameFromEditorUrl(url);
@@ -129,19 +148,5 @@ public class McpEditorScraper : IContentScraper
         var uri = new Uri(url);
         // Segments: ["/", "server/", "{serverName}/", ...]
         return uri.Segments.Length >= 3 ? uri.Segments[1].TrimEnd('/') : "";
-    }
-
-    private static string GetItemNameFromEditorUrl(string url)
-    {
-        var uri = new Uri(url);
-        // Segments: ["/", "server/", "{serverName}/", ...]
-        return uri.Segments.Length >= 4 ? uri.Segments[3].TrimEnd('/') : "";
-    }
-
-    private static string GetItemTypeFromEditorUrl(string url)
-    {
-        var uri = new Uri(url);
-        // Segments: ["/", "server/", "{serverName}/", ...]
-        return uri.Segments.Length >= 3 ? uri.Segments[2].TrimEnd('/') : "";
     }
 }

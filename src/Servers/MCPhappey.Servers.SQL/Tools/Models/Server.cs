@@ -30,6 +30,15 @@ public class NewMcpServer
 
 }
 
+[Description("Please fill in the MCP Server plugin details.")]
+public class McpServerPlugin
+{
+    [JsonPropertyName("pluginName")]
+    [Required]
+    [Description("The name of the plugin.")]
+    public string PluginName { get; set; } = default!;
+}
+
 
 [Description("Please fill in the MCP Server details.")]
 public class CloneMcpServer

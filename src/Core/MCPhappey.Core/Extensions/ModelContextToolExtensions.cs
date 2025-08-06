@@ -25,7 +25,7 @@ public static partial class ModelContextToolExtensions
         return tools.BuildCapability(server, headers);
     }
 
-    private static IEnumerable<McpServerTool>? GetToolsFromType(this Kernel kernel, string pluginTypeName)
+    public static IEnumerable<McpServerTool>? GetToolsFromType(this Kernel kernel, string pluginTypeName)
     {
         var pluginType = Type.GetType(pluginTypeName);
 

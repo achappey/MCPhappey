@@ -98,6 +98,18 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         }
     }
 
+
+    public async Task DeleteServerPlugin(int serverId, string ownerId)
+    {
+        var item = await databaseContext.Tools.FirstOrDefaultAsync(a => a.Name == ownerId && a.ServerId == serverId);
+
+        if (item != null)
+        {
+            databaseContext.Tools.Remove(item);
+            await databaseContext.SaveChangesAsync();
+        }
+    }
+
     public async Task DeleteServerOwner(int serverId, string ownerId)
     {
         var item = await databaseContext.ServerOwners.FirstOrDefaultAsync(a => a.Id == ownerId && a.ServerId == serverId);

@@ -9,8 +9,10 @@ using MCPhappey.Servers.SQL.Models;
 using MCPhappey.Servers.SQL.Repositories;
 using MCPhappey.Servers.SQL.Tools.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.SemanticKernel;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using MCPhappey.Core.Extensions;
 
 namespace MCPhappey.Servers.SQL.Tools;
 
@@ -252,7 +254,9 @@ public static partial class ModelContextEditor
             Instructions = instructions,
             Secured = true,
         }, cancellationToken);
+
         if (notAccepted != null) return notAccepted;
+
         if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
 
         var server = await serverRepository.CreateServer(new SQL.Models.Server()
@@ -346,5 +350,77 @@ public static partial class ModelContextEditor
             "Server deleted.",
             cancellationToken);
     }
+
+    [Description("Adds an plugin to a MCP-server")]
+    [McpServerTool(Name = "ModelContextEditor_AddPlugin",
+        Title = "Add an plugin to a MCP-server",
+        OpenWorld = false)]
+    public static async Task<CallToolResult> ModelContextEditor_AddPlugin(
+       [Description("Name of the server")] string serverName,
+       [Description("Name of the plugin")] string pluginName,
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       CancellationToken cancellationToken = default)
+    {
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new McpServerPlugin()
+        {
+            PluginName = pluginName
+        }, cancellationToken);
+
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
+        var repo = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
+        HashSet<string> allPlugins = repo.GetAllPlugins();
+
+        if (allPlugins.Any(a => a == typed.PluginName) != true)
+        {
+            return $"Plugin {typed.PluginName} not found".ToErrorCallToolResponse();
+        }
+
+        if (server.Tools.Any(a => a.Name == typed.PluginName) == true)
+        {
+            return $"Plugin {typed.PluginName} already exists on server {serverName}.".ToErrorCallToolResponse();
+        }
+
+        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
+
+        await serverRepository.AddServerTool(server.Id, typed.PluginName);
+
+        return $"Plugin {typed.PluginName} added to MCP server {serverName}".ToTextCallToolResponse();
+    }
+
+    [Description("Removes a plugin from a MCP-server")]
+    [McpServerTool(Name = "ModelContextEditor_RemovePlugin",
+        Title = "Remove a plugin from an MCP-server",
+        OpenWorld = false)]
+    public static async Task<CallToolResult> ModelContextEditor_RemovePlugin(
+       [Description("Name of the server")] string serverName,
+       [Description("Name of the plugin")] string pluginName,
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       CancellationToken cancellationToken = default)
+    {
+        var server = await serviceProvider.GetServer(serverName, cancellationToken);
+
+        if (server.Tools.Any(a => a.Name == pluginName) != true)
+        {
+            return $"Plugin {pluginName} is not a plugin on server {serverName}.".ToErrorCallToolResponse();
+        }
+
+        var (typed, notAccepted) = await requestContext.Server.TryElicit(new McpServerPlugin()
+        {
+            PluginName = pluginName
+        }, cancellationToken);
+
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
+        var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
+
+        await serverRepository.DeleteServerPlugin(server.Id, typed.PluginName);
+
+        return $"Plugin {typed.PluginName} deleted from MCP server {serverName}".ToTextCallToolResponse();
+    }
+
 }
 
