@@ -39,6 +39,7 @@ public static class AspNetCoreExtensions
         builder.Services.AddSingleton<IContentScraper, Agent2AgentScraper>();
         builder.Services.AddSingleton<ContextService>();
         builder.Services.AddScoped<AgentRepository>();
+        builder.Services.AddScoped<AgentService>();
         
         return builder;
     }

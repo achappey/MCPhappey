@@ -8,12 +8,6 @@ public class Agent2AgentViewContext
     [JsonPropertyName("contextId")]
     public string ContextId { get; set; } = default!;
 
-   // [JsonPropertyName("name")]
-    //public string Name { get; set; } = default!;
-
-    [JsonPropertyName("description")]
-    public string? Description { get; set; }
-
     [JsonPropertyName("taskIds")]
     public IEnumerable<string> TaskIds { get; set; } = [];
 

@@ -1,6 +1,7 @@
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common;
+using MCPhappey.Common.Constants;
 using MCPhappey.Common.Models;
 using MCPhappey.Scrapers.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -35,6 +36,15 @@ public class OboClientScraper(IHttpClientFactory httpClientFactory, ServerConfig
 
         httpClient.DefaultRequestHeaders.Accept.Clear();
         httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+
+        if (
+            uri.Host.Contains(Hosts.MicrosoftGraph, StringComparison.OrdinalIgnoreCase) &&
+            System.Text.RegularExpressions.Regex.IsMatch(url, @"[\?&]\$search=")
+        )
+        {
+            httpClient.DefaultRequestHeaders.Remove("ConsistencyLevel");
+            httpClient.DefaultRequestHeaders.Add("ConsistencyLevel", "eventual");
+        }
 
         using var result = await httpClient.GetWithContentExceptionAsync(url, cancellationToken);
 

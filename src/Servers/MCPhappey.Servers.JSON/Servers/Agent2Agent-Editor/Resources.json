@@ -1,0 +1,13 @@
+{
+  "resources": [
+    {
+      "uri": "a2a://agents",
+      "name": "List all available Agent2Agent agents available for editting",
+      "description": "List all available Agent2Agent agents available for editting for the current user",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    }
+  ]
+}

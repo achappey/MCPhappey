@@ -19,9 +19,9 @@
     <PackageReference Include="Mscc.GenerativeAI" Version="2.6.8" />
     <PackageReference Include="NAudio" Version="2.2.1" />
     <PackageReference Include="NAudio.Lame" Version="2.1.0" />
-    <PackageReference Include="OpenAI" Version="2.2.0" />
+    <PackageReference Include="OpenAI" Version="2.3.0" />
     <PackageReference Include="RESTCountries.NET" Version="3.4.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.7" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.8" />
     <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.7" />
 	</ItemGroup>
 

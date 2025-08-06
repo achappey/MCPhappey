@@ -171,6 +171,7 @@ public static class ChatApp
                 { "language", JsonSerializer.SerializeToElement(language) },
                 { "toolcall", JsonSerializer.SerializeToElement(toolcall) }
                 },
+            temperature: 0,
             modelHint: modelName,
             cancellationToken: cancellationToken);
 

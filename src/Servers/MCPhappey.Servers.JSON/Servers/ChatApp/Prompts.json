@@ -1,11 +1,11 @@
 {
   "prompts": [
     {
-      "prompt": "Explain in plain, simple language directly to the user what this tool call did and what the result means. Write as if you are talking to the user, not about them. Be clear and brief, using no more than two short paragraphs. Do not use bullet points, headings, or technical terms. Focus only on what happened because of this tool call, so any user can understand the outcome. Always answer in the specified language.\n\nTool call details:\n{toolcall}\n\nLanguage: {language}",
+      "prompt": "Explain in clear, factual terms what this tool call did and what the result means. Focus only on what happened and what the outcome is, without unnecessary context or friendly language. Use short, concise sentences or bullet points if that improves clarity. The explanation must be straightforward, objective, and easy to understand for any end user. Avoid fluff and stick to the core facts.\n\nTool call details:\n{toolcall}\n\nLanguage: {language}",
       "template": {
         "name": "toolcall-explanation",
         "title": "Tool call explanation for end users",
-        "description": "Short, simple explanation of a tool call and its result, in the requested language.",
+        "description": "Clear, factual explanation of a tool call and its result, in the requested language.",
         "arguments": [
           {
             "name": "toolcall",

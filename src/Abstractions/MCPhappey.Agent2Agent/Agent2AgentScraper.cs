@@ -38,6 +38,7 @@ public class Agent2AgentScraper(
         var contextRepo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
         var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
         var contextService = serviceProvider.GetRequiredService<ContextService>();
+        var agentService = serviceProvider.GetRequiredService<AgentService>();
         var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var uri = new Uri(url);
@@ -49,6 +50,18 @@ public class Agent2AgentScraper(
             (segments.Length == 1 && segments[0].Equals("context", StringComparison.OrdinalIgnoreCase)))
         {
             var contexts = await contextService.GetUserContextsWithUsersAsync(graphClient, oid, cancellationToken);
+
+            return [new FileItem {
+                Contents = BinaryData.FromObjectAsJson(contexts),
+                MimeType = "application/json",
+                Uri = url
+        }];
+        }
+
+        if ((host.Equals("agents", StringComparison.OrdinalIgnoreCase) && segments.Length == 0) ||
+          (segments.Length == 1 && segments[0].Equals("agents", StringComparison.OrdinalIgnoreCase)))
+        {
+            var contexts = await agentService.GetAgents(oid, cancellationToken);
 
             return [new FileItem {
                 Contents = BinaryData.FromObjectAsJson(contexts),
@@ -98,7 +111,7 @@ public class Agent2AgentScraper(
         {
             var taskId = segments[0];
             var task = await taskRepo.GetTaskAsync(taskId, cancellationToken);
-            var hasAccess = await contextRepo.HasContextAccess(task.ContextId, oid, cancellationToken);
+            var hasAccess = await contextRepo.HasContextAccess(task?.ContextId!, oid, cancellationToken);
             if (!hasAccess) throw new UnauthorizedAccessException();
 
             return [new FileItem {
