@@ -35,7 +35,7 @@ public class Agent2AgentScraper(
         var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
         var contextService = serviceProvider.GetRequiredService<ContextService>();
         var agentService = serviceProvider.GetRequiredService<AgentService>();
-        var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var uri = new Uri(url);
         var host = uri.Host;

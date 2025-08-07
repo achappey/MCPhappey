@@ -4,6 +4,7 @@ using MCPhappey.Servers.SQL.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace MCPhappey.Servers.SQL.Migrations
 {
     [DbContext(typeof(McpDatabaseContext))]
-    partial class McpDatabaseContextModelSnapshot : ModelSnapshot
+    [Migration("20250807151759_Annotations")]
+    partial class Annotations
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -136,8 +139,8 @@ namespace MCPhappey.Servers.SQL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("Priority")
-                        .HasColumnType("real");
+                    b.Property<int?>("Priority")
+                        .HasColumnType("int");
 
                     b.Property<int>("ServerId")
                         .HasColumnType("int");
@@ -177,8 +180,8 @@ namespace MCPhappey.Servers.SQL.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<float?>("Priority")
-                        .HasColumnType("real");
+                    b.Property<int?>("Priority")
+                        .HasColumnType("int");
 
                     b.Property<int>("ServerId")
                         .HasColumnType("int");

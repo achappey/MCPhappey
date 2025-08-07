@@ -20,7 +20,7 @@ public class GraphCompletion : IAutoCompletion
         if (completeRequestParams?.Argument?.Name is not string argName || completeRequestParams.Argument.Value is not string argValue)
             return new();
 
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         IEnumerable<string> result = [];
 

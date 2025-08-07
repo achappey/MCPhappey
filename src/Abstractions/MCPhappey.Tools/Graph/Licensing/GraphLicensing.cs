@@ -17,7 +17,7 @@ public static class GraphLicensing
             CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var skuMap = await BuildSkuMap(client, cancellationToken);
         var result = new Dictionary<string, Dictionary<string, List<string>>>();

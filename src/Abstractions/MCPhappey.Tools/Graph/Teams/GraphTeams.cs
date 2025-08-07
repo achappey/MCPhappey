@@ -47,7 +47,7 @@ public static partial class GraphTeams
             },
         };
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var result = await client.Teams.PostAsync(newTeam, cancellationToken: cancellationToken);
 
         return (result ?? newTeam).ToJsonContentBlock("https://graph.microsoft.com/beta/teams").ToCallToolResult();

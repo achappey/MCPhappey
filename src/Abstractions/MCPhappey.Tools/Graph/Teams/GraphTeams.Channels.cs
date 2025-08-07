@@ -25,7 +25,7 @@ public static partial class GraphTeams
         string? description = null,
         CancellationToken cancellationToken = default)
     {
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+       using  var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         try
         {
@@ -104,7 +104,7 @@ public static partial class GraphTeams
                 },
             };
 
-            var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+           using  var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
             var result = await client.Teams[teamId]
                 .Channels[channelId]
                 .Messages
@@ -136,7 +136,7 @@ public static partial class GraphTeams
     {
         try
         {
-            var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+            using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
             var mentionInfo = new List<(string Id, string DisplayName)>();
             foreach (var userId in mentionUserIds)

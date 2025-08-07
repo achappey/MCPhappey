@@ -31,6 +31,7 @@ public static partial class ModelContextEditor
         string? title = null,
         [Description("Optional description of the prompt.")]
         string? description = null,
+        
         CancellationToken cancellationToken = default)
     {
         var server = await serviceProvider.GetServer(serverName, cancellationToken);

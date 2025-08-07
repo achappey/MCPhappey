@@ -44,7 +44,7 @@ public static partial class HTMLPlugin
       RequestContext<CallToolRequestParams> requestContext,
       CancellationToken cancellationToken = default)
     {
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var arguments = await GetArguments(sourceUrl, client, cancellationToken);
 
         return arguments.ToJsonContentBlock(sourceUrl).ToCallToolResult();
@@ -62,7 +62,7 @@ public static partial class HTMLPlugin
         [Description("Default values for the replacements. Format: key is argument name (without braces), value is replacement.")] Dictionary<string, string>? replacements = null,
         CancellationToken cancellationToken = default)
     {
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var arguments = await GetArguments(sourceUrl, client, cancellationToken);
         var values = await requestContext.Server.ElicitAsync(
             new ElicitRequestParams

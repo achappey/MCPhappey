@@ -69,7 +69,7 @@ public static partial class GraphWorkbooks
         );
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid result".ToErrorCallToolResponse();
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
         var requestBody = new Microsoft.Graph.Beta.Drives.Item.Items.Item.Workbook.Worksheets.Item.Charts.Add.AddPostRequestBody
         {

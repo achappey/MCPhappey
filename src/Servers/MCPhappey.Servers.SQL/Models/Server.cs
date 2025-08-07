@@ -9,6 +9,8 @@ public class Server
 
     public string Name { get; set; } = null!;
 
+    public string? Title { get; set; }
+
     public bool Secured { get; set; }
 
     public bool? Hidden { get; set; }

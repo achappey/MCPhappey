@@ -50,16 +50,6 @@ public static class StaticContentLoader
                 var resourcesFile = Path.Combine(subDir, "Resources.json");
                 var resourceTemplatesFile = Path.Combine(subDir, "ResourceTemplates.json");
 
-                var updateTimes = new List<DateTime>
-                {
-                    File.GetLastWriteTime(file)
-                };
-
-                if (File.Exists(promptsFile)) updateTimes.Add(File.GetLastWriteTime(promptsFile));
-                if (File.Exists(resourcesFile)) updateTimes.Add(File.GetLastWriteTime(resourcesFile));
-                if (File.Exists(resourceTemplatesFile)) updateTimes.Add(File.GetLastWriteTime(resourceTemplatesFile));
-
-                var lastUpdate = updateTimes.Max();
                 if (File.Exists(promptsFile))
                 {
                     serverConfig.PromptList = JsonSerializer.Deserialize<PromptTemplates>(File.ReadAllText(promptsFile));
@@ -86,8 +76,6 @@ public static class StaticContentLoader
                             File.ReadAllText(resourceTemplatesFile));
                     serverObj.Capabilities.Resources = new();
                 }
-
-                serverConfig.Server.ServerInfo.Version = lastUpdate.ToString("yyyyMMdd");
 
                 servers.Add(serverConfig);
             }

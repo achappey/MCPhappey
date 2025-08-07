@@ -12,7 +12,6 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using MCPhappey.Core.Extensions;
 
 namespace MCPhappey.Servers.SQL.Tools;
 
@@ -74,6 +73,7 @@ public static partial class ModelContextEditor
                 return new
                 {
                     s.Server.ServerInfo.Name,
+                    s.Server.ServerInfo.Title,
                     s.Server.Instructions,
                     Secured = true,
                     Prompts = s.PromptList?.Prompts?.Select(p => new
@@ -110,6 +110,7 @@ public static partial class ModelContextEditor
                 {
                     s.Name,
                     s.Instructions,
+                    s.Title,
                     s.Secured,
                     Prompts = s.Prompts?.Select(p => new
                     {
@@ -152,6 +153,7 @@ public static partial class ModelContextEditor
         {
             Name = typedResult.Name.Slugify(),
             Instructions = src.Instructions,
+            Title = src.Title,
             Secured = src.Secured,
             Owners = [new ServerOwner { Id = userId }]
         }, cancellationToken);
@@ -237,6 +239,8 @@ public static partial class ModelContextEditor
         string serverName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Optional title for the server")]
+        string? serverTitle = null,
         [Description("Instructions of the new server")]
         string? instructions = null,
         CancellationToken cancellationToken = default)
@@ -251,6 +255,7 @@ public static partial class ModelContextEditor
         var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new NewMcpServer()
         {
             Name = serverName,
+            Title = serverTitle,
             Instructions = instructions,
             Secured = true,
         }, cancellationToken);
@@ -263,6 +268,7 @@ public static partial class ModelContextEditor
         {
             Name = typedResult.Name.Slugify(),
             Instructions = typedResult.Instructions,
+            Title = typedResult.Title,
             Secured = typedResult.Secured ?? true,
             Hidden = typedResult.Hidden,
             Owners = [new ServerOwner() {
@@ -289,6 +295,8 @@ public static partial class ModelContextEditor
       [Description("Name of the server")] string serverName,
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
+        [Description("New server title")]
+        string? serverTitle = null,
         [Description("Updated instructions for the server")]
         string? instructions = null,
         [Description("If the server should be hidden")]
@@ -299,6 +307,7 @@ public static partial class ModelContextEditor
         var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpServer()
         {
             Name = serverName,
+            Title = serverTitle ?? server.Title,
             Instructions = instructions ?? server.Instructions,
             Hidden = hidden ?? server.Hidden
         }, cancellationToken);
@@ -312,6 +321,7 @@ public static partial class ModelContextEditor
 
         server.Instructions = typed.Instructions;
         server.Hidden = typed.Hidden;
+        server.Title = typed.Title;
 
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var updated = await serverRepository.UpdateServer(server);

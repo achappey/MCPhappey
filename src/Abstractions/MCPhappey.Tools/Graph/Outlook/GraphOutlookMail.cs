@@ -69,7 +69,7 @@ public static class GraphOutlookMail
             Flag = flag
         };
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         await client.Me.Messages[messageId].PatchAsync(updatedMessage, cancellationToken: cancellationToken);
 
         return typed.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{messageId}").ToCallToolResult();
@@ -127,7 +127,7 @@ public static class GraphOutlookMail
 
         if (notAccepted != null) return notAccepted;
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         if (typed?.ReplyType == ReplyTypeEnum.ReplyAll)
         {
@@ -215,7 +215,7 @@ public static class GraphOutlookMail
                 SaveToSentItems = true
             };
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         await client.Me.SendMail.PostAsync(sendMailPostRequestBody, cancellationToken: cancellationToken);
 
         return sendMailPostRequestBody.ToJsonContentBlock("https://graph.microsoft.com/beta/me/sendmail").ToCallToolResult();

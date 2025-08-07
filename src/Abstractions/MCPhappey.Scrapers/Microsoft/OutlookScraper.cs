@@ -42,7 +42,7 @@ public sealed class OutlookScraper(
             string.IsNullOrEmpty(itemId))
             return null;
 
-        var graph = await httpClientFactory.GetOboGraphClient(
+        using var graph = await httpClientFactory.GetOboGraphClient(
             tokenProvider.Bearer,
             serverConfig.Server,
             oAuthSettings);

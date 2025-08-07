@@ -24,7 +24,7 @@ public static partial class GraphTeams
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var (typed, notAccepted) = await requestContext.Server.TryElicit(
                new GraphSetStatusMessage
@@ -79,7 +79,7 @@ public static partial class GraphTeams
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var graphClient = await serviceProvider.GetOboGraphClient(mcpServer); // Zorg dat je BETA gebruikt!
+        using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer); // Zorg dat je BETA gebruikt!
         var oauth = serviceProvider.GetService<OAuthSettings>();
 
         var (typed, notAccepted) = await requestContext.Server.TryElicit(

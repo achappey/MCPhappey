@@ -49,7 +49,7 @@ public static class GraphUsers
         );
         if (notAccepted != null) return notAccepted;
 
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var user = new User()
         {
             DisplayName = typed?.DisplayName,
@@ -85,7 +85,7 @@ public static class GraphUsers
      CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var newUser = await client.Users[userId].GetAsync(cancellationToken: cancellationToken);
 
         var (typed, notAccepted) = await mcpServer.TryElicit(

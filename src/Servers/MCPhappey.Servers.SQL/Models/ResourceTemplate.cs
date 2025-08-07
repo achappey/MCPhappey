@@ -16,5 +16,11 @@ public class ResourceTemplate
 
     public string? Description { get; set; }
 
+    public float? Priority { get; set; }
+
+    public bool? UserAudience { get; set; }
+
+    public bool? AssistantAudience { get; set; }
+
     public ICollection<PromptResourceTemplate> PromptResourceTemplates { get; set; } = [];
 }

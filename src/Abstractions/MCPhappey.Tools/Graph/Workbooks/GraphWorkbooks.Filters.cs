@@ -28,7 +28,7 @@ public static partial class GraphWorkbooks
             CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         try
         {

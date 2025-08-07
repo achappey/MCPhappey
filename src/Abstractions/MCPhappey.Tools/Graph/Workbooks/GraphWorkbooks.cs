@@ -31,7 +31,7 @@ public static partial class GraphWorkbooks
             string? worksheetName = null,
         CancellationToken cancellationToken = default)
     {
-        var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         try
         {
@@ -105,7 +105,7 @@ public static partial class GraphWorkbooks
             CancellationToken cancellationToken = default)
     {
         // 1. Haal de kolomnamen van de Excel-tabel op
-        var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         try
         {
@@ -180,7 +180,7 @@ public static partial class GraphWorkbooks
         CancellationToken cancellationToken = default)
     {
         var graphClient = await serviceProvider.GetGraphHttpClient(requestContext.Server);
-        var oboGraphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var oboGraphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var driveItem = await oboGraphClient.GetDriveItem(excelFileUrl, cancellationToken);
 
         try

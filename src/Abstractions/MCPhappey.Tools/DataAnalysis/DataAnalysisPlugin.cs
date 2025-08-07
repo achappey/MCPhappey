@@ -32,7 +32,7 @@ public static partial class DataAnalysisPlugin
         if (string.IsNullOrWhiteSpace(excelFileUrl))
             return "Excel file URL is required.".ToErrorCallToolResponse();
 
-        var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         try
         {
@@ -187,7 +187,7 @@ public static partial class DataAnalysisPlugin
             if (string.IsNullOrWhiteSpace(excelFileUrl))
                 return "Excel file URL is required.".ToErrorCallToolResponse();
 
-            var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+            using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
             // Resolve DriveItem from sharing URL
             var driveItem = await graphClient.GetDriveItem(excelFileUrl, cancellationToken);

@@ -35,6 +35,20 @@ public class UpdateMcpResource
     [JsonPropertyName("description")]
     [Description("New description of the resource.")]
     public string? Description { get; set; }
+
+    [JsonPropertyName("priority")]
+    [Range(0, 1)]
+    [Description("Optional priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
+    public float? Priority { get; set; }
+
+    [JsonPropertyName("assistantAudience")]
+    [DefaultValue(true)]
+    [Description("Optional assistant audience target.")]
+    public bool? AssistantAudience { get; set; } = true;
+
+    [JsonPropertyName("userAudience")]
+    [Description("Optional user audience target.")]
+    public bool? UserAudience { get; set; }
 }
 
 
@@ -58,4 +72,19 @@ public class AddMcpResource
     [JsonPropertyName("description")]
     [Description("Optional description of the resource.")]
     public string? Description { get; set; }
+
+    [JsonPropertyName("priority")]
+    [Range(0, 1)]
+    [Description("Optional priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
+    public float? Priority { get; set; }
+
+    [JsonPropertyName("assistantAudience")]
+    [DefaultValue(true)]
+    [Description("Optional assistant audience target.")]
+    public bool? AssistantAudience { get; set; } = true;
+
+    [JsonPropertyName("userAudience")]
+    [Description("Optional user audience target.")]
+    public bool? UserAudience { get; set; }
+
 }

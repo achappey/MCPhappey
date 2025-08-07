@@ -27,7 +27,7 @@ public static partial class GraphPlanner
             CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var plan = await client.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var bucket = await client.Planner.Plans[plannerId].Buckets[bucketId].GetAsync((config) => { }, cancellationToken);
         var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewPlannerTask>(
@@ -71,7 +71,7 @@ public static partial class GraphPlanner
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var planner = await client.Planner.Plans[plannerId]
                                .GetAsync(cancellationToken: cancellationToken);
 
@@ -105,7 +105,7 @@ public static partial class GraphPlanner
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var group = await client.Groups[groupId]
                          .GetAsync(cancellationToken: cancellationToken);
 

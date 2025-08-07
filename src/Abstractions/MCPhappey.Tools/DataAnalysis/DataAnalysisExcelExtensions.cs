@@ -16,7 +16,7 @@ public static partial class DataAnalysisExcelExtensions
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var driveId = driveItem.ParentReference!.DriveId!;
         var itemId = driveItem.Id!;
 

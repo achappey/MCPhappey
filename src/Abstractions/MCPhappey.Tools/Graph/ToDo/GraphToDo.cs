@@ -25,7 +25,7 @@ public static class GraphToDo
      CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var (typed, notAccepted) = await mcpServer.TryElicit(
             new GraphNewTodoTask
@@ -66,7 +66,7 @@ public static class GraphToDo
      CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewTodoTaskList>(
             new GraphNewTodoTaskList
@@ -113,6 +113,6 @@ public static class GraphToDo
         [JsonPropertyName("displayName")]
         [Required]
         [Description("The task display name.")]
-        public string DisplayName  { get; set; } = default!;
+        public string DisplayName { get; set; } = default!;
     }
 }

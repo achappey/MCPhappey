@@ -236,7 +236,12 @@ public class ServerRepository(McpDatabaseContext databaseContext)
     }
 
     public async Task<Resource> AddServerResource(int serverId, string uri,
-        string? name = null, string? description = null, string? title = null)
+        string? name = null,
+        string? description = null,
+        string? title = null,
+        float? priority = null,
+        bool? assistantAudience = null,
+        bool? userAudience = null)
     {
         var item = await databaseContext.Resources.AddAsync(new()
         {
@@ -244,6 +249,9 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             Name = name ?? string.Empty,
             Description = description,
             Title = title,
+            Priority = priority,
+            AssistantAudience = assistantAudience,
+            UserAudience = userAudience,
             ServerId = serverId
         });
 
@@ -257,7 +265,10 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         string uri,
         string? name = null,
         string? description = null,
-        string? title = null)
+        string? title = null,
+        float? priority = null,
+        bool? assistantAudience = null,
+        bool? userAudience = null)
     {
         var item = await databaseContext.ResourceTemplates.AddAsync(new()
         {
@@ -265,6 +276,9 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             Name = name ?? string.Empty,
             Description = description,
             Title = title,
+            Priority = priority,
+            AssistantAudience = assistantAudience,
+            UserAudience = userAudience,
             ServerId = serverId
         });
 

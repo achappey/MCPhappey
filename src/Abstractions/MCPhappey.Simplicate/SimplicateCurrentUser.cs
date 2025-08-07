@@ -21,7 +21,7 @@ public static class SimplicateCurrentUser
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var currentUser = await graphClient.Me.GetAsync();
 
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();

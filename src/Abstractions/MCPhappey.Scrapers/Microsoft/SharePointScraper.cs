@@ -26,7 +26,7 @@ public class SharePointScraper(IHttpClientFactory httpClientFactory, ServerConfi
             return null;
         }
 
-        var graphClient = await httpClientFactory.GetOboGraphClient(tokenService.Bearer,
+        using var graphClient = await httpClientFactory.GetOboGraphClient(tokenService.Bearer,
                 serverConfig.Server, oAuthSettings);
 
         if (url.Contains("/_layouts/15/news.aspx?"))

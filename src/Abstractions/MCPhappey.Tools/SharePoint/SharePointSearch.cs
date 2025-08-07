@@ -99,7 +99,7 @@ public static class SharePointSearch
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
         int? progressCounter = requestContext.Params?.ProgressToken is not null ? 1 : null;
 

@@ -68,6 +68,7 @@ public static class DatabaseExtensions
             ServerInfo = new()
             {
                 Name = server.Name,
+                Title = server.Title,
                 Version = "1.0.0"
             },
             Groups = server.Secured && server.Groups.Count != 0
@@ -81,13 +82,24 @@ public static class DatabaseExtensions
         };
     }
 
+    public static Annotations? ToAnnotations(float? prioritoy, bool? assistant, bool? user)
+          => assistant.HasValue || prioritoy.HasValue || user.HasValue ? new()
+          {
+              Priority = prioritoy,
+              Audience = assistant == true ? user == true ?
+                      [Role.User, Role.Assistant] : [Role.Assistant] :
+                      user == true ? [Role.User] : null
+          } : null;
+
     public static Resource ToResource(this Models.Resource resource)
         => new()
         {
             Uri = resource.Uri,
             Name = resource.Name,
             Title = resource.Title,
-            Description = resource.Description
+            Description = resource.Description,
+            Annotations = ToAnnotations(resource.Priority, resource.AssistantAudience,
+                resource.UserAudience)
         };
 
     public static ListResourcesResult ToListResourcesResult(this ICollection<Models.Resource> resources)
@@ -102,7 +114,9 @@ public static class DatabaseExtensions
             UriTemplate = resource.TemplateUri,
             Name = resource.Name,
             Title = resource.Title,
-            Description = resource.Description
+            Description = resource.Description,
+            Annotations = ToAnnotations(resource.Priority, resource.AssistantAudience,
+                resource.UserAudience)
         };
 
     public static ListResourceTemplatesResult ToListResourceTemplatesResult(this ICollection<Models.ResourceTemplate> resources)

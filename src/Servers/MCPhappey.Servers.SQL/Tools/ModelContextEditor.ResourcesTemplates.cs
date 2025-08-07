@@ -29,6 +29,12 @@ public static partial class ModelContextEditor
         string? title = null,
         [Description("Optional description of the resource template.")]
         string? description = null,
+        [Description("Optional priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
+        float? priority = null,
+        [Description("Optional assistant audience target.")]
+        bool? assistantAudience = true,
+        [Description("Optional user audience target.")]
+        bool? userAudience = null,
         CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
@@ -38,8 +44,12 @@ public static partial class ModelContextEditor
             UriTemplate = uriTemplate,
             Title = title,
             Name = name.Slugify().ToLowerInvariant(),
+            AssistantAudience = assistantAudience,
+            UserAudience = userAudience,
+            Priority = priority,
             Description = description
         }, cancellationToken);
+
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid response".ToErrorCallToolResponse();
         var usedArguments = typed.UriTemplate.ExtractPromptArguments();
@@ -53,7 +63,10 @@ public static partial class ModelContextEditor
             typed.UriTemplate,
             typed.Name.Slugify().ToLowerInvariant(),
             typed.Description,
-            typed.Title);
+            typed.Title,
+            typed.Priority,
+            typed.AssistantAudience,
+            typed.UserAudience);
 
         return item.ToResourceTemplate()
                       .ToJsonContentBlock($"mcp-editor://server/{serverName}/resourceTemplates/{item.Name}")
@@ -72,6 +85,12 @@ public static partial class ModelContextEditor
         [Description("New value for the uri template property")] string? newUriTemplate = null,
         [Description("New value for the title property")] string? newTitle = null,
         [Description("New value for the description property")] string? newDescription = null,
+        [Description("New value for the priority of the resource template. Between 0 and 1, where 1 is most important and 0 is least important.")]
+        float? priority = null,
+        [Description("New value for the assistant audience target.")]
+        bool? assistantAudience = true,
+        [Description("New value for the user audience target.")]
+        bool? userAudience = null,
         CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
@@ -82,6 +101,9 @@ public static partial class ModelContextEditor
             Description = newDescription ?? resource.Description,
             Title = newTitle ?? resource.Title,
             Name = resourceTemplateName,
+            AssistantAudience = assistantAudience ?? resource.AssistantAudience,
+            UserAudience = userAudience ?? resource.UserAudience,
+            Priority = priority ?? resource.Priority,
             UriTemplate = newUriTemplate ?? resource.TemplateUri
         }, cancellationToken);
 
@@ -99,6 +121,9 @@ public static partial class ModelContextEditor
 
         resource.Description = typed.Description;
         resource.Title = typed.Title;
+        resource.AssistantAudience = typed?.AssistantAudience;
+        resource.UserAudience = typed?.UserAudience;
+        resource.Priority = typed?.Priority;
 
         var updated = await serverRepository.UpdateResourceTemplate(resource);
 

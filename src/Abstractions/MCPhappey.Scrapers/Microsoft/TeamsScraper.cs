@@ -28,7 +28,7 @@ public class TeamsScraper(IHttpClientFactory httpClientFactory, ServerConfig ser
             return null;
         }
 
-        var graphClient = await httpClientFactory.GetOboGraphClient(tokenService.Bearer,
+        using var graphClient = await httpClientFactory.GetOboGraphClient(tokenService.Bearer,
                 serverConfig.Server, oAuthSettings);
 
         // ── 3. URL ontleden ────────────────────────────────────────────────────────

@@ -27,7 +27,7 @@ public static partial class GraphPlanner
     {
         var mcpServer = requestContext.Server;
 
-        var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
         var plan = await graphClient.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var targetGroup = await graphClient.Groups[groupId].GetAsync((config) => { }, cancellationToken);
 

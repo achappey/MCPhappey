@@ -24,7 +24,7 @@ public static class GraphLists
           CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var list = await client
               .Sites[siteId]
@@ -106,7 +106,7 @@ public static class GraphLists
             CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var (typed, notAccepted) = await mcpServer.TryElicit(
             new GraphNewSharePointList
@@ -157,7 +157,7 @@ public static class GraphLists
             CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var site = await client
                       .Sites[siteId]
                       .GetAsync(cancellationToken: cancellationToken);

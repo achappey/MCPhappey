@@ -109,7 +109,7 @@ public static partial class GoogleAudio
             cancellationToken
         );
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         var outputName = $"{filename}.mp3";
         using  var uploadStream = new MemoryStream(Convert.FromBase64String(audio.Data));

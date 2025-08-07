@@ -12,7 +12,7 @@ public static partial class ModelContextServerExtensions
      => new()
      {
          Id = server.Server.ServerInfo.Name,
-         Title = server.Server.ServerInfo.Name,
+         Title = server.Server.ServerInfo.Title ?? server.Server.ServerInfo.Name,
          Transport = new()
          {
              Url = server.Server.GetUrl(httpContext)
@@ -29,7 +29,6 @@ public static partial class ModelContextServerExtensions
 
     public static IEnumerable<ServerConfig> WithoutHiddenServers(this IEnumerable<ServerConfig> servers)
         => servers.Where(a => a.Server.Hidden != true);
-
 
     public static MCPServerList ToMcpServerList(this IEnumerable<ServerConfig> servers, string baseUrl, bool sse = false)
      => new()
@@ -74,7 +73,12 @@ public static partial class ModelContextServerExtensions
             };
 
     public static Implementation ToServerInfo(this Server server)
-        => new() { Name = server.ServerInfo.Name, Version = server.ServerInfo.Version };
+        => new()
+        {
+            Name = server.ServerInfo.Name,
+            Title = server.ServerInfo.Title,
+            Version = server.ServerInfo.Version
+        };
 
     public static string GetServerRelativeUrl(this Server server)
         => $"/{server.ServerInfo.Name.ToLowerInvariant()}";
@@ -90,7 +94,7 @@ public static partial class ModelContextServerExtensions
                 BinaryData binaryData,
                 CancellationToken cancellationToken = default)
     {
-        var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var sizeInKb = binaryData.Length / 1024.0;
         var markdown = $"Upload {filename} ({sizeInKb:F1} KB)";
@@ -100,5 +104,5 @@ public static partial class ModelContextServerExtensions
     }
 
 
-    
+
 }
