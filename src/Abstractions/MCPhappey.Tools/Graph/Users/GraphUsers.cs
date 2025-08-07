@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Graph.Beta.Models;
@@ -22,6 +20,8 @@ public static class GraphUsers
       [Description("The users's principal name.")] string? userPrincipalName = null,
       [Description("The users's mail nickname.")] string? mailNickname = null,
       [Description("The users's job title.")] string? jobTitle = null,
+      [Description("The users's mobile phone.")] string? mobilePhone = null,
+      [Description("The users's business phone.")] string? businessPhone = null,
       [Description("Account enabled.")] bool? accountEnabled = null,
       [Description("The users's department.")] string? department = null,
       [Description("The users's compay name.")] string? companyName = null,
@@ -39,6 +39,8 @@ public static class GraphUsers
                 UserPrincipalName = userPrincipalName ?? string.Empty,
                 MailNickname = mailNickname ?? string.Empty,
                 Department = department ?? string.Empty,
+                MobilePhone = mobilePhone,
+                BusinessPhone = businessPhone,
                 CompanyName = companyName ?? string.Empty,
                 AccountEnabled = accountEnabled ?? true,
                 JobTitle = jobTitle ?? string.Empty,
@@ -47,6 +49,7 @@ public static class GraphUsers
             },
             cancellationToken
         );
+
         if (notAccepted != null) return notAccepted;
 
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
@@ -58,6 +61,8 @@ public static class GraphUsers
             JobTitle = typed?.JobTitle,
             CompanyName = typed?.CompanyName,
             Department = typed?.Department,
+            MobilePhone = typed?.MobilePhone,
+            BusinessPhones = string.IsNullOrWhiteSpace(typed?.BusinessPhone) ? null : [typed.BusinessPhone],
             AccountEnabled = typed?.AccountEnabled,
             PasswordProfile = new PasswordProfile()
             {
@@ -72,17 +77,22 @@ public static class GraphUsers
         return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser.Id}").ToCallToolResult();
     }
 
+    [Description("Update a Microsoft 365 user")]
+    [McpServerTool(Name = "GraphUsers_UpdateUser", Title = "Update a user",
+           OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_UpdateUser(
-     [Description("User id to update.")] string userId,
-     IServiceProvider serviceProvider,
-     RequestContext<CallToolRequestParams> requestContext,
-     [Description("The users's given name.")] string? givenName = null,
-     [Description("The users's display name.")] string? displayName = null,
-     [Description("The users's job title.")] string? jobTitle = null,
-     [Description("The users's compay name.")] string? companyName = null,
-     [Description("The users's department.")] string? department = null,
-     [Description("Account enabled.")] bool? accountEnabled = null,
-     CancellationToken cancellationToken = default)
+        [Description("User id to update.")] string userId,
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("The users's given name.")] string? givenName = null,
+        [Description("The users's display name.")] string? displayName = null,
+        [Description("The users's job title.")] string? jobTitle = null,
+        [Description("The users's compay name.")] string? companyName = null,
+        [Description("The users's department.")] string? department = null,
+        [Description("The users's mobile phone.")] string? mobilePhone = null,
+        [Description("The users's business phone.")] string? businessPhone = null,
+        [Description("Account enabled.")] bool? accountEnabled = null,
+        CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
@@ -94,6 +104,8 @@ public static class GraphUsers
                 GivenName = givenName ?? newUser?.GivenName ?? string.Empty,
                 Department = department ?? newUser?.Department,
                 CompanyName = companyName ?? newUser?.CompanyName,
+                MobilePhone = mobilePhone ?? newUser?.MobilePhone,
+                BusinessPhone = businessPhone ?? newUser?.BusinessPhones?.FirstOrDefault(),
                 DisplayName = displayName ?? newUser?.DisplayName ?? string.Empty,
                 AccountEnabled = accountEnabled ?? (newUser != null
                     && newUser.AccountEnabled.HasValue && newUser.AccountEnabled.Value),
@@ -108,6 +120,8 @@ public static class GraphUsers
             DisplayName = typed?.DisplayName,
             GivenName = typed?.GivenName,
             JobTitle = typed?.JobTitle,
+            MobilePhone = typed?.MobilePhone,
+            BusinessPhones = string.IsNullOrWhiteSpace(typed?.BusinessPhone) ? null : [typed.BusinessPhone],
             Department = typed?.Department,
             CompanyName = typed?.CompanyName,
             AccountEnabled = typed?.AccountEnabled,
@@ -115,96 +129,7 @@ public static class GraphUsers
 
         var patchedUser = await client.Users[userId].PatchAsync(user, cancellationToken: cancellationToken);
 
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{patchedUser.Id}").ToCallToolResult();
-    }
-
-    [Description("Please fill in the user details.")]
-    public class GraphNewUser
-    {
-        [JsonPropertyName("givenName")]
-        [Required]
-        [Description("The users's given name.")]
-        public string GivenName { get; set; } = default!;
-
-        [JsonPropertyName("displayName")]
-        [Required]
-        [Description("The users's display name.")]
-        public string DisplayName { get; set; } = default!;
-
-        [JsonPropertyName("userPrincipalName")]
-        [Required]
-        [EmailAddress]
-        [Description("The users's principal name.")]
-        public string UserPrincipalName { get; set; } = default!;
-
-        [JsonPropertyName("mailNickname")]
-        [Required]
-        [Description("The users's mail nickname.")]
-        public string MailNickname { get; set; } = default!;
-
-        [JsonPropertyName("jobTitle")]
-        [Required]
-        [Description("The users's job title.")]
-        public string JobTitle { get; set; } = default!;
-
-        [JsonPropertyName("accountEnabled")]
-        [Required]
-        [DefaultValue(true)]
-        [Description("Account enabled.")]
-        public bool AccountEnabled { get; set; }
-
-        [JsonPropertyName("forceChangePasswordNextSignIn")]
-        [Required]
-        [DefaultValue(true)]
-        [Description("Force password change.")]
-        public bool ForceChangePasswordNextSignIn { get; set; }
-
-        [JsonPropertyName("password")]
-        [Required]
-        [Description("The users's password.")]
-        public string Password { get; set; } = default!;
-
-        [JsonPropertyName("department")]
-        [Description("The users's department.")]
-        public string? Department { get; set; }
-
-        [JsonPropertyName("companyName")]
-        [Description("The users's company name.")]
-        public string? CompanyName { get; set; }
-
-    }
-
-    [Description("Please fill in the user details.")]
-    public class GraphUpdateUser
-    {
-        [Required]
-        [JsonPropertyName("givenName")]
-        [Description("The users's given name.")]
-        public string GivenName { get; set; } = default!;
-
-        [JsonPropertyName("displayName")]
-        [Required]
-        [Description("The users's display name.")]
-        public string DisplayName { get; set; } = default!;
-
-        [JsonPropertyName("jobTitle")]
-        [Required]
-        [Description("The users's job title.")]
-        public string JobTitle { get; set; } = default!;
-
-        [JsonPropertyName("accountEnabled")]
-        [Required]
-        [DefaultValue(true)]
-        [Description("Account enabled.")]
-        public bool AccountEnabled { get; set; }
-
-        [JsonPropertyName("department")]
-        [Description("The users's department.")]
-        public string? Department { get; set; }
-
-        [JsonPropertyName("companyName")]
-        [Description("The users's company name.")]
-        public string? CompanyName { get; set; }
-
+        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{patchedUser.Id}")
+             .ToCallToolResult();
     }
 }
