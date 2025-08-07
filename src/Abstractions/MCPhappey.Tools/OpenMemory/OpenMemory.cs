@@ -16,7 +16,8 @@ public static class OpenMemory
     public const string MemoryPurpose = "Memory";
 
     [Description("Save a personal user memory")]
-    [McpServerTool(Name = "OpenMemory_SaveMemory", OpenWorld = false)]
+    [McpServerTool(Name = "OpenMemory_SaveMemory", Title = "Save memory",
+        OpenWorld = false)]
     public static async Task<CallToolResult> OpenMemory_SaveMemory(
         [Description("Memory to save")]
         string memory,
@@ -51,7 +52,8 @@ public static class OpenMemory
     }
 
     [Description("Delete a personal user memory")]
-    [McpServerTool(Name = "OpenMemory_DeleteMemory", OpenWorld = false)]
+    [McpServerTool(Name = "OpenMemory_DeleteMemory", Title = "Delete memory",
+        OpenWorld = false)]
     public static async Task<CallToolResult> OpenMemory_DeleteMemory(
         [Description("Id of the memory")]
         string memoryId,
@@ -73,7 +75,8 @@ public static class OpenMemory
     }
 
     [Description("Ask a question to personal user memory")]
-    [McpServerTool(Name = "OpenMemory_AskMemory", ReadOnly = true)]
+    [McpServerTool(Name = "OpenMemory_AskMemory", Title = "Ask memory",
+        ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_AskMemory(
         [Description("Question prompt")]
         string prompt,
@@ -111,7 +114,9 @@ public static class OpenMemory
     }
 
     [Description("Search personal user memories with a prompt")]
-    [McpServerTool(Name = "OpenMemory_SearchMemories", ReadOnly = true)]
+    [McpServerTool(Name = "OpenMemory_SearchMemories",
+        Title = "Search memories",
+        ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_SearchMemories(
       [Description("Question prompt")]
         string prompt,
@@ -185,8 +190,6 @@ public static class OpenMemory
         [Required]
         [Description("The memory to add.")]
         public string Memory { get; set; } = default!;
-
     }
-
 }
 

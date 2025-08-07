@@ -1,4 +1,6 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
+using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -19,6 +21,7 @@ public static class GoogleVideo
         [Description("YouTube video URL")]
         string url,
         IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
@@ -29,15 +32,27 @@ public static class GoogleVideo
 
         try
         {
+            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+                        new GoogleVideoPromptYoutTube
+                        {
+                            Prompt = prompt,
+                            YouTubeUrl = url
+                        },
+
+                        cancellationToken);
+
+            if (notAccepted != null) return notAccepted;
+            if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
+
             var result = await googleClient.GenerateContent(new Mscc.GenerativeAI.GenerateContentRequest()
             {
                 Contents =
                 [
-                    new Mscc.GenerativeAI.Content(prompt)
+                    new Mscc.GenerativeAI.Content(typed.Prompt)
                     {
                         Parts = [
                             new Mscc.GenerativeAI.FileData() {
-                                FileUri = url
+                                FileUri = typed.YouTubeUrl
                             }
                         ]
                     }
@@ -50,5 +65,22 @@ public static class GoogleVideo
         {
             return ex.Message.ToErrorCallToolResponse();
         }
+    }
+
+
+
+    [Description("Please fill in the YouTube prompt details.")]
+    public class GoogleVideoPromptYoutTube
+    {
+        [JsonPropertyName("prompt")]
+        [Required]
+        [Description("The YouTube video question prompt.")]
+        public string Prompt { get; set; } = default!;
+
+        [JsonPropertyName("youTubeUrl")]
+        [Required]
+        [Description("YouTube url.")]
+        public string YouTubeUrl { get; set; } = default!;
+
     }
 }

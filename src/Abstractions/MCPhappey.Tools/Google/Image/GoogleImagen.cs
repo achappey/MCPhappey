@@ -1,8 +1,9 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
+using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
-using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -13,8 +14,7 @@ public static class GoogleImagen
 {
     [Description("Create a image with Google Imagen image generator")]
     [McpServerTool(Name = "GoogleImagen_CreateImage",
-        Title = "Generate image with Google Imagen",
-        ReadOnly = true)]
+        Title = "Generate image with Google Imagen")]
     public static async Task<CallToolResult?> GoogleImagen_CreateImage(
         [Description("prompt")]
         string prompt,
@@ -26,6 +26,8 @@ public static class GoogleImagen
         string aspectRatio = "1:1",
         [Description("The number of images to generate. Max. 4.")]
         int numberOfImages = 1,
+        [Description("New image file name, without extension")]
+        string? filename = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
@@ -35,11 +37,24 @@ public static class GoogleImagen
 
         try
         {
-            var item = await imageClient.GenerateImages(new Mscc.GenerativeAI.ImageGenerationRequest(prompt, 1)
+            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+                           new GoogleImagenNewImage
+                           {
+                               Prompt = prompt,
+                               NumberOfImages = numberOfImages,
+                               Filename = filename ?? requestContext.ToOutputFileName()
+                           },
+
+                           cancellationToken);
+
+            if (notAccepted != null) return notAccepted;
+            if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
+
+            var item = await imageClient.GenerateImages(new Mscc.GenerativeAI.ImageGenerationRequest(typed.Prompt, typed.NumberOfImages)
             {
                 Parameters = new()
                 {
-                    SampleCount = numberOfImages,
+                    SampleCount = typed.NumberOfImages,
                     AspectRatio = aspectRatio,
                     OutputOptions = new Mscc.GenerativeAI.OutputOptions()
                     {
@@ -53,7 +68,7 @@ public static class GoogleImagen
             foreach (var imageItem in item.Predictions)
             {
                 var result = await requestContext.Server.Upload(serviceProvider,
-                    requestContext.ToOutputFileName("png"),
+                     $"{typed?.Filename}.png",
                     BinaryData.FromBytes(Convert.FromBase64String(imageItem.BytesBase64Encoded!)), cancellationToken);
 
                 if (result != null) resourceLinks.Add(result);
@@ -65,6 +80,27 @@ public static class GoogleImagen
         {
             return e.Message.ToErrorCallToolResponse();
         }
+    }
+
+
+    [Description("Please fill in the AI image request details.")]
+    public class GoogleImagenNewImage
+    {
+        [JsonPropertyName("prompt")]
+        [Required]
+        [Description("The image prompt.")]
+        public string Prompt { get; set; } = default!;
+
+        [JsonPropertyName("filename")]
+        [Required]
+        [Description("The new image file name.")]
+        public string Filename { get; set; } = default!;
+
+        [JsonPropertyName("numberOfImages")]
+        [Required]
+        [Range(1, 4)]
+        [Description("The number of images to create.")]
+        public int NumberOfImages { get; set; } = 1;
     }
 }
 

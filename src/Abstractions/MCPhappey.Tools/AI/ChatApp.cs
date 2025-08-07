@@ -13,7 +13,9 @@ namespace MCPhappey.Tools.AI;
 public static class ChatApp
 {
     [Description("Generate a conversation name from initial user and assistant messages")]
-    [McpServerTool(Name = "ChatApp_ExecuteGenerateConversationName", ReadOnly = true)]
+    [McpServerTool(Name = "ChatApp_ExecuteGenerateConversationName",
+        Title = "Generate conversation name",
+         ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExecuteGenerateConversationName(
         [Description("User message")] string userMessage,
         IServiceProvider serviceProvider,
@@ -50,7 +52,9 @@ public static class ChatApp
     }
 
     [Description("Get MCP server usage statistics")]
-    [McpServerTool(Name = "ChatApp_GetMcpServerStats", ReadOnly = true)]
+    [McpServerTool(Name = "ChatApp_GetMcpServerStats",
+        Title = "Get server usage statistics",
+         ReadOnly = true)]
     public static async Task<CallToolResult> ChatApp_GetMcpServerStats(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -112,7 +116,9 @@ public static class ChatApp
     }
 
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]
-    [McpServerTool(Name = "ChatApp_ExecuteGenerateWelcomeMessage", ReadOnly = true)]
+    [McpServerTool(Name = "ChatApp_ExecuteGenerateWelcomeMessage",
+        Title = "Generate welcome message",
+        ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExecuteGenerateWelcomeMessage(
         [Description("Language of the requested welcome message")] string language,
         IServiceProvider serviceProvider,
@@ -145,7 +151,9 @@ public static class ChatApp
     }
 
     [Description("Explain a tool call to an end user in simple words")]
-    [McpServerTool(Name = "ChatApp_ExplainToolCall", ReadOnly = true)]
+    [McpServerTool(Name = "ChatApp_ExplainToolCall",
+        Title = "Explain tool call in simple words",
+        ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExplainToolCall(
        [Description("Stringified json of all toolcall data")] string toolcall,
        [Description("Language of the requested welcome message")] string language,
