@@ -10,7 +10,7 @@
   "plugins": [
     "MCPhappey.Simplicate.Export.SimplicateExport, MCPhappey.Simplicate"
   ],
-  "instructions": "Use the locale delimeter from user context when known. Always use the select query parameter for the fields needed.",
+  "instructions": "Use the locale delimeter from user context when known. Always use the select query parameter for the fields needed. Only use the export tool when CSV export files are explicitly asked. Don't use Export tool to search/retrieve data, since it will only return the url to the csv file, not the content itself.",
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }

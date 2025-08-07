@@ -101,7 +101,10 @@ public static class GraphClientExtensions
         var uploadedItem = await graphServiceClient.Drives[myDrive?.Id].Root.ItemWithPath($"/{filename}")
             .Content.PutAsync(uploadStream, cancellationToken: cancellationToken);
 
-        return uploadedItem?.ToResourceLinkBlock();
+        var retrievedItem = await graphServiceClient.Drives[myDrive?.Id].Items[uploadedItem?.Id]
+            .GetAsync(cancellationToken: cancellationToken);
+
+        return retrievedItem?.ToResourceLinkBlock();
     }
 
 }

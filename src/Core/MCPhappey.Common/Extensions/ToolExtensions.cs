@@ -67,7 +67,7 @@ public static class ToolExtensions
     };
 
     public static string ToOutputFileName(this RequestContext<CallToolRequestParams> context, string extension)
-        => $"{DateTime.Now.Ticks:yyyyMMdd}_{context.Params?.Name ?? context.Server.ServerOptions.ServerInfo?.Name}.{extension.ToLower()}";
+        => $"{DateTime.Now:yyyyMMdd}_{context.Params?.Name ?? context.Server.ServerOptions.ServerInfo?.Name}.{extension.ToLower()}";
 
     public static HashSet<string> GetAllPlugins(this IReadOnlyList<ServerConfig> results) =>
             [.. results.SelectMany(r => r.Server.Plugins ?? [])
