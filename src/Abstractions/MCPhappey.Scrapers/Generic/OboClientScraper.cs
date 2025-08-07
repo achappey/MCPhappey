@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common;
@@ -35,7 +36,7 @@ public class OboClientScraper(IHttpClientFactory httpClientFactory, ServerConfig
                 serverConfig.Server, oAuthSettings);
 
         httpClient.DefaultRequestHeaders.Accept.Clear();
-        httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json"));
+        httpClient.DefaultRequestHeaders.Accept.Add(new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue(MediaTypeNames.Application.Json));
 
         if (
             uri.Host.Contains(Hosts.MicrosoftGraph, StringComparison.OrdinalIgnoreCase) &&

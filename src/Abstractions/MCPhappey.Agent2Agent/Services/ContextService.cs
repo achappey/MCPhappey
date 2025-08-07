@@ -1,15 +1,13 @@
+using MCPhappey.Agent2Agent.Extensions;
 using MCPhappey.Agent2Agent.Models;
 using MCPhappey.Agent2Agent.Repositories;
 using Microsoft.Graph.Beta;
-using ModelContextProtocol.Server;
 
 namespace MCPhappey.Agent2Agent.Services;
 
 public class ContextService(
     IAgent2AgentContextRepository contextRepo)
 {
-   
-
     public async Task<List<Agent2AgentViewContext>> GetUserContextsWithUsersAsync(GraphServiceClient graphServiceClient,
         string userId, CancellationToken cancellationToken = default)
     {

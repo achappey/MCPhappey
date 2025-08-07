@@ -2,6 +2,7 @@ using ModelContextProtocol.Protocol;
 using System.Text.Json;
 using System.Globalization;
 using System.Collections.Concurrent;
+using System.Net.Mime;
 
 namespace MCPhappey.Tools.Dataverse;
 
@@ -224,7 +225,7 @@ public static class DataversePluginExtensions
             "IsLogical)";
 
         using var req = new HttpRequestMessage(HttpMethod.Get, requestUrl);
-        req.Headers.Accept.ParseAdd("application/json");
+        req.Headers.Accept.ParseAdd(MediaTypeNames.Application.Json);
 
         using var res = await http.SendAsync(req, ct).ConfigureAwait(false);
 

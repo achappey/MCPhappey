@@ -1,6 +1,7 @@
 using MCPhappey.Common.Models;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory;
+using Microsoft.KernelMemory.DataFormats;
 using Microsoft.KernelMemory.DataFormats.WebPages;
 
 namespace MCPhappey.Core.Extensions;
@@ -42,4 +43,7 @@ public static class KernelMemoryExtensions
         MimeType = webScraperResult.ContentType,
         Uri = uri,
     };
+
+    public static IEnumerable<IContentDecoder> ByMimeType(this IEnumerable<IContentDecoder> contentDecoders,
+       string mimeType) => contentDecoders.Where(a => a.SupportsMimeType(mimeType));
 }

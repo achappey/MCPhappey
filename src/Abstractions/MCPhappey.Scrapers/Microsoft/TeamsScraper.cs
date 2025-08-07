@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common;
 using MCPhappey.Common.Constants;
@@ -102,7 +103,7 @@ public class TeamsScraper(IHttpClientFactory httpClientFactory, ServerConfig ser
         {
             Filename = $"TeamsMessage_{messageId}.json",
             Uri = url,
-            MimeType = "application/json",
+            MimeType = MediaTypeNames.Application.Json,
             Contents = BinaryData.FromObjectAsJson(new
             {
                 Context = contextText,

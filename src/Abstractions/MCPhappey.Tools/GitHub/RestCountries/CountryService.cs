@@ -17,22 +17,6 @@ public static class CountryService
     public static async Task<EmbeddedResourceBlock> GitHubRestCountries_SearchCountryCodes(
         [Description("Search query by name (contains)")] string name)
     {
-  /* var binDir = AppDomain.CurrentDomain.BaseDirectory;
-var dllInfo = Directory.GetFiles(binDir, "*.dll")
-    .Select(f => {
-        try {
-            var asm = System.Reflection.AssemblyName.GetAssemblyName(f);
-            return (Name: asm.Name, Version: asm.Version);
-        } catch {
-            return (Name: (string?)null, Version: (Version?)null);
-        }
-    })
-    .Where(a => a.Name != null && !a.Name.StartsWith("System") && !a.Name.StartsWith("Microsoft"))
-    .Select(a => $"{a.Name}, {a.Version}")
-    .ToList();*/
-
-
-        
         var items = string.IsNullOrEmpty(name?.ToString())
                 ? RestCountriesService.GetAllCountries()
                 : RestCountriesService.GetCountriesByNameContains(name?.ToString() ?? string.Empty);

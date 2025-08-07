@@ -64,7 +64,7 @@
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/crm/contactperson?q[person.id]=person:{personId}&q[organization.name]=*{organizationName}*&q[work_email]=*{workEmail}*&q[work_phone]=*{workPhone}*&q[work_mobile]=*{workMobile}*&q[work_function]=*{workFunction}*&q[created_at][ge]={createdAtGE}&q[created_at][le]={createdAtLE}&q[updated_at][ge]={updatedAtGE}&q[updated_at][le]={updatedAtLE}&q[is_active]={isActive}&offset={offset}&limit={limit}&sort={sortColumn}",
       "name": "contactpersonen-alle-filters",
       "title": "Contactpersonen (alle filters)",
-      "description": "Haal contactpersonen op, gefilterd op naam, bedrijf, e-mail, telefoon, mobiel, functie, aanmaak-/wijzigingsdatumbereik, activiteitsstatus. Ondersteunt paginering en sortering.",
+      "description": "Haal contactpersonen op, gefilterd op naam, bedrijf, e-mail, telefoon, mobiel, functie, aanmaak-/wijzigingsdatumbereik, activiteitsstatus. Ondersteunt paginering en sortering. Let op: het is NIET mogelijk om deze lijst te doorzoeken op naam persoon of bedrijf. Gebruik hiervoor de andere 2 resources (/person, /organization)",
       "mimeType": "application/json",
       "annotations": {
         "audience": ["assistant"]

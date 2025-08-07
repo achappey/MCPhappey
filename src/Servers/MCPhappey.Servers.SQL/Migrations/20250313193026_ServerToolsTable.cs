@@ -64,17 +64,17 @@ namespace MCPhappey.Servers.SQL.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_Tools",
                 table: "Tools",
-                columns: new[] { "Name", "ServerId" });
+                columns: ["Name", "ServerId"]);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_ServerOwners",
                 table: "ServerOwners",
-                columns: new[] { "Id", "ServerId" });
+                columns: ["Id", "ServerId"]);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_ServerApiKeys",
                 table: "ServerApiKeys",
-                columns: new[] { "Id", "ServerId" });
+                columns: ["Id", "ServerId"]);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ServerApiKeys_Servers_ServerId",
@@ -158,17 +158,17 @@ namespace MCPhappey.Servers.SQL.Migrations
             migrationBuilder.AddPrimaryKey(
                 name: "PK_ServerTool",
                 table: "ServerTool",
-                columns: new[] { "Name", "ServerId" });
+                columns: ["Name", "ServerId"]);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_ServerOwner",
                 table: "ServerOwner",
-                columns: new[] { "Id", "ServerId" });
+                columns: ["Id", "ServerId"]);
 
             migrationBuilder.AddPrimaryKey(
                 name: "PK_ServerApiKey",
                 table: "ServerApiKey",
-                columns: new[] { "Id", "ServerId" });
+                columns: ["Id", "ServerId"]);
 
             migrationBuilder.AddForeignKey(
                 name: "FK_ServerApiKey_Servers_ServerId",

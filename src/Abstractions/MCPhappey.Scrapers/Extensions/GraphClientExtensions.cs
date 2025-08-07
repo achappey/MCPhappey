@@ -140,6 +140,10 @@ public static class GraphClientExtensions
                Uri = driveItem?.WebUrl!,
                Size = driveItem?.Size,
                Description = driveItem?.Description,
+               Annotations = new Annotations()
+               {
+                   LastModified = driveItem?.LastModifiedDateTime
+               },
                MimeType = driveItem?.File?.MimeType ?? (driveItem?.Folder != null
                     ? MediaTypeNames.Application.Json : driveItem?.File?.MimeType)
            };
@@ -238,12 +242,7 @@ public static class GraphClientExtensions
             };
         });
 
-        return [new FileItem() {
-            Uri = fullUrl,
-            Filename = "news.aspx",
-            MimeType = MediaTypeNames.Application.Json,
-            Contents = BinaryData.FromObjectAsJson(pages)
-        }];
+        return [pages.ToFileItem(fullUrl, filename: "news.aspx")];
     }
 
 }

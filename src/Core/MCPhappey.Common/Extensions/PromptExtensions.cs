@@ -72,10 +72,9 @@ public static partial class PromptExtensions
 
         var matches = PromptArgumentRegex().Matches(template);
 
-        return matches
+        return [.. matches
             .Select(m => m.Groups[1].Value)
-            .Distinct(StringComparer.OrdinalIgnoreCase)
-            .ToList();
+            .Distinct(StringComparer.OrdinalIgnoreCase)];
     }
 
 

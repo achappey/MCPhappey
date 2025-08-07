@@ -5,12 +5,13 @@ using MCPhappey.Core.Extensions;
 using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Repositories;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.DataFormats;
 using Microsoft.SemanticKernel;
 using ModelContextProtocol.Server;
 
 namespace MCPhappey.Servers.SQL.Providers;
 
-public class McpEditorScraper : IContentScraper
+public class McpEditorScraper(IEnumerable<IContentDecoder> contentDecoders) : IContentScraper
 {
     public bool SupportsHost(ServerConfig serverConfig, string url)
         => new Uri(url).Scheme.Equals("mcp-editor", StringComparison.OrdinalIgnoreCase);
@@ -84,6 +85,40 @@ public class McpEditorScraper : IContentScraper
                 .ToFileItem(url)];
         }
 
+        if (url.Equals("mcp-editor://assemblies"))
+        {
+            var binDir = AppDomain.CurrentDomain.BaseDirectory;
+            var dllInfo = Directory.GetFiles(binDir, "*.dll")
+                .Select(f =>
+                {
+                    try
+                    {
+                        var asm = System.Reflection.AssemblyName.GetAssemblyName(f);
+                        return (asm.Name, asm.Version);
+                    }
+                    catch
+                    {
+                        return (Name: (string?)null, Version: (Version?)null);
+                    }
+                })
+                .Where(a => a.Name != null
+                    && !a.Name.StartsWith("System")
+                    && (!a.Name.StartsWith("Microsoft") || a.Name.StartsWith("Microsoft.Graph")))
+                .Select(a => $"{a.Name}, {a.Version}")
+                .ToList();
+
+            return [dllInfo.ToFileItem(url)];
+        }
+
+        if (url.Equals("mcp-editor://decoders"))
+        {
+            var bestDecoder = contentDecoders
+                .Select(a => a.GetType().Namespace);
+                
+            return [bestDecoder.ToFileItem(url)];
+        }
+
+
         if (url.Equals("mcp-editor://servers"))
         {
             var servers = await serviceProvider.GetServers(cancellationToken);
@@ -91,6 +126,21 @@ public class McpEditorScraper : IContentScraper
 
             return [userServers.ToFileItem(url)];
         }
+
+        if (url.StartsWith("mcp-editor://decoders/", StringComparison.OrdinalIgnoreCase))
+        {
+            // Extract mimetype from URI
+            var mimetype = url["mcp-editor://decoders/".Length..];
+
+            var supportedDecoders = contentDecoders
+                .ByMimeType(mimetype)
+                .Select(a => a.GetType().Namespace)
+                .ToList();
+
+            return [supportedDecoders.ToFileItem(url)];
+        }
+        // Optionally: return empty for not matched
+
 
         if (url.StartsWith("mcp-editor://plugins/", StringComparison.OrdinalIgnoreCase)
             && url.EndsWith("/tools", StringComparison.OrdinalIgnoreCase))

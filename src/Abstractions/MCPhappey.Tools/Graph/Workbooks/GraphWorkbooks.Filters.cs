@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Kiota.Abstractions.Serialization;
@@ -113,9 +114,9 @@ public static partial class GraphWorkbooks
             // Matrix helpers
             static List<List<object?>> ToMatrix(UntypedNode? n)
             {
-                if (n == null) return new();
+                if (n == null) return [];
                 var w = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory()
-                    .GetSerializationWriter("application/json");
+                    .GetSerializationWriter(MediaTypeNames.Application.Json);
                 w.WriteObjectValue(null, n);
                 using var s = w.GetSerializedContent();
                 return System.Text.Json.JsonSerializer.Deserialize<List<List<object?>>>(s) ?? new();
@@ -266,7 +267,7 @@ public static partial class GraphWorkbooks
             {
                 if (n == null) return new();
                 var w = new Microsoft.Kiota.Serialization.Json.JsonSerializationWriterFactory()
-                    .GetSerializationWriter("application/json");
+                    .GetSerializationWriter(MediaTypeNames.Application.Json);
                 w.WriteObjectValue(null, n);
                 using var s = w.GetSerializedContent();
                 return System.Text.Json.JsonSerializer.Deserialize<List<List<object?>>>(s) ?? new();

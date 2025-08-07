@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
@@ -59,10 +60,10 @@ public static class KrokiDiagrams
         // Detect content type (simple switch, expand as needed)
         string contentType = fileType.ToLower() switch
         {
-            "svg" => "image/svg+xml",
-            "png" => "image/png",
-            "pdf" => "application/pdf",
-            _ => "application/octet-stream"
+            "svg" => MediaTypeNames.Image.Svg,
+            "png" => MediaTypeNames.Image.Png,
+            "pdf" => MediaTypeNames.Application.Pdf,
+            _ => MediaTypeNames.Application.Octet
         };
 
         var result = await requestContext.Server.Upload(serviceProvider,

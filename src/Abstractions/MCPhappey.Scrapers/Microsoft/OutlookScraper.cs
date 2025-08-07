@@ -55,7 +55,7 @@ public sealed class OutlookScraper(
             message = await graph.Me.Messages[itemId]
                 .GetAsync(config =>
                 {
-                    config.QueryParameters.Expand = new[] { "attachments" };
+                    config.QueryParameters.Expand = ["attachments"];
                 }, cancellationToken);
         }
         else
@@ -63,7 +63,7 @@ public sealed class OutlookScraper(
             message = await graph.Users[mailbox].Messages[itemId]
                 .GetAsync(config =>
                 {
-                    config.QueryParameters.Expand = new[] { "attachments" };
+                    config.QueryParameters.Expand = ["attachments"];
                 }, cancellationToken);
         }
 
@@ -84,7 +84,7 @@ public sealed class OutlookScraper(
             {
                 if (attachment is FileAttachment fileAttachment)
                 {
-                    var attachmentItem = await graph.CreateAttachmentFileItemAsync(                        
+                    var attachmentItem = await graph.CreateAttachmentFileItemAsync(
                         mailbox,
                         itemId,
                         fileAttachment,

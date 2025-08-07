@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
@@ -39,7 +40,7 @@ public static partial class GoogleAudio
         var promptArgs = new Dictionary<string, JsonElement>
         {
             ["documentContent"] = JsonSerializer.SerializeToElement(string.Join("\n\n", contents
-                .Where(t => t.MimeType.StartsWith("text/") || t.MimeType.StartsWith("application/json"))
+                .Where(t => t.MimeType.StartsWith("text/") || t.MimeType.StartsWith(MediaTypeNames.Application.Json))
                 .Select(t => t.Contents.ToString()))),
             ["inputAroundPodcast"] = JsonSerializer.SerializeToElement(prompt)
         };

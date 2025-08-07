@@ -6,12 +6,25 @@ namespace MCPhappey.Common.Extensions;
 
 public static class FileItemExtensions
 {
-    public static FileItem ToFileItem<T>(this T content, string uri) => new()
-       {
-           Contents = BinaryData.FromObjectAsJson(content),
-           MimeType = MediaTypeNames.Application.Json,
-           Uri = uri,
-       };
+    public static FileItem ToFileItem<T>(this T content, string uri, string? filename = null) => new()
+    {
+        Contents = BinaryData.FromObjectAsJson(content),
+        MimeType = MediaTypeNames.Application.Json,
+        Uri = uri,
+        Filename = filename
+    };
+
+    public static FileItem ToFileItem(this BinaryData binaryData,
+          string uri,
+          string mimeType = MediaTypeNames.Text.Plain,
+          string? filename = null)
+              => new()
+              {
+                  Contents = binaryData,
+                  MimeType = mimeType,
+                  Filename = filename,
+                  Uri = uri,
+              };
 
 
     public static FileItem ToJsonFileItem(this string content, string uri)

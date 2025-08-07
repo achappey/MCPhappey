@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -137,7 +138,7 @@ public static partial class GraphPlanner
 
             var patchContent = new StringContent(
                 patchJObj.ToString(Newtonsoft.Json.Formatting.None),
-                System.Text.Encoding.UTF8, "application/json");
+                System.Text.Encoding.UTF8, MediaTypeNames.Application.Json);
 
             var patchReq = new HttpRequestMessage(HttpMethod.Patch, newDetailsUrl) { Content = patchContent };
             patchReq.Headers.TryAddWithoutValidation("If-Match", newEtag);

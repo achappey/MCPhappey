@@ -17,7 +17,7 @@ namespace MCPhappey.Agent2Agent;
 
 public static class Agent2AgentContextPlugin
 {
-    [McpServerTool(Name = "Agent2AgentContext_CreateTask", ReadOnly = false)]
+    [McpServerTool(Name = "Agent2AgentContext_CreateTask", OpenWorld = false)]
     [Description("Create a new Agent2Agent task.")]
     public static async Task<CallToolResult> Agent2AgentContext_CreateTask(
             IServiceProvider serviceProvider,
@@ -48,9 +48,6 @@ public static class Agent2AgentContextPlugin
         if (!userAllowed)
             throw new UnauthorizedAccessException("You do not have access to this task's context");
 
-
-
-
         var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new NewA2ATask()
         {
             Description = taskDescription,
@@ -62,6 +59,7 @@ public static class Agent2AgentContextPlugin
         var taskItem = new TaskRecord()
         {
             Id = Guid.NewGuid().ToString(),
+            ContextId = contextId,
             Status = new A2A.Models.TaskStatus()
             {
                 State = A2A.TaskState.Unknown,
@@ -84,7 +82,53 @@ public static class Agent2AgentContextPlugin
         await taskRepo.SaveTaskAsync(taskItem, cancellationToken);
 
         return taskItem.ToJsonContentBlock($"a2a://task/{taskItem?.Id}").ToCallToolResult();
+    }
 
+    [McpServerTool(Name = "Agent2AgentContext_UpdateContext", ReadOnly = false)]
+    [Description("Update an existing A2A context")]
+    public static async Task<CallToolResult> Agent2AgentContext_UpdateContext(
+        [Description("ID of the context to update")] string contextId,
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("New name of the context")] string? newName = null,
+        CancellationToken cancellationToken = default)
+    {
+        var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
+        var oid = tokenProvider.GetOidClaim();
+        ArgumentException.ThrowIfNullOrWhiteSpace(oid);
+
+        // Elicit update details (name/metadata) via TryElicit, just like with Create
+        var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new UpdateA2AContext()
+        {
+            Name = newName
+        }, cancellationToken);
+
+        if (notAccepted != null) return notAccepted;
+        if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
+
+        var repo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
+        var context = await repo.GetContextAsync(contextId, cancellationToken);
+        if (context == null)
+            return $"Context {contextId} not found".ToErrorCallToolResponse();
+
+        if (!context.OwnerIds.Contains(oid))
+            return "You are not allowed to update this context".ToErrorCallToolResponse();
+
+        if (!string.IsNullOrWhiteSpace(typedResult.Name))
+            context.Metadata["name"] = typedResult.Name;
+     
+        await repo.SaveContextAsync(context, cancellationToken);
+
+        return context.ToJsonContentBlock($"a2a://context/{context.ContextId}").ToCallToolResult();
+    }
+
+    [Description("Provide updated values for the context.")]
+    public class UpdateA2AContext
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("The new context name.")]
+        public string? Name { get; set; }
     }
 
     [McpServerTool(Name = "Agent2AgentContext_CreateContext", ReadOnly = true)]

@@ -116,10 +116,6 @@ public static class AspNetCoreExtensions
             server.ResourceTemplateList.ResourceTemplates = updatedTemplates;
             server.ResourceList ??= new();
             server.ResourceList.Resources = [.. server.ResourceList.Resources, .. newResources];
-
-
         }
     }
-
-
 }

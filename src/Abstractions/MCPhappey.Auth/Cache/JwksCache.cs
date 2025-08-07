@@ -85,7 +85,7 @@ public static class JwksCache
             }
 
             // Store new entry
-            var newEntry = new CacheEntry(jwks.Keys.ToArray(), DateTimeOffset.UtcNow.Add(effectiveCacheDuration));
+            var newEntry = new CacheEntry([.. jwks.Keys], DateTimeOffset.UtcNow.Add(effectiveCacheDuration));
             _cache[url] = newEntry;
             return newEntry.Keys;
         }

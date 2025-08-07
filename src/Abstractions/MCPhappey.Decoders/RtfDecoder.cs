@@ -1,3 +1,4 @@
+using System.Net.Mime;
 using Microsoft.KernelMemory.DataFormats;
 using Microsoft.KernelMemory.Pipeline;
 using RtfPipe;
@@ -9,7 +10,7 @@ public class RtfDecoder : IContentDecoder
     public bool SupportsMimeType(string mimeType)
     {
         return mimeType != null &&
-               (mimeType.Equals("application/rtf", StringComparison.OrdinalIgnoreCase) ||
+               (mimeType.Equals(MediaTypeNames.Application.Rtf, StringComparison.OrdinalIgnoreCase) ||
                 mimeType.Equals("text/rtf", StringComparison.OrdinalIgnoreCase) ||
                 mimeType.Equals(".rtf", StringComparison.OrdinalIgnoreCase));
     }

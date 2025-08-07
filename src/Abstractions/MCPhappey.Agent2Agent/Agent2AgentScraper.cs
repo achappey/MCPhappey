@@ -3,14 +3,10 @@ using MCPhappey.Common.Models;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Server;
 using MCPhappey.Common.Extensions;
-using System.Web;
-using System.Text.Json;
 using MCPhappey.Auth.Extensions;
 using System.Collections.Concurrent;
 using MCPhappey.Agent2Agent.Repositories;
 using MCPhappey.Core.Extensions;
-using MCPhappey.Agent2Agent.Models;
-using Microsoft.Graph.Beta.Models;
 using MCPhappey.Agent2Agent.Services;
 
 namespace MCPhappey.Agent2Agent;
@@ -51,11 +47,7 @@ public class Agent2AgentScraper(
         {
             var contexts = await contextService.GetUserContextsWithUsersAsync(graphClient, oid, cancellationToken);
 
-            return [new FileItem {
-                Contents = BinaryData.FromObjectAsJson(contexts),
-                MimeType = "application/json",
-                Uri = url
-        }];
+            return [contexts.ToFileItem(url)];
         }
 
         if ((host.Equals("agents", StringComparison.OrdinalIgnoreCase) && segments.Length == 0) ||
@@ -63,11 +55,7 @@ public class Agent2AgentScraper(
         {
             var contexts = await agentService.GetAgents(oid, cancellationToken);
 
-            return [new FileItem {
-                Contents = BinaryData.FromObjectAsJson(contexts),
-                MimeType = "application/json",
-                Uri = url
-        }];
+            return [contexts.ToFileItem(url)];
         }
 
         // a2a://context/{contextId}
@@ -79,11 +67,7 @@ public class Agent2AgentScraper(
             var context = await contextService.GetContextAsync(graphClient, contextId, oid, cancellationToken);
             if (context == null) throw new UnauthorizedAccessException();
 
-            return [new FileItem {
-            Contents = BinaryData.FromObjectAsJson(context),
-            MimeType = "application/json",
-            Uri = url
-        }];
+            return [context.ToFileItem(url)];
         }
 
         // a2a://context/{contextId}/tasks
@@ -99,11 +83,8 @@ public class Agent2AgentScraper(
             if (context == null) throw new UnauthorizedAccessException();
 
             var tasks = await taskRepo.GetTasksByContextAsync(contextId, cancellationToken);
-            return [new FileItem {
-            Contents = BinaryData.FromObjectAsJson(tasks),
-            MimeType = "application/json",
-            Uri = url
-        }];
+
+            return [tasks.ToFileItem(url)];
         }
 
         // a2a://task/{taskId}
@@ -114,11 +95,7 @@ public class Agent2AgentScraper(
             var hasAccess = await contextRepo.HasContextAccess(task?.ContextId!, oid, cancellationToken);
             if (!hasAccess) throw new UnauthorizedAccessException();
 
-            return [new FileItem {
-            Contents = BinaryData.FromObjectAsJson(task),
-            MimeType = "application/json",
-            Uri = url
-        }];
+            return [task.ToFileItem(url)];
         }
 
         // a2a://task/{taskId}/artifact
@@ -131,11 +108,7 @@ public class Agent2AgentScraper(
             var hasAccess = await contextRepo.HasContextAccess(task?.ContextId!, oid, cancellationToken);
             if (!hasAccess) throw new UnauthorizedAccessException();
 
-            return [new FileItem {
-            Contents = BinaryData.FromObjectAsJson(task?.Artifacts),
-            MimeType = "application/json",
-            Uri = url
-        }];
+            return task?.Artifacts != null ? [task.Artifacts.ToFileItem(url)] : [];
         }
 
         // a2a://task/{taskId}/artifact/{artifactId}
@@ -150,11 +123,9 @@ public class Agent2AgentScraper(
             var hasAccess = await contextRepo.HasContextAccess(task?.ContextId!, oid, cancellationToken);
             if (!hasAccess) throw new UnauthorizedAccessException();
 
-            return [new FileItem {
-            Contents = BinaryData.FromObjectAsJson(task?.Artifacts?.FirstOrDefault(t => t.ArtifactId == artifactId)),
-            MimeType = "application/json",
-            Uri = url
-        }];
+            var artifact = task?.Artifacts?.FirstOrDefault(t => t.ArtifactId == artifactId);
+
+            return artifact != null ? [artifact.ToFileItem(url)] : [];
         }
 
         throw new NotSupportedException();

@@ -63,7 +63,7 @@ public static partial class GraphWorkbooks
         DateTime dt => new UntypedString(dt.ToString("o")),
         DateTimeOffset dto => new UntypedString(dto.ToString("o")),
         string s => new UntypedString(s),
-        IEnumerable<object?> list => new UntypedArray(list.Select(ToUntyped).ToList()),
+        IEnumerable<object?> list => new UntypedArray([.. list.Select(ToUntyped)]),
         IDictionary<string, object?> dict => new UntypedObject(dict.ToDictionary(k => k.Key, v => ToUntyped(v.Value))),
         _ => new UntypedString(v.ToString() ?? string.Empty),
     };
@@ -75,6 +75,6 @@ public static partial class GraphWorkbooks
             rowNodes.Add(ToUntyped(values.TryGetValue(col, out var v) ? v : null));
 
         // [[ row ]]
-        return new UntypedArray(new List<UntypedArray> { new UntypedArray(rowNodes) });
+        return new UntypedArray(new List<UntypedArray> { new(rowNodes) });
     }
 }

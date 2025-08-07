@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Net.Mime;
 using Microsoft.PowerBI.Api;
 using Microsoft.PowerBI.Api.Models;
 using ModelContextProtocol.Protocol;
@@ -39,7 +40,7 @@ public static class PowerBI
         {
             Resource = new TextResourceContents()
             {
-                MimeType = "application/json",
+                MimeType = MediaTypeNames.Application.Json,
                 Text = Newtonsoft.Json.JsonConvert.SerializeObject(result),
                 Uri = $"https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/executeQueries"
             }
@@ -88,11 +89,12 @@ public static class PowerBI
 
         var response = await client.Datasets.PostDatasetAsync(createRequest, cancellationToken: cancellationToken);
 
+        //return response.ToJsonContentBlock($"https://api.powerbi.com/v1.0/myorg/datasets/{response.Id}");
         return new EmbeddedResourceBlock()
         {
             Resource = new TextResourceContents()
             {
-                MimeType = "application/json",
+                MimeType = MediaTypeNames.Application.Json,
                 Text = Newtonsoft.Json.JsonConvert.SerializeObject(response),
                 Uri = $"https://api.powerbi.com/v1.0/myorg/datasets/{response.Id}"
             }
@@ -148,7 +150,10 @@ public static class PowerBI
         }
 
         // 5. Make sure all values are native types (handle possible JsonElement etc)
-        var sdkRows = rows.Select(a => a.ToNativeDictionary()).Cast<object>().ToList();
+        var sdkRows = rows.Select(a => a.ToNativeDictionary())
+            .Cast<object>()
+            .ToList();
+            
         var rowRequest = new PostRowsRequest
         {
             Rows = sdkRows
@@ -160,7 +165,7 @@ public static class PowerBI
         {
             Resource = new TextResourceContents()
             {
-                MimeType = "application/json",
+                MimeType = MediaTypeNames.Application.Json,
                 Text = Newtonsoft.Json.JsonConvert.SerializeObject(rowRequest),
                 Uri = $"https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/tables/{tableName}/rows"
             }

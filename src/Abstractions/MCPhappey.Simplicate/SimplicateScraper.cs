@@ -9,6 +9,7 @@ using System.Web;
 using System.Text.Json;
 using MCPhappey.Auth.Extensions;
 using System.Collections.Concurrent;
+using System.Net.Mime;
 
 namespace MCPhappey.Simplicate;
 
@@ -88,7 +89,7 @@ public class SimplicateScraper(
         client.DefaultRequestHeaders.Add("Authentication-Key", key);
         client.DefaultRequestHeaders.Add("Authentication-Secret", secret);
 
-        using var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, "application/json");
+        using var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, MediaTypeNames.Application.Json);
         using var response = await client.PostAsync(url, content, cancellationToken);
 
         if (!response.IsSuccessStatusCode)

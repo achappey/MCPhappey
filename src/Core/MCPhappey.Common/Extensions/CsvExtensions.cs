@@ -58,7 +58,7 @@ public static class JsonCsvConverter
             }
         }
         if (options.Order == ColumnOrder.Alphabetical)
-            columns = columns.OrderBy(c => c, StringComparer.Ordinal).ToList();
+            columns = [.. columns.OrderBy(c => c, StringComparer.Ordinal)];
 
         // Header
         writer.WriteLine(string.Join(options.Delimiter, columns.Select(a => EscapeCsv(a, options.Delimiter))));

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Globalization;
 using System.Net.Http.Headers;
+using System.Net.Mime;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -238,7 +239,7 @@ public static partial class GraphWorkbooks
 
             // Matrix: header + data
             var values = new object[dataRows.Count + 1][];
-            values[0] = headers.Cast<object>().ToArray();
+            values[0] = [.. headers.Cast<object>()];
             for (int i = 0; i < dataRows.Count; i++)
                 values[i + 1] = dataRows[i];
 
@@ -265,8 +266,8 @@ public static partial class GraphWorkbooks
             // 3. PATCH matrix naar worksheet-range (direct via Graph REST)
             var patchUrl = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook/worksheets/{worksheetName}/range(address='{address}')";
             var payload = new { values };
-            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json");
-            content.Headers.ContentType = new MediaTypeHeaderValue("application/json");
+            var content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, MediaTypeNames.Application.Json);
+            content.Headers.ContentType = new MediaTypeHeaderValue(MediaTypeNames.Application.Json);
 
             // Bearer-token van jouw graphClient (verondersteld geauthenticeerd!)
             if (graphClient.DefaultRequestHeaders.Authorization == null)
@@ -284,7 +285,7 @@ public static partial class GraphWorkbooks
                 hasHeaders = true
             };
             var tableContent = new StringContent(JsonSerializer.Serialize(tablePayload),
-                Encoding.UTF8, "application/json");
+                Encoding.UTF8, MediaTypeNames.Application.Json);
 
             // Re-use authorized graphClient!
             var tableResp = await graphClient.PostAsync(tableUrl, tableContent, cancellationToken);

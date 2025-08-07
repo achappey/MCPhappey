@@ -78,7 +78,11 @@ public static class GraphClientExtensions
                 Size = driveItem?.Size,
                 Description = driveItem?.Description,
                 MimeType = driveItem?.File?.MimeType ?? (driveItem?.Folder != null
-                    ? MediaTypeNames.Application.Json : driveItem?.File?.MimeType)
+                    ? MediaTypeNames.Application.Json : driveItem?.File?.MimeType),
+                Annotations = new Annotations()
+                {
+                    LastModified = driveItem?.LastModifiedDateTime
+                }
             };
 
 
@@ -86,10 +90,10 @@ public static class GraphClientExtensions
             => driveItem.WebUrl!.ToResourceLinkBlock(driveItem?.Name!, driveItem?.File?.MimeType, driveItem?.Description, driveItem?.Size);
 
 
-      public static async Task<ResourceLinkBlock?> Upload(this GraphServiceClient  graphServiceClient,
-                string filename,
-                BinaryData binaryData,
-                CancellationToken cancellationToken = default)
+    public static async Task<ResourceLinkBlock?> Upload(this GraphServiceClient graphServiceClient,
+              string filename,
+              BinaryData binaryData,
+              CancellationToken cancellationToken = default)
     {
         using var uploadStream = new MemoryStream(binaryData.ToArray());
 

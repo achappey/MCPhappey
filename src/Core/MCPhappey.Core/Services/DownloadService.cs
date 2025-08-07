@@ -41,11 +41,35 @@ public partial class DownloadService(WebScraper webScraper,
 
             if (fileContent != null)
             {
+                if (mcpServer.LoggingLevel == LoggingLevel.Debug)
+                {
+                    foreach (var file in fileContent)
+                    {
+                        var fileMarkdown =
+                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">GET {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
+
+                        await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug);
+                    }
+                }
+
                 var decodeTasks = fileContent.Select(a => transformService.DecodeAsync(url,
                     a.Contents,
                     a.MimeType, cancellationToken));
 
-                return await Task.WhenAll(decodeTasks);
+                var decoded = await Task.WhenAll(decodeTasks);
+
+                if (mcpServer.LoggingLevel == LoggingLevel.Debug)
+                {
+                    foreach (var file in decoded)
+                    {
+                        var fileMarkdown =
+                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">DECODE {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
+
+                        await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug);
+                    }
+                }
+
+                return decoded;
             }
         }
 

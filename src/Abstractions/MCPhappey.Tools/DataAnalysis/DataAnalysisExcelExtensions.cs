@@ -58,7 +58,7 @@ public static partial class DataAnalysisExcelExtensions
         {
             var headerMatrix = UntypedToMatrix(headerRange.Values);
             if (headerMatrix.Count > 0)
-                headers = headerMatrix[0].Select(h => (h ?? string.Empty).Trim()).ToList();
+                headers = [.. headerMatrix[0].Select(h => (h ?? string.Empty).Trim())];
         }
 
         // Fallback if headers missing: derive from first body row

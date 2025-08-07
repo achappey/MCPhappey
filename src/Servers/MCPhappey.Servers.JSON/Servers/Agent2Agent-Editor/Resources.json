@@ -2,7 +2,8 @@
   "resources": [
     {
       "uri": "a2a://agents",
-      "name": "List all available Agent2Agent agents available for editting",
+      "name": "list-agent2agent-agents-for-editing",
+      "title": "List all Agent2Agent Agents for editing",
       "description": "List all available Agent2Agent agents available for editting for the current user",
       "mimeType": "application/json",
       "annotations": {
