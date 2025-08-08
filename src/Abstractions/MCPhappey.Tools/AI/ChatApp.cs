@@ -32,7 +32,7 @@ public static class ChatApp
         };
 
         // Pick the model you want (same as before or allow config)
-        var modelName = "gpt-4.1-mini"; // or any default model you prefer
+        var modelName = "gpt-5-mini"; // or any default model you prefer
 
         // Optional: Logging/notification
         var markdown = $"Generating conversation name...\nUser: {userMessage}";
@@ -130,7 +130,7 @@ public static class ChatApp
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
 
         // Pick the model you want
-        var modelName = "gpt-4.1-nano"; // or set to your preferred model
+        var modelName = "gpt-5-nano"; // or set to your preferred model
 
         // Optional: Logging/notification
         var markdown = $"Generating welcome message";
@@ -165,7 +165,7 @@ public static class ChatApp
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
 
         // Pick the model you want
-        var modelName = "gpt-4.1-nano"; // or set to your preferred model
+        var modelName = "gpt-5-nano"; // or set to your preferred model
 
         // Optional: Logging/notification
         var markdown = $"Explain tool call";
@@ -179,7 +179,6 @@ public static class ChatApp
                 { "language", JsonSerializer.SerializeToElement(language) },
                 { "toolcall", JsonSerializer.SerializeToElement(toolcall) }
                 },
-            temperature: 0,
             modelHint: modelName,
             cancellationToken: cancellationToken);
 

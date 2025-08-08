@@ -39,7 +39,7 @@ public class UpdateMcpResourceTemplate
     [JsonPropertyName("priority")]
     [Range(0, 1)]
     [Description("Optional priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
-    public float? Priority { get; set; }
+    public double? Priority { get; set; }
 
     [JsonPropertyName("assistantAudience")]
     [DefaultValue(true)]
@@ -75,7 +75,7 @@ public class AddMcpResourceTemplate
     [JsonPropertyName("priority")]
     [Range(0, 1)]
     [Description("Optional priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
-    public float? Priority { get; set; }
+    public double? Priority { get; set; }
 
     [JsonPropertyName("assistantAudience")]
     [DefaultValue(true)]

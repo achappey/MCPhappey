@@ -47,7 +47,7 @@ if (!string.IsNullOrEmpty(appConfig?.KernelMemoryDatabase)
             .WithOpenAI(new OpenAIConfig()
             {
                 APIKey = apiKey,
-                TextModel = "gpt-4.1-2025-04-14",
+                TextModel = "gpt-5",
                 TextModelMaxTokenTotal = 65536,
                 EmbeddingDimensions = 3072,
                 EmbeddingModel = "text-embedding-3-large"

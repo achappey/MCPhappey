@@ -218,6 +218,8 @@ public static class ElicitFormExtensions
                                 el.ValueKind == JsonValueKind.False ? false : (bool?)null;
                     else if (t == typeof(double))
                         value = el.ValueKind == JsonValueKind.Number ? el.GetDouble() : default;
+                    else if (t == typeof(decimal))
+                        value = el.ValueKind == JsonValueKind.Number ? el.GetDecimal() : default;
                     else if (t == typeof(DateTime))
                         value = el.ValueKind == JsonValueKind.String ? el.GetDateTime() : default;
                     else

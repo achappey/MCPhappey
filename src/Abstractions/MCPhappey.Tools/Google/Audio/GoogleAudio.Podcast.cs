@@ -50,7 +50,7 @@ public static partial class GoogleAudio
                      requestContext.Server,
                      "create-podcast-outline-from-document",
                      promptArgs,
-                     "gpt-4.1",
+                     "gpt-5",
                      cancellationToken: cancellationToken
                  );
 
@@ -70,7 +70,7 @@ public static partial class GoogleAudio
                      requestContext.Server,
                      "create-podcast-script-from-outline",
                      scriptPromptArgs,
-                     "gpt-4.1",
+                     "gpt-5",
                      cancellationToken: cancellationToken
                  );
 

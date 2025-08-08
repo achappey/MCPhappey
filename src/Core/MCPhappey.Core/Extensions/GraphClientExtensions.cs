@@ -85,9 +85,8 @@ public static class GraphClientExtensions
                 }
             };
 
-
-    public static ResourceLinkBlock ToResourceLinkBlock(this DriveItem driveItem)
-            => driveItem.WebUrl!.ToResourceLinkBlock(driveItem?.Name!, driveItem?.File?.MimeType, driveItem?.Description, driveItem?.Size);
+    public static ResourceLinkBlock ToResourceLinkBlock(this DriveItem driveItem, string filename)
+            => driveItem.WebUrl!.ToResourceLinkBlock(driveItem?.Name ?? filename, driveItem?.File?.MimeType, driveItem?.Description, driveItem?.Size);
 
 
     public static async Task<ResourceLinkBlock?> Upload(this GraphServiceClient graphServiceClient,
@@ -104,7 +103,8 @@ public static class GraphClientExtensions
         var retrievedItem = await graphServiceClient.Drives[myDrive?.Id].Items[uploadedItem?.Id]
             .GetAsync(cancellationToken: cancellationToken);
 
-        return retrievedItem?.ToResourceLinkBlock();
+        return retrievedItem?.ToResourceLinkBlock(filename) ?? throw new Exception("Something went wrong");
+
     }
 
 }

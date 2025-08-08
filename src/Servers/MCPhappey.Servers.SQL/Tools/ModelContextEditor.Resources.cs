@@ -66,7 +66,7 @@ public static partial class ModelContextEditor
                 typed.Name.Slugify().ToLowerInvariant(),
                 typed.Description,
                 typed.Title,
-                typed.Priority,
+                (float?)typed.Priority,
                 typed.AssistantAudience,
                 typed.UserAudience);
 
@@ -127,7 +127,7 @@ public static partial class ModelContextEditor
         resource.Title = typed?.Title;
         resource.AssistantAudience = typed?.AssistantAudience;
         resource.UserAudience = typed?.UserAudience;
-        resource.Priority = typed?.Priority;
+        resource.Priority = (float?)typed?.Priority;
 
         var updated = await serverRepository.UpdateResource(resource);
 

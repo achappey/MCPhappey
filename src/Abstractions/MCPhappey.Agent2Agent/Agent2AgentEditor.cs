@@ -21,7 +21,7 @@ public static partial class Agent2AgentEditor
             RequestContext<CallToolRequestParams> requestContext,
             string newAgentName,
             string newAgentUrl,
-            string agentModel = "gpt-4.1-mini",
+            string agentModel = "gpt-5-mini",
             float temperature = 0,
             string? description = null,
             CancellationToken cancellationToken = default)

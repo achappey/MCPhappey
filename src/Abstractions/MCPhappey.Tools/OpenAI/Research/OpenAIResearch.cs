@@ -92,7 +92,7 @@ public static class OpenAIResearch
 
         var reportSampling = await samplingService.GetPromptSample<ResearchReport>(serviceProvider,
             requestContext.Server, "write-report", reportArgs,
-            "gpt-4o", cancellationToken: cancellationToken);
+            "gpt-5", cancellationToken: cancellationToken);
 
         if (string.IsNullOrEmpty(reportSampling?.MarkdownReport))
         {

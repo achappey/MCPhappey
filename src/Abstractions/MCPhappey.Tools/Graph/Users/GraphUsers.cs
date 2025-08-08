@@ -74,7 +74,7 @@ public static class GraphUsers
 
         var newUser = await client.Users.PostAsync(user, cancellationToken: cancellationToken);
 
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser.Id}").ToCallToolResult();
+        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser?.Id}").ToCallToolResult();
     }
 
     [Description("Update a Microsoft 365 user")]
@@ -129,7 +129,7 @@ public static class GraphUsers
 
         var patchedUser = await client.Users[userId].PatchAsync(user, cancellationToken: cancellationToken);
 
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{patchedUser.Id}")
+        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{patchedUser?.Id}")
              .ToCallToolResult();
     }
 }
