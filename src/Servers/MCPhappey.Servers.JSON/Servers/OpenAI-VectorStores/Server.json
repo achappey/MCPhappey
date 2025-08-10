@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "OpenAI-VectorStores",
+    "title": "OpenAI VectorStores",
     "version": "1.0.0"
   },
   "plugins": [

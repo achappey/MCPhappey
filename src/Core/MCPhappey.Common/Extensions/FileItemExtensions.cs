@@ -1,6 +1,7 @@
 using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol;
 using System.Net.Mime;
+using System.Text.Json;
 
 namespace MCPhappey.Common.Extensions;
 
@@ -8,7 +9,7 @@ public static class FileItemExtensions
 {
     public static FileItem ToFileItem<T>(this T content, string uri, string? filename = null) => new()
     {
-        Contents = BinaryData.FromObjectAsJson(content),
+        Contents = BinaryData.FromObjectAsJson(content, JsonSerializerOptions.Web),
         MimeType = MediaTypeNames.Application.Json,
         Uri = uri,
         Filename = filename

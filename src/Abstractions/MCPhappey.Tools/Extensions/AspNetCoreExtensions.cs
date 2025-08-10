@@ -1,6 +1,7 @@
 using MCPhappey.Common;
 using MCPhappey.Tools.GitHub.RestCountries;
 using MCPhappey.Tools.Graph;
+using MCPhappey.Tools.OpenAI.VectorStores;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
 
@@ -13,6 +14,7 @@ public static class AspNetCoreExtensions
     {
         builder.Services.AddSingleton<IAutoCompletion, GraphCompletion>();
         builder.Services.AddSingleton<IAutoCompletion, CountryCompletion>();
+        builder.Services.AddSingleton<IContentScraper, VectorStoreScraper>();
 
         return builder;
     }
@@ -23,7 +25,7 @@ public static class AspNetCoreExtensions
     {
         Mscc.GenerativeAI.GoogleAI googleAI = new(apiKey);
         builder.Services.AddSingleton(googleAI);
-        
+
         return builder;
     }
 }

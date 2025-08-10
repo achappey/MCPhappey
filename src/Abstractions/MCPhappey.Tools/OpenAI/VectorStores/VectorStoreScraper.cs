@@ -1,0 +1,60 @@
+using MCPhappey.Auth.Extensions;
+using MCPhappey.Common;
+using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
+using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol.Server;
+using OpenAI;
+
+namespace MCPhappey.Tools.OpenAI.VectorStores;
+
+public class VectorStoreScraper : IContentScraper
+{
+    public bool SupportsHost(ServerConfig serverConfig, string url)
+        => url.StartsWith("https://api.openai.com/v1/vector_stores", StringComparison.OrdinalIgnoreCase);
+
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer,
+        IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
+    {
+        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
+        var userId = serviceProvider.GetUserId();
+        var client = openAiClient
+                    .GetVectorStoreClient();
+
+        if (url.Equals("https://api.openai.com/v1/vector_stores", StringComparison.OrdinalIgnoreCase))
+        {
+            var item = await client.GetVectorStoresAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken: cancellationToken);
+
+            return [item
+            .Where(a => a.IsOwner(userId))
+            .ToFileItem(url)];
+        }
+        else
+
+        if (url.StartsWith("https://api.openai.com/v1/vector_stores/vs_", StringComparison.OrdinalIgnoreCase)
+            && url.EndsWith("/files", StringComparison.OrdinalIgnoreCase))
+        {
+            string? vectorStoreId = null;
+            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            {
+                var segs = uri.AbsolutePath.TrimEnd('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+                if (segs.Length >= 4 && segs[1] == "vector_stores" && segs[^1] == "files")
+                    vectorStoreId = segs[2];
+            }
+
+            var list = client.GetVectorStore(vectorStoreId, cancellationToken: cancellationToken);
+
+            if (!list.Value.IsOwner(userId))
+            {
+                throw new UnauthorizedAccessException();
+            }
+
+            var refs = await client.GetFileAssociationsAsync(vectorStoreId, cancellationToken: cancellationToken).ToListAsync();
+
+            return refs.Select(a => a.ToFileItem(url));
+        }
+
+        return [];
+    }
+
+}

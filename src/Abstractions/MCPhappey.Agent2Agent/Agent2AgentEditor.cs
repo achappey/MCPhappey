@@ -14,7 +14,7 @@ namespace MCPhappey.Agent2Agent;
 
 public static partial class Agent2AgentEditor
 {
-    [McpServerTool(Name = "Agent2AgentEditor_CreateAgent")]
+    [McpServerTool(Destructive = false)]
     [Description("Create a new Agent2Agent agent.")]
     public static async Task<CallToolResult> Agent2AgentEditor_CreateAgent(
             IServiceProvider serviceProvider,
@@ -22,7 +22,7 @@ public static partial class Agent2AgentEditor
             string newAgentName,
             string newAgentUrl,
             string agentModel = "gpt-5-mini",
-            float temperature = 0,
+            float temperature = 1,
             string? description = null,
             CancellationToken cancellationToken = default)
     {
@@ -75,7 +75,7 @@ public static partial class Agent2AgentEditor
         .ToJsonCallToolResponse($"a2a-editor://agent/{server.AgentCard.Name}");
     }
 
-    [McpServerTool(Name = "Agent2AgentEditor_AddMcpServer")]
+    [McpServerTool(Destructive = false)]
     [Description("Add a MCP server to an Agent2Agent agent.")]
     public static async Task<CallToolResult> Agent2AgentEditor_AddMcpServer(
                IServiceProvider serviceProvider,
