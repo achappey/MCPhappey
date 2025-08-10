@@ -14,8 +14,7 @@ namespace MCPhappey.Simplicate.Projects;
 public static class SimplicateProjects
 {
     [Description("Create a new project in Simplicate")]
-    [McpServerTool(OpenWorld = false, Title = "Create new Simplicate project",
-        ReadOnly = false, Idempotent = false)]
+    [McpServerTool(OpenWorld = false, Title = "Create new Simplicate project")]
     public static async Task<CallToolResult?> SimplicateProjects_CreateProject(
         [Description("Name of the new project")] string name,
         IServiceProvider serviceProvider,

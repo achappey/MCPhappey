@@ -13,16 +13,19 @@ namespace MCPhappey.Tools.Graph.Outlook;
 public static class GraphOutlookMail
 {
     [Description("Set or update the follow-up flag for a mail message in Outlook.")]
-    [McpServerTool(Title = "Flag mail for follow-up in Outlook", OpenWorld = true)]
+    [McpServerTool(Title = "Flag mail for follow-up in Outlook",
+        Idempotent = true,
+        Destructive = false,
+        OpenWorld = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_FlagMail(
-     IServiceProvider serviceProvider,
-     RequestContext<CallToolRequestParams> requestContext,
-     [Description("ID of the message to flag.")][Required] string messageId,
-     [Description("Flag status. Use Flagged, Complete, or NotFlagged. Defaults to Flagged.")]
-        FlagStatusEnum? flagStatus = FlagStatusEnum.Flagged,
-     [Description("Start date/time for the flag in ISO format (optional).")] string? startDateTime = null,
-     [Description("Due date/time for the flag in ISO format (optional).")] string? dueDateTime = null,
-     CancellationToken cancellationToken = default)
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("ID of the message to flag.")][Required] string messageId,
+        [Description("Flag status. Use Flagged, Complete, or NotFlagged. Defaults to Flagged.")]
+            FlagStatusEnum? flagStatus = FlagStatusEnum.Flagged,
+        [Description("Start date/time for the flag in ISO format (optional).")] string? startDateTime = null,
+        [Description("Due date/time for the flag in ISO format (optional).")] string? dueDateTime = null,
+        CancellationToken cancellationToken = default)
     {
         var (typed, notAccepted) = await requestContext.Server.TryElicit(
             new GraphFlagMail
@@ -106,8 +109,7 @@ public static class GraphOutlookMail
 
 
     [Description("Reply to an e-mail message in Outlook.")]
-    [McpServerTool(Name = "GraphOutlookMail_Reply", Title = "Reply to e-mail via Outlook",
-       OpenWorld = true)]
+    [McpServerTool(Title = "Reply to e-mail via Outlook")]
     public static async Task<CallToolResult?> GraphOutlookMail_Reply(
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
@@ -168,8 +170,7 @@ public static class GraphOutlookMail
     }
 
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
-    [McpServerTool(Name = "GraphOutlookMail_SendMail", Title = "Send e-mail via Outlook",
-        OpenWorld = true)]
+    [McpServerTool(Title = "Send e-mail via Outlook")]
     public static async Task<CallToolResult?> GraphOutlookMail_SendMail(
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
@@ -222,17 +223,18 @@ public static class GraphOutlookMail
     }
 
     [Description("Create a draft e-mail message in the current user's Outlook mailbox.")]
-    [McpServerTool(Name = "GraphOutlookMail_CreateDraft", Title = "Create draft e-mail in Outlook",
-        ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Create draft e-mail in Outlook",
+        Destructive = false,
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphOutlookMail_CreateDraft(
-     IServiceProvider serviceProvider,
-     RequestContext<CallToolRequestParams> requestContext,
-     [Description("E-mail addresses of the recipients. Use a comma separated list for multiple recipients.")] string? toRecipients = null,
-     [Description("E-mail addresses for CC (carbon copy). Use a comma separated list for multiple recipients.")] string? ccRecipients = null,
-     [Description("Subject of the draft e-mail message.")] string? subject = null,
-     [Description("Body of the draft e-mail message.")] string? body = null,
-     [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
-     CancellationToken cancellationToken = default)
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("E-mail addresses of the recipients. Use a comma separated list for multiple recipients.")] string? toRecipients = null,
+        [Description("E-mail addresses for CC (carbon copy). Use a comma separated list for multiple recipients.")] string? ccRecipients = null,
+        [Description("Subject of the draft e-mail message.")] string? subject = null,
+        [Description("Body of the draft e-mail message.")] string? body = null,
+        [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
+        CancellationToken cancellationToken = default)
     {
         var (typed, notAccepted) = await requestContext.Server.TryElicit(
             new GraphCreateMailDraft

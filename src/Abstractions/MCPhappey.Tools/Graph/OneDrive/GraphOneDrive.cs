@@ -13,7 +13,10 @@ namespace MCPhappey.Tools.Graph.OneDrive;
 public static class GraphOneDrive
 {
     [Description("Uploads a file to the specified OneDrive location.")]
-    [McpServerTool(Title = "Upload file to OneDrive", OpenWorld = false)]
+    [McpServerTool(Title = "Upload file to OneDrive",
+        Destructive = false,
+        Idempotent = true,
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphOneDrive_UploadFile(
         [Description("The OneDrive Drive ID.")] string driveId,
         [Description("The file name (e.g. foo.txt).")] string filename,
@@ -45,7 +48,8 @@ public static class GraphOneDrive
     }
 
     [Description("Create a folder in the specified OneDrive or SharePoint document library.")]
-    [McpServerTool(OpenWorld = false)]
+    [McpServerTool(Title = "Create OneDrive/SharePoint folder",
+        OpenWorld = false, Destructive = false, Idempotent = true)]
     public static async Task<CallToolResult?> GraphOneDrive_CreateFolder(
             [Description("The OneDrive or SharePoint Drive ID.")] string driveId,
             [Description("The name of the new folder.")] string name,
@@ -59,7 +63,6 @@ public static class GraphOneDrive
     {
         try
         {
-
             var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
             var (typed, notAccepted) = await requestContext.Server.TryElicit(

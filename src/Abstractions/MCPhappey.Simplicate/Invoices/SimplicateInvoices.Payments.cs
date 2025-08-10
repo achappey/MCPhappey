@@ -11,7 +11,7 @@ namespace MCPhappey.Simplicate.Invoices;
 
 public static partial class SimplicateInvoices
 {
-    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, Destructive = false, ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns a list of payments received.")]
     public static async Task<List<SimplicateInvoicePayment>> SimplicateInvoices_GetPayments(
           IServiceProvider serviceProvider,
@@ -64,7 +64,7 @@ public static partial class SimplicateInvoices
     }
 
 
-    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true, Destructive = false, UseStructuredContent = true)]
     [Description("Returns, per my organization profile, a summary of paid invoices: average, minimum, and maximum payment term (days between invoice date and payment date), optionally filtered by date range and organization.")]
     public static async Task<Dictionary<string, PaidInvoicePaymentTermSummary>?> SimplicateInvoices_GetAveragePaymentTermByMyOrganization(
       IServiceProvider serviceProvider,

@@ -15,7 +15,7 @@ namespace MCPhappey.Tools.Graph.Teams;
 public static partial class GraphTeams
 {
     [Description("Set a Teams status message for a user.")]
-    [McpServerTool(ReadOnly = false)]
+    [McpServerTool(Title = "Set Teams status message", Destructive = false)]
     public static async Task<CallToolResult> GraphTeams_SetStatusMessage(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -69,7 +69,7 @@ public static partial class GraphTeams
         - Away + Away: Sets presence to Away.
         - DoNotDisturb + Presenting: Sets presence to DoNotDisturb, Presenting.
         ")]
-    [McpServerTool(ReadOnly = false)]
+    [McpServerTool(Title = "Set Teams presence", Destructive = false)]
     public static async Task<CallToolResult> GraphTeams_SetPresence(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

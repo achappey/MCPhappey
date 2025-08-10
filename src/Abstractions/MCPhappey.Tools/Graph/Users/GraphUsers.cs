@@ -10,8 +10,7 @@ namespace MCPhappey.Tools.Graph.Users;
 public static class GraphUsers
 {
     [Description("Create a new user")]
-    [McpServerTool(Name = "GraphUsers_CreateUser", Title = "Create new user",
-        ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Create new user", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_CreateUser(
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
@@ -78,8 +77,8 @@ public static class GraphUsers
     }
 
     [Description("Update a Microsoft 365 user")]
-    [McpServerTool(Name = "GraphUsers_UpdateUser", Title = "Update a user",
-           OpenWorld = false)]
+    [McpServerTool(Title = "Update a user",
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_UpdateUser(
         [Description("User id to update.")] string userId,
         IServiceProvider serviceProvider,

@@ -12,6 +12,7 @@ public static class HTTPService
     [Description("Fetches a public accessible url")]
     [McpServerTool(Title = "Fetch public URL",
         Destructive = false,
+        Idempotent = true,
         ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> Http_FetchUrl(
         [Description("The url to fetch.")]

@@ -13,7 +13,7 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static partial class GraphPlanner
 {
     [Description("Copy a Planner")]
-    [McpServerTool(Title = "Copy a Planner", OpenWorld = false)]
+    [McpServerTool(Title = "Copy a Planner", OpenWorld = false, Destructive = false)]
     public static async Task<CallToolResult?> GraphPlanner_CopyPlan(
         [Description("The id of the original Planner to copy.")]
         string plannerId,
@@ -40,7 +40,7 @@ public static partial class GraphPlanner
         );
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid result".ToErrorCallToolResponse();
-        
+
         var httpClient = await serviceProvider.GetGraphHttpClient(mcpServer);
         var buckets = await graphClient.Planner.Plans[plannerId].Buckets.GetAsync((config) => { }, cancellationToken);
         var tasks = await graphClient.Planner.Plans[plannerId].Tasks.GetAsync((config) => { }, cancellationToken);

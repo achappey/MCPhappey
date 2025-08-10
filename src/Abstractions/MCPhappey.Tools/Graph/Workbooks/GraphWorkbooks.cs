@@ -20,7 +20,6 @@ public static partial class GraphWorkbooks
 {
     [Description("Add a new worksheet to an Excel workbook on OneDrive/SharePoint. Optionally set a name and activate it.")]
     [McpServerTool(
-        Name = "GraphWorkbooks_AddWorksheet",
         Title = "Add worksheet to Excel",
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_AddWorksheet(
@@ -92,7 +91,6 @@ public static partial class GraphWorkbooks
 
     [Description("Add a new row to an Excel table on OneDrive/SharePoint. Use defaultValues dictionary to add default values to the Excel new row form.")]
     [McpServerTool(
-            Name = "GraphWorkbooks_AddRowToTable",
             Title = "Add row to Excel table",
             OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_AddRowToTable(
@@ -168,7 +166,6 @@ public static partial class GraphWorkbooks
 
     [Description("Import a remote CSV (by URL) into a new Excel table on OneDrive/SharePoint. Downloads CSV, fills worksheet, and creates an Excel table.")]
     [McpServerTool(
-        Name = "GraphWorkbooks_CreateTableFromCsvLink",
         Title = "Create Excel table from remote CSV",
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_CreateTableFromCsvLink(

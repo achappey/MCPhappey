@@ -92,6 +92,8 @@ public static class SharePointSearch
     [Description("Search Microsoft 365 content")]
     [McpServerTool(Title = "Search Microsoft 365 content",
         Destructive = false,
+        Idempotent = true,
+        OpenWorld = false,
         ReadOnly = true)]
     public static async Task<CallToolResult> SharePoint_Search(
         [Description("Search query")] string query,

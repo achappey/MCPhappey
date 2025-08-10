@@ -12,7 +12,7 @@ namespace MCPhappey.Simplicate.HRM;
 public static class SimplicateHRM
 {
     [Description("Get Simplicate leaves totals grouped on employee and leave type")]
-    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, Destructive = false, ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, List<LeaveTotals>>?> SimplicateHRM_GetLeaveTotals(
         [Description("Team to get the leave totals for")] string teamName,
         IServiceProvider serviceProvider,

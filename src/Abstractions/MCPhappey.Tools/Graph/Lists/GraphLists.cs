@@ -13,7 +13,7 @@ namespace MCPhappey.Tools.Graph.Lists;
 public static class GraphLists
 {
     [Description("Create a new Microsoft List item")]
-    [McpServerTool(Title = "Create a new Microsoft List item", ReadOnly = false,
+    [McpServerTool(Title = "Create a new Microsoft List item", Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphLists_CreateListItem(
           string siteId,            // ID of the SharePoint site
@@ -90,7 +90,7 @@ public static class GraphLists
     }
 
     [Description("Create a new Microsoft List")]
-    [McpServerTool(Title = "Create a new Microsoft List", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Create a new Microsoft List", Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphLists_CreateList(
             [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
         string siteId,
@@ -137,7 +137,7 @@ public static class GraphLists
     }
 
     [Description("Add a column to a Microsoft List")]
-    [McpServerTool(Title = "Add a column to a Microsoft List", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Add a column to a Microsoft List", Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphLists_AddColumn(
             [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
         string siteId,

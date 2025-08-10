@@ -62,11 +62,6 @@ public static class OpenMemory
     {
         var kernelMemory = serviceProvider.GetRequiredService<IKernelMemory>();
         var appSettings = serviceProvider.GetRequiredService<OAuthSettings>();
-        var userId = serviceProvider.GetUserId();
-        var tagCollections = new TagCollection
-        {
-            { MemoryPurpose, userId }
-        };
 
         await kernelMemory.DeleteDocumentAsync(memoryId, index: appSettings?.ClientId!,
             cancellationToken: cancellationToken);
@@ -152,7 +147,7 @@ public static class OpenMemory
     }
 
     [Description("List personal user memories")]
-    [McpServerTool(ReadOnly = true)]
+    [McpServerTool(Title = "List memories", ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_ListMemories(
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)

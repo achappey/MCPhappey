@@ -49,8 +49,7 @@ public static class PowerBI
 
     [Description("Creates a new Power BI streaming (push) dataset with the specified table schema.")]
     [McpServerTool(Title = "Create a new Power BI streaming dataset",
-        Destructive = false,
-        ReadOnly = false)]
+        Destructive = false)]
     public static async Task<ContentBlock?> PowerBI_CreateStreamingDataset(
     [Description("Dataset name")] string datasetName,
     [Description("Table name")] string tableName,

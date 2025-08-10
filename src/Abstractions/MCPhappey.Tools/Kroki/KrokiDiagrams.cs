@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Net.Mime;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
@@ -12,9 +11,10 @@ namespace MCPhappey.Tools.Kroki;
 public static class KrokiDiagrams
 {
     [Description("Generate a Kroki diagram from code and diagram type")]
-    [McpServerTool(ReadOnly = true,
+    [McpServerTool(Idempotent = true, OpenWorld = false,
+        Destructive = false,
         Title = "Create a diagram with Kroki")]
-    public static async Task<CallToolResult> Kroki_CreateDiagram(
+    public static async Task<CallToolResult?> Kroki_CreateDiagram(
       [Description("Diagram type, e.g. graphviz, mermaid, plantuml, etc.")] string diagramType,
       [Description("The diagram source code (DOT, Mermaid, etc.)")] string diagramCode,
       [Description("Output file type/format, e.g. svg, png, pdf")] string fileType,
@@ -56,26 +56,12 @@ public static class KrokiDiagrams
         var fileBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
         var base64 = Convert.ToBase64String(fileBytes);
 
-        // Detect content type (simple switch, expand as needed)
-        string contentType = fileType.ToLower() switch
-        {
-            "svg" => MediaTypeNames.Image.Svg,
-            "png" => MediaTypeNames.Image.Png,
-            "pdf" => MediaTypeNames.Application.Pdf,
-            _ => MediaTypeNames.Application.Octet
-        };
-
         var result = await requestContext.Server.Upload(serviceProvider,
             requestContext.ToOutputFileName(fileType),
             BinaryData.FromBytes(fileBytes),
             cancellationToken);
 
-        List<ContentBlock> content = [new ImageContentBlock(){
-                MimeType = contentType,
-                Data = base64
-            }];
-
-        return content.ToCallToolResult();
+        return result?.ToCallToolResult();
     }
 
     public static readonly HashSet<string> AllowedTypes = new(StringComparer.OrdinalIgnoreCase)

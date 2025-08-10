@@ -17,7 +17,7 @@ namespace MCPhappey.Agent2Agent;
 
 public static class Agent2AgentContextPlugin
 {
-    [McpServerTool(Name = "Agent2AgentContext_CreateTask", OpenWorld = false)]
+    [McpServerTool(OpenWorld = false)]
     [Description("Create a new Agent2Agent task.")]
     public static async Task<CallToolResult> Agent2AgentContext_CreateTask(
             IServiceProvider serviceProvider,
@@ -84,7 +84,7 @@ public static class Agent2AgentContextPlugin
         return taskItem.ToJsonContentBlock($"a2a://task/{taskItem?.Id}").ToCallToolResult();
     }
 
-    [McpServerTool(Name = "Agent2AgentContext_UpdateContext", ReadOnly = false)]
+    [McpServerTool(OpenWorld = false)]
     [Description("Update an existing A2A context")]
     public static async Task<CallToolResult> Agent2AgentContext_UpdateContext(
         [Description("ID of the context to update")] string contextId,
@@ -131,7 +131,7 @@ public static class Agent2AgentContextPlugin
         public string? Name { get; set; }
     }
 
-    [McpServerTool(Name = "Agent2AgentContext_CreateContext", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     [Description("Create a new A2A context")]
     public static async Task<CallToolResult> Agent2AgentContext_CreateContext(
        [Description("Name of the new context")] string name,

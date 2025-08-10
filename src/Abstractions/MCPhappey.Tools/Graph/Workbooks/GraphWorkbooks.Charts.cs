@@ -12,8 +12,8 @@ namespace MCPhappey.Tools.Graph.Workbooks;
 public static partial class GraphWorkbooks
 {
     [Description("Get an Excel chart as an image from a user's OneDrive or SharePoint via Microsoft Graph.")]
-    [McpServerTool(Name = "GraphUsers_GetWorkbookChart",
-        Title = "Get Excel chart as image",
+    [McpServerTool(Title = "Get Excel chart as image",
+        Destructive = false,
         ReadOnly = true, OpenWorld = false)]
     public static async Task<ImageContentBlock> GraphWorkbooks_GetWorkbookChart(
         string excelFileUrl,
@@ -44,9 +44,8 @@ public static partial class GraphWorkbooks
     }
 
     [Description("Add a chart to an Excel worksheet using Microsoft Graph.")]
-    [McpServerTool(Name = "GraphExcel_AddChart",
-        Title = "Add chart to Excel worksheet",
-        ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Add chart to Excel worksheet",
+        OpenWorld = false)]
     public static async Task<CallToolResult?> GraphExcel_AddChart(
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,

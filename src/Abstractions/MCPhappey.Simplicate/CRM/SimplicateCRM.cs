@@ -28,7 +28,7 @@ public static class SimplicateCRM
         // Simplicate CRM Organization endpoint
         string baseUrl = simplicateOptions.GetApiUrl("/crm/organization");
 
-        var (dtoItem, notAccepted) = await requestContext.Server.TryElicit<SimplicateNewOrganization>(
+        var (dtoItem, notAccepted) = await requestContext.Server.TryElicit(
                 new SimplicateNewOrganization
                 {
                     Name = name,
@@ -66,7 +66,7 @@ public static class SimplicateCRM
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
 
         string baseUrl = simplicateOptions.GetApiUrl("/crm/person");
-        var (dtoItem, notAccepted) = await requestContext.Server.TryElicit<SimplicateNewPerson>(
+        var (dtoItem, notAccepted) = await requestContext.Server.TryElicit(
                new SimplicateNewPerson()
                {
                    FirstName = firstName,

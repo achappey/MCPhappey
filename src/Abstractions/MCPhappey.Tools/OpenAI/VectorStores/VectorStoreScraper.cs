@@ -10,8 +10,9 @@ namespace MCPhappey.Tools.OpenAI.VectorStores;
 
 public class VectorStoreScraper : IContentScraper
 {
+
     public bool SupportsHost(ServerConfig serverConfig, string url)
-        => url.StartsWith("https://api.openai.com/v1/vector_stores", StringComparison.OrdinalIgnoreCase);
+        => url.StartsWith(OpenAIVectorStores.BASE_URL, StringComparison.OrdinalIgnoreCase);
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer,
         IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
@@ -21,7 +22,7 @@ public class VectorStoreScraper : IContentScraper
         var client = openAiClient
                     .GetVectorStoreClient();
 
-        if (url.Equals("https://api.openai.com/v1/vector_stores", StringComparison.OrdinalIgnoreCase))
+        if (url.Equals(OpenAIVectorStores.BASE_URL, StringComparison.OrdinalIgnoreCase))
         {
             var item = await client.GetVectorStoresAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken: cancellationToken);
 
@@ -31,7 +32,7 @@ public class VectorStoreScraper : IContentScraper
         }
         else
 
-        if (url.StartsWith("https://api.openai.com/v1/vector_stores/vs_", StringComparison.OrdinalIgnoreCase)
+        if (url.StartsWith($"{OpenAIVectorStores.BASE_URL}/vs_", StringComparison.OrdinalIgnoreCase)
             && url.EndsWith("/files", StringComparison.OrdinalIgnoreCase))
         {
             string? vectorStoreId = null;

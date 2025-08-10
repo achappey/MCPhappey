@@ -67,7 +67,7 @@ public static partial class GraphTeams
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
     [McpServerTool(Title = "Create message in Teams channel",
-        ReadOnly = false, Destructive = false, OpenWorld = false)]
+        Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateChannelMessage(
         [Description("ID of the Team.")] string teamId,
         [Description("ID of the Channel.")] string channelId,
@@ -120,7 +120,7 @@ public static partial class GraphTeams
 
     [Description("Create a reply to a Teams channel message, mentioning specified users.")]
     [McpServerTool(Title = "Reply in Teams channel with mentions",
-        ReadOnly = false, Destructive = false, OpenWorld = false)]
+        Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_ReplyWithMentions(
         [Description("ID of the Team.")] string teamId,
         [Description("ID of the Channel.")] string channelId,

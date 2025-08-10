@@ -17,6 +17,8 @@ namespace MCPhappey.Tools.OpenAI.VectorStores;
 
 public static class OpenAIVectorStores
 {
+    public const string BASE_URL = "https://api.openai.com/v1/vector_stores";
+
     public static bool IsOwner(this VectorStore store, string? userId)
         => userId != null && store.Metadata.ContainsKey("Owners") && store.Metadata["Owners"].Contains(userId);
 
@@ -64,7 +66,7 @@ public static class OpenAIVectorStores
             newMetadata["Description"] = typed.Description;
 
         // SDK naming differs by version; both are common. Use the one your package exposes.
-        var updateOptions = new OAIV.VectorStoreModificationOptions
+        var updateOptions = new VectorStoreModificationOptions
         {
             Name = typed.Name,
         };
@@ -81,8 +83,9 @@ public static class OpenAIVectorStores
         }
 
         var updated = await client.ModifyVectorStoreAsync(vectorStoreId, updateOptions, cancellationToken);
-        
-        return updated?.ToJsonContentBlock($"https://api.openai.com/v1/vector_stores/{vectorStoreId}").ToCallToolResult();
+
+        return updated?.ToJsonContentBlock($"https://api.openai.com/v1/vector_stores/{vectorStoreId}")
+            .ToCallToolResult();
     }
 
     [Description("Create a vector store at OpenAI")]

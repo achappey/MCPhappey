@@ -75,8 +75,7 @@ public static partial class GoogleAudio
 
     [Description("Generate multi speaker audio from the input prompt")]
     [McpServerTool(Title = "Generate multi speaker audio from input prompt",
-        Destructive = false,
-           ReadOnly = false)]
+        Destructive = false)]
     public static async Task<CallToolResult?> GoogleAudio_CreateMultiSpeakerSpeech(
            [Description("The input prompt to generate the audio")]
            [MaxLength(1024)]

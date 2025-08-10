@@ -11,7 +11,8 @@ namespace MCPhappey.Tools.KernelMemory;
 public static class KernelMemory
 {
     [Description("Search Microsoft Kernel Memory")]
-    [McpServerTool(ReadOnly = true, Destructive = false)]
+    [McpServerTool(Title = "Search Microsoft kernel memory",
+        ReadOnly = true, Destructive = false, Idempotent = true)]
     public static async Task<CallToolResult> KernelMemory_Search(
         [Description("Search query")]
         string query,
@@ -54,7 +55,8 @@ public static class KernelMemory
     }
 
     [Description("Ask Microsoft Kernel Memory")]
-    [McpServerTool(ReadOnly = true, Destructive = false)]
+    [McpServerTool(Title = "Ask Microsoft kernel memory",
+        ReadOnly = true, Destructive = false)]
     public static async Task<CallToolResult> KernelMemory_Ask(
         [Description("Question prompt")]
         string prompt,
@@ -73,6 +75,7 @@ public static class KernelMemory
         {
             return "Not authorized".ToErrorCallToolResponse();
         }
+
         ArgumentNullException.ThrowIfNull(memory);
         var answer = await memory.AskAsync(prompt, index, minRelevance: minRelevance ?? 0,
             cancellationToken: cancellationToken);
@@ -93,7 +96,8 @@ public static class KernelMemory
     }
 
     [Description("List available Microsoft Kernel Memory indexes")]
-    [McpServerTool(ReadOnly = true, Destructive = false)]
+    [McpServerTool(Title = "List kernel memory indexes", Idempotent = true,
+        ReadOnly = true, Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult> KernelMemory_ListIndexes(
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)

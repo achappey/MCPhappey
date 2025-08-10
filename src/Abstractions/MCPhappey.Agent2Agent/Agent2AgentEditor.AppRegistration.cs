@@ -14,7 +14,7 @@ namespace MCPhappey.Agent2Agent;
 
 public static partial class Agent2AgentEditor
 {
-    [McpServerTool(Name = "Agent2AgentEditor_SetAppRegistration")]
+    [McpServerTool(OpenWorld = false)]
     [Description("Sets the app registrations for an Agent2Agent agent.")]
     public static async Task<CallToolResult> Agent2AgentEditor_SetAppRegistration(
             IServiceProvider serviceProvider,
