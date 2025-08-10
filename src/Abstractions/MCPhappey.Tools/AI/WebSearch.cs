@@ -10,11 +10,15 @@ namespace MCPhappey.Tools.AI;
 
 public static class WebSearch
 {
-    private static readonly string[] ModelNames = ["sonar-pro", "gpt-4o-search-preview", "gemini-2.5-pro-preview-06-05"];
+    //"gpt-4o-search-preview"
+    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash"];
+    private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro"];
 
     [Description("Web search using multiple AI models in parallel")]
-    [McpServerTool(Name = "WebSearch_ExecuteWebSearch", Title = "Web search (multi-model)", ReadOnly = true)]
-    public static async Task<IEnumerable<ContentBlock>> WebSearch_ExecuteWebSearch(
+    [McpServerTool(Title = "Web search (multi-model)",
+        Destructive = false,
+        ReadOnly = true)]
+    public static async Task<IEnumerable<ContentBlock>> WebSearch_Execute(
        [Description("Search query")] string query,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
@@ -43,6 +47,27 @@ public static class WebSearch
                 "ai-websearch-answer",
                 promptArgs,
                 modelName,
+                metadata: new Dictionary<string, object>()
+                {
+                    {"perplexity", new {
+                        search_mode = "web"
+                     } },
+                    {"google", new {
+                        google_search = new { },
+                         thinkingConfig = new {
+                            thinkingBudget = -1
+                        }
+                     } },
+                    {"openai", new {
+                        web_search_preview = new {
+                            search_context_size = "medium"
+                         },
+                         reasoning = new {
+                            effort = "low"
+                         }
+                     } },
+
+                },
                 cancellationToken: cancellationToken
             );
 
@@ -65,10 +90,10 @@ public static class WebSearch
     }
 
     [Description("Academic web search using multiple AI models in parallel")]
-    [McpServerTool(Name = "WebSearch_ExecuteAcademicWebSearch",
-        Title = "Academic web search (multi-model)",
+    [McpServerTool(Title = "Academic web search (multi-model)",
+        Destructive = false,
         ReadOnly = true)]
-    public static async Task<IEnumerable<ContentBlock>> WebSearch_ExecuteAcademicWebSearch(
+    public static async Task<IEnumerable<ContentBlock>> WebSearch_ExecuteAcademic(
       [Description("Search query")] string query,
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
@@ -87,7 +112,7 @@ public static class WebSearch
         var markdown = $"{string.Join(", ", ModelNames)}\n{query}";
         await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
-        var tasks = ModelNames.Select(async modelName =>
+        var tasks = AcademicModelNames.Select(async modelName =>
         {
             var markdown = $"{modelName}\n{query}";
             var result = await samplingService.GetPromptSample(
@@ -98,7 +123,24 @@ public static class WebSearch
                 modelName,
                 metadata: new Dictionary<string, object>()
                 {
-                    {"search_mode", "academic"}
+                    {"perplexity", new {
+                        search_mode = "academic"
+                     } },
+                    {"google", new {
+                        google_search = new { },
+                        thinkingConfig = new {
+                            thinkingBudget = -1
+                        }
+                     } },
+                    {"openai", new {
+                        web_search_preview = new {
+                            search_context_size = "medium"
+                         },
+                         reasoning = new {
+                            effort = "medium"
+                         }
+                     } }
+
                 },
                 cancellationToken: cancellationToken
             );

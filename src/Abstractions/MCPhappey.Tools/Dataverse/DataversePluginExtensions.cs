@@ -338,7 +338,7 @@ public static class DataversePluginExtensions
         var optsNode = doc.RootElement
                           .GetProperty("OptionSet")
                           .GetProperty("Options");
-        return optsNode.Deserialize<Option[]>() ?? Array.Empty<Option>();
+        return optsNode.Deserialize<Option[]>() ?? [];
     }
 
     private static async Task<(string idField, string nameField, string[] ids, string[] names)>

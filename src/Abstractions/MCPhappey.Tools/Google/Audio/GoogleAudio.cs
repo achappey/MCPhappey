@@ -13,8 +13,8 @@ namespace MCPhappey.Tools.Google.Audio;
 public static partial class GoogleAudio
 {
     [Description("Generate audio from the input prompt")]
-    [McpServerTool(Name = "GoogleAudio_CreateSpeech",
-        Title = "Generate speech from input prompt",
+    [McpServerTool(Title = "Generate speech from input prompt",
+        Destructive = false,
         ReadOnly = true)]
     public static async Task<CallToolResult> GoogleAudio_CreateSpeech(
         [Description("The input prompt to generate the audio")]
@@ -74,9 +74,9 @@ public static partial class GoogleAudio
     }
 
     [Description("Generate multi speaker audio from the input prompt")]
-    [McpServerTool(Name = "GoogleAudio_CreateMultiSpeakerSpeech",
-           Title = "Generate multi speaker audio from input prompt",
-           ReadOnly = true)]
+    [McpServerTool(Title = "Generate multi speaker audio from input prompt",
+        Destructive = false,
+           ReadOnly = false)]
     public static async Task<CallToolResult?> GoogleAudio_CreateMultiSpeakerSpeech(
            [Description("The input prompt to generate the audio")]
            [MaxLength(1024)]

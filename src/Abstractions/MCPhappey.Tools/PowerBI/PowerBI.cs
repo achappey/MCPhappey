@@ -10,8 +10,8 @@ namespace MCPhappey.Tools.PowerBI;
 public static class PowerBI
 {
     [Description("Executes a DAX query on a Power BI dataset via the ExecuteQueries endpoint.")]
-    [McpServerTool(Name = "PowerBI_ExecuteDaxQuery",
-        Title = "Execute a DAX query on a Power BI dataset",
+    [McpServerTool(Title = "Execute a DAX query on a Power BI dataset",
+        Destructive = false,
         ReadOnly = true)]
     public static async Task<ContentBlock?> PowerBI_ExecuteDaxQuery(
         [Description("PowerBI datasetId")] string datasetId,
@@ -48,8 +48,8 @@ public static class PowerBI
     }
 
     [Description("Creates a new Power BI streaming (push) dataset with the specified table schema.")]
-    [McpServerTool(Name = "PowerBI_CreateStreamingDataset",
-        Title = "Create a new Power BI streaming dataset",
+    [McpServerTool(Title = "Create a new Power BI streaming dataset",
+        Destructive = false,
         ReadOnly = false)]
     public static async Task<ContentBlock?> PowerBI_CreateStreamingDataset(
     [Description("Dataset name")] string datasetName,
@@ -89,7 +89,6 @@ public static class PowerBI
 
         var response = await client.Datasets.PostDatasetAsync(createRequest, cancellationToken: cancellationToken);
 
-        //return response.ToJsonContentBlock($"https://api.powerbi.com/v1.0/myorg/datasets/{response.Id}");
         return new EmbeddedResourceBlock()
         {
             Resource = new TextResourceContents()
@@ -102,9 +101,8 @@ public static class PowerBI
     }
 
     [Description("Adds rows to a table in a Power BI streaming (push) dataset, with automatic type detection and mapping.")]
-    [McpServerTool(Name = "PowerBI_AddRowsToDatasetTable",
-        Title = "Add rows to a table in a Power BI streaming dataset",
-        ReadOnly = false)]
+    [McpServerTool(Title = "Add rows to a table in a Power BI streaming dataset",
+        Destructive = false)]
     public static async Task<ContentBlock?> PowerBI_AddRowsToDatasetTable(
         [Description("PowerBI dataset ID")] string datasetId,
         [Description("Table name")] string tableName,

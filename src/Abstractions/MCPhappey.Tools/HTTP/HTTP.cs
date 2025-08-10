@@ -10,7 +10,8 @@ namespace MCPhappey.Tools.HTTP;
 public static class HTTPService
 {
     [Description("Fetches a public accessible url")]
-    [McpServerTool(Name = "Http_FetchUrl", Title = "Fetch public URL",
+    [McpServerTool(Title = "Fetch public URL",
+        Destructive = false,
         ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> Http_FetchUrl(
         [Description("The url to fetch.")]

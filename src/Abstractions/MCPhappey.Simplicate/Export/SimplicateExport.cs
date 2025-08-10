@@ -14,8 +14,8 @@ namespace MCPhappey.Simplicate.Export;
 public static class SimplicateExport
 {
     [Description("Downloads data from Simplicate for the specified resource or endpoint, and generates a downloadable CSV export. Supports filtering and full pagination to include all matching records. The resulting CSV file contains all main fields and nested object values for consistent reporting.")]
-    [McpServerTool(Name = "Simplicate_CreateCSVExport", Title = "Create a CSV export from Simplicate data",
-        ReadOnly = false, Idempotent = false)]
+    [McpServerTool(Title = "Create a CSV export from Simplicate data", OpenWorld = false,
+        Idempotent = false)]
     public static async Task<CallToolResult?> Simplicate_CreateCSVExport(
         [Description("Server relative url of the Simplicate API enpoint with filters (eg /projects/project or /crm/organizations)")]
         string simplicateUrl,

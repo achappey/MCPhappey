@@ -14,7 +14,7 @@ public static class SimplicateHours
 {
 
     [Description("Create a new hour registration in Simplicate")]
-    [McpServerTool(Name = "SimplicateHours_CreateHourRegistration")]
+    [McpServerTool(OpenWorld = false)]
     public static async Task<CallToolResult?> SimplicateHours_CreateHourRegistration(
      [Description("The number of hours.")] double hours,
      [Description("The id of the employee.")] string employeeId,
@@ -49,7 +49,7 @@ public static class SimplicateHours
         }
 
         // Simplicate Hours endpoint
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hours/hours";
+        string baseUrl = simplicateOptions.GetApiUrl("/hours/hours");
 
         var dto = new SimplicateNewHour
         {
@@ -75,7 +75,7 @@ public static class SimplicateHours
 
 
     [Description("Get total registered hours grouped by employee, optionally filtered by date range (max 65 days), project, or employee.")]
-    [McpServerTool(Name = "SimplicateHours_GetHourTotalsByEmployee", ReadOnly = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SimplicateHours_GetHourTotalsByEmployee(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -93,7 +93,7 @@ public static class SimplicateHours
 );
 
     [Description("Get total registered hours grouped by hour type, optionally filtered by date range (max 65 days), project, or employee.")]
-    [McpServerTool(Name = "SimplicateHours_GetHourTotalsByHourType", ReadOnly = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SimplicateHours_GetHourTotalsByHourType(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -111,7 +111,7 @@ public static class SimplicateHours
     );
 
     [Description("Get total registered hours grouped by project, optionally filtered by date range (max 65 days), or approval status.")]
-    [McpServerTool(Name = "SimplicateHours_GetHourTotalsByProject", ReadOnly = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SimplicateHours_GetHourTotalsByProject(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -159,7 +159,7 @@ public static class SimplicateHours
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hours/hours";
+        string baseUrl = simplicateOptions.GetApiUrl("/hours/hours");
         var filters = new List<string>();
 
         if (!string.IsNullOrWhiteSpace(fromDate))

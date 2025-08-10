@@ -13,7 +13,7 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Adds a resource template to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddResourceTemplate",
+    [McpServerTool(Destructive = false,
         Title = "Add a resource template to an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddResourceTemplate(
@@ -74,7 +74,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Updates a resource template of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdateResourceTemplate",
+    [McpServerTool(Destructive = false,
         Title = "Update a resource template of an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResourceTemplate(
@@ -133,8 +133,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Deletes a resource template from a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeleteResourceTemplate",
-        Title = "Delete a resource template from an MCP-server",
+    [McpServerTool(Title = "Delete a resource template from an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteResourceTemplate(
         [Description("Name of the server")] string serverName,

@@ -11,7 +11,7 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static partial class GraphPlanner
 {
     [Description("Create a new Microsoft Planner task")]
-    [McpServerTool(Name = "GraphPlanner_CreateTask", Title = "Create a new Microsoft Planner task", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Create a new Microsoft Planner task", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphPlanner_CreateTask(
             [Description("Planner id")]
             string plannerId,
@@ -58,7 +58,7 @@ public static partial class GraphPlanner
 
 
     [Description("Create a new Planner bucket in a plan")]
-    [McpServerTool(Name = "GraphPlanner_CreateBucket", Title = "Create a new Planner bucket in a plan", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Create a new Planner bucket in a plan", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphPlanner_CreateBucket(
         [Description("Planner id (plan to add bucket to)")]
         string plannerId,
@@ -95,7 +95,7 @@ public static partial class GraphPlanner
     }
 
     [Description("Create a new Planner plan")]
-    [McpServerTool(Name = "GraphPlanner_CreatePlan", Title = "Create a new Planner plan", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Create a new Planner plan", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphPlanner_CreatePlan(
             [Description("Group id (Microsoft 365 group that will own the plan)")]
         string groupId,
@@ -126,7 +126,8 @@ public static partial class GraphPlanner
             Owner = groupId
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{result?.Id}").ToCallToolResult();
+        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{result?.Id}")
+              .ToCallToolResult();
     }
 
 }

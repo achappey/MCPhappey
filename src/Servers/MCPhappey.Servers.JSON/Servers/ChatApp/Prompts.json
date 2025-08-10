@@ -36,7 +36,7 @@
       }
     },
     {
-      "prompt": "Current date and time: {currentDateTime}\nYou are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words. Vary the wording, tone, and mood—be upbeat, curious, or playful.\nOutput the message in the language specified below.\nMake sure the message is suitable for a business or professional context (work-appropriate).\nOnly output the welcome message itself, no quotes or extra text.\nLanguage: {language}",
+      "prompt": "Current date and time: {currentDateTime}\nYou are an AI chatbot. Write a very short, friendly, and slightly creative welcome message suitable for a chat interface. Keep it between 3 and 7 words.\nVary the wording, tone, and mood—be warm, curious, slightly surprising, or subtly witty. Avoid clichés.\nOutput the message in the language specified below.\nMake sure the message is suitable for a professional or business context—tone should be appropriate for workplace communication. In Dutch, avoid sounding overly formal.\nOnly output the welcome message itself, no quotes or extra text.\nLanguage: {language}",
       "template": {
         "name": "welcome-message",
         "title": "Welcome message",

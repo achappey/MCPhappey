@@ -48,7 +48,8 @@ public static class NotificationExtensions
     public static async Task SendMessageNotificationAsync(
       this IMcpServer requestContext,
       string? message,
-      LoggingLevel loggingLevel = LoggingLevel.Info)
+      LoggingLevel loggingLevel = LoggingLevel.Info,
+      CancellationToken cancellationToken = default)
     {
         if (loggingLevel.ShouldLog(requestContext.LoggingLevel))
         {

@@ -13,10 +13,10 @@ namespace MCPhappey.Tools.AI;
 public static class ChatApp
 {
     [Description("Generate a conversation name from initial user and assistant messages")]
-    [McpServerTool(Name = "ChatApp_ExecuteGenerateConversationName",
-        Title = "Generate conversation name",
+    [McpServerTool(Title = "Generate conversation name",
+         Destructive = false,
          ReadOnly = true)]
-    public static async Task<ContentBlock> ChatApp_ExecuteGenerateConversationName(
+    public static async Task<ContentBlock> ChatApp_GenerateConversationName(
         [Description("User message")] string userMessage,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -52,8 +52,8 @@ public static class ChatApp
     }
 
     [Description("Get MCP server usage statistics")]
-    [McpServerTool(Name = "ChatApp_GetMcpServerStats",
-        Title = "Get server usage statistics",
+    [McpServerTool(Title = "Get server usage statistics",
+         Destructive = false,
          ReadOnly = true)]
     public static async Task<CallToolResult> ChatApp_GetMcpServerStats(
         IServiceProvider serviceProvider,
@@ -116,10 +116,10 @@ public static class ChatApp
     }
 
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]
-    [McpServerTool(Name = "ChatApp_ExecuteGenerateWelcomeMessage",
-        Title = "Generate welcome message",
+    [McpServerTool(Title = "Generate welcome message",
+        Destructive = false,
         ReadOnly = true)]
-    public static async Task<ContentBlock> ChatApp_ExecuteGenerateWelcomeMessage(
+    public static async Task<ContentBlock> ChatApp_GenerateWelcomeMessage(
         [Description("Language of the requested welcome message")] string language,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -134,7 +134,13 @@ public static class ChatApp
 
         // Optional: Logging/notification
         var markdown = $"Generating welcome message";
+
         await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
+
+        var options = new
+        {
+            reasoning = new { effort = "minimal" },
+        };
 
         var result = await samplingService.GetPromptSample(
             serviceProvider,
@@ -145,14 +151,15 @@ public static class ChatApp
                 { "currentDateTime", JsonSerializer.SerializeToElement(currentDateTime ?? DateTime.UtcNow.ToString()) }
             },
             modelHint: modelName,
+            metadata: new Dictionary<string, object>() { { "openai", options } },
             cancellationToken: cancellationToken);
 
         return result.Content;
     }
 
     [Description("Explain a tool call to an end user in simple words")]
-    [McpServerTool(Name = "ChatApp_ExplainToolCall",
-        Title = "Explain tool call in simple words",
+    [McpServerTool(Title = "Explain tool call in simple words",
+        Destructive = false,
         ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExplainToolCall(
        [Description("Stringified json of all toolcall data")] string toolcall,

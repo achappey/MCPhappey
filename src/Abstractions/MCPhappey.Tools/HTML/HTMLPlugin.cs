@@ -35,8 +35,8 @@ public static partial class HTMLPlugin
     }
 
     [Description("Reads an HTML file from OneDrive and returns all unique argument placeholders (like {name}) found in the file.")]
-    [McpServerTool(Name = "HTMLPlugin_ListTemplateArguments",
-        Title = "List template arguments in an HTML file",
+    [McpServerTool(Title = "List template arguments in an HTML file",
+        Destructive = false,
         OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult?> HTMLPlugin_ListTemplateArguments(
       [Description("Url to the source HTML file")] string sourceUrl,
@@ -51,8 +51,8 @@ public static partial class HTMLPlugin
     }
 
     [Description("Reads an HTML file from OneDrive, replaces {argument} tags with provided values, and uploads the result as a new HTML file.")]
-    [McpServerTool(Name = "HTMLPlugin_FillTemplate",
-        Title = "Fill an HTML template and upload the result",
+    [McpServerTool(Title = "Fill an HTML template and upload the result",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult?> HTMLPlugin_FillTemplate(
         [Description("Url to the source HTML file")] string sourceUrl,

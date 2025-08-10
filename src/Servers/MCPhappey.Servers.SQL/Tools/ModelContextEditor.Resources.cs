@@ -14,7 +14,8 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Adds a resource to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddResource",
+    [McpServerTool(
+        Destructive = false,
         Title = "Add a resource to an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddResource(
@@ -79,7 +80,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Updates a resource of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdateResource",
+    [McpServerTool(Destructive = false,
         Title = "Update a resource of an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResource(
@@ -137,8 +138,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Deletes a resource from a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeleteResource",
-        Title = "Delete a resource from an MCP-server",
+    [McpServerTool(Title = "Delete a resource from an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteResource(
         [Description("Name of the server")] string serverName,

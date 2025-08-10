@@ -13,7 +13,7 @@ namespace MCPhappey.Simplicate.CRM;
 public static class SimplicateCRM
 {
     [Description("Create a new organization in Simplicate CRM")]
-    [McpServerTool(Name = "SimplicateCRM_CreateOrganization")]
+    [McpServerTool(OpenWorld = false)]
     public static async Task<CallToolResult?> SimplicateCRM_CreateOrganization(
         [Description("The full name of the organization.")] string name,
         IServiceProvider serviceProvider,
@@ -26,7 +26,8 @@ public static class SimplicateCRM
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
 
         // Simplicate CRM Organization endpoint
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/organization";
+        string baseUrl = simplicateOptions.GetApiUrl("/crm/organization");
+
         var (dtoItem, notAccepted) = await requestContext.Server.TryElicit<SimplicateNewOrganization>(
                 new SimplicateNewOrganization
                 {
@@ -50,7 +51,7 @@ public static class SimplicateCRM
     }
 
     [Description("Create a new person in Simplicate CRM")]
-    [McpServerTool(Name = "SimplicateCRM_CreatePerson")]
+    [McpServerTool(OpenWorld = false)]
     public static async Task<CallToolResult?> SimplicateCRM_CreatePerson(
         [Description("The person's first name.")] string firstName,
         [Description("The person's family name or surname.")] string familyName,
@@ -64,7 +65,7 @@ public static class SimplicateCRM
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/crm/person";
+        string baseUrl = simplicateOptions.GetApiUrl("/crm/person");
         var (dtoItem, notAccepted) = await requestContext.Server.TryElicit<SimplicateNewPerson>(
                new SimplicateNewPerson()
                {

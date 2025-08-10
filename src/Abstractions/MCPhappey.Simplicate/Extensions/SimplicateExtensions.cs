@@ -2,6 +2,7 @@ using System.Text.Json;
 using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
+using MCPhappey.Simplicate.Options;
 using Microsoft.AspNetCore.WebUtilities;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -11,6 +12,13 @@ namespace MCPhappey.Simplicate.Extensions;
 
 public static class SimplicateExtensions
 {
+    private static readonly JsonSerializerOptions JsonSerializerOptions = new()
+    { PropertyNameCaseInsensitive = true };
+
+    public static string GetApiUrl(
+           this SimplicateOptions options,
+           string endpoint)
+           => $"https://{options.Organization}.simplicate.app/api/v2{endpoint}";
 
     public static async Task<SimplicateData<JsonElement>?> GetSimplicatePageAsync(
         this DownloadService downloadService,
@@ -24,8 +32,7 @@ public static class SimplicateExtensions
         if (string.IsNullOrWhiteSpace(stringContent))
             return null;
 
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        return JsonSerializer.Deserialize<SimplicateData<JsonElement>>(stringContent, options);
+        return JsonSerializer.Deserialize<SimplicateData<JsonElement>>(stringContent, JsonSerializerOptions);
     }
 
     public static async Task<List<JsonElement>> GetAllSimplicatePagesAsync(
@@ -72,7 +79,7 @@ public static class SimplicateExtensions
 
             var markdown =
                 $"<details><summary><a href=\"{url}\" target=\"blank\">{new Uri(url).Host}</a></summary>\n\n```\n{JsonSerializer.Serialize(result)}\n```\n</details>";
-                
+
             await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
             results.AddRange(result.Data);

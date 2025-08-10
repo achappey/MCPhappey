@@ -11,9 +11,10 @@ public static class CountryService
     static readonly string SOURCE_URL = "https://github.com/egbakou/RESTCountries.NET";
 
     [Description("Search country codes and names")]
-    [McpServerTool(Name = "GitHubRestCountries_SearchCountryCodes",
-        Title = "Search country codes and names",
-        ReadOnly = true, OpenWorld = false)]
+    [McpServerTool(Title = "Search country codes and names",
+        Destructive = false,
+        ReadOnly = true,
+        OpenWorld = false)]
     public static async Task<EmbeddedResourceBlock> GitHubRestCountries_SearchCountryCodes(
         [Description("Search query by name (contains)")] string name)
     {
@@ -27,18 +28,21 @@ public static class CountryService
     }
 
     [Description("Get all country details by the alpha-2 code")]
-    [McpServerTool(Name = "GitHubRestCountries_GetCountryDetail",
-        Title = "Get all country details by the alpha-2 code",
-        ReadOnly = true, OpenWorld = false, UseStructuredContent = true)]
+    [McpServerTool(Title = "Get all country details by the alpha-2 code",
+        Destructive = false,
+        ReadOnly = true,
+        OpenWorld = false,
+        UseStructuredContent = true)]
     public static async Task<RESTCountries.NET.Models.Country?> GitHubRestCountries_GetCountryDetail(
         [Description("The alpha-2 code of the country")] string cca2) =>
             await Task.FromResult(RestCountriesService
                 .GetCountryByCode(cca2.ToString()!));
 
     [Description("Get countries by region")]
-    [McpServerTool(Name = "GitHubRestCountries_GetCountriesByRegion",
-        Title = "Get countries by region",
-        ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(Title = "Get countries by region",
+        Destructive = false,
+        ReadOnly = true,
+        UseStructuredContent = true, OpenWorld = false)]
     public static async Task<IEnumerable<RESTCountries.NET.Models.Country>> GitHubRestCountries_GetCountriesByRegion(
         [Description("The region to filter on (e.g. Europe, Asia, Africa).")] string region) =>
             await Task.FromResult(RestCountriesService

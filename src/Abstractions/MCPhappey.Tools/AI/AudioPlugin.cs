@@ -12,9 +12,9 @@ namespace MCPhappey.Tools.AI;
 public static partial class AudioPlugin
 {
     [Description("Concatenate multiple base64-encoded MP3 audio files into one single MP3 file.")]
-    [McpServerTool(
-            Name = "AudioPlugin_ConcatMp3Files",
-            Title = "Concatenate MP3 files")]
+    [McpServerTool(Title = "Concatenate MP3 files",
+     Destructive = false,
+     OpenWorld = false)]
     public static async Task<CallToolResult?> AudioPlugin_ConcatMp3Files(
         IServiceProvider serviceProvider,
         [Description("List of MP3 file urls to concatenate, in order.")]
@@ -61,7 +61,5 @@ public static partial class AudioPlugin
             return ex.Message.ToErrorCallToolResponse();
         }
     }
-
-
 }
 

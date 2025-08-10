@@ -12,7 +12,7 @@ public static class GoogleVideo
 {
     [Description("Prompt a YouTube video using Google Gemini AI.")]
     [McpServerTool(
-        Name = "GoogleVideo_PromptYouTube",
+        Destructive = false,
         Title = "Prompt YouTube video with Gemini",
         ReadOnly = true)]
     public static async Task<CallToolResult?> GoogleVideo_PromptYouTube(

@@ -18,8 +18,8 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Clone a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_CloneServer",
-        Title = "Clone an MCP-server",
+    [McpServerTool(Title = "Clone an MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_CloneServer(
      [Description("Name of the server to clone")]
@@ -231,8 +231,8 @@ public static partial class ModelContextEditor
     }
 
     [Description("Create a new MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_CreateServer",
-        Title = "Create a new MCP-server",
+    [McpServerTool(Title = "Create a new MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_CreateServer(
         [Description("Name of the new server")]
@@ -288,8 +288,8 @@ public static partial class ModelContextEditor
     }
 
     [Description("Updates a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdateServer",
-        Title = "Update an MCP-server",
+    [McpServerTool(Title = "Update an MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateServer(
       [Description("Name of the server")] string serverName,
@@ -338,8 +338,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Deletes a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeleteServer",
-        Title = "Delete an MCP-server",
+    [McpServerTool(Title = "Delete an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeleteServer(
         [Description("Name of the server")] string serverName,
@@ -362,8 +361,8 @@ public static partial class ModelContextEditor
     }
 
     [Description("Adds an plugin to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddPlugin",
-        Title = "Add an plugin to a MCP-server",
+    [McpServerTool(Title = "Add an plugin to a MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddPlugin(
        [Description("Name of the server")] string serverName,
@@ -401,8 +400,8 @@ public static partial class ModelContextEditor
     }
 
     [Description("Removes a plugin from a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_RemovePlugin",
-        Title = "Remove a plugin from an MCP-server",
+    [McpServerTool(Title = "Remove a plugin from an MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_RemovePlugin(
        [Description("Name of the server")] string serverName,

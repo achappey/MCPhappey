@@ -12,7 +12,7 @@ namespace MCPhappey.Simplicate.HRM;
 public static class SimplicateHRM
 {
     [Description("Get Simplicate leaves totals grouped on employee and leave type")]
-    [McpServerTool(Name = "SimplicateHRM_GetLeaveTotals", ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, List<LeaveTotals>>?> SimplicateHRM_GetLeaveTotals(
         [Description("Team to get the leave totals for")] string teamName,
         IServiceProvider serviceProvider,
@@ -23,7 +23,8 @@ public static class SimplicateHRM
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string employeeUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/employee";
+        string employeeUrl = simplicateOptions.GetApiUrl("/hrm/employee");
+
         string employeeSelect = "id";
         var employeeFilters = new List<string>
         {
@@ -46,10 +47,7 @@ public static class SimplicateHRM
               );
 
         var selectedId = employees.OfType<SimplicateIdItem>().Select(a => a.Id);
-
-
-
-        string timetableUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/timetable";
+        string timetableUrl = simplicateOptions.GetApiUrl("/hrm/timetable");
         string timetableSelect = "even_week,odd_week,employee.,end_date";
         var timetableFilters = new List<string>
         {
@@ -68,7 +66,7 @@ public static class SimplicateHRM
                   cancellationToken: cancellationToken
               );
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/leave";
+        string baseUrl = simplicateOptions.GetApiUrl("/hrm/leave");
         string select = "employee.,hours,leavetype.,start_date";
         var filters = new List<string>
         {

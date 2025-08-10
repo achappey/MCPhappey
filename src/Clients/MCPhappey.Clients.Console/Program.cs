@@ -45,7 +45,7 @@ McpClientOptions clientOptions = new()
 
                 IEnumerable<OpenAI.Chat.ChatMessage> messages =
              Enumerable.Select<ModelContextProtocol.Protocol.SamplingMessage, OpenAI.Chat.ChatMessage>(
-                 textItems ?? Enumerable.Empty<ModelContextProtocol.Protocol.SamplingMessage>(),
+                 textItems ?? [],
                  a => a.Role == ModelContextProtocol.Protocol.Role.Assistant
                      ? OpenAI.Chat.ChatMessage.CreateAssistantMessage(a.Content.Text)
                      : OpenAI.Chat.ChatMessage.CreateUserMessage(a.Content.Text)

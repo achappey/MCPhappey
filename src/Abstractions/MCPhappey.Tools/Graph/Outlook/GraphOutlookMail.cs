@@ -13,7 +13,7 @@ namespace MCPhappey.Tools.Graph.Outlook;
 public static class GraphOutlookMail
 {
     [Description("Set or update the follow-up flag for a mail message in Outlook.")]
-    [McpServerTool(Name = "GraphOutlookMail_FlagMail", Title = "Flag mail for follow-up in Outlook", OpenWorld = true)]
+    [McpServerTool(Title = "Flag mail for follow-up in Outlook", OpenWorld = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_FlagMail(
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,

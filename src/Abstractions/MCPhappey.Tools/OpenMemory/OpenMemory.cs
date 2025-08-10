@@ -16,7 +16,7 @@ public static class OpenMemory
     public const string MemoryPurpose = "Memory";
 
     [Description("Save a personal user memory")]
-    [McpServerTool(Name = "OpenMemory_SaveMemory", Title = "Save memory",
+    [McpServerTool(Title = "Save memory",
         OpenWorld = false)]
     public static async Task<CallToolResult> OpenMemory_SaveMemory(
         [Description("Memory to save")]
@@ -52,7 +52,7 @@ public static class OpenMemory
     }
 
     [Description("Delete a personal user memory")]
-    [McpServerTool(Name = "OpenMemory_DeleteMemory", Title = "Delete memory",
+    [McpServerTool(Title = "Delete memory",
         OpenWorld = false)]
     public static async Task<CallToolResult> OpenMemory_DeleteMemory(
         [Description("Id of the memory")]
@@ -75,7 +75,7 @@ public static class OpenMemory
     }
 
     [Description("Ask a question to personal user memory")]
-    [McpServerTool(Name = "OpenMemory_AskMemory", Title = "Ask memory",
+    [McpServerTool(Title = "Ask memory",
         ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_AskMemory(
         [Description("Question prompt")]
@@ -114,8 +114,7 @@ public static class OpenMemory
     }
 
     [Description("Search personal user memories with a prompt")]
-    [McpServerTool(Name = "OpenMemory_SearchMemories",
-        Title = "Search memories",
+    [McpServerTool(Title = "Search memories",
         ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_SearchMemories(
       [Description("Question prompt")]
@@ -153,7 +152,7 @@ public static class OpenMemory
     }
 
     [Description("List personal user memories")]
-    [McpServerTool(Name = "OpenMemory_ListMemories", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_ListMemories(
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)
@@ -181,7 +180,6 @@ public static class OpenMemory
         .ToJsonContentBlock(appSettings.ClientId)
         .ToCallToolResult();
     }
-
 
     [Description("Please fill in the new memory details.")]
     public class OpenMemoryNewMemory

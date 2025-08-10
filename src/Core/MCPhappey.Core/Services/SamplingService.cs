@@ -23,7 +23,7 @@ public class SamplingService(PromptService promptService)
 
         return await mcpServer.SampleAsync(new CreateMessageRequestParams()
         {
-            Messages = [.. prompt.Messages.Select(a => new SamplingMessage()
+            Messages = [.. prompt.Messages.Select(a =>  new SamplingMessage()
             {
                 Role = a.Role,
                 Content = a.Content
@@ -43,12 +43,16 @@ public class SamplingService(PromptService promptService)
         IReadOnlyDictionary<string, JsonElement> arguments,
         string? modelHint = null,
         float? temperature = null,
-         string? systemPrompt = null,
+        string? systemPrompt = null,
         ContextInclusion includeContext = ContextInclusion.None,
+        Dictionary<string, object>? metadata = null,
         CancellationToken cancellationToken = default)
     {
         var promptSample = await GetPromptSample(serviceProvider, mcpServer, name, arguments, modelHint,
-            temperature, systemPrompt, includeContext);
+            temperature, systemPrompt,
+            includeContext,
+            metadata: metadata,
+            cancellationToken: cancellationToken);
 
         try
         {
@@ -68,12 +72,7 @@ public class SamplingService(PromptService promptService)
                 Role = a.Role,
                 Content = a.Content
             }),
-            new SamplingMessage() {
-                    Role = Role .User,
-                    Content = new TextContentBlock() {
-                        Text = $"Your last answer failed to JsonSerializer.Deserialize. Error message is included. Please try again.\n\n{exception.Message}"
-                    }
-            }],
+            $"Your last answer failed to JsonSerializer.Deserialize. Error message is included. Please try again.\n\n{exception.Message}".ToUserSamplingMessage()],
                 IncludeContext = includeContext,
                 MaxTokens = 4096,
                 SystemPrompt = systemPrompt,

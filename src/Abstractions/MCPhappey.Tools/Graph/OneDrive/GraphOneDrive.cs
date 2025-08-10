@@ -13,7 +13,7 @@ namespace MCPhappey.Tools.Graph.OneDrive;
 public static class GraphOneDrive
 {
     [Description("Uploads a file to the specified OneDrive location.")]
-    [McpServerTool(Name = "GraphOneDrive_UploadFile", Title = "Upload file to OneDrive", OpenWorld = false)]
+    [McpServerTool(Title = "Upload file to OneDrive", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphOneDrive_UploadFile(
         [Description("The OneDrive Drive ID.")] string driveId,
         [Description("The file name (e.g. foo.txt).")] string filename,
@@ -45,7 +45,7 @@ public static class GraphOneDrive
     }
 
     [Description("Create a folder in the specified OneDrive or SharePoint document library.")]
-    [McpServerTool(Name = "GraphOneDrive_CreateFolder", OpenWorld = false)]
+    [McpServerTool(OpenWorld = false)]
     public static async Task<CallToolResult?> GraphOneDrive_CreateFolder(
             [Description("The OneDrive or SharePoint Drive ID.")] string driveId,
             [Description("The name of the new folder.")] string name,

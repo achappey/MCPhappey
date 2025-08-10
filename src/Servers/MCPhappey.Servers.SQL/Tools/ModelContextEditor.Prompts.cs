@@ -15,8 +15,8 @@ public static partial class ModelContextEditor
 {
 
     [Description("Adds a prompt to a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_AddPrompt",
-        Title = "Add a prompt to an MCP-server",
+    [McpServerTool(Title = "Add a prompt to an MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddPrompt(
         [Description("Name of the server")]
@@ -62,8 +62,8 @@ public static partial class ModelContextEditor
     }
 
     [Description("Updates a resource of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdatePrompt",
-        Title = "Update a prompt of an MCP-server",
+    [McpServerTool(Title = "Update a prompt of an MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdatePrompt(
         [Description("Name of the server")] string serverName,
@@ -133,8 +133,8 @@ public static partial class ModelContextEditor
     }
 
     [Description("Updates a prompt argument of a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_UpdatePromptArgument",
-        Title = "Update a prompt argument of an MCP-server",
+    [McpServerTool(Title = "Update a prompt argument of an MCP-server",
+        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdatePromptArgument(
        [Description("Name of the server")] string serverName,
@@ -170,8 +170,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Deletes a prompt from a MCP-server")]
-    [McpServerTool(Name = "ModelContextEditor_DeletePrompt",
-        Title = "Delete a prompt from an MCP-server",
+    [McpServerTool(Title = "Delete a prompt from an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_DeletePrompt(
         [Description("Name of the server")] string serverName,

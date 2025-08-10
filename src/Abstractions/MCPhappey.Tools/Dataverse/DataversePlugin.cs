@@ -16,6 +16,7 @@ public static class DataversePlugin
 {
     [Description("Update an existing entity in a Dataverse table")]
     [McpServerTool(Name = "Dataverse_UpdateEntity",
+          Destructive = false,
           Title = "Update entity in Dataverse table",
           OpenWorld = false)]
     public static async Task<CallToolResult?> Dataverse_UpdateEntity(
@@ -181,6 +182,7 @@ public static class DataversePlugin
 
     [Description("Create a new entity in a Dataverse table")]
     [McpServerTool(Name = "Dataverse_CreateEntity",
+        Destructive = false,
         Title = "New entity in Dataverse table",
         OpenWorld = false)]
     public static async Task<CallToolResult?> Dataverse_CreateEntity(

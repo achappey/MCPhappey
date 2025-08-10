@@ -78,7 +78,7 @@ public class SimplicateCompletion(
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
-        var url = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/{urlFactory(argValue, context)}";
+        var url = simplicateOptions.GetApiUrl($"/{urlFactory(argValue, context)}");
         var items = await downloadService.GetSimplicatePageAsync<T>(serviceProvider, mcpServer, url, cancellationToken);
         return items?.Data?.Take(100).Select(item => selector(item, context)).Where(a => !string.IsNullOrEmpty(a)).ToList() ?? [];
     }

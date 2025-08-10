@@ -186,6 +186,7 @@ public static class GraphClientExtensions
         {
             Contents = BinaryData.FromStream(stream),
             Uri = item?.WebUrl!,
+            Filename = item?.Name,
             MimeType = finalContentType,
         };
 

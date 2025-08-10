@@ -11,7 +11,7 @@ namespace MCPhappey.Simplicate.Invoices;
 
 public static partial class SimplicateInvoices
 {
-    [McpServerTool(Name = "SimplicateInvoices_GetPayments", ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns a list of payments received.")]
     public static async Task<List<SimplicateInvoicePayment>> SimplicateInvoices_GetPayments(
           IServiceProvider serviceProvider,
@@ -24,7 +24,7 @@ public static partial class SimplicateInvoices
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/payment";
+        string baseUrl = simplicateOptions.GetApiUrl("/invoices/payment");
         var filters = new List<string>
         {
             $"q[date]={Uri.EscapeDataString(paymentDate)}"
@@ -45,7 +45,7 @@ public static partial class SimplicateInvoices
 
         foreach (var payment in payments)
         {
-            string paymentsBaseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/invoice/{payment.InvoiceId}";
+            string paymentsBaseUrl = simplicateOptions.GetApiUrl($"/invoices/invoice/{payment.InvoiceId}");
             string paymentSelect = "invoice_number";
             var paymentFilterString = $"?select={paymentSelect}";
             var fullUrl = $"{paymentsBaseUrl}{paymentFilterString}";
@@ -64,7 +64,7 @@ public static partial class SimplicateInvoices
     }
 
 
-    [McpServerTool(Name = "SimplicateInvoices_GetAveragePaymentTermByMyOrganization", ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns, per my organization profile, a summary of paid invoices: average, minimum, and maximum payment term (days between invoice date and payment date), optionally filtered by date range and organization.")]
     public static async Task<Dictionary<string, PaidInvoicePaymentTermSummary>?> SimplicateInvoices_GetAveragePaymentTermByMyOrganization(
       IServiceProvider serviceProvider,
@@ -90,7 +90,7 @@ public static partial class SimplicateInvoices
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/invoice";
+        string baseUrl = simplicateOptions.GetApiUrl("/invoices/invoice");
         string select = "total_including_vat,total_excluding_vat,total_outstanding,my_organization_profile.,date,id";
         var filters = new List<string> { "q[status.label]=Payed" };
 
@@ -116,7 +116,8 @@ public static partial class SimplicateInvoices
             if (!DateTime.TryParse(invoice.Date, out var invoiceDate))
                 continue;
 
-            string paymentsBaseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/payment";
+            string paymentsBaseUrl = simplicateOptions.GetApiUrl("/invoices/payment");
+
             string paymentSelect = "date,amount,invoice_id";
             var paymentFilters = new List<string> { $"q[invoice_id]={invoice.Id}" };
             var paymentFilterString = string.Join("&", paymentFilters) + $"&select={paymentSelect}";

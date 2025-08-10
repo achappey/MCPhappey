@@ -90,7 +90,8 @@ public static class SharePointSearch
     }
 
     [Description("Search Microsoft 365 content")]
-    [McpServerTool(Name = "SharePoint_Search", Title = "Search Microsoft 365 content",
+    [McpServerTool(Title = "Search Microsoft 365 content",
+        Destructive = false,
         ReadOnly = true)]
     public static async Task<CallToolResult> SharePoint_Search(
         [Description("Search query")] string query,
@@ -142,7 +143,7 @@ public static class SharePointSearch
             mcpServer,
             "get-sharepoint-serp-queries",
             queryArgs,
-            "o4-mini",
+            "gpt-5-mini",
             null,
             cancellationToken: cancellationToken);
 
@@ -153,7 +154,7 @@ public static class SharePointSearch
                 cancellationToken: cancellationToken
             );
 
-        var queries = (querySampling?.Queries ?? Enumerable.Empty<string>())
+        var queries = (querySampling?.Queries ?? [])
             .Append(query)
             .Distinct()
             .ToList();

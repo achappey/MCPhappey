@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-VectorStores",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.VectorStores.OpenAIVectorStores, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

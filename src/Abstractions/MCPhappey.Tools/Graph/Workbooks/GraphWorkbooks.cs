@@ -246,7 +246,7 @@ public static partial class GraphWorkbooks
             // Normaliseer breedte & nulls
             for (int r = 0; r < values.Length; r++)
             {
-                var row = values[r] ?? Array.Empty<object>();
+                var row = values[r] ?? [];
                 if (row.Length != columnCount)
                 {
                     var fixedRow = new object[columnCount];

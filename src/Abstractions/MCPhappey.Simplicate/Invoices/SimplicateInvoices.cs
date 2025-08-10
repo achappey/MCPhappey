@@ -11,7 +11,7 @@ namespace MCPhappey.Simplicate.Invoices;
 
 public static partial class SimplicateInvoices
 {
-    [McpServerTool(Name = "SimplicateInvoices_GetOpenInvoicesWithDaysOpenByMyOrganization",
+    [McpServerTool(OpenWorld = false,
         Title = "Get open invoices by customer (KPI dashboard)",
         ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns, per own organization profile, a grouped summary of outstanding debtors: for each customer, shows the total outstanding amount, number of open invoices, and the average number of days invoices have been open (as of today). Perfect for actionable debtor KPI dashboards without hardcoded periods.")]
@@ -25,8 +25,7 @@ public static partial class SimplicateInvoices
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/invoice";
+        string baseUrl = simplicateOptions.GetApiUrl("/invoices/invoice");
 
         var filters = new List<string>
         {
@@ -67,7 +66,7 @@ public static partial class SimplicateInvoices
                 );
     }
 
-    [McpServerTool(Name = "SimplicateInvoices_GetInvoicesByProjectManager",
+    [McpServerTool(OpenWorld = false,
         Title = "Get invoices by project manager",
         ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns, per project manager, a list of invoices with invoice number and amount. Ideal for project control and cashflow management.")]
@@ -84,7 +83,7 @@ public static partial class SimplicateInvoices
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/invoice";
+        string baseUrl = simplicateOptions.GetApiUrl("/invoices/invoice");
         var filters = new List<string>();
 
         if (!string.IsNullOrWhiteSpace(organizationName)) filters.Add($"q[organization.name]=*{Uri.EscapeDataString(organizationName)}*");
@@ -113,7 +112,7 @@ public static partial class SimplicateInvoices
           );
     }
 
-    [McpServerTool(Name = "SimplicateInvoices_GetInvoiceTotalsByMyOrganization", ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
     [Description("Get total invoices grouped by my organization profile, optionally filtered by date range and organization.")]
     public static async Task<Dictionary<string, SimplicateInvoiceTotals>?> SimplicateInvoices_GetInvoiceTotalsByMyOrganization(
         IServiceProvider serviceProvider,
@@ -131,7 +130,7 @@ public static partial class SimplicateInvoices
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/invoices/invoice";
+        string baseUrl = simplicateOptions.GetApiUrl("/invoices/invoice");
         string select = "total_including_vat,total_excluding_vat,total_outstanding,my_organization_profile.,payment_term.,date";
         var filters = new List<string>();
 

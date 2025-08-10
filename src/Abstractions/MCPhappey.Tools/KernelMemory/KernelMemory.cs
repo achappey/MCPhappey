@@ -11,7 +11,7 @@ namespace MCPhappey.Tools.KernelMemory;
 public static class KernelMemory
 {
     [Description("Search Microsoft Kernel Memory")]
-    [McpServerTool(Name = "KernelMemory_Search", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true, Destructive = false)]
     public static async Task<CallToolResult> KernelMemory_Search(
         [Description("Search query")]
         string query,
@@ -54,7 +54,7 @@ public static class KernelMemory
     }
 
     [Description("Ask Microsoft Kernel Memory")]
-    [McpServerTool(Name = "KernelMemory_Ask", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true, Destructive = false)]
     public static async Task<CallToolResult> KernelMemory_Ask(
         [Description("Question prompt")]
         string prompt,
@@ -93,7 +93,7 @@ public static class KernelMemory
     }
 
     [Description("List available Microsoft Kernel Memory indexes")]
-    [McpServerTool(Name = "KernelMemory_ListIndexes", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true, Destructive = false)]
     public static async Task<CallToolResult> KernelMemory_ListIndexes(
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)

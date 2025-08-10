@@ -14,7 +14,7 @@ namespace MCPhappey.Simplicate.Projects;
 public static class SimplicateProjects
 {
     [Description("Create a new project in Simplicate")]
-    [McpServerTool(Name = "SimplicateProjects_CreateProject", Title = "Create new Simplicate project",
+    [McpServerTool(OpenWorld = false, Title = "Create new Simplicate project",
         ReadOnly = false, Idempotent = false)]
     public static async Task<CallToolResult?> SimplicateProjects_CreateProject(
         [Description("Name of the new project")] string name,
@@ -25,7 +25,7 @@ public static class SimplicateProjects
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
 
         // Simplicate CRM Organization endpoint
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/projects/project";
+        string baseUrl = simplicateOptions.GetApiUrl("/projects/project");
         var (dto, notAccepted) = await requestContext.Server.TryElicit(new SimplicateNewProject()
         {
             Name = name,
@@ -42,7 +42,7 @@ public static class SimplicateProjects
     }
 
     [Description("Get projects grouped by project manager filtered by my organization profile, optionally filtered by date (equal or greater than), project.")]
-    [McpServerTool(Name = "SimplicateProjects_GetProjectNamesByProjectManager",
+    [McpServerTool(OpenWorld = false,
         Title = "Get projects by project manager",
         ReadOnly = true, UseStructuredContent = true)]
     public static async Task<Dictionary<string, IEnumerable<string>>?> SimplicateProjects_GetProjectNamesByProjectManager(
@@ -50,7 +50,6 @@ public static class SimplicateProjects
         RequestContext<CallToolRequestParams> requestContext,
         [Description("My organization profile name of the project filter. Optional.")] string myOrganizationProfileName,
         [Description("End date for filtering (on or after), format yyyy-MM-dd. Optional.")] string? date = null,
-        //  [Description("Project manager name to filter by. Optional.")] string? managerName = null,
         [Description("Project status label to filter by. Optional.")] ProjectStatusLabel? projectStatusLabel = null,
         CancellationToken cancellationToken = default) => await GetProjectsGroupedBy(
             serviceProvider,
@@ -62,24 +61,20 @@ public static class SimplicateProjects
             IServiceProvider serviceProvider,
             RequestContext<CallToolRequestParams> requestContext,
             Func<SimplicateProject, string?> groupKeySelector,
-            //  string? managerName = null,
             string? myOrganizationProfileName = null,
             string? date = null,
             ProjectStatusLabel? projectStatusLabel = null,
             CancellationToken cancellationToken = default)
     {
         if (
-             //string.IsNullOrWhiteSpace(managerName)
-             //&&
              string.IsNullOrWhiteSpace(myOrganizationProfileName)
-            //   && !projectStatusLabel.HasValue
             && string.IsNullOrWhiteSpace(date))
             throw new ArgumentException("At least one filter (managerName, date, myOrganizationProfileName) must be provided.");
 
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string baseUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/projects/project";
+        string baseUrl = simplicateOptions.GetApiUrl("/projects/project");
         string select = "project_manager.,name";
         var filters = new List<string>();
 

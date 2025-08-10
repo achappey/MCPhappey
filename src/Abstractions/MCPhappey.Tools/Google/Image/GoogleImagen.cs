@@ -13,8 +13,7 @@ namespace MCPhappey.Tools.Google.Image;
 public static class GoogleImagen
 {
     [Description("Create a image with Google Imagen image generator")]
-    [McpServerTool(Name = "GoogleImagen_CreateImage",
-        Title = "Generate image with Google Imagen")]
+    [McpServerTool(Title = "Generate image with Google Imagen", Destructive = false)]
     public static async Task<CallToolResult?> GoogleImagen_CreateImage(
         [Description("prompt")]
         string prompt,

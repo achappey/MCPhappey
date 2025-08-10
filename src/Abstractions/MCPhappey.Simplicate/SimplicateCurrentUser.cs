@@ -15,7 +15,7 @@ public static class SimplicateCurrentUser
 {
 
     [Description("Get current user profile from Simplicate")]
-    [McpServerTool(Name = "Simplicate_GetCurrentUser", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     public static async Task<ContentBlock?> Simplicate_GetCurrentUser(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -27,12 +27,11 @@ public static class SimplicateCurrentUser
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-        string employeeUrl = $"https://{simplicateOptions.Organization}.simplicate.app/api/v2/hrm/employee";
+        string employeeUrl = simplicateOptions.GetApiUrl("/hrm/employee");
         string employeeSelect = "id,name,employment_status,function,work_email,work_phone,hourly_sales_tariff";
         var employeeFilters = new List<string>
         {
             $"q[work_email]=*{currentUser?.Mail}",
-         //   "q[is_user]=true",
             $"select={employeeSelect}"
         };
 

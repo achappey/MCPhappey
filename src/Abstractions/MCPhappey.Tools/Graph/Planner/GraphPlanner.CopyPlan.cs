@@ -13,7 +13,7 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static partial class GraphPlanner
 {
     [Description("Copy a Planner")]
-    [McpServerTool(Name = "GraphPlanner_CopyPlan", Title = "Copy a Planner", ReadOnly = false, OpenWorld = false)]
+    [McpServerTool(Title = "Copy a Planner", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphPlanner_CopyPlan(
         [Description("The id of the original Planner to copy.")]
         string plannerId,
