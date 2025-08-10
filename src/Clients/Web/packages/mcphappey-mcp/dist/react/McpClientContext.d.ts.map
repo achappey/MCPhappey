@@ -1,1 +1,0 @@
-{"version":3,"file":"McpClientContext.d.ts","sourceRoot":"","sources":["../../src/react/McpClientContext.tsx"],"names":[],"mappings":"AAEA,OAAO,EAAE,aAAa,EAAE,MAAM,eAAe,CAAC;AAE9C,UAAU,qBAAqB;IAC7B,IAAI,EAAE,aAAa,CAAC;CACrB;AAID,eAAO,MAAM,iBAAiB,GAAI,cAAc;IAAE,QAAQ,EAAE,KAAK,CAAC,SAAS,CAAA;CAAE,4CAS5E,CAAC;AAEF,wBAAgB,mBAAmB,0BAIlC"}

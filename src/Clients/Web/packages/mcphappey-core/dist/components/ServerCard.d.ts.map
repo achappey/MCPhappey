@@ -1,1 +1,0 @@
-{"version":3,"file":"ServerCard.d.ts","sourceRoot":"","sources":["../../src/components/ServerCard.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,iBAAiB,EAAE,MAAM,iBAAiB,CAAC;AAKzD,UAAU,eAAe;IACvB,MAAM,EAAE,iBAAiB,CAAC;IAC1B,aAAa,EAAE,CAAC,MAAM,EAAE,iBAAiB,KAAK,IAAI,CAAC;CACpD;AAED,QAAA,MAAM,UAAU,GAAI,2BAA2B,eAAe,4CAmC7D,CAAC;AAEF,eAAe,UAAU,CAAC"}

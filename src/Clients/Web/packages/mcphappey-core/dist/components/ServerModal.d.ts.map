@@ -1,1 +1,0 @@
-{"version":3,"file":"ServerModal.d.ts","sourceRoot":"","sources":["../../src/components/ServerModal.tsx"],"names":[],"mappings":"AAAA,OAAO,KAAK,EAAE,iBAAiB,EAAE,MAAM,iBAAiB,CAAC;AASzD,UAAU,gBAAgB;IACxB,IAAI,EAAE,OAAO,CAAC;IACd,MAAM,EAAE,iBAAiB,GAAG,IAAI,CAAC;IACjC,OAAO,EAAE,MAAM,IAAI,CAAC;CACrB;AAED,QAAA,MAAM,WAAW,GAAI,2BAA2B,gBAAgB,mDAkE/D,CAAC;AAEF,eAAe,WAAW,CAAC"}
