@@ -13,7 +13,7 @@ namespace MCPhappey.Tools.OpenAI.Research;
 public static class OpenAIResearch
 {
     [Description("Perform web research on a topic. Before you use this tool, always ask the user first for more details so you can craft a detailed research topic for maximum accuracy")]
-    [McpServerTool(Name = "OpenAIResearch_PerformResearch", Title = "Perform web research",
+    [McpServerTool(Title = "Perform web research", Destructive = false,
         ReadOnly = true)]
     public static async Task<CallToolResult> OpenAIResearch_PerformResearch(
         [Description("Topic for the research")]

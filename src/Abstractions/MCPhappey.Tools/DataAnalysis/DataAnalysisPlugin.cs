@@ -13,10 +13,10 @@ public static partial class DataAnalysisPlugin
 {
     [Description("Get a preview of data from a specific worksheet or table in an Excel file. Returns columns, row count, and sample rows for AI analysis.")]
     [McpServerTool(
-        Name = "OpenAIAnalysis_GetExcelDataSample",
         Title = "Get Excel data sample",
+        Destructive = false,
         ReadOnly = true)]
-    public static async Task<CallToolResult?> OpenAIAnalysis_GetExcelDataSample(
+    public static async Task<CallToolResult?> DataAnalysis_GetExcelDataSample(
                  [Description("OneDrive/SharePoint sharing URL of the Excel file")]
              string excelFileUrl,
                  [Description("Name of the table")]
@@ -53,9 +53,11 @@ public static partial class DataAnalysisPlugin
 
     [Description("Get a preview of data from a CSV file, including columns, row count, and sample rows for AI analysis.")]
     [McpServerTool(
-     Name = "DataAnalysis_GetCSVDataSample",
-     Title = "Get CSV data sample",
-     ReadOnly = true)]
+        Title = "Get CSV data sample",
+        Destructive = false,
+        OpenWorld = false,
+        Idempotent = true,
+        ReadOnly = true)]
     public static async Task<CallToolResult?> DataAnalysis_GetCSVDataSample(
          [Description("Url of the CSV file")]
             string csvFileUrl,
@@ -98,8 +100,8 @@ public static partial class DataAnalysisPlugin
 
     [Description("Execute a compact but powerful analytics query with filtering, grouping, aggregates, sorting and projection on a CSV file.")]
     [McpServerTool(
-     Name = "DataAnalysis_ExecuteCSVDataQuery",
      Title = "Run CSV analytics query",
+     Destructive = false,
      ReadOnly = true)]
     public static async Task<CallToolResult?> DataAnalysis_ExecuteCSVDataQuery(
      [Description("OneDrive/SharePoint sharing URL of the CSV file")]
@@ -163,8 +165,8 @@ public static partial class DataAnalysisPlugin
 
     [Description("Execute a compact but powerful analytics query with filtering, grouping, aggregates, sorting and projection on a Excel file.")]
     [McpServerTool(
-        Name = "DataAnalysis_ExecuteExcelDataQuery",
         Title = "Run Excel analytics query",
+        Destructive = false,
         ReadOnly = true)]
     public static async Task<CallToolResult?> DataAnalysis_ExecuteExcelDataQuery(
         string excelFileUrl,

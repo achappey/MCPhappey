@@ -10,10 +10,25 @@ namespace MCPhappey.Tools.KernelMemory;
 
 public static class KernelMemory
 {
+    private static Common.Models.SearchResult ToSearchResult(this Citation citation)
+        => new()
+        {
+            Title = citation.SourceName,
+            Source = citation.SourceUrl!,
+            Content = citation.Partitions.Select(a => new Common.Models.SearchResultContentBlock()
+            {
+                Text = a.Text
+            }),
+            Citations = new Common.Models.CitationConfiguration()
+            {
+                Enabled = true
+            }
+        };
+
     [Description("Search Microsoft Kernel Memory")]
     [McpServerTool(Title = "Search Microsoft kernel memory",
-        ReadOnly = true, Destructive = false, Idempotent = true)]
-    public static async Task<CallToolResult> KernelMemory_Search(
+        ReadOnly = true, Destructive = false, Idempotent = true, UseStructuredContent = true)]
+    public static async Task<IEnumerable<Common.Models.SearchResult>> KernelMemory_Search(
         [Description("Search query")]
         string query,
         [Description("Kernel memory index")]
@@ -31,7 +46,8 @@ public static class KernelMemory
         var appSettings = serviceProvider.GetService<OAuthSettings>();
         if (appSettings?.ClientId.Equals(index, StringComparison.OrdinalIgnoreCase) == true)
         {
-            return "Not authorized".ToErrorCallToolResponse();
+            //         return "Not authorized".ToErrorCallToolResponse();
+            throw new UnauthorizedAccessException();
         }
 
         ArgumentNullException.ThrowIfNull(memory);
@@ -40,18 +56,20 @@ public static class KernelMemory
             limit: limit ?? int.MaxValue,
             cancellationToken: cancellationToken);
 
-        return new
-        {
-            answer.Query,
-            answer.NoResult,
-            Results = answer.Results.Select(b => new
-            {
-                b.SourceUrl,
-                b.Partitions.OrderByDescending(y => y.LastUpdate).FirstOrDefault()?.LastUpdate,
-                Citations = b.Partitions.Select(z => z.Text)
-            })
-        }.ToJsonContentBlock(index)
-        .ToCallToolResult();
+        return answer.Results.Select(b => b.ToSearchResult());
+        /*
+                return new
+                {
+                    answer.Query,
+                    answer.NoResult,
+                    Results = answer.Results.Select(b => new
+                    {
+                        b.SourceUrl,
+                        b.Partitions.OrderByDescending(y => y.LastUpdate).FirstOrDefault()?.LastUpdate,
+                        Citations = b.Partitions.Select(z => z.Text)
+                    })
+                }.ToJsonContentBlock(index)
+                .ToCallToolResult();*/
     }
 
     [Description("Ask Microsoft Kernel Memory")]

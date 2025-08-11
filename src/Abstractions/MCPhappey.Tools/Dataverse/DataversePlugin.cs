@@ -15,8 +15,7 @@ namespace MCPhappey.Tools.Dataverse;
 public static class DataversePlugin
 {
     [Description("Update an existing entity in a Dataverse table")]
-    [McpServerTool(Name = "Dataverse_UpdateEntity",
-          Destructive = false,
+    [McpServerTool(Destructive = true,
           Title = "Update entity in Dataverse table",
           OpenWorld = false)]
     public static async Task<CallToolResult?> Dataverse_UpdateEntity(
@@ -110,8 +109,7 @@ public static class DataversePlugin
 
 
     [Description("Delete an entity from a Dataverse table")]
-    [McpServerTool(Name = "Dataverse_DeleteEntity",
-       Title = "Delete entity from Dataverse table",
+    [McpServerTool(Title = "Delete entity from Dataverse table",
        OpenWorld = false)]
     public static async Task<CallToolResult?> Dataverse_DeleteEntity(
        IServiceProvider serviceProvider,
@@ -181,9 +179,7 @@ public static class DataversePlugin
     }
 
     [Description("Create a new entity in a Dataverse table")]
-    [McpServerTool(Name = "Dataverse_CreateEntity",
-        Destructive = false,
-        Title = "New entity in Dataverse table",
+    [McpServerTool(Title = "New entity in Dataverse table",
         OpenWorld = false)]
     public static async Task<CallToolResult?> Dataverse_CreateEntity(
         IServiceProvider serviceProvider,

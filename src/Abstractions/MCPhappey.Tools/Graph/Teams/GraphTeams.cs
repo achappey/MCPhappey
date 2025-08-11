@@ -10,8 +10,8 @@ namespace MCPhappey.Tools.Graph.Teams;
 public static partial class GraphTeams
 {
     [Description("Create a new Microsoft Teams.")]
-    [McpServerTool(Name = "GraphTeams_CreateTeam", Title = "Create Microsoft Team",
-        Destructive = false,
+    [McpServerTool(Title = "Create Microsoft Teams",
+        Destructive = true,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateTeam(
         [Description("Displayname of the new channel")]

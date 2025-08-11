@@ -1,7 +1,10 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using OpenAI;
@@ -25,14 +28,14 @@ public static class OpenAIAudio
     }
 
     [Description("Generate audio from the input text")]
-    [McpServerTool(Name = "OpenAIAudio_CreateSpeech", Title = "Generate speech from text",
-        ReadOnly = true)]
+    [McpServerTool(Title = "Generate speech from text",
+        Destructive = false)]
     public static async Task<CallToolResult> OpenAIAudio_CreateSpeech(
         [Description("The text to generate audio for")]
         [MaxLength(4096)]
         string input,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        RequestContext<CallToolRequestParams> requestContext,
         [Description("Additional instructions about the generated audio.")]
         string? instructions = null,
         [Description("The voice of your generated audio.")]
@@ -42,7 +45,6 @@ public static class OpenAIAudio
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(input);
-        var uploadService = serviceProvider.GetRequiredService<UploadService>();
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
 
         OAI.Audio.GeneratedSpeechVoice speechVoice = voice.HasValue ? voice.Value.ToGeneratedSpeechVoice()
@@ -58,7 +60,8 @@ public static class OpenAIAudio
                              Instructions = instructions,
                          }, cancellationToken);
 
-        var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-{DateTime.Now.Ticks}.mp3",
+        var uploaded = await requestContext.Server.Upload(serviceProvider,
+            requestContext.ToOutputFileName("mp3"),
             item.Value, cancellationToken);
 
         return new CallToolResult()
@@ -66,25 +69,25 @@ public static class OpenAIAudio
             Content = [
                 uploaded != null ? new EmbeddedResourceBlock() {
                     Resource = new BlobResourceContents() {
-                        MimeType = "audio/mpeg",
+                        MimeType = MimeTypes.AudioMP3,
                         Uri = uploaded.Uri,
                         Blob = Convert.ToBase64String(item.Value)
                     }
             } : new AudioContentBlock() {
-                MimeType = "audio/mpeg",
+                MimeType = MimeTypes.AudioMP3,
                 Data = Convert.ToBase64String(item.Value),
             }]
         };
     }
 
     [Description("Generate text from an audio input file")]
-    [McpServerTool(Name = "OpenAIAudio_CreateTranscription", Title = "Transcribe audio to text",
-        ReadOnly = true)]
-    public static async Task<CallToolResult> OpenAIAudio_CreateTranscription(
+    [McpServerTool(Title = "Transcribe audio to text",
+        Destructive = false)]
+    public static async Task<IEnumerable<ContentBlock>> OpenAIAudio_CreateTranscription(
        [Description("Url of the audio file")]
         string url,
        IServiceProvider serviceProvider,
-       IMcpServer mcpServer,
+       RequestContext<CallToolRequestParams> requestContext,
        [Description("A prompt to improve the quality of the generated transcripts.")]
         string? prompt = null,
        [Description("The language of the audio to transcribe")]
@@ -94,11 +97,10 @@ public static class OpenAIAudio
        CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
-        var uploadService = serviceProvider.GetRequiredService<UploadService>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
 
-        var downloads = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer,
+        var downloads = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server,
             url!, cancellationToken);
         var download = downloads.FirstOrDefault();
 
@@ -118,21 +120,19 @@ public static class OpenAIAudio
                          },
                          cancellationToken);
 
-        var uploaded = await uploadService.UploadToRoot(mcpServer, serviceProvider, $"OpenAI-Audio-Transcription-{DateTime.Now.Ticks}.txt",
+        var uploaded = await requestContext.Server.Upload(serviceProvider,
+            requestContext.ToOutputFileName("txt"),
             BinaryData.FromString(item), cancellationToken);
 
-        return new CallToolResult()
-        {
-            Content = [uploaded != null ? new EmbeddedResourceBlock(){
+        return [new TextContentBlock() {
+                Text = item
+            }, new EmbeddedResourceBlock(){
                 Resource = new TextResourceContents() {
-                    MimeType = "text/plain",
-                    Uri = uploaded.Uri,
+                    MimeType = MimeTypes.PlainText,
+                    Uri = uploaded?.Uri!,
                     Text = item
                 }
-            } : new TextContentBlock() {
-                Text = item
-            }]
-        };
+            }];
     }
 }
 

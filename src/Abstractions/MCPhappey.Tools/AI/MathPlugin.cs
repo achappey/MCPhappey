@@ -7,7 +7,7 @@ namespace MCPhappey.Tools.AI;
 public static class MathPlugin
 {
     [Description("Add two numbers.")]
-    [McpServerTool(Name = "MathPlugin_Add", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     public static double MathPlugin_Add(
          [Description("The first number to add")] double number1,
          [Description("The second number to add")] double number2
@@ -17,7 +17,7 @@ public static class MathPlugin
     }
 
     [Description("Subtract two numbers.")]
-    [McpServerTool(Name = "MathPlugin_Subtract", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     public static double MathPlugin_Subtract(
         [Description("The first number to subtract from")] double number1,
         [Description("The second number to subtract away")] double number2
@@ -27,7 +27,7 @@ public static class MathPlugin
     }
 
     [Description("Multiply two numbers.")]
-    [McpServerTool(Name = "MathPlugin_Multiply", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     public static double MathPlugin_Multiply(
         [Description("The first number to multiply")] double number1,
         [Description("The second number to multiply")] double number2
@@ -37,7 +37,7 @@ public static class MathPlugin
     }
 
     [Description("Divide two numbers.")]
-    [McpServerTool(Name = "MathPlugin_Divide", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     public static double MathPlugin_Divide(
         [Description("The first number to divide from")] double number1,
         [Description("The second number to divide by")] double number2
@@ -47,7 +47,7 @@ public static class MathPlugin
     }
 
     [Description("Round a number to the target number of decimal places.")]
-    [McpServerTool(Name = "MathPlugin_Round", ReadOnly = true)]
+    [McpServerTool(ReadOnly = true)]
     public static double MathPlugin_Round(
         [Description("The number to round")] double number1,
         [Description("The number of decimal places to round to")] double number2

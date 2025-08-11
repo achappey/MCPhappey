@@ -55,8 +55,7 @@ public static class GraphToDo
     }
 
     [Description("Create a new Microsoft To Do task list")]
-    [McpServerTool(Name = "GraphTodo_CreateTaskList",
-        Title = "Create Microsoft To Do task list",
+    [McpServerTool(Title = "Create Microsoft To Do task list",
         Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTodo_CreateTaskList(
