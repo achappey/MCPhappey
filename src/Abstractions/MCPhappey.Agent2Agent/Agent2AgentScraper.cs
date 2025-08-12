@@ -9,6 +9,7 @@ using MCPhappey.Agent2Agent.Repositories;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Agent2Agent.Services;
 using MCPhappey.Agent2Agent.Extensions;
+using Microsoft.AspNetCore.Http;
 
 namespace MCPhappey.Agent2Agent;
 
@@ -41,12 +42,15 @@ public class Agent2AgentScraper(
         var uri = new Uri(url);
         var host = uri.Host;
         var segments = uri.AbsolutePath.Trim('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+        var name = tokenProvider.GetNameClaim();
+        var userGroupIds = httpContextAccessor.HttpContext?.User.GetGroupClaims();
 
         // a2a://context or a2a://context/
         if ((host.Equals("context", StringComparison.OrdinalIgnoreCase) && segments.Length == 0) ||
             (segments.Length == 1 && segments[0].Equals("context", StringComparison.OrdinalIgnoreCase)))
         {
-            var contexts = await contextService.GetUserContextsWithUsersAsync(graphClient, oid, cancellationToken);
+            var contexts = await contextService.GetUserContextsWithUsersAsync(graphClient, oid, userGroupIds ?? [], cancellationToken);
 
             return [contexts.ToFileItem(url)];
         }

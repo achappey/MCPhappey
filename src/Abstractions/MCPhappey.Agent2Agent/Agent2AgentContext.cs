@@ -11,6 +11,9 @@ using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using MCPhappey.Common.Extensions;
 using System.Text.Json;
+using MCPhappey.Common.Models;
+using A2A.Models;
+using MCPhappey.Core.Extensions;
 
 namespace MCPhappey.Agent2Agent;
 
@@ -117,6 +120,112 @@ public static class Agent2AgentContextPlugin
         };
     }
 
+    [Description("Delete an A2A context")]
+    [McpServerTool(Name = "agent2agent_delete_context", Title = "Delete an A2A context",
+        OpenWorld = false)]
+    public static async Task<CallToolResult> Agent2Agent_DeleteContext(
+        [Description("Id of the context")] string contextId,
+        RequestContext<CallToolRequestParams> requestContext,
+        IServiceProvider serviceProvider,
+        CancellationToken cancellationToken = default)
+    {
+        var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
+        var oid = serviceProvider.GetUserId();
+        var contextRepo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
+        var context = await contextRepo.GetContextAsync(contextId, cancellationToken);
+
+        if (context == null)
+            return "Context not found".ToErrorCallToolResponse();
+
+        var userAllowed =
+            context.OwnerIds != null && context.OwnerIds.Contains(oid);
+
+        if (!userAllowed)
+            return "You do not have access to this task's context".ToErrorCallToolResponse();
+
+        // One-liner again
+        return await requestContext.ConfirmAndDeleteAsync<DeleteA2AContext>(
+            context.Metadata.TryGetValue("name", out object? value) ? value.ToString()! : context.ContextId,
+            async _ => await contextRepo.DeleteContextAsync(contextId, cancellationToken),
+            "Context deleted.",
+            cancellationToken);
+    }
+
+    [Description("Upload task artifacts to users' OneDrive")]
+    [McpServerTool(Name = "agent2agent_upload_artifacts",
+        Title = "Upload artifacts to OneDrive",
+        OpenWorld = false)]
+    public static async Task<CallToolResult> Agent2Agent_UploadArtifacts(
+       [Description("Id of the task")] string taskId,
+       RequestContext<CallToolRequestParams> requestContext,
+       IServiceProvider serviceProvider,
+       CancellationToken cancellationToken = default)
+    {
+        var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
+        var oid = serviceProvider.GetUserId();
+        var contextRepo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
+        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+        var userGroupIds = httpContextAccessor.HttpContext?.User.GetGroupClaims();
+        var currentTask = await taskRepo.GetTaskAsync(taskId, cancellationToken);
+        var context = await contextRepo.GetContextAsync(currentTask?.ContextId!, cancellationToken);
+
+        if (context == null)
+            return "Context not found".ToErrorCallToolResponse();
+
+        var userAllowed =
+            (context.UserIds != null && context.UserIds.Contains(oid)) ||
+            (context.SecurityGroupIds != null && userGroupIds != null && context.SecurityGroupIds.Intersect(userGroupIds).Any());
+
+        if (!userAllowed)
+            return "You do not have access to this task's context".ToErrorCallToolResponse();
+
+        var artifacts = currentTask?.Artifacts?.SelectMany(a => a.Parts.OfType<FilePart>());
+        List<ResourceLinkBlock> resources = [];
+
+        foreach (var artifact in artifacts?.Where(a => a.File.Bytes != null) ?? [])
+        {
+            var url = await requestContext.Server.Upload(serviceProvider, artifact.File.Name!,
+                BinaryData.FromBytes(Convert.FromBase64String(artifact.File.Bytes!)), cancellationToken);
+
+            if (url != null)
+                resources.Add(url);
+        }
+
+        return resources.ToResourceLinkCallToolResponse();
+    }
+
+    [Description("Delete an A2A task")]
+    [McpServerTool(Name = "agent2agent_delete_task", Title = "Delete an A2A task",
+       OpenWorld = false)]
+    public static async Task<CallToolResult> Agent2Agent_DeleteTask(
+       [Description("Id of the task")] string taskId,
+       RequestContext<CallToolRequestParams> requestContext,
+       IServiceProvider serviceProvider,
+       CancellationToken cancellationToken = default)
+    {
+        var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
+        var oid = serviceProvider.GetUserId();
+        var contextRepo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
+        var taskItem = await taskRepo.GetTaskAsync(taskId, cancellationToken);
+        var context = await contextRepo.GetContextAsync(taskItem?.ContextId!, cancellationToken);
+
+        if (context == null)
+            return "Context not found".ToErrorCallToolResponse();
+
+        var userAllowed =
+            context.OwnerIds != null && context.OwnerIds.Contains(oid);
+
+        if (!userAllowed)
+            return "You do not have access to this task's context".ToErrorCallToolResponse();
+
+        // One-liner again
+        return await requestContext.ConfirmAndDeleteAsync<DeleteA2ATask>(
+            context.Metadata.TryGetValue("name", out object? value) ? value.ToString()! : context.ContextId,
+            async _ => await taskRepo.DeleteTaskAsync(taskId, cancellationToken),
+            "Task deleted.",
+            cancellationToken);
+    }
+
     [McpServerTool(Name = "agent2agent_update_context", OpenWorld = false)]
     [Description("Update an existing A2A context")]
     public static async Task<CallToolResult> Agent2Agent_UpdateContext(
@@ -217,6 +326,25 @@ public static class Agent2AgentContextPlugin
         [Description("The task message.")]
         public string Message { get; set; } = default!;
 
+    }
+
+    [Description("Please fill in the context name.")]
+    public class DeleteA2AContext : IHasName
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("The name of the context to delete.")]
+        public string Name { get; set; } = default!;
+
+    }
+
+    [Description("Please fill in the task id.")]
+    public class DeleteA2ATask : IHasName
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("The name of the context to delete.")]
+        public string Name { get; set; } = default!;
     }
 
 }

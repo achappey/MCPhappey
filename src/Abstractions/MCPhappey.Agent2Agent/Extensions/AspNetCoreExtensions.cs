@@ -4,6 +4,7 @@ using MCPhappey.Agent2Agent.Repositories;
 using MCPhappey.Agent2Agent.Services;
 using MCPhappey.Common;
 using MCPhappey.Servers.SQL.Context;
+using MCPhappey.Servers.SQL.Providers;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -25,8 +26,8 @@ public static class AspNetCoreExtensions
         string contextContainer,
         string database)
     {
-         builder.Services.AddDbContext<A2ADatabaseContext>(options =>
-            options.UseSqlServer(database, sqlOpts => sqlOpts.EnableRetryOnFailure()));
+        builder.Services.AddDbContext<A2ADatabaseContext>(options =>
+           options.UseSqlServer(database, sqlOpts => sqlOpts.EnableRetryOnFailure()));
 
         builder.Services.AddSingleton(_ => new BlobServiceClient(blobConnectionString));
         builder.Services.AddSingleton<IContextsBlobContainerProvider, ContextsBlobContainerProvider>((sp) =>
@@ -40,6 +41,7 @@ public static class AspNetCoreExtensions
         builder.Services.AddSingleton<ContextService>();
         builder.Services.AddScoped<AgentRepository>();
         builder.Services.AddScoped<AgentService>();
+        builder.Services.AddSingleton<IAutoCompletion, Agent2AgentCompletion>();
         
         return builder;
     }

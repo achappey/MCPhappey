@@ -9,7 +9,7 @@ public interface IAgent2AgentContextRepository
 {
     Task<Agent2AgentContext?> GetContextAsync(string contextId, CancellationToken ct = default);
     Task<IEnumerable<Agent2AgentContext>> GetAllContextsAsync(CancellationToken ct = default);
-    Task<IEnumerable<Agent2AgentContext>> GetContextsForUserAsync(string userId, CancellationToken ct = default);
+    Task<IEnumerable<Agent2AgentContext>> GetContextsForUserAsync(string userId, IEnumerable<string> groups, CancellationToken ct = default);
     Task SaveContextAsync(Agent2AgentContext ctx, CancellationToken ct = default);
     Task DeleteContextAsync(string contextId, CancellationToken ct = default);
     Task<bool> HasContextAccess(string contextId, string userId, CancellationToken ct = default);
@@ -56,10 +56,12 @@ public class Agent2AgentContextRepository : IAgent2AgentContextRepository
         return result?.UserIds.Contains(userId) == true;
     }
 
-    public async Task<IEnumerable<Agent2AgentContext>> GetContextsForUserAsync(string userId, CancellationToken ct = default)
+    public async Task<IEnumerable<Agent2AgentContext>> GetContextsForUserAsync(string userId, IEnumerable<string> groups, CancellationToken ct = default)
     {
         var all = await GetAllContextsAsync(ct);
-        return all.Where(c => c.UserIds.Contains(userId));
+        return all.Where(c => c.OwnerIds.Contains(userId) ||
+        c.UserIds.Contains(userId)
+        || groups.Any(z => c.SecurityGroupIds.Contains(z)));
     }
 
     public async Task SaveContextAsync(Agent2AgentContext ctx, CancellationToken ct = default)

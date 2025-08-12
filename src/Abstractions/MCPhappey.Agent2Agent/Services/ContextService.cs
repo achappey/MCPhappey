@@ -9,9 +9,9 @@ public class ContextService(
     IAgent2AgentContextRepository contextRepo)
 {
     public async Task<List<Agent2AgentViewContext>> GetUserContextsWithUsersAsync(GraphServiceClient graphServiceClient,
-        string userId, CancellationToken cancellationToken = default)
+        string userId, IEnumerable<string> groups,  CancellationToken cancellationToken = default)
     {
-        var contexts = await contextRepo.GetContextsForUserAsync(userId, cancellationToken);
+        var contexts = await contextRepo.GetContextsForUserAsync(userId, groups, cancellationToken);
 
         var userIds = contexts.SelectMany(c => c.OwnerIds)
             .Concat(contexts.SelectMany(c => c.UserIds))
