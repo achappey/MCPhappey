@@ -11,8 +11,8 @@ namespace MCPhappey.Tools.AI;
 public static class WebSearch
 {
     //"gpt-4o-search-preview"
-    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash"];
-    private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro"];
+    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "claude-sonnet-4-20250514"];
+    private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro", "claude-sonnet-4-20250514"];
 
     [Description("Web search using multiple AI models in parallel")]
     [McpServerTool(Title = "Web search (multi-model)",
@@ -50,7 +50,10 @@ public static class WebSearch
                 metadata: new Dictionary<string, object>()
                 {
                     {"perplexity", new {
-                        search_mode = "web"
+                        search_mode = "web",
+                        web_search_options = new {
+                            search_context_size = "medium"
+                        }
                      } },
                     {"google", new {
                         google_search = new { },
@@ -64,6 +67,14 @@ public static class WebSearch
                          },
                          reasoning = new {
                             effort = "low"
+                         }
+                     } },
+                    {"anthropic", new {
+                        web_search = new {
+                            max_uses = 5
+                         },
+                         thinking = new {
+                            budget_tokens = 4096
                          }
                      } },
 
@@ -124,7 +135,10 @@ public static class WebSearch
                 metadata: new Dictionary<string, object>()
                 {
                     {"perplexity", new {
-                        search_mode = "academic"
+                        search_mode = "academic",
+                        web_search_options = new {
+                            search_context_size = "medium"
+                        }
                      } },
                     {"google", new {
                         google_search = new { },
@@ -139,7 +153,15 @@ public static class WebSearch
                          reasoning = new {
                             effort = "medium"
                          }
-                     } }
+                     } },
+                     {"anthropic", new {
+                        web_search = new {
+                            max_uses = 5
+                         },
+                         thinking = new {
+                            budget_tokens = 8192
+                         }
+                     } },
 
                 },
                 cancellationToken: cancellationToken
