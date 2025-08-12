@@ -12,6 +12,9 @@ public class Agent
     public int AgentCardId { get; set; }
 
     public AgentCard AgentCard { get; set; } = default!;
+    public AnthropicMetadata? Anthropic { get; set; }
+
+    public OpenAIMetadata? OpenAI { get; set; }
 
     public AppRegistration? AppRegistration { get; set; }
 

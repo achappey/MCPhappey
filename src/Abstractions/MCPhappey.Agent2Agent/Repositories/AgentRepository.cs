@@ -13,6 +13,7 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
     public async Task<Agent?> GetAgent(string name, CancellationToken cancellationToken = default) =>
         await databaseContext.Agents
             .Include(r => r.Owners)
+            .Include(r => r.OpenAI)
             .Include(r => r.AgentCard)
             .ThenInclude(r => r.Skills)
             .ThenInclude(r => r.SkillTags)
@@ -29,6 +30,7 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
     public async Task<List<Agent>> GetAgents(CancellationToken cancellationToken = default) =>
         await databaseContext.Agents.AsNoTracking()
             .Include(r => r.Owners)
+            .Include(r => r.OpenAI)
             .Include(r => r.AgentCard)
             .ThenInclude(r => r.Skills)
             .ThenInclude(r => r.SkillTags)

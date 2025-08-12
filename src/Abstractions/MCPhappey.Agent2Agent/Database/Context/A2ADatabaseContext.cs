@@ -29,6 +29,31 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
   {
     base.OnModelCreating(modelBuilder);
 
+
+    modelBuilder.Entity<Agent>(e =>
+   {
+     e.Navigation(x => x.Anthropic).IsRequired();   // 👈 required nav
+     e.OwnsOne(x => x.Anthropic, nav =>
+     {
+       nav.ToJson();
+       nav.OwnsOne(m => m.CodeExecution);
+       nav.OwnsOne(m => m.Thinking);
+       nav.OwnsOne(m => m.WebSearch);
+     });
+   });
+
+
+    modelBuilder.Entity<Agent>(builder =>
+        builder.OwnsOne(a => a.OpenAI, nav =>
+            {
+              nav.ToJson();                // <- key line
+
+              // Optional: fine-tune nested owned objects (they’ll be nested JSON)
+              nav.OwnsOne(m => m.CodeInterpreter);
+              nav.OwnsOne(m => m.Reasoning);
+              nav.OwnsOne(m => m.FileSearch);
+            }));
+
     // === Agent ===
     modelBuilder.Entity<Agent>(builder =>
     {
