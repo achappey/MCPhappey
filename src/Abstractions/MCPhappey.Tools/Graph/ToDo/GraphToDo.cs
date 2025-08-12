@@ -26,7 +26,7 @@ public static class GraphToDo
         var mcpServer = requestContext.Server;
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await mcpServer.TryElicit(
             new GraphNewTodoTask
             {
                 Title = title ?? string.Empty,
@@ -38,7 +38,7 @@ public static class GraphToDo
 
         if (notAccepted != null) return notAccepted;
 
-        var result = await client.Me.Todo.Lists[listId].Tasks
+        var graphItem = await client.Me.Todo.Lists[listId].Tasks
             .PostAsync(new TodoTask
             {
                 Title = typed?.Title,
@@ -50,7 +50,7 @@ public static class GraphToDo
                 } : null
             }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{listId}/tasks")
+        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{listId}/tasks")
             .ToCallToolResult();
     }
 
@@ -67,7 +67,7 @@ public static class GraphToDo
         var mcpServer = requestContext.Server;
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit<GraphNewTodoTaskList>(
+        var (typed, notAccepted, result) = await mcpServer.TryElicit<GraphNewTodoTaskList>(
             new GraphNewTodoTaskList
             {
                 DisplayName = displayName ?? string.Empty,
@@ -77,13 +77,13 @@ public static class GraphToDo
 
         if (notAccepted != null) return notAccepted;
 
-        var result = await client.Me.Todo.Lists
+        var graphItem = await client.Me.Todo.Lists
             .PostAsync(new TodoTaskList
             {
                 DisplayName = typed?.DisplayName,
             }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{result?.Id}")
+        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{graphItem?.Id}")
             .ToCallToolResult();
     }
 

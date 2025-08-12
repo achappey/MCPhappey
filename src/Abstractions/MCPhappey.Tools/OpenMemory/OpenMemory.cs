@@ -34,7 +34,7 @@ public static class OpenMemory
             { MemoryPurpose, userId }
         };
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                 new OpenMemoryNewMemory
                 {
                     Memory = memory,

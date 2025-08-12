@@ -18,7 +18,7 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Clone a MCP-server")]
-    [McpServerTool(Title = "Clone an MCP-server",
+    [McpServerTool(Title = "Clone a MCP-server",
         Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_CloneServer(
@@ -54,7 +54,7 @@ public static partial class ModelContextEditor
             }
         }
 
-        var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new CloneMcpServer
+        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new CloneMcpServer
         {
             Name = newServerName ?? string.Empty,
         }, cancellationToken);
@@ -232,7 +232,6 @@ public static partial class ModelContextEditor
 
     [Description("Create a new MCP-server")]
     [McpServerTool(Title = "Create a new MCP-server",
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_CreateServer(
         [Description("Name of the new server")]
@@ -252,7 +251,7 @@ public static partial class ModelContextEditor
         var serverExists = await serviceProvider.ServerExists(serverName, cancellationToken);
         if (serverExists) return "Servername already in use".ToErrorCallToolResponse();
 
-        var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new NewMcpServer()
+        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewMcpServer()
         {
             Name = serverName,
             Title = serverTitle,
@@ -289,7 +288,6 @@ public static partial class ModelContextEditor
 
     [Description("Updates a MCP-server")]
     [McpServerTool(Title = "Update an MCP-server",
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateServer(
       [Description("Name of the server")] string serverName,
@@ -304,7 +302,7 @@ public static partial class ModelContextEditor
       CancellationToken cancellationToken = default)
     {
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpServer()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new UpdateMcpServer()
         {
             Name = serverName,
             Title = serverTitle ?? server.Title,
@@ -362,7 +360,6 @@ public static partial class ModelContextEditor
 
     [Description("Adds an plugin to a MCP-server")]
     [McpServerTool(Title = "Add an plugin to a MCP-server",
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddPlugin(
        [Description("Name of the server")] string serverName,
@@ -372,7 +369,7 @@ public static partial class ModelContextEditor
        CancellationToken cancellationToken = default)
     {
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new McpServerPlugin()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new McpServerPlugin()
         {
             PluginName = pluginName
         }, cancellationToken);
@@ -401,7 +398,6 @@ public static partial class ModelContextEditor
 
     [Description("Removes a plugin from a MCP-server")]
     [McpServerTool(Title = "Remove a plugin from an MCP-server",
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_RemovePlugin(
        [Description("Name of the server")] string serverName,
@@ -417,7 +413,7 @@ public static partial class ModelContextEditor
             return $"Plugin {pluginName} is not a plugin on server {serverName}.".ToErrorCallToolResponse();
         }
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new McpServerPlugin()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new McpServerPlugin()
         {
             PluginName = pluginName
         }, cancellationToken);

@@ -30,7 +30,7 @@ public static partial class GraphPlanner
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var plan = await client.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var bucket = await client.Planner.Plans[plannerId].Buckets[bucketId].GetAsync((config) => { }, cancellationToken);
-        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewPlannerTask>(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit<GraphNewPlannerTask>(
             new GraphNewPlannerTask
             {
                 Title = title,
@@ -43,7 +43,7 @@ public static partial class GraphPlanner
 
         if (notAccepted != null) return notAccepted;
 
-        var result = await client.Planner.Tasks.PostAsync(new PlannerTask
+        var graphItem = await client.Planner.Tasks.PostAsync(new PlannerTask
         {
             Title = typed?.Title,
             PlanId = plannerId,
@@ -53,7 +53,7 @@ public static partial class GraphPlanner
             DueDateTime = typed?.DueDateTime
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/tasks/{result.Id}").ToCallToolResult();
+        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/tasks/{graphItem.Id}").ToCallToolResult();
     }
 
 
@@ -75,7 +75,7 @@ public static partial class GraphPlanner
         var planner = await client.Planner.Plans[plannerId]
                                .GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewPlannerBucket>(new GraphNewPlannerBucket()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit<GraphNewPlannerBucket>(new GraphNewPlannerBucket()
         {
             Name = bucketName,
             OrderHint = orderHint
@@ -84,14 +84,14 @@ public static partial class GraphPlanner
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid result".ToErrorCallToolResponse();
 
-        var result = await client.Planner.Buckets.PostAsync(new PlannerBucket
+        var graphItem = await client.Planner.Buckets.PostAsync(new PlannerBucket
         {
             Name = typed.Name,
             PlanId = plannerId,
             OrderHint = typed.OrderHint
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{plannerId}/buckets").ToCallToolResult();
+        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{plannerId}/buckets").ToCallToolResult();
     }
 
     [Description("Create a new Planner plan")]
@@ -109,7 +109,7 @@ public static partial class GraphPlanner
         var group = await client.Groups[groupId]
                          .GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphNewPlannerPlan>(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit<GraphNewPlannerPlan>(
             new GraphNewPlannerPlan
             {
                 Title = planTitle
@@ -120,13 +120,13 @@ public static partial class GraphPlanner
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid result".ToErrorCallToolResponse();
 
-        var result = await client.Planner.Plans.PostAsync(new PlannerPlan
+        var graphItem = await client.Planner.Plans.PostAsync(new PlannerPlan
         {
             Title = typed.Title,
             Owner = groupId
         }, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{result?.Id}")
+        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{graphItem?.Id}")
               .ToCallToolResult();
     }
 

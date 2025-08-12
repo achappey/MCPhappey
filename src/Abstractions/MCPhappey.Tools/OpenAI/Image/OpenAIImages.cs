@@ -41,7 +41,7 @@ public static class OpenAIImages
             Moderation = moderation ?? ImageModerationLevel.auto
         };
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Error".ToErrorCallToolResponse();
 
@@ -96,7 +96,7 @@ public static class OpenAIImages
             Size = size ?? ImageSize.square,
         };
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Error".ToErrorCallToolResponse();
 

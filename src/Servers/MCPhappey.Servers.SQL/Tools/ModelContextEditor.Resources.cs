@@ -15,7 +15,6 @@ public static partial class ModelContextEditor
 {
     [Description("Adds a resource to a MCP-server")]
     [McpServerTool(
-        Destructive = false,
         Title = "Add a resource to an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddResource(
@@ -42,7 +41,7 @@ public static partial class ModelContextEditor
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new AddMcpResource()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new AddMcpResource()
         {
             Uri = uri,
             Name = name.Slugify().ToLowerInvariant(),
@@ -80,7 +79,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Updates a resource of a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Update a resource of an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResource(
@@ -102,7 +101,7 @@ public static partial class ModelContextEditor
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var resource = server.Resources.FirstOrDefault(a => a.Name == resourceName) ?? throw new ArgumentNullException();
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpResource()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new UpdateMcpResource()
         {
             Description = newDescription ?? resource.Description,
             Title = newTitle ?? resource.Title,

@@ -13,7 +13,7 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextSecurityEditor
 {
     [Description("Adds an owner to a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Add an owner to an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_AddOwner(
@@ -50,7 +50,7 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Removes an owner from a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Remove an owner from an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_RemoveOwner(
@@ -90,7 +90,7 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Updates the security of a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Update the security of an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_UpdateServerSecurity(
@@ -126,7 +126,7 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Adds a security group to a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Add a security group to an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_AddSecurityGroup(
@@ -160,7 +160,7 @@ public static partial class ModelContextSecurityEditor
     }
 
     [Description("Removes a security group from a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Remove a security group from an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextSecurityEditor_RemoveSecurityGroup(
@@ -178,7 +178,7 @@ public static partial class ModelContextSecurityEditor
         }, cancellationToken);
         var notAccepted = dto?.NotAccepted();
         if (notAccepted != null) return notAccepted;
-        
+
         var typed = dto?.GetTypedResult<McpSecurityGroup>() ?? throw new Exception();
 
         if (!server.Groups.Any(g => g.Id == typed.GroupId))

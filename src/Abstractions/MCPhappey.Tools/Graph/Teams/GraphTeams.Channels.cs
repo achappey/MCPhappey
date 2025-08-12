@@ -31,7 +31,7 @@ public static partial class GraphTeams
             var teams = await client.Teams[teamId]
                                .GetAsync(cancellationToken: cancellationToken);
 
-            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                 new GraphNewTeamChannel
                 {
                     DisplayName = displayName,
@@ -54,9 +54,9 @@ public static partial class GraphTeams
                 MembershipType = typed.MembershipType
             };
 
-            var result = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
+            var graphItem = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
 
-            return (result ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels")
+            return (graphItem ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels")
                 .ToCallToolResult();
         }
         catch (Exception e)
@@ -80,7 +80,7 @@ public static partial class GraphTeams
         try
         {
             // Vul defaults uit de parameters direct in
-            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                 new GraphNewChannelMessage
                 {
                     Subject = subject,
@@ -103,12 +103,12 @@ public static partial class GraphTeams
             };
 
             using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-            var result = await client.Teams[teamId]
+            var graphItem = await client.Teams[teamId]
                 .Channels[channelId]
                 .Messages
                 .PostAsync(newItem, cancellationToken: cancellationToken);
 
-            return (result ?? newItem)
+            return (graphItem ?? newItem)
                 .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages")
                 .ToCallToolResult();
         }

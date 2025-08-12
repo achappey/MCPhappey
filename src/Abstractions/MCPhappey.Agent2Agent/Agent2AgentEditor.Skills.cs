@@ -29,7 +29,7 @@ public static partial class Agent2AgentEditor
         var userId = serviceProvider.GetUserId();
         if (userId == null) return "No user found".ToErrorCallToolResponse();
 
-        var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new NewA2AAgentSkill()
+        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2AAgentSkill()
         {
             Id = skillId.Slugify().ToLowerInvariant(),
             Name = skillName,

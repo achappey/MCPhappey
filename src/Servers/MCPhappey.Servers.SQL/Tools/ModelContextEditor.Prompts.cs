@@ -16,7 +16,6 @@ public static partial class ModelContextEditor
 
     [Description("Adds a prompt to a MCP-server")]
     [McpServerTool(Title = "Add a prompt to an MCP-server",
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddPrompt(
         [Description("Name of the server")]
@@ -35,7 +34,7 @@ public static partial class ModelContextEditor
         CancellationToken cancellationToken = default)
     {
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new AddMcpPrompt()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new AddMcpPrompt()
         {
             Name = promptName.Slugify().ToLowerInvariant(),
             Prompt = prompt,
@@ -63,7 +62,6 @@ public static partial class ModelContextEditor
 
     [Description("Updates a resource of a MCP-server")]
     [McpServerTool(Title = "Update a prompt of an MCP-server",
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdatePrompt(
         [Description("Name of the server")] string serverName,
@@ -78,7 +76,7 @@ public static partial class ModelContextEditor
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException();
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpPrompt()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new UpdateMcpPrompt()
         {
             Prompt = newPrompt ?? prompt.PromptTemplate,
             Description = newDescription ?? prompt.Description,
@@ -134,7 +132,6 @@ public static partial class ModelContextEditor
 
     [Description("Updates a prompt argument of a MCP-server")]
     [McpServerTool(Title = "Update a prompt argument of an MCP-server",
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdatePromptArgument(
        [Description("Name of the server")] string serverName,
@@ -149,7 +146,7 @@ public static partial class ModelContextEditor
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var prompt = server.Prompts.FirstOrDefault(a => a.Name == promptName) ?? throw new ArgumentNullException(nameof(promptName));
         var promptArgument = prompt.Arguments.FirstOrDefault(a => a.Name == promptArgumentName) ?? throw new ArgumentNullException(nameof(promptArgumentName));
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpPromptArgument()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new UpdateMcpPromptArgument()
         {
             Required = required ?? promptArgument.Required,
             Description = newDescription ?? promptArgument.Description

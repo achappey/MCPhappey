@@ -23,7 +23,7 @@ public static partial class GraphTeams
         string? description = null,
         CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
          new GraphNewTeam
          {
              DisplayName = displayName,
@@ -48,8 +48,8 @@ public static partial class GraphTeams
         };
 
         using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-        var result = await client.Teams.PostAsync(newTeam, cancellationToken: cancellationToken);
+        var graphItem = await client.Teams.PostAsync(newTeam, cancellationToken: cancellationToken);
 
-        return (result ?? newTeam).ToJsonContentBlock("https://graph.microsoft.com/beta/teams").ToCallToolResult();
+        return (graphItem ?? newTeam).ToJsonContentBlock("https://graph.microsoft.com/beta/teams").ToCallToolResult();
     }
 }

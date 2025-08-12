@@ -83,7 +83,7 @@ public static partial class HTMLPlugin
                 }
             }, cancellationToken);
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
               new HtmlNewFile { Name = newFilename },
               cancellationToken);
 
@@ -104,11 +104,11 @@ public static partial class HTMLPlugin
         foreach (var pair in values?.Content?.ToList() ?? [])
             html = html.Replace($"{{{pair.Key}}}", pair.Value.ToString() ?? string.Empty);
 
-        var result = await requestContext.Server.Upload(serviceProvider,
+        var graphItem = await requestContext.Server.Upload(serviceProvider,
                                requestContext.ToOutputFileName("html"),
                                BinaryData.FromString(html), cancellationToken);
 
-        return result?.ToResourceLinkCallToolResponse();
+        return graphItem?.ToResourceLinkCallToolResponse();
     }
 
 

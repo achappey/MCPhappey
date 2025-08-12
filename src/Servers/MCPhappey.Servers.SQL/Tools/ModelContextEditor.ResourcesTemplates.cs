@@ -13,7 +13,7 @@ namespace MCPhappey.Servers.SQL.Tools;
 public static partial class ModelContextEditor
 {
     [Description("Adds a resource template to a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Add a resource template to an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_AddResourceTemplate(
@@ -39,7 +39,7 @@ public static partial class ModelContextEditor
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new AddMcpResourceTemplate()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new AddMcpResourceTemplate()
         {
             UriTemplate = uriTemplate,
             Title = title,
@@ -74,7 +74,7 @@ public static partial class ModelContextEditor
     }
 
     [Description("Updates a resource template of a MCP-server")]
-    [McpServerTool(Destructive = false,
+    [McpServerTool(
         Title = "Update a resource template of an MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextEditor_UpdateResourceTemplate(
@@ -96,7 +96,7 @@ public static partial class ModelContextEditor
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var resource = server.ResourceTemplates.FirstOrDefault(a => a.Name == resourceTemplateName) ?? throw new ArgumentNullException();
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(new UpdateMcpResourceTemplate()
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new UpdateMcpResourceTemplate()
         {
             Description = newDescription ?? resource.Description,
             Title = newTitle ?? resource.Title,
@@ -153,7 +153,7 @@ public static partial class ModelContextEditor
                 await serverRepository.DeleteResourceTemplate(template.Id);
             },
             successText: $"Resource {resourceTemplateName} has been deleted.",
-            ct: cancellationToken);
+                ct: cancellationToken);
     }
 
 }

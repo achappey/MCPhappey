@@ -8,6 +8,7 @@ using System.Collections.Concurrent;
 using MCPhappey.Agent2Agent.Repositories;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Agent2Agent.Services;
+using MCPhappey.Agent2Agent.Extensions;
 
 namespace MCPhappey.Agent2Agent;
 
@@ -84,7 +85,7 @@ public class Agent2AgentScraper(
 
             var tasks = await taskRepo.GetTasksByContextAsync(contextId, cancellationToken);
 
-            return [tasks.ToFileItem(url)];
+            return [tasks.Select(a => a.ToTaskFileItem($"a2a://task/{a.Id}")).ToFileItem(url)];
         }
 
         // a2a://task/{taskId}
@@ -95,7 +96,7 @@ public class Agent2AgentScraper(
             var hasAccess = await contextRepo.HasContextAccess(task?.ContextId!, oid, cancellationToken);
             if (!hasAccess) throw new UnauthorizedAccessException();
 
-            return [task.ToFileItem(url)];
+            return task != null ? [task.ToTaskFileItem(url)] : [];
         }
 
         // a2a://task/{taskId}/artifact
@@ -108,7 +109,10 @@ public class Agent2AgentScraper(
             var hasAccess = await contextRepo.HasContextAccess(task?.ContextId!, oid, cancellationToken);
             if (!hasAccess) throw new UnauthorizedAccessException();
 
-            return task?.Artifacts != null ? [task.Artifacts.ToFileItem(url)] : [];
+            return task?.Artifacts != null
+                ? [.. task.Artifacts.Select(a => a.ToArtifactFileItem($"a2a://task/{taskId}/artifact/{a.ArtifactId}"))] // or .ToArray(), depending on what ToFileItem accepts
+                                                                                                                        // .ToFileItem(url)
+                : new List<FileItem>(); // or Array.Empty<FileItem>()
         }
 
         // a2a://task/{taskId}/artifact/{artifactId}

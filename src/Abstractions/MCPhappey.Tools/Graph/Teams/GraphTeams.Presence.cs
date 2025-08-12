@@ -26,7 +26,7 @@ public static partial class GraphTeams
         var mcpServer = requestContext.Server;
         using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                new GraphSetStatusMessage
                {
                    Message = statusMessage,
@@ -82,7 +82,7 @@ public static partial class GraphTeams
         using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer); // Zorg dat je BETA gebruikt!
         var oauth = serviceProvider.GetService<OAuthSettings>();
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                new GraphSetPresence
                {
                    Availability = availability,

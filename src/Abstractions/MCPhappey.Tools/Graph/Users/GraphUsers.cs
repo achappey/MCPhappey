@@ -30,7 +30,7 @@ public static class GraphUsers
     {
         var mcpServer = requestContext.Server;
 
-        var (typed, notAccepted) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await mcpServer.TryElicit(
             new GraphNewUser
             {
                 GivenName = givenName ?? string.Empty,
@@ -97,7 +97,7 @@ public static class GraphUsers
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var newUser = await client.Users[userId].GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await mcpServer.TryElicit(
             new GraphUpdateUser
             {
                 GivenName = givenName ?? newUser?.GivenName ?? string.Empty,

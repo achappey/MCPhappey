@@ -31,7 +31,7 @@ public static partial class GraphPlanner
         var plan = await graphClient.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var targetGroup = await graphClient.Groups[groupId].GetAsync((config) => { }, cancellationToken);
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphCopyPlanner>(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit<GraphCopyPlanner>(
             new GraphCopyPlanner
             {
                 Title = title

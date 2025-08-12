@@ -26,7 +26,7 @@ public static class GraphOneDrive
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
               new GraphUploadFile
               {
                   Name = filename,
@@ -38,12 +38,12 @@ public static class GraphOneDrive
         if (notAccepted != null) return notAccepted;
 
         var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-        var result = await client.Drives[driveId]
+        var graphItem = await client.Drives[driveId]
                 .Items["root"].ItemWithPath($"/{typed?.Path}/{typed?.Name}")
                 .Content.PutAsync(BinaryData.FromString(typed?.Content ?? string.Empty).ToStream(),
                    cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock($"https://graph.microsoft.com/beta/drives/{driveId}/items/root:/{path}/{filename}:/content")
+        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/drives/{driveId}/items/root:/{path}/{filename}:/content")
          .ToCallToolResult();
     }
 
@@ -65,7 +65,7 @@ public static class GraphOneDrive
         {
             var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
-            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphNewFolder
             {
                 Name = name,

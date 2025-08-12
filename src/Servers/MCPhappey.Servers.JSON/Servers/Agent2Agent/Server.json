@@ -1,6 +1,6 @@
 {
   "serverInfo": {
-    "name": "Agent2Agent-Context",
+    "name": "Agent2Agent",
     "version": "1.0.0"
   },
   "plugins": ["MCPhappey.Agent2Agent.Agent2AgentContextPlugin, MCPhappey.Agent2Agent"],

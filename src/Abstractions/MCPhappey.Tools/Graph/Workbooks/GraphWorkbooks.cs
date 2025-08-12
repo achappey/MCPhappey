@@ -34,7 +34,7 @@ public static partial class GraphWorkbooks
 
         try
         {
-            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                 new GraphAddWorksheet
                 {
                     Name = worksheetName,

@@ -57,7 +57,7 @@ public static partial class GraphWorkbooks
     CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
-        var (typed, notAccepted) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await mcpServer.TryElicit(
             new GraphAddChartRequest
             {
                 Type = type ?? default,

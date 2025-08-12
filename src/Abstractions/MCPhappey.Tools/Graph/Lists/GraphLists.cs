@@ -107,7 +107,7 @@ public static class GraphLists
         var mcpServer = requestContext.Server;
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await mcpServer.TryElicit(
             new GraphNewSharePointList
             {
                 Title = listTitle,
@@ -166,7 +166,7 @@ public static class GraphLists
             .Lists[listId]
             .GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await mcpServer.TryElicit(
                 new GraphNewSharePointColumn
                 {
                     DisplayName = columnDisplayName,

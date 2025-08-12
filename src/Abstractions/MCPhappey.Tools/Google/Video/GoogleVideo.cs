@@ -32,7 +32,7 @@ public static class GoogleVideo
 
         try
         {
-            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                         new GoogleVideoPromptYoutTube
                         {
                             Prompt = prompt,
@@ -44,7 +44,7 @@ public static class GoogleVideo
             if (notAccepted != null) return notAccepted;
             if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
 
-            var result = await googleClient.GenerateContent(new Mscc.GenerativeAI.GenerateContentRequest()
+            var graphItem = await googleClient.GenerateContent(new Mscc.GenerativeAI.GenerateContentRequest()
             {
                 Contents =
                 [
@@ -59,7 +59,7 @@ public static class GoogleVideo
                 ]
             }, cancellationToken: cancellationToken);
 
-            return result?.Text?.ToTextCallToolResponse();
+            return graphItem?.Text?.ToTextCallToolResponse();
         }
         catch (Exception ex)
         {

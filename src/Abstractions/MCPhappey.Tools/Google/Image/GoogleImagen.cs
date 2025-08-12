@@ -36,7 +36,7 @@ public static class GoogleImagen
 
         try
         {
-            var (typed, notAccepted) = await requestContext.Server.TryElicit(
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                            new GoogleImagenNewImage
                            {
                                Prompt = prompt,
@@ -66,11 +66,11 @@ public static class GoogleImagen
 
             foreach (var imageItem in item.Predictions)
             {
-                var result = await requestContext.Server.Upload(serviceProvider,
+                var graphItem = await requestContext.Server.Upload(serviceProvider,
                      $"{typed?.Filename}.png",
                     BinaryData.FromBytes(Convert.FromBase64String(imageItem.BytesBase64Encoded!)), cancellationToken);
 
-                if (result != null) resourceLinks.Add(result);
+                if (graphItem != null) resourceLinks.Add(graphItem);
             }
 
             return resourceLinks?.ToResourceLinkCallToolResponse();

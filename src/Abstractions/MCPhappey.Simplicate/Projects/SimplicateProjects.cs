@@ -14,7 +14,7 @@ namespace MCPhappey.Simplicate.Projects;
 public static class SimplicateProjects
 {
     [Description("Create a new project in Simplicate")]
-    [McpServerTool(OpenWorld = false, Title = "Create new Simplicate project")]
+    [McpServerTool(OpenWorld = false, Title = "Create new project in Simplicate")]
     public static async Task<CallToolResult?> SimplicateProjects_CreateProject(
         [Description("Name of the new project")] string name,
         IServiceProvider serviceProvider,
@@ -25,7 +25,7 @@ public static class SimplicateProjects
 
         // Simplicate CRM Organization endpoint
         string baseUrl = simplicateOptions.GetApiUrl("/projects/project");
-        var (dto, notAccepted) = await requestContext.Server.TryElicit(new SimplicateNewProject()
+        var (dto, notAccepted, result) = await requestContext.Server.TryElicit(new SimplicateNewProject()
         {
             Name = name,
         }, cancellationToken);

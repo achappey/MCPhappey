@@ -1,10 +1,53 @@
+using System.Net.Mime;
+using System.Text.Json;
+using A2A.Models;
+using A2A.Server;
+using A2A.Server.Infrastructure;
 using MCPhappey.Agent2Agent.Models;
+using MCPhappey.Common.Models;
 using Microsoft.Graph.Beta.Models;
 
 namespace MCPhappey.Agent2Agent.Extensions;
 
 public static class ContextExtensions
 {
+
+    public static FileItem ToTaskFileItem(this TaskRecord? content, string uri, string? filename = null) => new()
+    {
+        Contents = BinaryData.FromObjectAsJson(new
+        {
+            content?.ContextId,
+            TaskId = content?.Id,
+            content?.Status,
+            Artifacts = content?.Artifacts?.Select(r => new
+            {
+                r.ArtifactId,
+                r.Name,
+                r.Description,
+                r.Metadata
+            }),
+            content?.Message,
+            content?.History,
+        }, JsonSerializerOptions.Web),
+        MimeType = MediaTypeNames.Application.Json,
+        Uri = uri,
+        Filename = filename
+    };
+
+    public static FileItem ToArtifactFileItem(this Artifact? content, string uri, string? filename = null) => new()
+    {
+        Contents = BinaryData.FromObjectAsJson(new
+        {
+            content?.ArtifactId,
+            content?.Name,
+            content?.Description,
+            content?.Metadata,
+        }, JsonSerializerOptions.Web),
+        MimeType = MediaTypeNames.Application.Json,
+        Uri = uri,
+        Filename = filename
+    };
+
     public static Agent2AgentViewContext ToViewContext(
         this Agent2AgentContext ctx,
         IDictionary<string, DirectoryObject> usersDict)

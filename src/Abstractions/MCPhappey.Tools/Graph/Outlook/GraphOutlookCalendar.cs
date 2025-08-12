@@ -27,7 +27,7 @@ public static class GraphOutlookCalendar
         [Description("E-mail addresses of attendees (comma separated).")] string? attendees = null,
         CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit<GraphCreateCalendarEvent>(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit<GraphCreateCalendarEvent>(
             new GraphCreateCalendarEvent
             {
                 Subject = subject ?? string.Empty,
@@ -77,9 +77,9 @@ public static class GraphOutlookCalendar
                     })]
         };
 
-        var result = await client.Me.Events.PostAsync(newEvent, cancellationToken: cancellationToken);
+        var graphItem = await client.Me.Events.PostAsync(newEvent, cancellationToken: cancellationToken);
 
-        return result.ToJsonContentBlock("https://graph.microsoft.com/beta/me/events").ToCallToolResult();
+        return graphItem.ToJsonContentBlock("https://graph.microsoft.com/beta/me/events").ToCallToolResult();
     }
 
     /// <summary>

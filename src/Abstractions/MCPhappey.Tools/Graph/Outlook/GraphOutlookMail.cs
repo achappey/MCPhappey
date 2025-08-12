@@ -27,7 +27,7 @@ public static class GraphOutlookMail
         [Description("Due date/time for the flag in ISO format (optional).")] string? dueDateTime = null,
         CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphFlagMail
             {
                 FlagStatus = flagStatus ?? FlagStatusEnum.Flagged,
@@ -118,7 +118,7 @@ public static class GraphOutlookMail
        [Description("Content of the reply message.")] string? content = null,
        CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphReplyMail
             {
                 Comment = content ?? string.Empty,
@@ -181,7 +181,7 @@ public static class GraphOutlookMail
      [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
      CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphSendMail
             {
                 ToRecipients = toRecipients ?? string.Empty,
@@ -236,7 +236,7 @@ public static class GraphOutlookMail
         [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
         CancellationToken cancellationToken = default)
     {
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphCreateMailDraft
             {
                 ToRecipients = toRecipients ?? string.Empty,

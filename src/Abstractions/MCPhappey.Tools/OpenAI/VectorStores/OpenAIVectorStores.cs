@@ -56,7 +56,7 @@ public static class OpenAIVectorStores
             Description = description ?? currentDescription
         };
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(input, cancellationToken);
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(input, cancellationToken);
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Error".ToErrorCallToolResponse();
 
@@ -105,7 +105,7 @@ public static class OpenAIVectorStores
             WaitUntilCompleted = true,
         };
 
-        var (typed, notAccepted) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Error".ToErrorCallToolResponse();
 

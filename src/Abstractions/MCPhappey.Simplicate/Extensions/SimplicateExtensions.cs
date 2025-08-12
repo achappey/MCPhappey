@@ -40,7 +40,6 @@ public static class SimplicateExtensions
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
         string baseUrl,
-        //string filterString,
         Func<int, string> progressTextSelector,
         RequestContext<CallToolRequestParams> requestContext,
         int pageSize = 100,
@@ -59,7 +58,7 @@ public static class SimplicateExtensions
             queryDict["limit"] = pageSize.ToString();
             queryDict["offset"] = offset.ToString();
             queryDict["metadata"] = "count";
-            builder.Query = string.Join("&", queryDict.SelectMany(kvp => kvp.Value.Select(v => $"{kvp.Key}={Uri.EscapeDataString(v)}")));
+            builder.Query = string.Join("&", queryDict.SelectMany(kvp => kvp.Value.Select(v => $"{kvp.Key}={Uri.EscapeDataString(v!)}")));
             string url = builder.Uri.ToString();
 
             //  string url = $"{baseUrl}?&limit={pageSize}&offset={offset}&metadata=count";

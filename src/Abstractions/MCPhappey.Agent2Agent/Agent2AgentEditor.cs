@@ -33,7 +33,7 @@ public static partial class Agent2AgentEditor
         var agentExists = await serverRepository.AgentExists(newAgentName, newAgentUrl, cancellationToken);
         if (agentExists == true) return "Servername already in use".ToErrorCallToolResponse();
 
-        var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new NewA2AAgent()
+        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2AAgent()
         {
             Name = newAgentName,
             Temperature = temperature,
@@ -88,7 +88,7 @@ public static partial class Agent2AgentEditor
         var userId = serviceProvider.GetUserId();
         if (userId == null) return "No user found".ToErrorCallToolResponse();
 
-        var (typedResult, notAccepted) = await requestContext.Server.TryElicit(new AddA2AAgentMcpServer()
+        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new AddA2AAgentMcpServer()
         {
             Url = new Uri(mcpServerUrl),
         }, cancellationToken);

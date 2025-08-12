@@ -8,7 +8,7 @@ namespace MCPhappey.Common.Extensions;
 
 public static class ElicitExtensions
 {
-    public static async Task<(T? typedResult, CallToolResult? notAccepted)> TryElicit<T>(
+    public static async Task<(T? typedResult, CallToolResult? notAccepted, ElicitResult? elicitResult)> TryElicit<T>(
      this IMcpServer mcpServer,
      T elicitRequest,
      CancellationToken cancellationToken = default)
@@ -23,9 +23,9 @@ public static class ElicitExtensions
 
         var result = await mcpServer.GetElicitResponse(elicitRequest, cancellationToken);
         var notAccepted = result?.NotAccepted();
-        if (notAccepted != null) return (null, notAccepted);
+        if (notAccepted != null) return (null, notAccepted, result);
         var typed = result?.GetTypedResult<T>() ?? throw new Exception("Type cast failed!");
-        return (typed, null);
+        return (typed, null, result);
     }
 
     public static async Task<ElicitResult?> GetElicitResponse<T>(this IMcpServer mcpServer,
