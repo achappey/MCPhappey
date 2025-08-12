@@ -38,77 +38,87 @@ public static class WebSearch
         await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
         var tasks = ModelNames.Select(async modelName =>
-        {
-            var markdown = $"{modelName}\n{query}";
-
-            var result = await samplingService.GetPromptSample(
-                serviceProvider,
-                mcpServer,
-                "ai-websearch-answer",
-                promptArgs,
-                modelName,
-                metadata: new Dictionary<string, object>()
+            {
+                try
                 {
-                    {"perplexity", new {
-                        search_mode = "web",
-                        web_search_options = new {
-                            search_context_size = "medium"
-                        }
-                     } },
-                    {"google", new {
-                        google_search = new { },
-                         thinkingConfig = new {
-                            thinkingBudget = -1
-                        }
-                     } },
-                    {"openai", new {
-                        web_search_preview = new {
-                            search_context_size = "medium"
-                         },
-                         reasoning = new {
-                            effort = "low"
-                         }
-                     } },
-                    {"anthropic", new {
-                        web_search = new {
-                            max_uses = 5
-                         },
-                         thinking = new {
-                            budget_tokens = 4096
-                         }
-                     } },
+                    var markdown = $"{modelName}\n{query}";
 
-                },
-                cancellationToken: cancellationToken
-            );
+                    var result = await samplingService.GetPromptSample(
+                        serviceProvider,
+                        mcpServer,
+                        "ai-websearch-answer",
+                        promptArgs,
+                        modelName,
+                        metadata: new Dictionary<string, object>
+                        {
+                            { "perplexity", new {
+                                search_mode = "web",
+                                web_search_options = new {
+                                    search_context_size = "medium"
+                                }
+                            } },
+                            { "google", new {
+                                google_search = new { },
+                                thinkingConfig = new {
+                                    thinkingBudget = -1
+                                }
+                            } },
+                            { "openai", new {
+                                web_search_preview = new {
+                                    search_context_size = "medium"
+                                },
+                                reasoning = new {
+                                    effort = "low"
+                                }
+                            } },
+                            { "anthropic", new {
+                                web_search = new {
+                                    max_uses = 5
+                                },
+                                thinking = new {
+                                    budget_tokens = 4096
+                                }
+                            } },
+                        },
+                        cancellationToken: cancellationToken
+                    );
 
-            progressToken = await requestContext.Server.SendProgressNotificationAsync(
-                           requestContext,
-                           progressToken,
-                           markdown,
-                           ModelNames.Length,
-                           cancellationToken
-                       );
+                    progressToken = await requestContext.Server.SendProgressNotificationAsync(
+                        requestContext,
+                        progressToken,
+                        markdown,
+                        ModelNames.Length,
+                        cancellationToken
+                    );
 
-            return result;
-        });
+                    return result.Content; // Success
+                }
+                catch (Exception ex)
+                {
+                    await requestContext.Server.SendMessageNotificationAsync(
+                        $"⚠ {modelName} failed: {ex.Message}",
+                        LoggingLevel.Error
+                    );
+                    return null; // Failure → skip
+                }
+            });
 
-        CreateMessageResult[] results = await Task.WhenAll(tasks);
+        var results = await Task.WhenAll(tasks);
 
-        // Terug als dictionary: model => antwoord
-        return results
-            .Select(a => a.Content);
+        // Return only successful results
+        return results.Where(r => r != null)!;
+
     }
 
     [Description("Academic web search using multiple AI models in parallel")]
     [McpServerTool(Title = "Academic web search (multi-model)",
-        Destructive = false,
-        ReadOnly = true)]
+     Destructive = false,
+     ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> WebSearch_ExecuteAcademic(
-      [Description("Search query")] string query,
-      IServiceProvider serviceProvider,
-      RequestContext<CallToolRequestParams> requestContext,
-      CancellationToken cancellationToken = default)
+     [Description("Search query")] string query,
+     IServiceProvider serviceProvider,
+     RequestContext<CallToolRequestParams> requestContext,
+     CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
@@ -120,33 +130,36 @@ public static class WebSearch
 
         int? progressToken = 1;
 
-        var markdown = $"{string.Join(", ", ModelNames)}\n{query}";
+        var markdown = $"{string.Join(", ", AcademicModelNames)}\n{query}";
         await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
 
         var tasks = AcademicModelNames.Select(async modelName =>
         {
-            var markdown = $"{modelName}\n{query}";
-            var result = await samplingService.GetPromptSample(
-                serviceProvider,
-                mcpServer,
-                "ai-academic-research-answer",
-                promptArgs,
-                modelName,
-                metadata: new Dictionary<string, object>()
-                {
-                    {"perplexity", new {
+            try
+            {
+                var markdown = $"{modelName}\n{query}";
+
+                var result = await samplingService.GetPromptSample(
+                    serviceProvider,
+                    mcpServer,
+                    "ai-academic-research-answer",
+                    promptArgs,
+                    modelName,
+                    metadata: new Dictionary<string, object>
+                    {
+                    { "perplexity", new {
                         search_mode = "academic",
                         web_search_options = new {
                             search_context_size = "medium"
                         }
                      } },
-                    {"google", new {
+                    { "google", new {
                         google_search = new { },
                         thinkingConfig = new {
                             thinkingBudget = -1
                         }
                      } },
-                    {"openai", new {
+                    { "openai", new {
                         web_search_preview = new {
                             search_context_size = "medium"
                          },
@@ -154,7 +167,7 @@ public static class WebSearch
                             effort = "medium"
                          }
                      } },
-                     {"anthropic", new {
+                    { "anthropic", new {
                         web_search = new {
                             max_uses = 5
                          },
@@ -162,28 +175,34 @@ public static class WebSearch
                             budget_tokens = 8192
                          }
                      } },
+                    },
+                    cancellationToken: cancellationToken
+                );
 
-                },
-                cancellationToken: cancellationToken
-            );
+                progressToken = await requestContext.Server.SendProgressNotificationAsync(
+                    requestContext,
+                    progressToken,
+                    markdown,
+                    AcademicModelNames.Length,
+                    cancellationToken
+                );
 
-            progressToken = await requestContext.Server.SendProgressNotificationAsync(
-                           requestContext,
-                           progressToken,
-                           markdown,
-                           ModelNames.Length,
-                           cancellationToken
-                       );
-
-            return result;
+                return result.Content; // Success
+            }
+            catch (Exception ex)
+            {
+                await requestContext.Server.SendMessageNotificationAsync(
+                    $"⚠ {modelName} failed: {ex.Message}",
+                    LoggingLevel.Warning
+                );
+                return null; // Skip failed
+            }
         });
 
-        CreateMessageResult[] results = await Task.WhenAll(tasks);
+        var results = await Task.WhenAll(tasks);
 
-        // Terug als dictionary: model => antwoord
-        return results
-            .Select(a => a.Content);
+        // Only keep successes
+        return results.Where(r => r != null)!;
     }
-
 }
 
