@@ -81,7 +81,6 @@ public static class Agent2AgentContextPlugin
         var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
         var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         var oid = tokenProvider.GetOidClaim();
-        var name = tokenProvider.GetNameClaim();
         var userGroupIds = httpContextAccessor.HttpContext?.User.GetGroupClaims();
 
         var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();

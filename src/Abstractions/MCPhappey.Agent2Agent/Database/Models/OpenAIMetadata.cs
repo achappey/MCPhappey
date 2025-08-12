@@ -13,6 +13,9 @@ public class OpenAIMetadata
     [JsonPropertyName("code_interpreter")]
     public CodeInterpreter? CodeInterpreter { get; set; }
 
+    [JsonPropertyName("web_search_preview")]
+    public WebSearchPreview? WebSearchPreview { get; set; }
+
     [JsonPropertyName("reasoning")]
     public Reasoning? Reasoning { get; set; }
 
@@ -71,4 +74,22 @@ public class FileSearch
 {
     [JsonPropertyName("vector_store_ids")]
     public IEnumerable<string>? VectorStoreIds { get; set; }
+}
+
+[Owned]
+public class WebSearchPreview
+{
+    [JsonPropertyName("search_context_size")]
+    public ContextSize? SearchContextSize { get; set; } = ContextSize.medium;
+}
+
+
+public enum ContextSize
+{
+    [EnumMember(Value = "low")]
+    low,
+    [EnumMember(Value = "medium")]
+    medium,
+    [EnumMember(Value = "high")]
+    high
 }

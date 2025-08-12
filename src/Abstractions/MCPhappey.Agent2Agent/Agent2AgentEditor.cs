@@ -153,6 +153,8 @@ public static partial class Agent2AgentEditor
         {
             ParallelToolCalls = currentAgent?.OpenAI?.ParallelToolCalls ?? true,
             Reasoning = currentAgent?.OpenAI?.Reasoning != null,
+            ContextSize = currentAgent?.OpenAI?.WebSearchPreview?.SearchContextSize ?? ContextSize.medium,
+            WebSearch = currentAgent?.OpenAI?.WebSearchPreview != null,
             ReasoningEffort = currentAgent?.OpenAI?.Reasoning?.Effort ?? ReasoningEffort.low,
             ReasoningSummary = currentAgent?.OpenAI?.Reasoning?.Summary ?? ReasoningSummary.auto
         }, cancellationToken);
@@ -164,6 +166,10 @@ public static partial class Agent2AgentEditor
         currentAgent.OpenAI = new OpenAIMetadata()
         {
             ParallelToolCalls = typedResult.ParallelToolCalls,
+            WebSearchPreview = typedResult.WebSearch ? new WebSearchPreview()
+            {
+                SearchContextSize = typedResult.ContextSize
+            } : null,
             Reasoning = typedResult.Reasoning ? new Reasoning()
             {
                 Effort = typedResult.ReasoningEffort,
@@ -219,10 +225,6 @@ public static partial class Agent2AgentEditor
         [Description("Enable or disable code interpreter.")]
         public bool CodeInterpreter { get; set; } = true;
 
-        [JsonPropertyName("code_interpreter_container_id")]
-        [Description("The container ID for the Code Interpreter (leave empty if not used).")]
-        public string? CodeInterpreterContainerId { get; set; }
-
         [JsonPropertyName("reasoning")]
         [DefaultValue(true)]
         [Description("Enable or disable reasoning.")]
@@ -237,6 +239,16 @@ public static partial class Agent2AgentEditor
         [Required]
         [Description("The reasoning summary style: auto, concise, detailed.")]
         public ReasoningSummary ReasoningSummary { get; set; } = ReasoningSummary.auto;
+
+        [JsonPropertyName("web_search")]
+        [DefaultValue(true)]
+        [Description("Enable or disable web search.")]
+        public bool WebSearch { get; set; } = true;
+
+        [JsonPropertyName("search_context_size")]
+        [Required]
+        [Description("The search context size: low, medium or high")]
+        public ContextSize ContextSize { get; set; } = ContextSize.medium;
 
         [JsonPropertyName("file_search_vector_store_ids")]
         [Description("Comma-separated list of Vector Store IDs for file search.")]

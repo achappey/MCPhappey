@@ -51,6 +51,7 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
               // Optional: fine-tune nested owned objects (they’ll be nested JSON)
               nav.OwnsOne(m => m.CodeInterpreter);
               nav.OwnsOne(m => m.Reasoning);
+              nav.OwnsOne(m => m.WebSearchPreview);
               nav.OwnsOne(m => m.FileSearch);
             }));
 

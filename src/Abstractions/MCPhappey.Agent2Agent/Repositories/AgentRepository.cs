@@ -13,6 +13,9 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
     public async Task<Agent?> GetAgent(string name, CancellationToken cancellationToken = default) =>
         await databaseContext.Agents
             .Include(r => r.Owners)
+            .Include(r => r.Servers)
+            .ThenInclude(r => r.McpServer)
+            .Include(r => r.Anthropic)
             .Include(r => r.OpenAI)
             .Include(r => r.AgentCard)
             .ThenInclude(r => r.Skills)
@@ -30,6 +33,9 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
     public async Task<List<Agent>> GetAgents(CancellationToken cancellationToken = default) =>
         await databaseContext.Agents.AsNoTracking()
             .Include(r => r.Owners)
+            .Include(r => r.Servers)
+            .ThenInclude(r => r.McpServer)
+            .Include(r => r.Anthropic)
             .Include(r => r.OpenAI)
             .Include(r => r.AgentCard)
             .ThenInclude(r => r.Skills)
@@ -47,7 +53,7 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
 
         return agent;
     }
-    
+
     public async Task<Skill> UpdateSkill(Skill agent)
     {
         databaseContext.Skills.Update(agent);
