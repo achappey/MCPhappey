@@ -3,7 +3,7 @@
     "name": "Microsoft-OneDrive",
     "version": "1.0.0"
   },
-  "instructions": "Can read all kind of SharePoint links, news pages and Graph API urls as resources.",
+  "instructions": "Can read all kind of SharePoint links, news pages, Graph API urls as resources.",
   "plugins": ["MCPhappey.Tools.Graph.OneDrive.GraphOneDrive, MCPhappey.Tools"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

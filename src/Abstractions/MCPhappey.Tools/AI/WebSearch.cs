@@ -161,7 +161,7 @@ public static class WebSearch
                      } },
                     { "openai", new {
                         web_search_preview = new {
-                            search_context_size = "medium"
+                            search_context_size = "low"
                          },
                          reasoning = new {
                             effort = "medium"

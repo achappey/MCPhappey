@@ -10,8 +10,10 @@ namespace MCPhappey.Tools.PowerBI;
 public static class PowerBI
 {
     [Description("Executes a DAX query on a Power BI dataset via the ExecuteQueries endpoint.")]
-    [McpServerTool(Title = "Execute a DAX query on a Power BI dataset",
+    [McpServerTool(Name = "powerbi_execute_dax_query",
+        Title = "Execute a DAX query on a Power BI dataset",
         Destructive = false,
+        OpenWorld = false,
         ReadOnly = true)]
     public static async Task<ContentBlock?> PowerBI_ExecuteDaxQuery(
         [Description("PowerBI datasetId")] string datasetId,
@@ -48,8 +50,10 @@ public static class PowerBI
     }
 
     [Description("Creates a new Power BI streaming (push) dataset with the specified table schema.")]
-    [McpServerTool(Title = "Create a new Power BI streaming dataset",
-        Destructive = false)]
+    [McpServerTool(Name = "powerbi_create_streaming_dataset",
+        Title = "Create a new Power BI streaming dataset",
+        OpenWorld = false,
+        Destructive = true)]
     public static async Task<ContentBlock?> PowerBI_CreateStreamingDataset(
     [Description("Dataset name")] string datasetName,
     [Description("Table name")] string tableName,
@@ -100,8 +104,10 @@ public static class PowerBI
     }
 
     [Description("Adds rows to a table in a Power BI streaming (push) dataset, with automatic type detection and mapping.")]
-    [McpServerTool(Title = "Add rows to a table in a Power BI streaming dataset",
-        Destructive = false)]
+    [McpServerTool(Name = "powerbi_add_rows_to_dataset_table",
+        Title = "Add rows to a table in a Power BI streaming dataset",
+        OpenWorld = false,
+        Destructive = true)]
     public static async Task<ContentBlock?> PowerBI_AddRowsToDatasetTable(
         [Description("PowerBI dataset ID")] string datasetId,
         [Description("Table name")] string tableName,
@@ -150,7 +156,7 @@ public static class PowerBI
         var sdkRows = rows.Select(a => a.ToNativeDictionary())
             .Cast<object>()
             .ToList();
-            
+
         var rowRequest = new PostRowsRequest
         {
             Rows = sdkRows

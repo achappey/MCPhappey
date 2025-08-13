@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-Files",
+    "title": "OpenAI-Files",
+    "version": "1.0.0"
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

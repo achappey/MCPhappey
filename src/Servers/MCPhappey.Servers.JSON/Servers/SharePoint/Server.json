@@ -4,6 +4,7 @@
     "version": "1.0.0"
   },
   "plugins": ["MCPhappey.Tools.SharePoint.SharePointSearch, MCPhappey.Tools"],
+  "instructions": "You can read all kind of SharePoint links, news pages, Graph API, Teams message link urls as resources. Also links that are not specified and/or come up from search results.",
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read"
   }

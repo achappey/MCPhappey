@@ -181,7 +181,7 @@ public static class SharePointSearch
  */
 
     [Description("Search Microsoft 365 content and return raw Microsoft search results")]
-    [McpServerTool(Title = "Search Microsoft 365 content raw",
+    [McpServerTool(Name = "sharepoint_search", Title = "Search Microsoft 365 content raw",
         Destructive = false, Idempotent = true, OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SharePoint_Search(
         [Description("Search query")] string query,
@@ -252,7 +252,7 @@ public static class SharePointSearch
       }
   */
     [Description("Read a Microsoft 365 search result")]
-    [McpServerTool(Title = "Read a Microsoft 365 search result",
+    [McpServerTool(Name = "sharepoint_read_search_result", Title = "Read a Microsoft 365 search result",
         Destructive = false, Idempotent = true, OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SharePoint_ReadSearchResult(
         [Description("Url to the search result item")] string url,
@@ -268,12 +268,12 @@ public static class SharePointSearch
 
         return new CallToolResult
         {
-            Content = new[] { text.ToTextContentBlock() }
+            Content = [text.ToTextContentBlock()]
         };
     }
 
     [Description("Executes a prompt on Microsoft 365 search results")]
-    [McpServerTool(Title = "Executes a prompt on Microsoft 365 search results",
+    [McpServerTool(Name = "sharepoint_prompt_search_results", Title = "Executes a prompt on Microsoft 365 search results",
         Destructive = false, Idempotent = true, OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SharePoint_PromptSearchResults(
         [Description("Prompt to execute on the search results")] string prompt,
@@ -282,7 +282,7 @@ public static class SharePointSearch
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
     {
-        var urls = urlList.Split(new[] { '\n', ',', ';' }, StringSplitOptions.RemoveEmptyEntries)
+        var urls = urlList.Split(['\n', ',', ';'], StringSplitOptions.RemoveEmptyEntries)
                           .Select(u => u.Trim()).Where(u => u.StartsWith("http"));
 
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -319,7 +319,7 @@ public static class SharePointSearch
 
         return new CallToolResult
         {
-            Content = new[] { result.Content }
+            Content = [result.Content]
         };
     }
 

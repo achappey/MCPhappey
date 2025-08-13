@@ -14,13 +14,80 @@ using System.Text.Json;
 using MCPhappey.Common.Models;
 using A2A.Models;
 using MCPhappey.Core.Extensions;
+using A2A.Server.Infrastructure;
 
 namespace MCPhappey.Agent2Agent;
 
 public static class Agent2AgentContextPlugin
 {
-    [McpServerTool(Name = "agent2agent_new_task")]
-    [Description("Execute an Agent2Agent task.")]
+    [McpServerTool(Name = "agent2agent_create_task", Title = "Create Agent2Agent task", OpenWorld = false)]
+    [Description("Create a new Agent2Agent task without executing it.")]
+    public static async Task<CallToolResult> Agent2Agent_CreateTask(
+           IServiceProvider serviceProvider,
+           RequestContext<CallToolRequestParams> requestContext,
+           string contextId,
+           string taskDescription,
+           CancellationToken cancellationToken = default)
+    {
+        var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
+        var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+        var oid = tokenProvider.GetOidClaim();
+        var name = tokenProvider.GetNameClaim();
+        var userGroupIds = httpContextAccessor.HttpContext?.User.GetGroupClaims();
+
+        var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
+        var contextRepo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
+
+        // 2. Load the context for the task
+        var context = await contextRepo.GetContextAsync(contextId, cancellationToken)
+            ?? throw new UnauthorizedAccessException("Context not found");
+
+        // 3. Check access
+        var userAllowed =
+            (context.UserIds != null && context.UserIds.Contains(oid)) ||
+            (context.SecurityGroupIds != null && userGroupIds != null && context.SecurityGroupIds.Intersect(userGroupIds).Any());
+
+        if (!userAllowed)
+            throw new UnauthorizedAccessException("You do not have access to this task's context");
+
+        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2ATask()
+        {
+            Message = taskDescription,
+        }, cancellationToken);
+
+        if (notAccepted != null) return notAccepted;
+        if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
+
+        var taskItem = new TaskRecord()
+        {
+            Id = Guid.NewGuid().ToString(),
+            ContextId = contextId,
+            Status = new A2A.Models.TaskStatus()
+            {
+                State = A2A.TaskState.Unknown,
+            },
+            Message = new Message()
+            {
+                Role = A2A.MessageRole.User,
+                MessageId = Guid.NewGuid().ToString(),
+                Parts = [new TextPart() {
+                    Text = typedResult.Message
+                }],
+                Metadata = new()
+                    {
+                        {"timestamp",  DateTime.UtcNow.ToString("o") },
+                        {"author",  name ?? requestContext.Server.ServerOptions.ServerInfo?.Name ?? string.Empty }
+                    }
+            }
+        };
+
+        await taskRepo.SaveTaskAsync(taskItem, cancellationToken);
+
+        return taskItem.ToJsonContentBlock($"a2a://task/{taskItem?.Id}").ToCallToolResult();
+    }
+
+    [McpServerTool(Name = "agent2agent_new_task", Title = "Execute new Agent2Agent task")]
+    [Description("Create a new task and execute it by the specified agent")]
     public static async Task<CallToolResult> Agent2Agent_NewTask(
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
@@ -68,7 +135,7 @@ public static class Agent2AgentContextPlugin
         };
     }
 
-    [McpServerTool(Name = "agent2agent_send_message")]
+    [McpServerTool(Name = "agent2agent_send_message", Title = "Send Agent2Agent task message")]
     [Description("Execute an existing Agent2Agent task with a new message.")]
     public static async Task<CallToolResult> Agent2Agent_SendMessage(
           IServiceProvider serviceProvider,

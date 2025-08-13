@@ -1,6 +1,7 @@
 using MCPhappey.Common;
 using MCPhappey.Tools.GitHub.RestCountries;
 using MCPhappey.Tools.Graph;
+using MCPhappey.Tools.OpenAI.Files;
 using MCPhappey.Tools.OpenAI.VectorStores;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.Extensions.DependencyInjection;
@@ -15,6 +16,7 @@ public static class AspNetCoreExtensions
         builder.Services.AddSingleton<IAutoCompletion, GraphCompletion>();
         builder.Services.AddSingleton<IAutoCompletion, CountryCompletion>();
         builder.Services.AddSingleton<IContentScraper, VectorStoreScraper>();
+        builder.Services.AddSingleton<IContentScraper, OpenAIFilesScraper>();
 
         return builder;
     }
