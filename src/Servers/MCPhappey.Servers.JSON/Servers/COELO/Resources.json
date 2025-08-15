@@ -7,7 +7,8 @@
       "description": "Sitemap van alle COELO pagina's",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": ["assistant"],
+        "priority": 0.7
       }
     },
     {
@@ -17,7 +18,8 @@
       "description": "Overzicht van alle COELO nieuwsberichten, etc.",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": ["assistant"],
+        "priority": 0.7
       }
     },
     {
@@ -27,7 +29,8 @@
       "description": "De Atlas van de lokale lasten is een jaarlijks overzicht van de heffingen van gemeenten, provincies en waterschappen.",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant", "user"]
+        "audience": ["assistant", "user"],
+        "priority": 0.6
       }
     },
     {
@@ -37,7 +40,19 @@
       "description": "De Atlas van de lokale lasten is een jaarlijks overzicht van de heffingen van gemeenten, provincies en waterschappen.",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant", "user"]
+        "audience": ["assistant", "user"],
+        "priority": 0.6
+      }
+    },
+    {
+      "uri": "https://coelo.nl/woonlasten/Lokale-lasten-calculator-2025-a.php",
+      "name": "lokale-lasten-calculator-ids",
+      "title": "Lokale lasten calculator om ids gemeente op te zoeken",
+      "description": "COELO lokale lasten calculator. Gebruik deze pagina om de IDs van gemeentes op te zoeken. Haal hiervoor de raw html op. Gebruik deze css selector om te zoeken: [name='gem_id1'] *",
+      "mimeType": "text/plain",
+      "annotations": {
+        "audience": ["assistant", "user"],
+        "priority": 0.8
       }
     }
   ]

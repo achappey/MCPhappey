@@ -3,6 +3,7 @@
     "name": "Agent2Agent",
     "version": "1.0.0"
   },
+  "instructions": "Always pass task and/or artifact references with referencedTaskIds, never by uri only.",
   "plugins": ["MCPhappey.Agent2Agent.Agent2AgentContextPlugin, MCPhappey.Agent2Agent"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
