@@ -124,8 +124,8 @@ public static class Agent2AgentContextPlugin
                 return "You do not have access to this task's context".ToErrorCallToolResponse();
         }
 
-        var refTaskIds = referencedTaskIds?.Split(",") ?? [];
-        await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
+      //  var refTaskIds = referencedTaskIds?.Split(",") ?? [];
+       // await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
 
         // 3. Check access
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2ATask()
