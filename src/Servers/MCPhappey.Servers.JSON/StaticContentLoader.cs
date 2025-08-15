@@ -1,5 +1,4 @@
 using System.Text.Json;
-using MCPhappey.Common.Constants;
 using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol;
 

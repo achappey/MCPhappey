@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Mime;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -15,12 +16,12 @@ public static class GoogleImagen
     [Description("Create a image with Google Imagen image generator")]
     [McpServerTool(Title = "Generate image with Google Imagen", Destructive = false)]
     public static async Task<CallToolResult?> GoogleImagen_CreateImage(
-        [Description("prompt")]
+        [Description("Image prompt (only English)")]
         string prompt,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("AI image model: imagen-3.0-generate-002, imagen-4.0-ultra-generate-preview-06-06 or imagen-4.0-generate-preview-06-06")]
-        string imageModel = "imagen-3.0-generate-002",
+        [Description("AI image model: imagen-3.0-generate-002, imagen-4.0-generate-001, imagen-4.0-ultra-generate-001 or imagen-4.0-fast-generate-001")]
+        Model? imageModel = Model.imagen40generate001,
         [Description("The aspect ratio of the generated image. 1:1, 9:16, 16:9, 3:4, or 4:3")]
         string aspectRatio = "1:1",
         [Description("The number of images to generate. Max. 4.")]
@@ -32,30 +33,34 @@ public static class GoogleImagen
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
         var googleAI = serviceProvider.GetRequiredService<Mscc.GenerativeAI.GoogleAI>();
 
-        var imageClient = googleAI.ImageGenerationModel(imageModel);
-
         try
         {
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                            new GoogleImagenNewImage
                            {
                                Prompt = prompt,
+                               Model = imageModel ?? Model.imagen40generate001,
                                NumberOfImages = numberOfImages,
-                               Filename = filename ?? requestContext.ToOutputFileName()
+                               Filename = filename?.ToOutputFileName()
+                                ?? requestContext.ToOutputFileName()
                            },
 
                            cancellationToken);
 
             if (notAccepted != null) return notAccepted;
             if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
+            var model = typed.Model;
+            var modelString = model.GetEnumMemberValue();
+            var imageClient = googleAI.ImageGenerationModel(modelString);
 
-            var item = await imageClient.GenerateImages(new Mscc.GenerativeAI.ImageGenerationRequest(typed.Prompt, typed.NumberOfImages)
+            var item = await imageClient.GenerateImages(new(typed.Prompt, typed.NumberOfImages)
             {
                 Parameters = new()
                 {
                     SampleCount = typed.NumberOfImages,
                     AspectRatio = aspectRatio,
-                    OutputOptions = new Mscc.GenerativeAI.OutputOptions()
+                    PersonGeneration = Mscc.GenerativeAI.PersonGeneration.AllowAdult,
+                    OutputOptions = new()
                     {
                         MimeType = MediaTypeNames.Image.Png
                     }
@@ -87,7 +92,7 @@ public static class GoogleImagen
     {
         [JsonPropertyName("prompt")]
         [Required]
-        [Description("The image prompt.")]
+        [Description("The image prompt. English prompts only")]
         public string Prompt { get; set; } = default!;
 
         [JsonPropertyName("filename")]
@@ -95,11 +100,29 @@ public static class GoogleImagen
         [Description("The new image file name.")]
         public string Filename { get; set; } = default!;
 
+        [JsonPropertyName("model")]
+        [Required]
+        [Description("The AI image model.")]
+        public Model Model { get; set; } = Model.imagen30generate002;
+
         [JsonPropertyName("numberOfImages")]
         [Required]
         [Range(1, 4)]
         [Description("The number of images to create.")]
         public int NumberOfImages { get; set; } = 1;
+    }
+
+    //imagen-3.0-generate-002, imagen-4.0-generate-001, imagen-4.0-ultra-generate-001 or imagen-4.0-fast-generate-001
+    public enum Model
+    {
+        [EnumMember(Value = "imagen-3.0-generate-002")]
+        imagen30generate002,
+        [EnumMember(Value = "imagen-4.0-generate-001")]
+        imagen40generate001,
+        [EnumMember(Value = "imagen-4.0-ultra-generate-001")]
+        imagen40ultragenerate001,
+        [EnumMember(Value = "imagen-4.0-fast-generate-001")]
+        imagen40fastgenerate001,
     }
 }
 

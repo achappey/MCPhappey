@@ -50,7 +50,8 @@ public class VectorStoreScraper : IContentScraper
                 throw new UnauthorizedAccessException();
             }
 
-            var refs = await client.GetFileAssociationsAsync(vectorStoreId, cancellationToken: cancellationToken).ToListAsync();
+            var refs = await client.GetFileAssociationsAsync(vectorStoreId, cancellationToken: cancellationToken)
+                .ToListAsync(cancellationToken: cancellationToken);
 
             return refs.Select(a => a.ToFileItem(url));
         }

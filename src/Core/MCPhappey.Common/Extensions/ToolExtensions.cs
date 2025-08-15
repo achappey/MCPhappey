@@ -1,3 +1,5 @@
+using System.Reflection;
+using System.Runtime.Serialization;
 using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -70,11 +72,21 @@ public static class ToolExtensions
         => $"{context.ToOutputFileName()}.{extension.ToLower()}";
 
     public static string ToOutputFileName(this RequestContext<CallToolRequestParams> context)
-        => $"{DateTime.Now:yyyyMMdd_HHmmss}_{context.Params?.Name ?? context.Server.ServerOptions.ServerInfo?.Name}";
+        => $"{DateTime.Now:yyMMdd_HHmmss}_{context.Params?.Name ?? context.Server.ServerOptions.ServerInfo?.Name}";
+
+    public static string ToOutputFileName(this string filename)
+        => $"{DateTime.Now:yyMMdd_HHmmss}_{filename}";
 
     public static HashSet<string> GetAllPlugins(this IReadOnlyList<ServerConfig> results) =>
             [.. results.SelectMany(r => r.Server.Plugins ?? [])
              .OfType<string>()
              .Distinct()];
+
+    public static string GetEnumMemberValue<T>(this T enumValue) where T : Enum
+    {
+        var memberInfo = typeof(T).GetMember(enumValue.ToString()).FirstOrDefault();
+        var attribute = memberInfo?.GetCustomAttribute<EnumMemberAttribute>();
+        return attribute?.Value ?? enumValue.ToString();
+    }
 }
 

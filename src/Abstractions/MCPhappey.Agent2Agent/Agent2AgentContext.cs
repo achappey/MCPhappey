@@ -27,6 +27,7 @@ public static class Agent2AgentContextPlugin
            RequestContext<CallToolRequestParams> requestContext,
            string contextId,
            string taskDescription,
+            [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
            CancellationToken cancellationToken = default)
     {
         var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
@@ -37,6 +38,9 @@ public static class Agent2AgentContextPlugin
 
         var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
         var contextRepo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
+        var refTaskIds = referencedTaskIds?.Split(",") ?? [];
+
+        await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
 
         // 2. Load the context for the task
         var context = await contextRepo.GetContextAsync(contextId, cancellationToken)
@@ -73,6 +77,7 @@ public static class Agent2AgentContextPlugin
                 Parts = [new TextPart() {
                     Text = typedResult.Message
                 }],
+                ReferenceTaskIds = [.. refTaskIds],
                 Metadata = new()
                     {
                         {"timestamp",  DateTime.UtcNow.ToString("o") },
@@ -93,6 +98,7 @@ public static class Agent2AgentContextPlugin
           RequestContext<CallToolRequestParams> requestContext,
          [Description("Url of the agent")] string agentUrl,
          [Description("Task message/comment")] string taskMessage,
+         [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
          [Description("Id of the context to execute the task in. Leave empty for new context.")] string? contextId = null,
          CancellationToken cancellationToken = default)
     {
@@ -100,7 +106,7 @@ public static class Agent2AgentContextPlugin
         var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         var oid = tokenProvider.GetOidClaim();
         var userGroupIds = httpContextAccessor.HttpContext?.User.GetGroupClaims();
-
+        var taskRepo = serviceProvider.GetRequiredService<IAgent2AgentTaskRepository>();
         var contextRepo = serviceProvider.GetRequiredService<IAgent2AgentContextRepository>();
 
         // 2. Load the context for the task
@@ -117,6 +123,9 @@ public static class Agent2AgentContextPlugin
             if (!userAllowed)
                 return "You do not have access to this task's context".ToErrorCallToolResponse();
         }
+
+        var refTaskIds = referencedTaskIds?.Split(",") ?? [];
+        await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
 
         // 3. Check access
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2ATask()
