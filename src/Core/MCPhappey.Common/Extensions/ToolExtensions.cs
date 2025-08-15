@@ -47,7 +47,7 @@ public static class ToolExtensions
     public static ResourceLinkBlock ToResourceLinkBlock(this string uri, string name, string? mimeType = null, string? description = null, long? size = null) => new()
     {
         Uri = uri,
-        Name = name,
+        Name = name ?? "No name",
         Description = description,
         MimeType = mimeType,
         Size = size

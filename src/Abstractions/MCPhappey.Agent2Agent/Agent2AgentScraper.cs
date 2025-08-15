@@ -100,7 +100,7 @@ public class Agent2AgentScraper(
             var hasAccess = await contextRepo.HasContextAccess(task?.ContextId!, oid, cancellationToken);
             if (!hasAccess) throw new UnauthorizedAccessException();
 
-            return task != null ? [task.ToTaskFileItem(url)] : [];
+            return task != null ? [task.ToTaskFileItem(url, $"{taskId}.json")] : [];
         }
 
         // a2a://task/{taskId}/artifact

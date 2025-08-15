@@ -31,7 +31,7 @@ public static class ContextExtensions
         }, JsonSerializerOptions.Web),
         MimeType = MediaTypeNames.Application.Json,
         Uri = uri,
-        Filename = filename
+        Filename = filename ?? content?.Id
     };
 
     public static FileItem ToArtifactFileItem(this Artifact? content, string uri, string? filename = null) => new()
@@ -45,7 +45,7 @@ public static class ContextExtensions
         }, JsonSerializerOptions.Web),
         MimeType = MediaTypeNames.Application.Json,
         Uri = uri,
-        Filename = filename
+        Filename = content?.Name ?? filename ?? content?.ArtifactId
     };
 
     public static Agent2AgentViewContext ToViewContext(
