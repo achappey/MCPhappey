@@ -124,8 +124,8 @@ public static class Agent2AgentContextPlugin
                 return "You do not have access to this task's context".ToErrorCallToolResponse();
         }
 
-      //  var refTaskIds = referencedTaskIds?.Split(",") ?? [];
-       // await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
+        var refTaskIds = referencedTaskIds?.Split(",") ?? [];
+        await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
 
         // 3. Check access
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2ATask()
@@ -152,6 +152,7 @@ public static class Agent2AgentContextPlugin
          [Description("Url of the agent")] string agentUrl,
          [Description("Id of the task to send the message to")] string taskId,
          [Description("Task message/comment")] string taskMessage,
+         [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
          CancellationToken cancellationToken = default)
     {
         var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
@@ -177,7 +178,8 @@ public static class Agent2AgentContextPlugin
             if (!userAllowed)
                 return "You do not have access to this task's context".ToErrorCallToolResponse();
         }
-
+        var refTaskIds = referencedTaskIds?.Split(",") ?? [];
+        await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
         // 3. Check access
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2ATask()
         {
