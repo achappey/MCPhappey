@@ -1,5 +1,7 @@
 using System.Reflection;
 using System.Text.Json;
+using System.Threading.Tasks;
+using HtmlAgilityPack;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.SemanticKernel;
@@ -10,6 +12,18 @@ namespace MCPhappey.Core.Extensions;
 
 public static partial class ModelContextToolExtensions
 {
+    public static async Task<CallToolResult?> WithExceptionCheck(this RequestContext<CallToolRequestParams> requestContext, Func<Task<CallToolResult?>> func)
+    {
+        try
+        {
+            return await func();
+        }
+        catch (Exception e)
+        {
+            return e.Message.ToErrorCallToolResponse();
+        }
+    }
+
     public static ToolsCapability? ToToolsCapability(this Server server, Kernel kernel,
         Dictionary<string, string>? headers = null)
     {

@@ -43,8 +43,14 @@ public static class HTTPService
         string url,
         IServiceProvider serviceProvider,
         IMcpServer mcpServer,
-        [Description("Css selector. Just raw, dont include select.")]
+        [Description("Css selector.")]
         string? cssSelector = null,
+        [Description("Extract only a specific HTML attribute from matched nodes (e.g., href, src, value).")]
+        string? attribute = null,
+        [Description("Return only the inner text without HTML tags.")]
+        bool textOnly = false,
+        [Description("Limit the number of matches returned.")]
+        int? maxMatches = null,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
@@ -75,14 +81,30 @@ public static class HTTPService
 
             var matches = doc.DocumentNode.QuerySelectorAll(cssSelector?.Trim());
             if (matches == null || !matches.Any())
-                return Array.Empty<ContentBlock>();
+                return [];
 
-            // Eén block per match (raw outerHTML)
-            var blocks = matches
-                .Select((n, i) => n.OuterHtml)
-                .ToArray();
+            if (maxMatches.HasValue)
+                matches = [.. matches.Take(maxMatches.Value)];
 
-            results.AddRange(blocks);
+            foreach (var match in matches)
+            {
+                string output;
+                if (!string.IsNullOrWhiteSpace(attribute))
+                {
+                    output = match.GetAttributeValue(attribute, string.Empty);
+                }
+                else if (textOnly)
+                {
+                    output = match.InnerText;
+                }
+                else
+                {
+                    output = match.OuterHtml;
+                }
+
+                if (!string.IsNullOrEmpty(output))
+                    results.Add(output);
+            }
         }
 
         return [string.Join("\n", results).ToTextContentBlock()];

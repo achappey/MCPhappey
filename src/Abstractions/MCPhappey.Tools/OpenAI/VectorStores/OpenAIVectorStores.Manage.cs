@@ -3,28 +3,29 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Common.Models;
+using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using OpenAI;
 using OpenAI.VectorStores;
 using OAIV = OpenAI.VectorStores;
+using OAIF = OpenAI.Files;
 
 namespace MCPhappey.Tools.OpenAI.VectorStores;
 
 public static partial class OpenAIVectorStores
 {
-    public const string BASE_URL = "https://api.openai.com/v1/vector_stores";
-    public const string OWNERS_KEY = "Owners";
-    public const string DESCRIPTION_KEY = "Description";
 
     public static bool IsOwner(this VectorStore store, string? userId)
-        => userId != null && store.Metadata.ContainsKey(OWNERS_KEY) && store.Metadata[OWNERS_KEY].Contains(userId);
+        => userId != null && store.Metadata.ContainsKey(VectorStoreExtensions.OWNERS_KEY)
+            && store.Metadata[VectorStoreExtensions.OWNERS_KEY].Contains(userId);
 
     [Description("Update a vector store at OpenAI")]
     [McpServerTool(
-       Title = "Update a vector store at OpenAI",
+       Title = "Update a vector store",
        Destructive = false,
        OpenWorld = false)]
     public static async Task<CallToolResult?> OpenAIVectorStores_Update(
@@ -34,59 +35,51 @@ public static partial class OpenAIVectorStores
        [Description("New name (defaults to current).")] string? name = null,
        [Description("New description (defaults to current).")] string? description = null,
        CancellationToken cancellationToken = default)
-    {
-        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
-        var userId = serviceProvider.GetUserId();
-        var client = openAiClient.GetVectorStoreClient();
+        => await requestContext.WithExceptionCheck(async () =>
+            await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
+            {
+                // Current values
+                var currentName = current.Name;
+                current.Metadata.TryGetValue(VectorStoreExtensions.BASE_URL, out var currentDescription);
 
-        // Load current store for defaults + owner check
-        var current = client.GetVectorStore(vectorStoreId, cancellationToken);
+                // Prepare elicitation payload with defaults from method params (fallback to current)
+                var input = new OpenAIEditVectorStore
+                {
+                    Name = !string.IsNullOrWhiteSpace(name) ? name! : currentName,
+                    Description = description ?? currentDescription
+                };
 
-        if (!current.Value.IsOwner(userId))
-            return "Only owners can update a vector store".ToErrorCallToolResponse();
+                var (typed, notAccepted, result) = await requestContext.Server.TryElicit(input, cancellationToken);
+                if (notAccepted != null) return notAccepted;
+                if (typed == null) return "Error".ToErrorCallToolResponse();
 
-        // Current values
-        var currentName = current.Value.Name;
-        current.Value.Metadata.TryGetValue(DESCRIPTION_KEY, out var currentDescription);
+                // Build update options; preserve existing metadata (Owners/Visibility/etc.)
+                var newMetadata = new Dictionary<string, string>(current.Metadata);
+                if (typed.Description != null)
+                    newMetadata[VectorStoreExtensions.DESCRIPTION_KEY] = typed.Description;
 
-        // Prepare elicitation payload with defaults from method params (fallback to current)
-        var input = new OpenAIEditVectorStore
-        {
-            Name = !string.IsNullOrWhiteSpace(name) ? name! : currentName,
-            Description = description ?? currentDescription
-        };
+                // SDK naming differs by version; both are common. Use the one your package exposes.
+                var updateOptions = new VectorStoreModificationOptions
+                {
+                    Name = typed.Name,
+                };
 
-        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(input, cancellationToken);
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Error".ToErrorCallToolResponse();
+                if (!string.IsNullOrEmpty(typed.Description))
+                    updateOptions.Metadata.Add(VectorStoreExtensions.DESCRIPTION_KEY, typed.Description);
+                else
+                    updateOptions.Metadata.Add(VectorStoreExtensions.DESCRIPTION_KEY, string.Empty);
 
-        // Build update options; preserve existing metadata (Owners/Visibility/etc.)
-        var newMetadata = new Dictionary<string, string>(current.Value.Metadata);
-        if (typed.Description != null)
-            newMetadata[DESCRIPTION_KEY] = typed.Description;
+                foreach (var i in current.Metadata
+                    .Where(z => !updateOptions.Metadata.ContainsKey(z.Key)))
+                {
+                    updateOptions.Metadata.Add(i.Value, i.Key);
+                }
 
-        // SDK naming differs by version; both are common. Use the one your package exposes.
-        var updateOptions = new VectorStoreModificationOptions
-        {
-            Name = typed.Name,
-        };
+                var updated = await client.ModifyVectorStoreAsync(vectorStoreId, updateOptions, cancellationToken);
 
-        if (!string.IsNullOrEmpty(typed.Description))
-            updateOptions.Metadata.Add(DESCRIPTION_KEY, typed.Description);
-        else
-            updateOptions.Metadata.Add(DESCRIPTION_KEY, string.Empty);
-
-        foreach (var i in current.Value.Metadata
-            .Where(z => !updateOptions.Metadata.ContainsKey(z.Key)))
-        {
-            updateOptions.Metadata.Add(i.Value, i.Key);
-        }
-
-        var updated = await client.ModifyVectorStoreAsync(vectorStoreId, updateOptions, cancellationToken);
-
-        return updated?.ToJsonContentBlock($"{BASE_URL}/{vectorStoreId}")
-            .ToCallToolResult();
-    }
+                return updated?.ToJsonContentBlock($"{VectorStoreExtensions.BASE_URL}/{vectorStoreId}")
+                    .ToCallToolResult();
+            }));
 
     [Description("Add an owner to an OpenAI vector store")]
     [McpServerTool(
@@ -99,94 +92,118 @@ public static partial class OpenAIVectorStores
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
       CancellationToken cancellationToken = default)
-    {
-        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
-        var userId = serviceProvider.GetUserId();
-        var client = openAiClient.GetVectorStoreClient();
+        => await requestContext.WithExceptionCheck(async () =>
+            await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
+            {
+                var currentName = current.Name;
+                current.Metadata.TryGetValue(VectorStoreExtensions.OWNERS_KEY, out var currentDescription);
 
-        // Load current store for defaults + owner check
-        var current = client.GetVectorStore(vectorStoreId, cancellationToken);
+                // Prepare elicitation payload with defaults from method params (fallback to current)
+                var input = new OpenAIAddVectorStoreOwner
+                {
+                    UserId = ownerId
+                };
 
-        if (!current.Value.IsOwner(userId))
-            return "Only owners can update a vector store".ToErrorCallToolResponse();
+                var (typed, notAccepted, result) = await requestContext.Server.TryElicit(input, cancellationToken);
+                if (notAccepted != null) return notAccepted;
+                if (typed == null) return "Error".ToErrorCallToolResponse();
 
-        // Current values
-        var currentName = current.Value.Name;
-        current.Value.Metadata.TryGetValue(OWNERS_KEY, out var currentDescription);
+                // Build update options; preserve existing metadata (Owners/Visibility/etc.)
+                var updateOptions = new VectorStoreModificationOptions
+                {
 
-        // Prepare elicitation payload with defaults from method params (fallback to current)
-        var input = new OpenAIAddVectorStoreOwner
-        {
-            UserId = ownerId
-        };
+                };
 
-        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(input, cancellationToken);
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Error".ToErrorCallToolResponse();
+                var currentOwners = currentDescription?.Split(",")?.ToList() ?? [];
 
-        // Build update options; preserve existing metadata (Owners/Visibility/etc.)
-        var updateOptions = new VectorStoreModificationOptions
-        {
+                if (!string.IsNullOrEmpty(typed.UserId) && !currentOwners.Contains(typed.UserId))
+                    currentOwners.Add(typed.UserId);
 
-        };
+                updateOptions.Metadata.Add(VectorStoreExtensions.OWNERS_KEY, string.Join(",", currentOwners));
 
-        var currentOwners = currentDescription?.Split(",")?.ToList() ?? [];
+                foreach (var i in current.Metadata
+                    .Where(z => !updateOptions.Metadata.ContainsKey(z.Key)))
+                {
+                    updateOptions.Metadata.Add(i.Value, i.Key);
+                }
 
-        if (!string.IsNullOrEmpty(typed.UserId) && !currentOwners.Contains(typed.UserId))
-            currentOwners.Add(typed.UserId);
+                var updated = await client.ModifyVectorStoreAsync(vectorStoreId, updateOptions, cancellationToken);
 
-        updateOptions.Metadata.Add(OWNERS_KEY, string.Join(",", currentOwners));
+                return updated?.ToJsonContentBlock($"{VectorStoreExtensions.BASE_URL}/{vectorStoreId}")
+                    .ToCallToolResult();
 
-        foreach (var i in current.Value.Metadata
-            .Where(z => !updateOptions.Metadata.ContainsKey(z.Key)))
-        {
-            updateOptions.Metadata.Add(i.Value, i.Key);
-        }
-
-        var updated = await client.ModifyVectorStoreAsync(vectorStoreId, updateOptions, cancellationToken);
-
-        return updated?.ToJsonContentBlock($"{BASE_URL}/{vectorStoreId}")
-            .ToCallToolResult();
-    }
+            }));
 
     [Description("Create a vector store at OpenAI")]
-    [McpServerTool(Title = "Create a vector store at OpenAI", Destructive = false, OpenWorld = false)]
+    [McpServerTool(Title = "Create a vector store", Destructive = false, OpenWorld = false)]
     public static async Task<CallToolResult?> OpenAIVectorStores_Create(
         [Description("The vector store name.")] string name,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
-    {
-        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
-        var userId = serviceProvider.GetUserId();
-
-        var imageInput = new OpenAINewVectorStore
+        =>
+        await requestContext.WithExceptionCheck(async () =>
+        await serviceProvider.WithVectorStoreClient(async (client) =>
         {
-            Name = name,
-            WaitUntilCompleted = true,
-        };
+            var userId = serviceProvider.GetUserId();
 
-        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Error".ToErrorCallToolResponse();
+            var imageInput = new OpenAINewVectorStore
+            {
+                Name = name,
+                WaitUntilCompleted = true,
+            };
 
-        var options = new OAIV.VectorStoreCreationOptions()
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
+            if (notAccepted != null) return notAccepted;
+            if (typed == null) return "Error".ToErrorCallToolResponse();
+
+            var options = new OAIV.VectorStoreCreationOptions()
+            {
+                Name = typed.Name
+            };
+
+            options.Metadata.Add(VectorStoreExtensions.OWNERS_KEY, userId);
+            options.Metadata.Add("Visibility", VectorStoreExtensions.OWNERS_KEY);
+
+            if (!string.IsNullOrEmpty(typed.Description))
+                options.Metadata.Add(VectorStoreExtensions.DESCRIPTION_KEY, typed.Description);
+
+            var item = await client.CreateVectorStoreAsync(typed.WaitUntilCompleted, options, cancellationToken);
+
+            return item?.ToJsonContentBlock($"{VectorStoreExtensions.BASE_URL}/{item.VectorStoreId}").ToCallToolResult();
+        }));
+
+    [Description("Add a file to a vector store")]
+    [McpServerTool(Title = "Add file to vector store", Destructive = false, OpenWorld = false)]
+    public static async Task<CallToolResult?> OpenAIVectorStores_AddFile(
+       [Description("The vector store name.")] string vectorStoreId,
+       [Description("Url of the file to add.")] string fileUrl,
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       [Description("Wait until complete.")] bool? waitUntilCompleted = true,
+       CancellationToken cancellationToken = default)
+        => await requestContext.WithExceptionCheck(async () =>
+        await serviceProvider.WithVectorStoreOwnerClient<CallToolResult>(vectorStoreId, async (client, current) =>
         {
-            Name = typed.Name
-        };
+            var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
+            var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+            var fileClient = openAiClient.GetOpenAIFileClient();
+            var downloads = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
 
-        options.Metadata.Add(OWNERS_KEY, userId!);
-        options.Metadata.Add("Visibility", OWNERS_KEY);
+            List<string> fileIds = [];
 
-        if (!string.IsNullOrEmpty(typed.Description))
-            options.Metadata.Add(DESCRIPTION_KEY, typed.Description);
+            foreach (var download in downloads)
+            {
+                var fileItem = await fileClient.UploadFileAsync(download.Contents, download.Filename, OAIF.FileUploadPurpose.UserData);
 
-        var item = await openAiClient
-            .GetVectorStoreClient()
-            .CreateVectorStoreAsync(typed.WaitUntilCompleted, options, cancellationToken);
+                fileIds.Add(fileItem.Value.Id);
+            }
 
-        return item?.ToJsonContentBlock($"{BASE_URL}/{item.VectorStoreId}").ToCallToolResult();
-    }
+            var item = client
+                .CreateBatchFileJobAsync(vectorStoreId, fileIds, waitUntilCompleted ?? true, cancellationToken);
+
+            return item?.ToJsonContentBlock($"{VectorStoreExtensions.BASE_URL}/{vectorStoreId}/files").ToCallToolResult();
+        }));
 
     [Description("Delete a vector store at OpenAI")]
     [McpServerTool(Title = "Delete a vector store at OpenAI",
@@ -196,25 +213,13 @@ public static partial class OpenAIVectorStores
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         CancellationToken cancellationToken = default)
-    {
-        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
-        var userId = serviceProvider.GetUserId();
-        var client = openAiClient
-                    .GetVectorStoreClient();
-        var item = client
-            .GetVectorStore(vectorStoreId, cancellationToken);
-
-        if (userId == null || !item.Value.Metadata.ContainsKey(OWNERS_KEY) || !item.Value.Metadata[OWNERS_KEY].Contains(userId))
-        {
-            return "Only owners can delete a vector store".ToErrorCallToolResponse();
-        }
-
-        return await requestContext.ConfirmAndDeleteAsync<OpenAIDeleteVectorStore>(
-                   item?.Value.Name!,
-                   async _ => await client.DeleteVectorStoreAsync(vectorStoreId, cancellationToken),
-            $"Vector store {item?.Value.Name} deleted.",
-            cancellationToken);
-    }
+         => await requestContext.WithExceptionCheck(async () =>
+            await serviceProvider.WithVectorStoreOwnerClient<CallToolResult>(vectorStoreId, async (client, item) =>
+            await requestContext.ConfirmAndDeleteAsync<OpenAIDeleteVectorStore>(
+                    item?.Name!,
+                    async _ => await client.DeleteVectorStoreAsync(vectorStoreId, cancellationToken),
+                $"Vector store {item?.Name} deleted.",
+                cancellationToken), cancellationToken));
 
     [Description("Please fill in the vector store details.")]
     public class OpenAINewVectorStore

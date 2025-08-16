@@ -28,63 +28,59 @@ public static class GoogleImagen
         int numberOfImages = 1,
         [Description("New image file name, without extension")]
         string? filename = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
         var googleAI = serviceProvider.GetRequiredService<Mscc.GenerativeAI.GoogleAI>();
 
-        try
+
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
+                       new GoogleImagenNewImage
+                       {
+                           Prompt = prompt,
+                           Model = imageModel ?? Model.imagen40generate001,
+                           NumberOfImages = numberOfImages,
+                           Filename = filename?.ToOutputFileName()
+                            ?? requestContext.ToOutputFileName()
+                       },
+
+                       cancellationToken);
+
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
+        var model = typed.Model;
+        var modelString = model.GetEnumMemberValue();
+        var imageClient = googleAI.ImageGenerationModel(modelString);
+
+        var item = await imageClient.GenerateImages(new(typed.Prompt, typed.NumberOfImages)
         {
-            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
-                           new GoogleImagenNewImage
-                           {
-                               Prompt = prompt,
-                               Model = imageModel ?? Model.imagen40generate001,
-                               NumberOfImages = numberOfImages,
-                               Filename = filename?.ToOutputFileName()
-                                ?? requestContext.ToOutputFileName()
-                           },
-
-                           cancellationToken);
-
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
-            var model = typed.Model;
-            var modelString = model.GetEnumMemberValue();
-            var imageClient = googleAI.ImageGenerationModel(modelString);
-
-            var item = await imageClient.GenerateImages(new(typed.Prompt, typed.NumberOfImages)
+            Parameters = new()
             {
-                Parameters = new()
+                SampleCount = typed.NumberOfImages,
+                AspectRatio = aspectRatio,
+                PersonGeneration = Mscc.GenerativeAI.PersonGeneration.AllowAdult,
+                OutputOptions = new()
                 {
-                    SampleCount = typed.NumberOfImages,
-                    AspectRatio = aspectRatio,
-                    PersonGeneration = Mscc.GenerativeAI.PersonGeneration.AllowAdult,
-                    OutputOptions = new()
-                    {
-                        MimeType = MediaTypeNames.Image.Png
-                    }
+                    MimeType = MediaTypeNames.Image.Png
                 }
-            }, cancellationToken);
-
-            List<ResourceLinkBlock> resourceLinks = [];
-
-            foreach (var imageItem in item.Predictions)
-            {
-                var graphItem = await requestContext.Server.Upload(serviceProvider,
-                     $"{typed?.Filename}.png",
-                    BinaryData.FromBytes(Convert.FromBase64String(imageItem.BytesBase64Encoded!)), cancellationToken);
-
-                if (graphItem != null) resourceLinks.Add(graphItem);
             }
+        }, cancellationToken);
 
-            return resourceLinks?.ToResourceLinkCallToolResponse();
-        }
-        catch (Exception e)
+        List<ResourceLinkBlock> resourceLinks = [];
+
+        foreach (var imageItem in item.Predictions)
         {
-            return e.Message.ToErrorCallToolResponse();
+            var graphItem = await requestContext.Server.Upload(serviceProvider,
+                 $"{typed?.Filename}.png",
+                BinaryData.FromBytes(Convert.FromBase64String(imageItem.BytesBase64Encoded!)), cancellationToken);
+
+            if (graphItem != null) resourceLinks.Add(graphItem);
         }
-    }
+
+        return resourceLinks?.ToResourceLinkCallToolResponse();
+
+    });
 
 
     [Description("Please fill in the AI image request details.")]

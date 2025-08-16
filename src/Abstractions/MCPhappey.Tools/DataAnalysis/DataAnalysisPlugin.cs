@@ -68,6 +68,7 @@ public static partial class DataAnalysisPlugin
          [Description("Number of data rows to skip")]
             int? numberOfSkipRows = 0,
          CancellationToken cancellationToken = default)
+         => await requestContext.WithExceptionCheck(async () =>
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(csvFileUrl);
 
@@ -81,20 +82,14 @@ public static partial class DataAnalysisPlugin
         if (csvRaw == null || csvRaw.IsEmpty)
             return "No content found".ToErrorCallToolResponse();
 
-        try
-        {
-            var data = await csvRaw.ToStream().CsvToDynamicRecordsAsync(cancellationToken);
+        var data = await csvRaw.ToStream().CsvToDynamicRecordsAsync(cancellationToken);
 
-            if (data == null)
-                return "No content found".ToErrorCallToolResponse();
+        if (data == null)
+            return "No content found".ToErrorCallToolResponse();
 
-            return data.ToDataSample(csvFileUrl, numberOfRows, numberOfSkipRows);
-        }
-        catch (Exception e)
-        {
-            return e.Message.ToErrorCallToolResponse();
-        }
-    }
+        return data.ToDataSample(csvFileUrl, numberOfRows, numberOfSkipRows);
+
+    });
 
 
 

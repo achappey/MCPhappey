@@ -16,22 +16,23 @@ public static partial class GoogleAudio
     [McpServerTool(Title = "Generate speech from input prompt",
         Destructive = false,
         ReadOnly = true)]
-    public static async Task<CallToolResult> GoogleAudio_CreateSpeech(
+    public static async Task<CallToolResult?> GoogleAudio_CreateSpeech(
         [Description("The input prompt to generate the audio")]
         [MaxLength(1024)]
         string prompt,
         IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
         [Description("Voice option")]
         TtsVoiceOption voice = TtsVoiceOption.Kore,
         CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-        var googleAI = serviceProvider.GetRequiredService<GoogleAI>();
-
-        string ttsModel = "gemini-2.5-flash-preview-tts";
-        var modelClient = googleAI.GenerativeModel(ttsModel);
-        try
+         => await requestContext.WithExceptionCheck(async () =>
         {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
+            var googleAI = serviceProvider.GetRequiredService<GoogleAI>();
+
+            string ttsModel = "gemini-2.5-flash-preview-tts";
+            var modelClient = googleAI.GenerativeModel(ttsModel);
+
             var item = await modelClient.GenerateContent(new GenerateContentRequest()
             {
                 Model = ttsModel,
@@ -66,12 +67,8 @@ public static partial class GoogleAudio
             };
 
             return audio.ToCallToolResult();
-        }
-        catch (Exception e)
-        {
-            return e.Message.ToErrorCallToolResponse();
-        }
-    }
+
+        });
 
     [Description("Generate multi speaker audio from the input prompt")]
     [McpServerTool(Title = "Generate multi speaker audio from input prompt",
@@ -111,7 +108,7 @@ public static partial class GoogleAudio
         using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         var outputName = $"{filename}.mp3";
-        using  var uploadStream = new MemoryStream(Convert.FromBase64String(audio.Data));
+        using var uploadStream = new MemoryStream(Convert.FromBase64String(audio.Data));
 
         var myDrive = await client.Me.Drive.GetAsync(cancellationToken: cancellationToken);
         var uploadedItem = await client.Drives[myDrive?.Id].Root.ItemWithPath($"/{outputName}")

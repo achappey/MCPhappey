@@ -23,47 +23,41 @@ public static partial class GraphTeams
         [Description("Description of the new channel")]
         string? description = null,
         CancellationToken cancellationToken = default)
+         => await requestContext.WithExceptionCheck(async () =>
     {
         using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var teams = await client.Teams[teamId]
+                           .GetAsync(cancellationToken: cancellationToken);
 
-        try
-        {
-            var teams = await client.Teams[teamId]
-                               .GetAsync(cancellationToken: cancellationToken);
-
-            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
-                new GraphNewTeamChannel
-                {
-                    DisplayName = displayName,
-                    Description = description,
-                    MembershipType = membershipType == "shared"
-                        ? ChannelMembershipType.Shared
-                        : membershipType == "private" ?
-                        ChannelMembershipType.Private : ChannelMembershipType.Standard
-                },
-                cancellationToken
-            );
-
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "Invalid result".ToErrorCallToolResponse();
-
-            var newItem = new Channel
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
+            new GraphNewTeamChannel
             {
-                DisplayName = typed.DisplayName,
-                Description = typed.Description,
-                MembershipType = typed.MembershipType
-            };
+                DisplayName = displayName,
+                Description = description,
+                MembershipType = membershipType == "shared"
+                    ? ChannelMembershipType.Shared
+                    : membershipType == "private" ?
+                    ChannelMembershipType.Private : ChannelMembershipType.Standard
+            },
+            cancellationToken
+        );
 
-            var graphItem = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
+        if (notAccepted != null) return notAccepted;
+        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
 
-            return (graphItem ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels")
-                .ToCallToolResult();
-        }
-        catch (Exception e)
+        var newItem = new Channel
         {
-            return e.Message.ToErrorCallToolResponse();
-        }
-    }
+            DisplayName = typed.DisplayName,
+            Description = typed.Description,
+            MembershipType = typed.MembershipType
+        };
+
+        var graphItem = await client.Teams[teamId].Channels.PostAsync(newItem, cancellationToken: cancellationToken);
+
+        return (graphItem ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels")
+            .ToCallToolResult();
+
+    });
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
     [McpServerTool(Title = "Create message in Teams channel",
@@ -76,47 +70,42 @@ public static partial class GraphTeams
         [Description("Subject of the message.")] string? subject = null,
         [Description("Content (body) of the message.")] string? content = null,
         CancellationToken cancellationToken = default)
+         => await requestContext.WithExceptionCheck(async () =>
     {
-        try
-        {
-            // Vul defaults uit de parameters direct in
-            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
-                new GraphNewChannelMessage
-                {
-                    Subject = subject,
-                    Content = content,
-                    Importance = ChatMessageImportance.Normal
-                },
-                cancellationToken
-            );
-
-            if (notAccepted != null) return notAccepted;
-
-            var newItem = new ChatMessage
+        // Vul defaults uit de parameters direct in
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
+            new GraphNewChannelMessage
             {
-                Subject = typed?.Subject,
-                Importance = typed?.Importance,
-                Body = new ItemBody
-                {
-                    Content = typed?.Content,
-                },
-            };
+                Subject = subject,
+                Content = content,
+                Importance = ChatMessageImportance.Normal
+            },
+            cancellationToken
+        );
 
-            using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-            var graphItem = await client.Teams[teamId]
-                .Channels[channelId]
-                .Messages
-                .PostAsync(newItem, cancellationToken: cancellationToken);
+        if (notAccepted != null) return notAccepted;
 
-            return (graphItem ?? newItem)
-                .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages")
-                .ToCallToolResult();
-        }
-        catch (Exception e)
+        var newItem = new ChatMessage
         {
-            return e.Message.ToErrorCallToolResponse();
-        }
-    }
+            Subject = typed?.Subject,
+            Importance = typed?.Importance,
+            Body = new ItemBody
+            {
+                Content = typed?.Content,
+            },
+        };
+
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var graphItem = await client.Teams[teamId]
+            .Channels[channelId]
+            .Messages
+            .PostAsync(newItem, cancellationToken: cancellationToken);
+
+        return (graphItem ?? newItem)
+            .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages")
+            .ToCallToolResult();
+
+    });
 
     [Description("Create a reply to a Teams channel message, mentioning specified users.")]
     [McpServerTool(Title = "Reply in Teams channel with mentions",
@@ -130,83 +119,77 @@ public static partial class GraphTeams
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Optional extra message after mentions.")] string? content = null,
         CancellationToken cancellationToken = default)
+         => await requestContext.WithExceptionCheck(async () =>
     {
-        try
+        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+
+        var mentionInfo = new List<(string Id, string DisplayName)>();
+        foreach (var userId in mentionUserIds)
         {
-            using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+            var user = await client.Users[userId].GetAsync(cancellationToken: cancellationToken);
+            mentionInfo.Add((userId, user?.DisplayName ?? userId));
+        }
 
-            var mentionInfo = new List<(string Id, string DisplayName)>();
-            foreach (var userId in mentionUserIds)
+        var mentionList = string.Join("\n", mentionInfo.Select(x => $"- {x.DisplayName}"));
+        var elicit = await requestContext.Server.ElicitAsync(new ElicitRequestParams()
+        {
+            Message = mentionList
+        }, cancellationToken: cancellationToken);
+
+        if (elicit.Action != "accept")
+        {
+            return elicit.Action.ToErrorCallToolResponse();
+        }
+
+        // Resolve display names for user IDs (helper function, see below)
+        var mentions = new List<ChatMessageMention>();
+        var mentionTags = new List<string>();
+
+        int idx = 0;
+        foreach (var (userId, displayName) in mentionInfo)
+        {
+            mentionTags.Add($"<at id=\"{idx}\">{displayName}</at>");
+            mentions.Add(new ChatMessageMention
             {
-                var user = await client.Users[userId].GetAsync(cancellationToken: cancellationToken);
-                mentionInfo.Add((userId, user?.DisplayName ?? userId));
-            }
-
-            var mentionList = string.Join("\n", mentionInfo.Select(x => $"- {x.DisplayName}"));
-            var elicit = await requestContext.Server.ElicitAsync(new ElicitRequestParams()
-            {
-                Message = mentionList
-            }, cancellationToken: cancellationToken);
-
-            if (elicit.Action != "accept")
-            {
-                return elicit.Action.ToErrorCallToolResponse();
-            }
-
-            // Resolve display names for user IDs (helper function, see below)
-            var mentions = new List<ChatMessageMention>();
-            var mentionTags = new List<string>();
-
-            int idx = 0;
-            foreach (var (userId, displayName) in mentionInfo)
-            {
-                mentionTags.Add($"<at id=\"{idx}\">{displayName}</at>");
-                mentions.Add(new ChatMessageMention
+                Id = idx,
+                MentionText = displayName,
+                Mentioned = new ChatMessageMentionedIdentitySet
                 {
-                    Id = idx,
-                    MentionText = displayName,
-                    Mentioned = new ChatMessageMentionedIdentitySet
+                    User = new Identity
                     {
-                        User = new Identity
-                        {
-                            Id = userId,
-                            DisplayName = displayName
-                        }
+                        Id = userId,
+                        DisplayName = displayName
                     }
-                });
-                idx++;
-            }
-
-            var bodyContent = string.Join(", ", mentionTags);
-            if (!string.IsNullOrWhiteSpace(content))
-                bodyContent += " " + content;
-
-            ChatMessage newReply = new()
-            {
-                Body = new()
-                {
-                    ContentType = BodyType.Html,
-                    Content = bodyContent
-                },
-                Mentions = mentions
-            };
-
-            var result = await client.Teams[teamId]
-                .Channels[channelId]
-                .Messages[messageId]
-                .Replies
-                .PostAsync(newReply, cancellationToken: cancellationToken);
-
-            return (result ?? newReply)
-                .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages/{messageId}/replies")
-                .ToCallToolResult();
+                }
+            });
+            idx++;
         }
-        catch (Exception e)
+
+        var bodyContent = string.Join(", ", mentionTags);
+        if (!string.IsNullOrWhiteSpace(content))
+            bodyContent += " " + content;
+
+        ChatMessage newReply = new()
         {
-            return e.Message.ToErrorCallToolResponse();
-        }
+            Body = new()
+            {
+                ContentType = BodyType.Html,
+                Content = bodyContent
+            },
+            Mentions = mentions
+        };
 
-    }
+        var result = await client.Teams[teamId]
+            .Channels[channelId]
+            .Messages[messageId]
+            .Replies
+            .PostAsync(newReply, cancellationToken: cancellationToken);
+
+        return (result ?? newReply)
+            .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages/{messageId}/replies")
+            .ToCallToolResult();
+
+    });
 
 
 }

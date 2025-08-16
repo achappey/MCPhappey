@@ -12,17 +12,18 @@ public class VectorStoreScraper : IContentScraper
 {
 
     public bool SupportsHost(ServerConfig serverConfig, string url)
-        => url.StartsWith(OpenAIVectorStores.BASE_URL, StringComparison.OrdinalIgnoreCase);
+        => url.StartsWith(VectorStoreExtensions.BASE_URL, StringComparison.OrdinalIgnoreCase);
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer,
         IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {
+        
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
         var userId = serviceProvider.GetUserId();
         var client = openAiClient
                     .GetVectorStoreClient();
 
-        if (url.Equals(OpenAIVectorStores.BASE_URL, StringComparison.OrdinalIgnoreCase))
+        if (url.Equals(VectorStoreExtensions.BASE_URL, StringComparison.OrdinalIgnoreCase))
         {
             var item = await client.GetVectorStoresAsync(cancellationToken: cancellationToken).ToListAsync(cancellationToken: cancellationToken);
 
@@ -32,7 +33,7 @@ public class VectorStoreScraper : IContentScraper
         }
         else
 
-        if (url.StartsWith($"{OpenAIVectorStores.BASE_URL}/vs_", StringComparison.OrdinalIgnoreCase)
+        if (url.StartsWith($"{VectorStoreExtensions.BASE_URL}/vs_", StringComparison.OrdinalIgnoreCase)
             && url.EndsWith("/files", StringComparison.OrdinalIgnoreCase))
         {
             string? vectorStoreId = null;

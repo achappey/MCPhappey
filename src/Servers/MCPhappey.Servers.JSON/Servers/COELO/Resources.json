@@ -7,7 +7,9 @@
       "description": "Sitemap van alle COELO pagina's",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant"],
+        "audience": [
+          "assistant"
+        ],
         "priority": 0.7
       }
     },
@@ -18,7 +20,9 @@
       "description": "Overzicht van alle COELO nieuwsberichten, etc.",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant"],
+        "audience": [
+          "assistant"
+        ],
         "priority": 0.7
       }
     },
@@ -28,8 +32,12 @@
       "title": "Atlas lokale lasten 2025",
       "description": "De Atlas van de lokale lasten is een jaarlijks overzicht van de heffingen van gemeenten, provincies en waterschappen.",
       "mimeType": "text/plain",
+      "size": 251697,
       "annotations": {
-        "audience": ["assistant", "user"],
+        "audience": [
+          "assistant",
+          "user"
+        ],
         "priority": 0.6
       }
     },
@@ -39,19 +47,25 @@
       "title": "Atlas lokale lasten 2024",
       "description": "De Atlas van de lokale lasten is een jaarlijks overzicht van de heffingen van gemeenten, provincies en waterschappen.",
       "mimeType": "text/plain",
+      "size": 249723,
       "annotations": {
-        "audience": ["assistant", "user"],
+        "audience": [
+          "assistant",
+          "user"
+        ],
         "priority": 0.6
       }
     },
     {
       "uri": "https://coelo.nl/woonlasten/Lokale-lasten-calculator-2025-a.php",
       "name": "lokale-lasten-calculator-ids",
-      "title": "Lokale lasten calculator om ids gemeente op te zoeken",
+      "title": "Lokale lasten calculator gemeente IDs",
       "description": "COELO lokale lasten calculator. Gebruik deze pagina om de IDs van gemeentes op te zoeken. Haal hiervoor de raw html op. Gebruik deze css selector om te zoeken: [name='gem_id1'] *",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant", "user"],
+        "audience": [
+          "assistant"
+        ],
         "priority": 0.8
       }
     }

@@ -25,19 +25,19 @@ public static class DataversePlugin
           [Description("Name of the table containing the entity")] string tableLogicalName,
           [Description("GUID of the entity to update")] string entityId,
           CancellationToken cancellationToken = default)
-    {
-        var tokenService = serviceProvider.GetService<HeaderProvider>();
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var oAuthSettings = serviceProvider.GetRequiredService<OAuthSettings>();
-        var serverConfig = serviceProvider.GetServerConfig(requestContext.Server);
-
-        if (string.IsNullOrEmpty(tokenService?.Bearer) || serverConfig == null) return null;
-
-        using var httpClient = await httpClientFactory.GetOboHttpClient(tokenService.Bearer, dynamicsHost,
-            serverConfig.Server, oAuthSettings);
-
-        try
+            => await requestContext.WithExceptionCheck(async () =>
         {
+            var tokenService = serviceProvider.GetService<HeaderProvider>();
+            var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            var oAuthSettings = serviceProvider.GetRequiredService<OAuthSettings>();
+            var serverConfig = serviceProvider.GetServerConfig(requestContext.Server);
+
+            if (string.IsNullOrEmpty(tokenService?.Bearer) || serverConfig == null) return null;
+
+            using var httpClient = await httpClientFactory.GetOboHttpClient(tokenService.Bearer, dynamicsHost,
+                serverConfig.Server, oAuthSettings);
+
+
             // --- Metadata -----------------------------------------------------------------------------
             var metadata = await httpClient.GetEntityMetadataAsync(dynamicsHost, tableLogicalName, cancellationToken);
             if (metadata == null || metadata.EntitySetName == null || metadata.Attributes == null)
@@ -76,8 +76,8 @@ public static class DataversePlugin
                 {
                     Properties = properties,
                     Required = [.. attributes
-                        .Where(a => a.RequiredLevel.Value == "ApplicationRequired")
-                        .Select(a => a.LogicalName ?? a.SchemaName)]
+                            .Where(a => a.RequiredLevel.Value == "ApplicationRequired")
+                            .Select(a => a.LogicalName ?? a.SchemaName)]
                 }
             }, cancellationToken);
 
@@ -100,12 +100,7 @@ public static class DataversePlugin
             }
 
             return payload.ToJsonContentBlock(updateUri).ToCallToolResult();
-        }
-        catch (Exception ex)
-        {
-            return (ex.Message + ex.StackTrace).ToErrorCallToolResponse();
-        }
-    }
+        });
 
 
     [Description("Delete an entity from a Dataverse table")]
@@ -118,6 +113,7 @@ public static class DataversePlugin
        [Description("Name of the table containing the entity")] string tableLogicalName,
        [Description("Guid of the entity to delete")] string entityId,
        CancellationToken cancellationToken = default)
+           => await requestContext.WithExceptionCheck(async () =>
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
@@ -129,54 +125,48 @@ public static class DataversePlugin
         using var httpClient = await httpClientFactory.GetOboHttpClient(tokenService.Bearer, dynamicsHost,
                 serverConfig.Server, oAuthSettings);
 
-        try
+        // Retrieve metadata so we know the entity set and primary id
+        var metadata = await httpClient.GetEntityMetadataAsync(dynamicsHost, tableLogicalName, cancellationToken);
+        if (metadata == null || metadata.EntitySetName == null || metadata.PrimaryNameAttribute == null)
         {
-            // Retrieve metadata so we know the entity set and primary id
-            var metadata = await httpClient.GetEntityMetadataAsync(dynamicsHost, tableLogicalName, cancellationToken);
-            if (metadata == null || metadata.EntitySetName == null || metadata.PrimaryNameAttribute == null)
+            return "Unable to load table metadata".ToErrorCallToolResponse();
+        }
+
+        var retrieveUri = $"https://{dynamicsHost}{DataversePluginExtensions.API_URL}{metadata.EntitySetName}({entityId})?$select={metadata.PrimaryNameAttribute}";
+
+        using var retrieveRes = await httpClient.GetAsync(retrieveUri, cancellationToken);
+        if (!retrieveRes.IsSuccessStatusCode)
+        {
+            var body = await retrieveRes.Content.ReadAsStringAsync(cancellationToken);
+            return $"Dataverse retrieve error {retrieveRes.StatusCode}: {body}".ToErrorCallToolResponse();
+        }
+
+        var record = await retrieveRes.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
+        if (!record.TryGetProperty(metadata.PrimaryNameAttribute, out var nameProp))
+        {
+            return $"Record {entityId} does not contain primary name attribute {metadata.PrimaryNameAttribute}.".ToErrorCallToolResponse();
+        }
+
+        var primaryName = nameProp.GetString() ?? null;
+        var confirmationString = string.IsNullOrEmpty(primaryName) ? entityId : primaryName;
+
+        return await requestContext.ConfirmAndDeleteAsync<DeleteDataverseEntity>(
+            confirmationString!,
+            async _ =>
             {
-                return "Unable to load table metadata".ToErrorCallToolResponse();
-            }
-
-            var retrieveUri = $"https://{dynamicsHost}{DataversePluginExtensions.API_URL}{metadata.EntitySetName}({entityId})?$select={metadata.PrimaryNameAttribute}";
-
-            using var retrieveRes = await httpClient.GetAsync(retrieveUri, cancellationToken);
-            if (!retrieveRes.IsSuccessStatusCode)
-            {
-                var body = await retrieveRes.Content.ReadAsStringAsync(cancellationToken);
-                return $"Dataverse retrieve error {retrieveRes.StatusCode}: {body}".ToErrorCallToolResponse();
-            }
-
-            var record = await retrieveRes.Content.ReadFromJsonAsync<JsonElement>(cancellationToken);
-            if (!record.TryGetProperty(metadata.PrimaryNameAttribute, out var nameProp))
-            {
-                return $"Record {entityId} does not contain primary name attribute {metadata.PrimaryNameAttribute}.".ToErrorCallToolResponse();
-            }
-
-            var primaryName = nameProp.GetString() ?? null;
-            var confirmationString = string.IsNullOrEmpty(primaryName) ? entityId : primaryName;
-
-            return await requestContext.ConfirmAndDeleteAsync<DeleteDataverseEntity>(
-                confirmationString!,
-                async _ =>
+                var deleteUri = $"https://{dynamicsHost}{DataversePluginExtensions.API_URL}{metadata.EntitySetName}({entityId})";
+                using var deleteRes = await httpClient.DeleteAsync(deleteUri, cancellationToken);
+                if (!deleteRes.IsSuccessStatusCode)
                 {
-                    var deleteUri = $"https://{dynamicsHost}{DataversePluginExtensions.API_URL}{metadata.EntitySetName}({entityId})";
-                    using var deleteRes = await httpClient.DeleteAsync(deleteUri, cancellationToken);
-                    if (!deleteRes.IsSuccessStatusCode)
-                    {
-                        var body = await deleteRes.Content.ReadAsStringAsync(cancellationToken);
+                    var body = await deleteRes.Content.ReadAsStringAsync(cancellationToken);
 
-                        throw new Exception(body);
-                    }
-                },
-                "Entity deleted.",
-                cancellationToken);
-        }
-        catch (Exception ex)
-        {
-            return ex.Message.ToErrorCallToolResponse();
-        }
-    }
+                    throw new Exception(body);
+                }
+            },
+            "Entity deleted.",
+            cancellationToken);
+
+    });
 
     [Description("Create a new entity in a Dataverse table")]
     [McpServerTool(Title = "New entity in Dataverse table",
@@ -188,6 +178,7 @@ public static class DataversePlugin
         [Description("Name of the table to create the entity in")] string tableLogicalName,
         [Description("Default values for the entity. Format: key is argument name (without braces), value is default value.")] Dictionary<string, string>? replacements = null,
         CancellationToken cancellationToken = default)
+          => await requestContext.WithExceptionCheck(async () =>
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
@@ -199,64 +190,59 @@ public static class DataversePlugin
         using var httpClient = await httpClientFactory.GetOboHttpClient(tokenService.Bearer, dynamicsHost,
                 serverConfig.Server, oAuthSettings);
 
-        try
-        {
-            var metadata = await httpClient.GetEntityMetadataAsync(dynamicsHost, tableLogicalName, cancellationToken);
 
-            Dictionary<string, ElicitRequestParams.PrimitiveSchemaDefinition> properties =
-                metadata.Attributes
-                    .ToDictionary(a => a.LogicalName, a => (ElicitRequestParams.PrimitiveSchemaDefinition)
-                    new ElicitRequestParams.StringSchema()
-                    {
-                        Title = a.LogicalName
-                    });
+        var metadata = await httpClient.GetEntityMetadataAsync(dynamicsHost, tableLogicalName, cancellationToken);
 
-            if (metadata.Attributes == null)
-            {
-                return "Error".ToErrorCallToolResponse();
-            }
-
-            var result = await requestContext.Server.ElicitAsync(new ElicitRequestParams()
-            {
-                Message = $"Please fill in the details for the {tableLogicalName} item",
-                RequestedSchema = new ElicitRequestParams.RequestSchema()
+        Dictionary<string, ElicitRequestParams.PrimitiveSchemaDefinition> properties =
+            metadata.Attributes
+                .ToDictionary(a => a.LogicalName, a => (ElicitRequestParams.PrimitiveSchemaDefinition)
+                new ElicitRequestParams.StringSchema()
                 {
-                    Properties = await metadata.Attributes
-                        .GetSupportedAttributes()
-                        .MapMetadataToElicit(dynamicsHost, httpClient, tableLogicalName, cancellationToken),
-                    Required = [.. metadata.Attributes
+                    Title = a.LogicalName
+                });
+
+        if (metadata.Attributes == null)
+        {
+            return "Error".ToErrorCallToolResponse();
+        }
+
+        var result = await requestContext.Server.ElicitAsync(new ElicitRequestParams()
+        {
+            Message = $"Please fill in the details for the {tableLogicalName} item",
+            RequestedSchema = new ElicitRequestParams.RequestSchema()
+            {
+                Properties = await metadata.Attributes
+                    .GetSupportedAttributes()
+                    .MapMetadataToElicit(dynamicsHost, httpClient, tableLogicalName, cancellationToken),
+                Required = [.. metadata.Attributes
                         .GetSupportedAttributes()
                         .Where(a => a.RequiredLevel.Value == "ApplicationRequired")
                         .Select(a => a.LogicalName ?? a.SchemaName)]
-                },
-            }, cancellationToken);
+            },
+        }, cancellationToken);
 
-            var answers = result.Content ?? new Dictionary<string, JsonElement>();
-            var payload = await answers.MapElicitToPayload(metadata.Attributes, httpClient, dynamicsHost, tableLogicalName, cancellationToken: cancellationToken);
-            var createUri = $"https://{dynamicsHost}{DataversePluginExtensions.API_URL}{metadata.EntitySetName}";
+        var answers = result.Content ?? new Dictionary<string, JsonElement>();
+        var payload = await answers.MapElicitToPayload(metadata.Attributes, httpClient, dynamicsHost, tableLogicalName, cancellationToken: cancellationToken);
+        var createUri = $"https://{dynamicsHost}{DataversePluginExtensions.API_URL}{metadata.EntitySetName}";
 
-            Console.WriteLine(JsonSerializer.Serialize(payload, new JsonSerializerOptions
-            {
-                WriteIndented = true
-            }));
-
-            using var res = await httpClient.PostAsJsonAsync(createUri, payload, cancellationToken);
-
-            if (!res.IsSuccessStatusCode)
-            {
-                var body = await res.Content.ReadAsStringAsync(cancellationToken);
-                return $"Dataverse error {res.StatusCode}: {body}".ToErrorCallToolResponse();
-            }
-
-            return payload.ToJsonContentBlock(res.Headers.Location?.AbsoluteUri.ToString() ?? string.Empty)
-                .ToCallToolResult();
-
-        }
-        catch (Exception e)
+        Console.WriteLine(JsonSerializer.Serialize(payload, new JsonSerializerOptions
         {
-            return e.Message.ToErrorCallToolResponse();
+            WriteIndented = true
+        }));
+
+        using var res = await httpClient.PostAsJsonAsync(createUri, payload, cancellationToken);
+
+        if (!res.IsSuccessStatusCode)
+        {
+            var body = await res.Content.ReadAsStringAsync(cancellationToken);
+            return $"Dataverse error {res.StatusCode}: {body}".ToErrorCallToolResponse();
         }
-    }
+
+        return payload.ToJsonContentBlock(res.Headers.Location?.AbsoluteUri.ToString() ?? string.Empty)
+            .ToCallToolResult();
+
+
+    });
 
 }
 

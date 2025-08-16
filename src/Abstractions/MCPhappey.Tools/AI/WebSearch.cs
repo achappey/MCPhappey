@@ -96,7 +96,7 @@ public static class WebSearch
                 catch (Exception ex)
                 {
                     await requestContext.Server.SendMessageNotificationAsync(
-                        $"⚠ {modelName} failed: {ex.Message}",
+                        $"{modelName} failed: {ex.Message}",
                         LoggingLevel.Error
                     );
                     return null; // Failure → skip
@@ -192,8 +192,8 @@ public static class WebSearch
             catch (Exception ex)
             {
                 await requestContext.Server.SendMessageNotificationAsync(
-                    $"⚠ {modelName} failed: {ex.Message}",
-                    LoggingLevel.Warning
+                    $"{modelName} failed: {ex.Message}",
+                    LoggingLevel.Error
                 );
                 return null; // Skip failed
             }

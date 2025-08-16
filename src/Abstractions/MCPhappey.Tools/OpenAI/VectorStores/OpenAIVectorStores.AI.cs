@@ -1,12 +1,10 @@
 using System.ClientModel;
 using System.ComponentModel;
 using System.Text.Json;
-using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
-using Microsoft.Extensions.DependencyInjection;
+using MCPhappey.Core.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using OpenAI;
 
 namespace MCPhappey.Tools.OpenAI.VectorStores;
 
@@ -21,43 +19,35 @@ public static partial class OpenAIVectorStores
           [Description("The vector store id.")] string vectorStoreId,
           [Description("The vector store prompt query.")] string query,
           IServiceProvider serviceProvider,
+           RequestContext<CallToolRequestParams> requestContext,
           [Description("If the query should be rewritten.")] bool? rewriteQuery = false,
           [Description("Maximum number of results.")] int? maxNumOfResults = 10,
-          CancellationToken cancellationToken = default)
-    {
-        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
-        var userId = serviceProvider.GetUserId();
-        var client = openAiClient
-                    .GetVectorStoreClient();
+          CancellationToken cancellationToken = default) =>
+          await requestContext.WithExceptionCheck(async () =>
+            await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
+            {
+                var payload = new Dictionary<string, object?>
+                {
+                    ["query"] = query,
+                    ["max_num_results"] = maxNumOfResults ?? 10,
+                    ["rewrite_query"] = rewriteQuery ?? false
+                };
 
-        var item = client
-                    .GetVectorStore(vectorStoreId, cancellationToken);
+                var content = BinaryContent.Create(BinaryData.FromObjectAsJson(payload));
+                var searchResult = await client
+                    .SearchVectorStoreAsync(vectorStoreId, content);
+                var raw = searchResult.GetRawResponse();            // PipelineResponse
+                string json = raw.Content.ToString();         // JSON string
 
-        if (!item.Value.IsOwner(userId))
-            return "Only owners can search a vector store".ToErrorCallToolResponse();
-
-        var payload = new Dictionary<string, object?>
-        {
-            ["query"] = query,
-            ["max_num_results"] = maxNumOfResults ?? 10,
-            ["rewrite_query"] = rewriteQuery ?? false
-        };
-
-        var content = BinaryContent.Create(BinaryData.FromObjectAsJson(payload));
-        var searchResult = await client
-            .SearchVectorStoreAsync(vectorStoreId, content);
-        var raw = searchResult.GetRawResponse();            // PipelineResponse
-        string json = raw.Content.ToString();         // JSON string
-
-        return json.ToJsonCallToolResponse($"https://api.openai.com/v1/vector_stores/{vectorStoreId}/search");
-    }
+                return json.ToJsonCallToolResponse($"{VectorStoreExtensions.BASE_URL}/{vectorStoreId}/search");
+            }, cancellationToken));
 
     [Description("Ask a question against an OpenAI vector store using file_search via sampling.")]
     [McpServerTool(
            Title = "Ask OpenAI vector store",
            Destructive = false,
            ReadOnly = true)]
-    public static async Task<CallToolResult> OpenAIVectorStores_Ask(
+    public static async Task<CallToolResult?> OpenAIVectorStores_Ask(
            [Description("The OpenAI vector store id.")] string vectorStoreId,
            [Description("Your question / query.")] string query,
            IServiceProvider serviceProvider,
@@ -65,42 +55,33 @@ public static partial class OpenAIVectorStores
            [Description("Optional model override (defaults to gpt-5).")] string? model = "gpt-5",
            [Description("Max number of retrieved chunks.")] int? maxNumResults = 10,
            CancellationToken cancellationToken = default)
-    {
-        var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
-        var userId = serviceProvider.GetUserId();
-        var client = openAiClient
-                    .GetVectorStoreClient();
-
-        var item = client
-                    .GetVectorStore(vectorStoreId, cancellationToken);
-
-        if (!item.Value.IsOwner(userId))
-            return "Only owners can ask a vector store".ToErrorCallToolResponse();
-
-        var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
-        {
-            Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
+        => await requestContext.WithExceptionCheck(async () =>
+            await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
+            {
+                var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
                 {
-                    {"openai", new {
-                        file_search = new
-                        {
-                            vector_store_ids = new[] { vectorStoreId },
-                            max_num_results = maxNumResults ?? 10
-                        },
-                        reasoning = new
-                        {
-                            effort = "low"
-                        }
-                        } },
-                        }),
-            Temperature = 1,
-            MaxTokens = 8192,
-            ModelPreferences = model.ToModelPreferences(),
-            Messages = [query.ToUserSamplingMessage()]
-        }, cancellationToken);
+                    Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
+                    {
+                        {"openai", new {
+                            file_search = new
+                            {
+                                vector_store_ids = new[] { vectorStoreId },
+                                max_num_results = maxNumResults ?? 10
+                            },
+                            reasoning = new
+                            {
+                                effort = "low"
+                            }
+                            } },
+                            }),
+                    Temperature = 1,
+                    MaxTokens = 8192,
+                    ModelPreferences = model.ToModelPreferences(),
+                    Messages = [query.ToUserSamplingMessage()]
+                }, cancellationToken);
 
-        // Return the model’s final content blocks
-        return respone.Content.ToCallToolResult();
-    }
+                // Return the model’s final content blocks
+                return respone.Content.ToCallToolResult();
+            }));
 }
 

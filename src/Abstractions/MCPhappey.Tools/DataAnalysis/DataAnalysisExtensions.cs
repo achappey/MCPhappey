@@ -53,7 +53,7 @@ public static partial class DataAnalysisExtensions
         IList<string>? select = null)
     {
         var list = rows?.ToList() ?? throw new ArgumentNullException(nameof(rows));
-        if (list.Count == 0) return Array.Empty<dynamic>();
+        if (list.Count == 0) return [];
         string Safe(string raw) => RewriteColumnRefs(raw ?? string.Empty);
 
         // 1️⃣  compute

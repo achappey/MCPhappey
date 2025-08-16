@@ -24,17 +24,15 @@ public static class GoogleVideo
         string url,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
-
-        var googleAI = serviceProvider.GetRequiredService<Mscc.GenerativeAI.GoogleAI>();
-        var googleClient = googleAI.GenerativeModel("gemini-2.5-flash");
-
-
-        try
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
         {
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
+
+            var googleAI = serviceProvider.GetRequiredService<Mscc.GenerativeAI.GoogleAI>();
+            var googleClient = googleAI.GenerativeModel("gemini-2.5-flash");
+
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                         new GoogleVideoPromptYoutTube
                         {
@@ -52,23 +50,19 @@ public static class GoogleVideo
                 Contents =
                 [
                     new Mscc.GenerativeAI.Content(typed.Prompt)
-                    {
-                        Parts = [
-                            new Mscc.GenerativeAI.FileData() {
-                                FileUri = typed.YouTubeUrl
-                            }
-                        ]
-                    }
+                        {
+                            Parts = [
+                                new Mscc.GenerativeAI.FileData() {
+                                    FileUri = typed.YouTubeUrl
+                                }
+                            ]
+                        }
                 ]
             }, cancellationToken: cancellationToken);
 
             return graphItem?.Text?.ToTextCallToolResponse();
-        }
-        catch (Exception ex)
-        {
-            return ex.Message.ToErrorCallToolResponse();
-        }
-    }
+
+        });
 
     /*[Description("Create a video with Google Veo video generator")]
     [McpServerTool(Title = "Generate video with Google Veo", Destructive = false)]
