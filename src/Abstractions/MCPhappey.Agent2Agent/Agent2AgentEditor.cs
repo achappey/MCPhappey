@@ -31,7 +31,7 @@ public static partial class Agent2AgentEditor
         if (userId == null) return "No user found".ToErrorCallToolResponse();
 
         var agentExists = await serverRepository.AgentExists(newAgentName, newAgentUrl, cancellationToken);
-        if (agentExists == true) return "Servername already in use".ToErrorCallToolResponse();
+        if (agentExists == true) return "Agent name already in use".ToErrorCallToolResponse();
 
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2AAgent()
         {

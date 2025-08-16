@@ -9,16 +9,6 @@
       "annotations": {
         "audience": ["assistant"]
       }
-    },
-    {
-      "uri": "https://api.openai.com/v1/vector_stores/{vectorStoreId}/files",
-      "name": "list-vector-store-files",
-      "title": "List files in a OpenAI vector store",
-      "description": "List all files in a OpenAI vector store",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
     }
   ]
 }

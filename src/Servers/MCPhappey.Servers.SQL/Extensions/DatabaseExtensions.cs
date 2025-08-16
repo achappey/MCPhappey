@@ -105,7 +105,9 @@ public static class DatabaseExtensions
     public static ListResourcesResult ToListResourcesResult(this ICollection<Models.Resource> resources)
         => new()
         {
-            Resources = [.. resources.Select(a => a.ToResource())]
+            Resources = [.. resources
+                .OrderByDescending(a => a.Priority)
+                .Select(a => a.ToResource())]
         };
 
     public static ResourceTemplate ToResourceTemplate(this Models.ResourceTemplate resource)
@@ -122,7 +124,9 @@ public static class DatabaseExtensions
     public static ListResourceTemplatesResult ToListResourceTemplatesResult(this ICollection<Models.ResourceTemplate> resources)
         => new()
         {
-            ResourceTemplates = [.. resources.Select(a => a.ToResourceTemplate())]
+            ResourceTemplates = [.. resources
+                .OrderByDescending(a => a.Priority)
+                .Select(a => a.ToResourceTemplate())]
         };
 
     public static PromptArgument ToPromptArgument(this Models.PromptArgument promptArgument)

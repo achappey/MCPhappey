@@ -90,42 +90,25 @@ public static class OpenAIResearch
            {"searchResults", JsonSerializer.SerializeToElement(string.Join("\n\n", searchResults))}
         };
 
-        var reportSampling = await samplingService.GetPromptSample<ResearchReport>(serviceProvider,
+        var reportSampling = await samplingService.GetPromptSample(serviceProvider,
             requestContext.Server, "write-report", reportArgs,
-            "gpt-5", cancellationToken: cancellationToken);
+            "gpt-5-mini",
+            maxTokens: 4096 * 4,
+            metadata: new Dictionary<string, object>() { { "openai", new {
+                                reasoning = new {
+                                    effort = "medium"
+                                }
+                            }  } },
+            cancellationToken: cancellationToken);
 
-        if (string.IsNullOrEmpty(reportSampling?.MarkdownReport))
+        var result = reportSampling.ToText();
+
+        if (string.IsNullOrEmpty(result))
         {
             return string.Join("\n\n", searchResults).ToTextCallToolResponse();
         }
-
-        string fullReport = $"\n\n=====REPORT=====\n\n";
-        fullReport += $"Report: {reportSampling.MarkdownReport}";
-        fullReport += $"\n\n=====FOLLOW UP QUESTIONS=====\n\n";
-        fullReport += $"Follow up questions: {string.Join("\n", reportSampling.FollowUpQuestions ?? [])}";
-
-        List<ContentBlock> content = [new TextContentBlock(){
-                Text = fullReport
-            }];
-
-        var uploaded = await uploadService.UploadToRoot(requestContext.Server, serviceProvider,
-          $"OpenAI-Research-{DateTime.Now.Ticks}.md",
-            BinaryData.FromString(fullReport), cancellationToken);
-
-        if (uploaded != null)
-        {
-            content.Add(new EmbeddedResourceBlock()
-            {
-                Resource = new TextResourceContents()
-                {
-                    MimeType = uploaded.MimeType,
-                    Uri = uploaded.Uri,
-                    Text = JsonSerializer.Serialize(uploaded)
-                }
-            });
-        }
-
-        return content.ToCallToolResult();
+    
+        return result.ToTextCallToolResponse();
     }
 
     private static async Task<string?> GetWebResearch(IMcpServer mcpServer,
@@ -179,20 +162,5 @@ public static class OpenAIResearch
         [JsonPropertyName("queries")]
         public List<WebSearchItem> Searches { get; set; } = [];
     }
-
-
-    public class ResearchReport
-    {
-        [JsonPropertyName("short_summary")]
-        public string ShortSummary { get; set; } = null!;
-
-        [JsonPropertyName("markdown_report")]
-        public string MarkdownReport { get; set; } = null!;
-
-        [JsonPropertyName("follow_up_questions")]
-        public List<string> FollowUpQuestions { get; set; } = [];
-    }
-
-
 }
 

@@ -15,6 +15,7 @@ public class SamplingService(PromptService promptService)
         float? temperature = null,
         string? systemPrompt = null,
         ContextInclusion includeContext = ContextInclusion.None,
+        int? maxTokens = 4096,
         Dictionary<string, object>? metadata = null,
         CancellationToken cancellationToken = default)
     {
@@ -29,7 +30,7 @@ public class SamplingService(PromptService promptService)
                 Content = a.Content
             })],
             IncludeContext = includeContext,
-            MaxTokens = 4096,
+            MaxTokens = maxTokens ?? 4096,
             SystemPrompt = systemPrompt,
             ModelPreferences = modelHint?.ToModelPreferences(),
             Temperature = temperature,
@@ -45,6 +46,7 @@ public class SamplingService(PromptService promptService)
         float? temperature = null,
         string? systemPrompt = null,
         ContextInclusion includeContext = ContextInclusion.None,
+        int? maxTokens = 4096,
         Dictionary<string, object>? metadata = null,
         CancellationToken cancellationToken = default)
     {
@@ -52,6 +54,7 @@ public class SamplingService(PromptService promptService)
             temperature, systemPrompt,
             includeContext,
             metadata: metadata,
+            maxTokens: maxTokens,
             cancellationToken: cancellationToken);
 
         try
@@ -74,7 +77,7 @@ public class SamplingService(PromptService promptService)
             }),
             $"Your last answer failed to JsonSerializer.Deserialize. Error message is included. Please try again.\n\n{exception.Message}".ToUserSamplingMessage()],
                 IncludeContext = includeContext,
-                MaxTokens = 4096,
+                MaxTokens = maxTokens ?? 4096,
                 SystemPrompt = systemPrompt,
                 ModelPreferences = modelHint?.ToModelPreferences(),
                 Temperature = temperature

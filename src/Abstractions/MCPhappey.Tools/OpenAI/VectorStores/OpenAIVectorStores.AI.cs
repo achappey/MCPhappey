@@ -19,7 +19,7 @@ public static partial class OpenAIVectorStores
           [Description("The vector store id.")] string vectorStoreId,
           [Description("The vector store prompt query.")] string query,
           IServiceProvider serviceProvider,
-           RequestContext<CallToolRequestParams> requestContext,
+          RequestContext<CallToolRequestParams> requestContext,
           [Description("If the query should be rewritten.")] bool? rewriteQuery = false,
           [Description("Maximum number of results.")] int? maxNumOfResults = 10,
           CancellationToken cancellationToken = default) =>
@@ -36,7 +36,7 @@ public static partial class OpenAIVectorStores
                 var content = BinaryContent.Create(BinaryData.FromObjectAsJson(payload));
                 var searchResult = await client
                     .SearchVectorStoreAsync(vectorStoreId, content);
-                var raw = searchResult.GetRawResponse();            // PipelineResponse
+                using var raw = searchResult.GetRawResponse();            // PipelineResponse
                 string json = raw.Content.ToString();         // JSON string
 
                 return json.ToJsonCallToolResponse($"{VectorStoreExtensions.BASE_URL}/{vectorStoreId}/search");

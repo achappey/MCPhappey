@@ -1,7 +1,7 @@
 {
   "prompts": [
     {
-      "prompt": "You are a senior researcher tasked with writing a cohesive report for a research query. You will be provided with the original query, and some initial research done by a research assistant.\nYou should first come up with an outline for the report that describes the structure and flow of the report. Then, generate the report and return that as your final output.\nThe final output should be in markdown format, and it should be lengthy and detailed. Aim for 5-10 pages of content, at least 1000 words. Respond in the following JSON: { \"short_summary\":\"[A short 2-3 sentence summary of the findings.]\", \"markdown_report\":\"[The final report.]\", \"follow_up_questions\": [\"[Suggested topics to research further]\"] } \n\nOriginal query: {query}\nSummarized search results: {searchResults}",
+      "prompt": "You are a senior researcher tasked with writing a cohesive report for a research query. You will be provided with the original query, and some initial research done by a research assistant.\nYou should first come up with an outline for the report that describes the structure and flow of the report. Then, generate the report and return that as your final output.\nThe final output should be in markdown format, and it should be lengthy and detailed. \n\nOriginal query: {query}\nSummarized search results: {searchResults}",
       "template": {
         "name": "write-report",
         "title": "Write report",

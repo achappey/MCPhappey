@@ -1,7 +1,7 @@
+using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Core.Extensions;
@@ -24,7 +24,7 @@ public static partial class ModelContextResourceExtensions
                 =>
                 {
                     var service = request.Services!.GetRequiredService<ResourceService>();
-                    
+
                     return await service.GetServerResourceTemplates(server, cancellationToken);
                 },
                 ReadResourceHandler = async (request, cancellationToken) =>
@@ -32,8 +32,6 @@ public static partial class ModelContextResourceExtensions
                     var scraper = request.Services!.GetRequiredService<ResourceService>();
                     request.Services!.WithHeaders(headers);
 
-                    //    try
-                    //   {
                     try
                     {
                         return await scraper.GetServerResource(request.Services!,
@@ -42,6 +40,11 @@ public static partial class ModelContextResourceExtensions
                     }
                     catch (Exception e)
                     {
+                        var fileMarkdown =
+                          $"<details><summary><a href=\"{request.Params?.Uri}\" target=\"blank\">ERROR ReadResource {new Uri(request.Params?.Uri!).Host}</a></summary>\n\n```\n{e.Message}\n```\n</details>";
+
+                        await request.Server.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Error, CancellationToken.None);
+
                         return new ReadResourceResult()
                         {
                             Contents = [new TextResourceContents() {
@@ -51,18 +54,6 @@ public static partial class ModelContextResourceExtensions
                             }]
                         };
                     }
-                    /*   }
-                           catch (Exception e)
-                           {
-                               return new ReadResourceResult()
-                               {
-                                   Contents = [new TextResourceContents() {
-                                       Text = e.Message,
-                                       MimeType = MimeTypes.PlainText,
-                                       Uri = request.Params?.Uri ?? string.Empty
-                                   }]
-                               };
-                           }*/
                 },
             }
             : null;

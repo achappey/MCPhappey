@@ -33,7 +33,7 @@ public partial class DownloadService(WebScraper webScraper,
         var domain = new Uri(url).Host; // e.g., "example.com"
         var markdown = $"GET [{domain}]({url})";
 
-        await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Info);
+        await mcpServer.SendMessageNotificationAsync(markdown, LoggingLevel.Info, CancellationToken.None);
 
         foreach (var decoder in supportedScrapers)
         {
@@ -46,9 +46,9 @@ public partial class DownloadService(WebScraper webScraper,
                     foreach (var file in fileContent)
                     {
                         var fileMarkdown =
-                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">GET {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
+                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">GET ScrapeContentAsync {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
 
-                        await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug);
+                        await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug, CancellationToken.None);
                     }
                 }
 
@@ -63,9 +63,9 @@ public partial class DownloadService(WebScraper webScraper,
                     foreach (var file in decoded)
                     {
                         var fileMarkdown =
-                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">DECODE {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
+                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">DECODE ScrapeContentAsync {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
 
-                        await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug);
+                        await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug, CancellationToken.None);
                     }
                 }
 
@@ -77,10 +77,13 @@ public partial class DownloadService(WebScraper webScraper,
 
         if (!defaultScraper.Success)
         {
+            var fileMarkdown =
+                      $"<details><summary><a href=\"{url}\" target=\"blank\">ERROR ScrapeContentAsync {new Uri(url).Host}</a></summary>\n\n```\n{defaultScraper.Error}\n```\n</details>";
+
+            await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Error, CancellationToken.None);
+
             throw new Exception(defaultScraper.Error);
         }
-
-        //  var fileItem = defaultScraper.ToFileItem(url);
 
         return [await transformService.DecodeAsync(url,
                           defaultScraper.Content,

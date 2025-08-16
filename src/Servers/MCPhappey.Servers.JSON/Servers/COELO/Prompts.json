@@ -51,17 +51,12 @@
       }
     },
     {
-      "prompt": "Vergelijk de lokale lasten voor huishoudens in {jaar} tussen gemeente {gemeenteA} en gemeente {gemeenteB}. Geef per gemeente het totaalbedrag en noem de grootste verschillen.",
+      "prompt": "Vergelijk de lokale lasten voor huishoudens tussen gemeente {gemeenteA} en gemeente {gemeenteB} op basis van:\n- Huishouden: {huishoudenPersonen} persoon/personen.\n- Eigen woning: {heeftEigenWoning}.\n  - WOZ-waarde: €{wozWaarde} (optioneel).\n  - Auto: {heeftAuto}.\n - Elektrisch: {isElektrisch}.\n   - Gewicht: {autoGewicht} kg.\n \nGeef per gemeente het totaalbedrag en splits uit naar OZB (indien eigen woning), rioolheffing, afvalstoffenheffing, en motorrijtuigenbelasting (indien auto). Benoem de grootste verschillen en leg kort uit waardoor deze ontstaan. Maak een overzichtelijke tabel met per gemeente de totale lasten en de onderliggende posten.",
       "template": {
         "name": "vergelijk-lokale-lasten-huishoudens",
         "title": "Vergelijk lokale lasten huishoudens",
-        "description": "Vergelijkt de totale lokale lasten voor huishoudens tussen twee gemeenten.",
+        "description": "Vergelijkt de totale lokale lasten voor huishoudens tussen twee gemeenten, met opties voor woning (incl. WOZ), huishouden, en auto (incl. elektrisch + gewicht).",
         "arguments": [
-          {
-            "name": "jaar",
-            "description": "Het gewenste jaartal (bijv. 2024).",
-            "required": true
-          },
           {
             "name": "gemeenteA",
             "description": "De eerste gemeente.",
@@ -71,6 +66,36 @@
             "name": "gemeenteB",
             "description": "De tweede gemeente.",
             "required": true
+          },
+          {
+            "name": "heeftEigenWoning",
+            "description": "Heeft u een eigen woning? (ja/nee).",
+            "required": true
+          },
+          {
+            "name": "wozWaarde",
+            "description": "WOZ-waarde van de woning in euro’s (alleen invullen als eigen woning, optioneel).",
+            "required": false
+          },
+          {
+            "name": "huishoudenPersonen",
+            "description": "Aantal personen in het huishouden: een, twee, drie of vier.",
+            "required": true
+          },
+          {
+            "name": "heeftAuto",
+            "description": "Heeft u een auto? (ja/nee).",
+            "required": true
+          },
+          {
+            "name": "isElektrisch",
+            "description": "Is de auto elektrisch? (ja/nee). Alleen relevant als heeftAuto = ja.",
+            "required": false
+          },
+          {
+            "name": "autoGewicht",
+            "description": "Leeggewicht van de auto in kilogram (optioneel). Indien leeg, gebruik 1150kg of 1800kg (elektrisch).",
+            "required": false
           }
         ]
       }

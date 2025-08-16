@@ -52,6 +52,7 @@ public static class StaticContentLoader
                 if (File.Exists(promptsFile))
                 {
                     serverConfig.PromptList = JsonSerializer.Deserialize<PromptTemplates>(File.ReadAllText(promptsFile));
+
                     serverObj.Capabilities.Prompts = new(); // not null
                 }
 
@@ -66,6 +67,13 @@ public static class StaticContentLoader
                     serverConfig.ResourceList = JsonSerializer.Deserialize<ListResourcesResult>(
                             File.ReadAllText(resourcesFile));
 
+                    serverConfig.ResourceList = new ListResourcesResult()
+                    {
+                        Resources = serverConfig.ResourceList?.Resources
+                            .OrderByDescending(a => a.Annotations?.Priority)
+                            .ToList() ?? []
+                    };
+
                     serverObj.Capabilities.Resources = new();
                 }
 
@@ -73,6 +81,14 @@ public static class StaticContentLoader
                 {
                     serverConfig.ResourceTemplateList = JsonSerializer.Deserialize<ListResourceTemplatesResult>(
                             File.ReadAllText(resourceTemplatesFile));
+
+                    serverConfig.ResourceTemplateList = new ListResourceTemplatesResult()
+                    {
+                        ResourceTemplates = serverConfig.ResourceTemplateList?.ResourceTemplates
+                            .OrderByDescending(a => a.Annotations?.Priority)
+                            .ToList() ?? []
+                    };
+
                     serverObj.Capabilities.Resources = new();
                 }
 

@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "ZorgkaartNederland",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"
+  ]
+}
