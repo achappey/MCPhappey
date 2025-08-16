@@ -10,6 +10,7 @@ using MCPhappey.Core.Extensions;
 using MCPhappey.Agent2Agent.Services;
 using MCPhappey.Agent2Agent.Extensions;
 using Microsoft.AspNetCore.Http;
+using A2A.Server.Infrastructure;
 
 namespace MCPhappey.Agent2Agent;
 
@@ -24,10 +25,10 @@ public class Agent2AgentScraper(
         => new Uri(host).Scheme == "a2a";
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
-    IMcpServer mcpServer,
-    IServiceProvider serviceProvider,
-    string url,
-    CancellationToken cancellationToken = default)
+        IMcpServer mcpServer,
+        IServiceProvider serviceProvider,
+        string url,
+        CancellationToken cancellationToken = default)
     {
         var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
         var oid = tokenProvider.GetOidClaim();
@@ -89,7 +90,24 @@ public class Agent2AgentScraper(
 
             var tasks = await taskRepo.GetTasksByContextAsync(contextId, cancellationToken);
 
-            return [tasks.Select(a => a.ToTaskFileItem($"a2a://task/{a.Id}")).ToFileItem(url)];
+            return [.. tasks.Select(a => a.ToTaskFileItem($"a2a://task/{a.Id}"))];
+        }
+
+        // a2a://tasks
+        if ((host.Equals("tasks", StringComparison.OrdinalIgnoreCase) && segments.Length == 0) ||
+            (segments.Length == 1 && segments[0].Equals("tasks", StringComparison.OrdinalIgnoreCase)))
+        {
+            var contexts = await contextService.GetUserContextsWithUsersAsync(graphClient, oid, userGroupIds ?? [], cancellationToken);
+
+            List<TaskRecord> allTasks = [];
+            foreach (var context in contexts)
+            {
+                var tasks = await taskRepo.GetTasksByContextAsync(context.ContextId, cancellationToken);
+
+                allTasks.AddRange(tasks);
+            }
+
+            return [.. allTasks.Select(a => a.ToTaskFileItem($"a2a://task/{a.Id}"))];
         }
 
         // a2a://task/{taskId}

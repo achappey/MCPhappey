@@ -20,16 +20,30 @@ namespace MCPhappey.Agent2Agent;
 
 public static class Agent2AgentContextPlugin
 {
+    [McpServerTool(Name = "agent2agent_get_authenticated_card", Title = "Read A2A Agent card", OpenWorld = false)]
+    [Description("Get a complete A2A Agent card")]
+    public static async Task<CallToolResult> Agent2Agent_GetAuthenticatedCard(
+          IServiceProvider serviceProvider,
+          RequestContext<CallToolRequestParams> requestContext,
+          string agentUrl,
+          CancellationToken cancellationToken = default) => await System.Threading.Tasks.Task.FromResult(new CallToolResult());
+
     [McpServerTool(Name = "agent2agent_create_task", Title = "Create Agent2Agent task", OpenWorld = false)]
-    [Description("Create a new Agent2Agent task without executing it.")]
+    [Description("Create a new Agent2Agent task without executing it. Make sure you add all required and optional, but needed, extensions")]
     public static async Task<CallToolResult> Agent2Agent_CreateTask(
            IServiceProvider serviceProvider,
            RequestContext<CallToolRequestParams> requestContext,
            string contextId,
            string taskDescription,
-            [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
+           [Description("Agent extension to use for the task.")] List<AgentExtension> extensions,
+           [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
            CancellationToken cancellationToken = default)
     {
+        if (extensions == null)
+        {
+            return "Extensions are missing. Please carefulle read the Agent card and task requirements and add the needed extensions. If no extensionsa are needed, sent in an emty object".ToErrorCallToolResponse();
+        }
+
         var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
         var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         var oid = tokenProvider.GetOidClaim();
@@ -62,10 +76,27 @@ public static class Agent2AgentContextPlugin
         if (notAccepted != null) return notAccepted;
         if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
 
+        var meta = new Dictionary<string, object>
+            {
+                { "timestamp", DateTime.UtcNow.ToString("o") },
+                { "author", name ?? requestContext.Server.ServerOptions.ServerInfo?.Name ?? string.Empty }
+            };
+
+        // Only keys: uri → true
+        if (extensions != null)
+        {
+            foreach (var ext in extensions)
+            {
+                if (!string.IsNullOrWhiteSpace(ext.Uri.ToString()))
+                    meta[ext.Uri.ToString()] = new { }; // value can be true/null/whatever you want
+            }
+        }
+
         var taskItem = new TaskRecord()
         {
             Id = Guid.NewGuid().ToString(),
             ContextId = contextId,
+            // Metadata = [.. extensions ?? []],
             Status = new A2A.Models.TaskStatus()
             {
                 State = A2A.TaskState.Unknown,
@@ -78,11 +109,7 @@ public static class Agent2AgentContextPlugin
                     Text = typedResult.Message
                 }],
                 ReferenceTaskIds = [.. refTaskIds],
-                Metadata = new()
-                    {
-                        {"timestamp",  DateTime.UtcNow.ToString("o") },
-                        {"author",  name ?? requestContext.Server.ServerOptions.ServerInfo?.Name ?? string.Empty }
-                    }
+                Metadata = [.. meta]
             }
         };
 
@@ -98,10 +125,16 @@ public static class Agent2AgentContextPlugin
           RequestContext<CallToolRequestParams> requestContext,
          [Description("Url of the agent")] string agentUrl,
          [Description("Task message/comment")] string taskMessage,
+         [Description("Agent extension to use for the task.")] List<AgentExtension> extensions,
          [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
          [Description("Id of the context to execute the task in. Leave empty for new context.")] string? contextId = null,
          CancellationToken cancellationToken = default)
     {
+        if (extensions == null)
+        {
+            return "Extensions are missing. Please carefulle read the Agent card and task requirements and add the needed extensions. If no extensionsa are needed, sent in an emty object".ToErrorCallToolResponse();
+        }
+
         var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
         var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
         var oid = tokenProvider.GetOidClaim();
@@ -402,10 +435,9 @@ public static class Agent2AgentContextPlugin
         [Required]
         [Description("The task message.")]
         public string Message { get; set; } = default!;
-
     }
 
-    [Description("Please fill in the context name.")]
+    [Description("Please confirm the name of the context you want to delete: {0}")]
     public class DeleteA2AContext : IHasName
     {
         [JsonPropertyName("name")]
@@ -415,7 +447,7 @@ public static class Agent2AgentContextPlugin
 
     }
 
-    [Description("Please fill in the task id.")]
+    [Description("Please confirm the name of the task you want to delete: {0}")]
     public class DeleteA2ATask : IHasName
     {
         [JsonPropertyName("name")]

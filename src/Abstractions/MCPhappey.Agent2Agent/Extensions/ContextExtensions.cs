@@ -1,7 +1,6 @@
 using System.Net.Mime;
 using System.Text.Json;
 using A2A.Models;
-using A2A.Server;
 using A2A.Server.Infrastructure;
 using MCPhappey.Agent2Agent.Models;
 using MCPhappey.Common.Models;
