@@ -14,16 +14,16 @@ namespace MCPhappey.Agent2Agent;
 
 public static partial class Agent2AgentEditor
 {
-    [McpServerTool(Destructive = false)]
+    [McpServerTool(Name = "agent2agent_editor_create_agent", OpenWorld = false)]
     [Description("Create a new Agent2Agent agent.")]
     public static async Task<CallToolResult> Agent2AgentEditor_CreateAgent(
             IServiceProvider serviceProvider,
             RequestContext<CallToolRequestParams> requestContext,
-            string newAgentName,
-            string newAgentUrl,
-            string agentModel = "gpt-5-mini",
-            float temperature = 1,
-            string? description = null,
+            [Description("Name of the new Agent")] string newAgentName,
+            [Description("Server relative URL of the new Agent")] string newAgentUrl,
+            [Description("AI model the Agent should use")] string agentModel = "gpt-5-mini",
+            //float temperature = 1,
+            [Description("Description of the agent")] string? description = null,
             CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<AgentRepository>();
@@ -36,7 +36,7 @@ public static partial class Agent2AgentEditor
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2AAgent()
         {
             Name = newAgentName,
-            Temperature = temperature,
+            //  Temperature = temperature,
             Description = description,
             Url = newAgentUrl,
         }, cancellationToken);
@@ -47,7 +47,7 @@ public static partial class Agent2AgentEditor
         var server = await serverRepository.CreateAgent(new Agent()
         {
             Model = agentModel,
-            Temperature = typedResult.Temperature ?? 0,
+            Temperature = 1,
             AgentCard = new AgentCard()
             {
                 Name = typedResult.Name,
@@ -75,142 +75,143 @@ public static partial class Agent2AgentEditor
         .ToJsonCallToolResponse($"a2a-editor://agent/{server.AgentCard.Name}");
     }
 
-    [McpServerTool(Destructive = false)]
-    [Description("Add a MCP server to an Agent2Agent agent.")]
-    public static async Task<CallToolResult> Agent2AgentEditor_AddMcpServer(
+    [McpServerTool(Name = "agent2agent_editor_add_extension", OpenWorld = false)]
+    [Description("Add an extension to an Agent2Agent agent.")]
+    public static async Task<CallToolResult> Agent2AgentEditor_AddExtension(
                IServiceProvider serviceProvider,
                RequestContext<CallToolRequestParams> requestContext,
                string agentName,
-               string mcpServerUrl,
+               [Description("Uri of the extension")] string extensionUri,
+               [Description("If the extension is required")] bool required,
+               [Description("The description of the extension")] string? description = null,
+               [Description("The parameters of the extension")] string? parameters = null,
                CancellationToken cancellationToken = default)
     {
         var serverRepository = serviceProvider.GetRequiredService<AgentRepository>();
         var userId = serviceProvider.GetUserId();
         if (userId == null) return "No user found".ToErrorCallToolResponse();
 
-        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new AddA2AAgentMcpServer()
+        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new AddA2AAgentExtension()
         {
-            Url = new Uri(mcpServerUrl),
+            Uri = new Uri(extensionUri),
+            Description = description,
+            Required = required,
+            Params = parameters,
         }, cancellationToken);
 
         if (notAccepted != null) return notAccepted;
         if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
-        var mcpServer = await serverRepository.GetMcpServer(typedResult.Url.ToString(), cancellationToken);
         var currentAgent = await serverRepository.GetAgent(agentName, cancellationToken);
         if (currentAgent?.Owners.Any(e => e.Id == userId) != true) return "Access denied".ToErrorCallToolResponse();
 
-        if (mcpServer == null)
+        var newMcp = await serverRepository.CreateExtension(new Extension()
         {
-            var newMcp = await serverRepository.CreateMcpServer(new McpServer()
-            {
-                Url = typedResult.Url.ToString()
-            }, cancellationToken);
-
-            currentAgent.Servers.Add(new AgentServer()
-            {
-                McpServer = newMcp
-            });
-        }
-        else
-        {
-            currentAgent.Servers.Add(new AgentServer()
-            {
-                McpServer = mcpServer
-            });
-        }
-
-        var server = await serverRepository.UpdateAgent(currentAgent!);
-
-        return JsonSerializer.Serialize(new
-        {
-            server.Model,
-            server.Temperature,
-            AgentCard = new
-            {
-                server.AgentCard.Name,
-                server.AgentCard.Url,
-                server.AgentCard.Description
-            },
-            Owners = new List<string>() { userId }
-        })
-        .ToJsonCallToolResponse($"a2a-editor://agent/{server.AgentCard.Name}");
-    }
-
-    [McpServerTool()]
-    [Description("Set up OpenAI provider specific metadata like code_interpreter, web_search_preview, etc.")]
-    public static async Task<CallToolResult> Agent2AgentEditor_SetOpenAIMetadata(
-              IServiceProvider serviceProvider,
-              RequestContext<CallToolRequestParams> requestContext,
-              string agentName,
-              CancellationToken cancellationToken = default)
-    {
-        var serverRepository = serviceProvider.GetRequiredService<AgentRepository>();
-        var userId = serviceProvider.GetUserId();
-        if (userId == null) return "No user found".ToErrorCallToolResponse();
-        var currentAgent = await serverRepository.GetAgent(agentName, cancellationToken);
-
-        var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new A2AAgentOpenAISettings()
-        {
-            ParallelToolCalls = currentAgent?.OpenAI?.ParallelToolCalls ?? true,
-            Reasoning = currentAgent?.OpenAI?.Reasoning != null,
-            ContextSize = currentAgent?.OpenAI?.WebSearchPreview?.SearchContextSize ?? ContextSize.medium,
-            WebSearch = currentAgent?.OpenAI?.WebSearchPreview != null,
-            ReasoningEffort = currentAgent?.OpenAI?.Reasoning?.Effort ?? ReasoningEffort.low,
-            ReasoningSummary = currentAgent?.OpenAI?.Reasoning?.Summary ?? ReasoningSummary.auto
+            Uri = typedResult.Uri.ToString(),
+            Description = typedResult.Description,
+            Required = typedResult.Required,
+            AgentCardId = currentAgent.AgentCard.Id,
+            Params = typedResult.Params
         }, cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
-        if (currentAgent == null) return "Something went wrong".ToErrorCallToolResponse();
-
-        currentAgent.OpenAI = new OpenAIMetadata()
-        {
-            ParallelToolCalls = typedResult.ParallelToolCalls,
-            WebSearchPreview = typedResult.WebSearch ? new WebSearchPreview()
-            {
-                SearchContextSize = typedResult.ContextSize
-            } : null,
-            Reasoning = typedResult.Reasoning ? new Reasoning()
-            {
-                Effort = typedResult.ReasoningEffort,
-                Summary = typedResult.ReasoningSummary
-            } : null,
-            CodeInterpreter = typedResult.CodeInterpreter ? new CodeInterpreter()
-            {
-
-            } : null,
-            FileSearch = !string.IsNullOrEmpty(typedResult.FileSearchVectorStoreIds) ? new FileSearch()
-            {
-                VectorStoreIds = typedResult.FileSearchVectorStoreIds.Split(",")
-            } : null
-        };
-
-        var server = await serverRepository.UpdateAgent(currentAgent);
-
         return JsonSerializer.Serialize(new
         {
-            server.Model,
-            server.Temperature,
-            server.OpenAI,
-            AgentCard = new
-            {
-                server.AgentCard.Name,
-                server.AgentCard.Url,
-                server.AgentCard.Description
-            },
-            Owners = new List<string>() { userId }
+            newMcp.Uri,
+            newMcp.Required,
+            newMcp.Description,
+            newMcp.Params
         }, JsonSerializerOptions.Web)
-        .ToJsonCallToolResponse($"a2a-editor://agent/{server.AgentCard.Name}");
+        .ToJsonCallToolResponse($"a2a-editor://agent/{currentAgent.AgentCard.Name}/extensions/{newMcp.Id}");
     }
+    /*
+        [McpServerTool()]
+        [Description("Set up OpenAI provider specific metadata like code_interpreter, web_search_preview, etc.")]
+        public static async Task<CallToolResult> Agent2AgentEditor_SetOpenAIMetadata(
+                  IServiceProvider serviceProvider,
+                  RequestContext<CallToolRequestParams> requestContext,
+                  string agentName,
+                  CancellationToken cancellationToken = default)
+        {
+            var serverRepository = serviceProvider.GetRequiredService<AgentRepository>();
+            var userId = serviceProvider.GetUserId();
+            if (userId == null) return "No user found".ToErrorCallToolResponse();
+            var currentAgent = await serverRepository.GetAgent(agentName, cancellationToken);
 
-    [Description("Please fill in the MCP details.")]
-    public class AddA2AAgentMcpServer
+            var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new A2AAgentOpenAISettings()
+            {
+                ParallelToolCalls = currentAgent?.OpenAI?.ParallelToolCalls ?? true,
+                Reasoning = currentAgent?.OpenAI?.Reasoning != null,
+                ContextSize = currentAgent?.OpenAI?.WebSearchPreview?.SearchContextSize ?? ContextSize.medium,
+                WebSearch = currentAgent?.OpenAI?.WebSearchPreview != null,
+                ReasoningEffort = currentAgent?.OpenAI?.Reasoning?.Effort ?? ReasoningEffort.low,
+                ReasoningSummary = currentAgent?.OpenAI?.Reasoning?.Summary ?? ReasoningSummary.auto
+            }, cancellationToken);
+
+            if (notAccepted != null) return notAccepted;
+            if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
+            if (currentAgent == null) return "Something went wrong".ToErrorCallToolResponse();
+
+            currentAgent.OpenAI = new OpenAIMetadata()
+            {
+                ParallelToolCalls = typedResult.ParallelToolCalls,
+                WebSearchPreview = typedResult.WebSearch ? new WebSearchPreview()
+                {
+                    SearchContextSize = typedResult.ContextSize
+                } : null,
+                Reasoning = typedResult.Reasoning ? new Reasoning()
+                {
+                    Effort = typedResult.ReasoningEffort,
+                    Summary = typedResult.ReasoningSummary
+                } : null,
+                CodeInterpreter = typedResult.CodeInterpreter ? new CodeInterpreter()
+                {
+
+                } : null,
+                FileSearch = !string.IsNullOrEmpty(typedResult.FileSearchVectorStoreIds) ? new FileSearch()
+                {
+                    VectorStoreIds = typedResult.FileSearchVectorStoreIds.Split(",")
+                } : null
+            };
+
+            var server = await serverRepository.UpdateAgent(currentAgent);
+
+            return JsonSerializer.Serialize(new
+            {
+                server.Model,
+                server.Temperature,
+                server.OpenAI,
+                AgentCard = new
+                {
+                    server.AgentCard.Name,
+                    server.AgentCard.Url,
+                    server.AgentCard.Description
+                },
+                Owners = new List<string>() { userId }
+            }, JsonSerializerOptions.Web)
+            .ToJsonCallToolResponse($"a2a-editor://agent/{server.AgentCard.Name}");
+        }
+        */
+
+    [Description("Please fill in the Agent extension details.")]
+    public class AddA2AAgentExtension
     {
-        [JsonPropertyName("url")]
+        [JsonPropertyName("uri")]
         [Required]
-        [Description("The Agent url.")]
-        public Uri Url { get; set; } = default!;
+        [Description("The extension uri.")]
+        public Uri Uri { get; set; } = default!;
 
+        [JsonPropertyName("required")]
+        [Required]
+        [DefaultValue(true)]
+        [Description("If the extension is required.")]
+        public bool Required { get; set; } = true;
+
+        [JsonPropertyName("description")]
+        [Description("The description of the extension.")]
+        public string? Description { get; set; }
+
+        [JsonPropertyName("params")]
+        [Description("The parameters of the extension.")]
+        public string? Params { get; set; }
     }
 
 
@@ -269,10 +270,10 @@ public static partial class Agent2AgentEditor
         [Description("The Agent url.")]
         public string Url { get; set; } = default!;
 
-        [JsonPropertyName("temperature")]
-        [Range(0, 1)]
-        [Description("The Agent temperature.")]
-        public float? Temperature { get; set; }
+        /*  [JsonPropertyName("temperature")]
+          [Range(0, 1)]
+          [Description("The Agent temperature.")]
+          public float? Temperature { get; set; }*/
 
         [JsonPropertyName("description")]
         [Description("The Agent description.")]

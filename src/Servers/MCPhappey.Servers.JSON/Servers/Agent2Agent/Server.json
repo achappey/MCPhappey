@@ -3,7 +3,7 @@
     "name": "Agent2Agent",
     "version": "1.0.0"
   },
-  "instructions": "Rules: 1. Before sending a task to an agent, always read the authenticated card json and carefully inspect all capabilities. 2. Pass task and/or artifact references with referencedTaskIds, never by uri only. 3. Send in the required extensions when creating tasks and/or messages. The required and optional extensions can be found on the Agent card",
+  "instructions": "Rules: 1. Before sending a task to an agent, always read the authenticated card json and carefully inspect all capabilities. 2. Pass task and/or artifact references with referencedTaskIds, never by uri only. 3. Send in the required extensions when creating tasks and/or messages. The required and optional extensions can be found on the Agent card. 4. Create tasks with minimal needed mcp policy to complete the task.",
   "plugins": ["MCPhappey.Agent2Agent.Agent2AgentContextPlugin, MCPhappey.Agent2Agent"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

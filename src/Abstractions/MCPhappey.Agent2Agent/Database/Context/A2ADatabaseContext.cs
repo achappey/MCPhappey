@@ -21,6 +21,8 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
 
   public DbSet<AppRegistration> AppRegistrations { get; set; } = null!;
 
+  public DbSet<Extension> Extensions { get; set; } = null!;
+
   public DbSet<Tag> Tags { get; set; } = null!;
 
   public DbSet<SkillExample> SkillExamples { get; set; } = null!;
@@ -109,6 +111,11 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
               .WithOne(s => s.AgentCard)
               .HasForeignKey(s => s.AgentCardId)
               .OnDelete(DeleteBehavior.Cascade);
+
+      builder.HasMany(ac => ac.Extensions)
+        .WithOne(s => s.AgentCard)
+        .HasForeignKey(s => s.AgentCardId)
+        .OnDelete(DeleteBehavior.Cascade);
     });
 
     // === Skill ===
@@ -129,6 +136,19 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
               .WithOne(st => st.Skill)
               .HasForeignKey(st => st.SkillId)
               .OnDelete(DeleteBehavior.Cascade);
+    });
+
+
+    modelBuilder.Entity<Extension>(builder =>
+    {
+      builder.HasKey(s => s.Id);
+      builder.Property(s => s.Uri).IsRequired();
+      builder.Property(s => s.Required).IsRequired();
+
+      // One-to-many SkillExample
+      builder.HasOne(s => s.AgentCard)
+              .WithMany(e => e.Extensions)
+              .HasForeignKey(e => e.AgentCardId);
     });
 
     // === Tag ===

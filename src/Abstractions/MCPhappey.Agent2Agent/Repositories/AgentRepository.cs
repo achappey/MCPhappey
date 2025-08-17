@@ -70,6 +70,14 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
         return result.Entity;
     }
 
+    public async Task<Extension> CreateExtension(Extension extension, CancellationToken cancellationToken)
+    {
+        var result = await databaseContext.Extensions.AddAsync(extension, cancellationToken);
+        await databaseContext.SaveChangesAsync(cancellationToken);
+
+        return result.Entity;
+    }
+
     public async Task<Agent> CreateAgent(Agent agent, CancellationToken cancellationToken)
     {
         var result = await databaseContext.Agents.AddAsync(agent, cancellationToken);

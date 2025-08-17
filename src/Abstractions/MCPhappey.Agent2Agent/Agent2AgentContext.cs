@@ -35,13 +35,13 @@ public static class Agent2AgentContextPlugin
            RequestContext<CallToolRequestParams> requestContext,
            string contextId,
            string taskDescription,
-           [Description("Agent extension to use for the task.")] List<AgentExtension> extensions,
+           [Description("Agent extension to use for the task.")] List<Models.AgentExtension> extensions,
            [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
            CancellationToken cancellationToken = default)
     {
         if (extensions == null)
         {
-            return "Extensions are missing. Please carefulle read the Agent card and task requirements and add the needed extensions. If no extensionsa are needed, sent in an emty object".ToErrorCallToolResponse();
+            return "Extensions are missing. Please carefully read the Agent card and task requirements and add the needed extensions. If no extensionsa are needed, sent in an empty object".ToErrorCallToolResponse();
         }
 
         var tokenProvider = serviceProvider.GetRequiredService<HeaderProvider>();
@@ -96,7 +96,6 @@ public static class Agent2AgentContextPlugin
         {
             Id = Guid.NewGuid().ToString(),
             ContextId = contextId,
-            // Metadata = [.. extensions ?? []],
             Status = new A2A.Models.TaskStatus()
             {
                 State = A2A.TaskState.Unknown,
@@ -124,10 +123,10 @@ public static class Agent2AgentContextPlugin
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
          [Description("Url of the agent")] string agentUrl,
+         [Description("Id of the context to execute the task in.")] string contextId,
          [Description("Task message/comment")] string taskMessage,
-         [Description("Agent extension to use for the task.")] List<AgentExtension> extensions,
+         [Description("Agent extension to use for the task.")] List<Models.AgentExtension> extensions,
          [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
-         [Description("Id of the context to execute the task in. Leave empty for new context.")] string? contextId = null,
          CancellationToken cancellationToken = default)
     {
         if (extensions == null)

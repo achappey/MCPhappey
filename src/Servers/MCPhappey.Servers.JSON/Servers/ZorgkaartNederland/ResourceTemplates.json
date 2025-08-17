@@ -13,6 +13,18 @@
       }
     },
     {
+      "uriTemplate": "https://www.zorgkaartnederland.nl/{plaatsnaam}",
+      "name": "zorgkaart-nederland-plaatsnaam",
+      "description": "Alle zorginstellingen per plaatsnaam.",
+      "mimeType": "text/plain",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ],
+        "priority": 0.7
+      }
+    },
+    {
       "uriTemplate": "https://www.zorgkaartnederland.nl/?zoekterm={zoekterm}",
       "name": "zorgkaart-nederland-doorzoeken",
       "description": "Doorzoekt ZorgkaartNederland.",

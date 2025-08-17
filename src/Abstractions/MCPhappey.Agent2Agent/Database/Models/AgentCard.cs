@@ -16,6 +16,8 @@ public class AgentCard
 
     public ICollection<Skill> Skills { get; set; } = [];
 
+    public ICollection<Extension> Extensions { get; set; } = [];
+
     public int AgentId { get; set; }
 
     public Agent Agent { get; set; } = default!;
