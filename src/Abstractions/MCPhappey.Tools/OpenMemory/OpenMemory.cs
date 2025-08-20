@@ -71,6 +71,8 @@ public static class OpenMemory
 
     [Description("Ask a question to personal user memory")]
     [McpServerTool(Title = "Ask memory",
+        Idempotent = true,
+        OpenWorld = false,
         ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_AskMemory(
         [Description("Question prompt")]
@@ -110,6 +112,8 @@ public static class OpenMemory
 
     [Description("Search personal user memories with a prompt")]
     [McpServerTool(Title = "Search memories",
+        Idempotent = true,
+        OpenWorld = false,
         ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_SearchMemories(
       [Description("Question prompt")]
@@ -147,7 +151,10 @@ public static class OpenMemory
     }
 
     [Description("List personal user memories")]
-    [McpServerTool(Title = "List memories", ReadOnly = true)]
+    [McpServerTool(Title = "List memories",
+        ReadOnly = true,
+        Idempotent = true,
+        OpenWorld = false)]
     public static async Task<CallToolResult> OpenMemory_ListMemories(
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)

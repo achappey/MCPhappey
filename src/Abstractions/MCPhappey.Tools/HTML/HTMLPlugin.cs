@@ -38,7 +38,8 @@ public static partial class HTMLPlugin
     [McpServerTool(Title = "List template arguments in an HTML file",
         Destructive = false,
         Idempotent = true,
-        OpenWorld = false, ReadOnly = true)]
+        OpenWorld = false,
+        ReadOnly = true)]
     public static async Task<CallToolResult?> HTMLPlugin_ListTemplateArguments(
       [Description("Url to the source HTML file")] string sourceUrl,
       IServiceProvider serviceProvider,

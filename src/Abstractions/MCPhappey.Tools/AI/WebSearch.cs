@@ -10,18 +10,19 @@ namespace MCPhappey.Tools.AI;
 
 public static class WebSearch
 {
-    //"gpt-4o-search-preview"
     private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "claude-sonnet-4-20250514"];
-    private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro", "claude-sonnet-4-20250514"];
+    private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro", "claude-opus-4-1-20250805"];
 
-    [Description("Web search using multiple AI models in parallel")]
+    [Description("Parallel web search across multiple AI models, optionally filtered by date range. If a date range is used, include it in the prompt, as some providers don’t support date filters.")]
     [McpServerTool(Title = "Web search (multi-model)",
-        Destructive = false,
         ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> WebSearch_Execute(
        [Description("Search query")] string query,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
+       [Description("Start date of the date range")] string? startDate = null,
+       [Description("End date of the date range")] string? endDate = null,
+       [Description("Search context size. low, medium or high")] string? searchContextSize = "medium",
        CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
@@ -35,7 +36,7 @@ public static class WebSearch
         int? progressToken = 1;
 
         var markdown = $"{string.Join(", ", ModelNames)}\n{query}";
-        await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug);
+        await requestContext.Server.SendMessageNotificationAsync(markdown, LoggingLevel.Debug, cancellationToken: CancellationToken.None);
 
         var tasks = ModelNames.Select(async modelName =>
             {
@@ -54,18 +55,23 @@ public static class WebSearch
                             { "perplexity", new {
                                 search_mode = "web",
                                 web_search_options = new {
-                                    search_context_size = "medium"
-                                }
+                                    search_context_size = searchContextSize
+                                },
+                                last_updated_before_filter = endDate,
+                                last_updated_after_filter = startDate
                             } },
                             { "google", new {
-                                google_search = new { },
+                                google_search = new { timeRangeFilter = new {
+                                    startTime = startDate,
+                                    endTime = endDate
+                                } },
                                 thinkingConfig = new {
                                     thinkingBudget = -1
                                 }
                             } },
                             { "openai", new {
                                 web_search_preview = new {
-                                    search_context_size = "medium"
+                                    search_context_size = searchContextSize
                                 },
                                 reasoning = new {
                                     effort = "low"
@@ -73,7 +79,7 @@ public static class WebSearch
                             } },
                             { "anthropic", new {
                                 web_search = new {
-                                    max_uses = 5
+                                    max_uses = searchContextSize == "low" ? 3 : searchContextSize == "high" ? 7 : 5
                                 },
                                 thinking = new {
                                     budget_tokens = 4096
@@ -118,6 +124,9 @@ public static class WebSearch
      [Description("Search query")] string query,
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
+       [Description("Start date of the date range")] string? startDate = null,
+       [Description("End date of the date range")] string? endDate = null,
+       [Description("Search context size. low, medium or high")] string? searchContextSize = "medium",
      CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
@@ -150,18 +159,22 @@ public static class WebSearch
                     { "perplexity", new {
                         search_mode = "academic",
                         web_search_options = new {
-                            search_context_size = "medium"
+                            search_context_size = searchContextSize
                         }
                      } },
                     { "google", new {
-                        google_search = new { },
+                        google_search = new {
+                            timeRangeFilter = new {
+                                    startTime = startDate,
+                                    endTime = endDate
+                                } },
                         thinkingConfig = new {
                             thinkingBudget = -1
                         }
                      } },
                     { "openai", new {
                         web_search_preview = new {
-                            search_context_size = "low"
+                            search_context_size = searchContextSize
                          },
                          reasoning = new {
                             effort = "medium"
@@ -169,7 +182,8 @@ public static class WebSearch
                      } },
                     { "anthropic", new {
                         web_search = new {
-                            max_uses = 5
+                              max_uses = searchContextSize == "low"
+                                ? 3 : searchContextSize == "high" ? 7 : 5
                          },
                          thinking = new {
                             budget_tokens = 8192

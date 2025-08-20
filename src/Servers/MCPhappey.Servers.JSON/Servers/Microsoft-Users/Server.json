@@ -4,6 +4,6 @@
     "version": "1.0.0"
   },
   "obo": {
-    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All"
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/ProfilePhoto.ReadWrite.All https://graph.microsoft.com/MailboxSettings.ReadWrite https://graph.microsoft.com/Presence.Read.All"
   }
 }

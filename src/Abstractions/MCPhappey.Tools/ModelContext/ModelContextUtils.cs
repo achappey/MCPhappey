@@ -32,7 +32,7 @@ public static class ModelContextUtils
 
     [Description("Test Elicit capabilites by requesting a form with a single field")]
     [McpServerTool(Title = "Elicit single-field form test",
-        ReadOnly = true, Destructive = false, Idempotent = true, OpenWorld = false)]
+        ReadOnly = true, Idempotent = true, OpenWorld = false)]
     public static async Task<CallToolResult> ModelContextUtils_TestElicit(
         [Description("Elicit message")]
         string message,

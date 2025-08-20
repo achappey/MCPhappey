@@ -25,7 +25,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=department eq '{departmentName}'&$orderby=displayName asc&$top={top}&$select=id,displayName,userPrincipalName,mail,jobTitle,department,companyName,officeLocation,accountEnabled,createdDateTime",
+      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=department eq '{departmentName}'&$top={top}&$select=id,displayName,userPrincipalName,mail,jobTitle,department,companyName,officeLocation,accountEnabled,createdDateTime",
       "name": "users-by-department",
       "title": "Users by department",
       "description": "Filter users by exact department (case-sensitive match).",
@@ -37,7 +37,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=startswith(displayName,'{nameStartsWith}')&$orderby=displayName asc&$top={top}&$select=id,displayName,userPrincipalName,mail,jobTitle,department,officeLocation,accountEnabled",
+      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=startswith(displayName,'{nameStartsWith}')&$top={top}&$select=id,displayName,userPrincipalName,mail,jobTitle,department,officeLocation,accountEnabled",
       "name": "users-by-displayname-prefix",
       "title": "Users by display name prefix",
       "description": "Prefix search on displayName using startswith().",
@@ -49,7 +49,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=accountEnabled eq {isEnabled}&$orderby=displayName asc&$top={top}&$select=id,displayName,userPrincipalName,mail,jobTitle,department,accountEnabled,createdDateTime",
+      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=accountEnabled eq {isEnabled}&$top={top}&$select=id,displayName,userPrincipalName,mail,jobTitle,department,accountEnabled,createdDateTime",
       "name": "users-by-enabled-state",
       "title": "Enabled/disabled users",
       "description": "List users by accountEnabled true/false.",
@@ -61,7 +61,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=createdDateTime ge {createdSinceIso}&$orderby=createdDateTime desc&$top={top}&$select=id,displayName,userPrincipalName,mail,createdDateTime,department,jobTitle,accountEnabled",
+      "uriTemplate": "https://graph.microsoft.com/beta/users?$filter=createdDateTime ge {createdSinceIso}&$top={top}&$select=id,displayName,userPrincipalName,mail,createdDateTime,department,jobTitle,accountEnabled",
       "name": "users-created-since",
       "title": "Recently created users",
       "description": "Users created after a given ISO 8601 timestamp (e.g., 2025-07-01T00:00:00Z).",
@@ -133,7 +133,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/users/{userId}/appRoleAssignments?$select=id,principalDisplayName,resourceDisplayName,resourceId,appRoleId,createdDateTime",
+      "uriTemplate": "https://graph.microsoft.com/beta/users/{userId}/appRoleAssignments?$select=id,principalDisplayName,resourceDisplayName,resourceId,appRoleId",
       "name": "user-approle-assignments",
       "title": "User app role assignments",
       "description": "Enterprise app role assignments granted to the user.",
