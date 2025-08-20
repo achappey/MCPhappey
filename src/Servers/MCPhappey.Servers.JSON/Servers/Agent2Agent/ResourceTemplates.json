@@ -29,16 +29,6 @@
       "annotations": {
         "audience": ["assistant"]
       }
-    },
-    {
-      "uriTemplate": "https://a2a.{companyDomain}/agents.json",
-      "name": "get-agents",
-      "title": "Get Agent2Agent agetns",
-      "description": "Retrieve a list of Agent2Agent agents.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
     }
   ]
 }

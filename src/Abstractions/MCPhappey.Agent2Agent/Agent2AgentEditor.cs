@@ -22,7 +22,6 @@ public static partial class Agent2AgentEditor
             [Description("Name of the new Agent")] string newAgentName,
             [Description("Server relative URL of the new Agent")] string newAgentUrl,
             [Description("AI model the Agent should use")] string agentModel = "gpt-5-mini",
-            //float temperature = 1,
             [Description("Description of the agent")] string? description = null,
             CancellationToken cancellationToken = default)
     {
@@ -36,7 +35,6 @@ public static partial class Agent2AgentEditor
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2AAgent()
         {
             Name = newAgentName,
-            //  Temperature = temperature,
             Description = description,
             Url = newAgentUrl,
         }, cancellationToken);

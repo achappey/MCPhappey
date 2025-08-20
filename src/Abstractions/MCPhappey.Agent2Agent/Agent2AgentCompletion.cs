@@ -12,7 +12,7 @@ namespace MCPhappey.Servers.SQL.Providers;
 public class Agent2AgentCompletion : IAutoCompletion
 {
     public bool SupportsHost(ServerConfig serverConfig)
-        => serverConfig.Server.ServerInfo.Name.StartsWith("Agent2Agent-");
+        => serverConfig.Server.ServerInfo.Name.StartsWith("Agent2Agent");
 
     public async Task<Completion> GetCompletion(
         IMcpServer mcpServer,
@@ -34,7 +34,7 @@ public class Agent2AgentCompletion : IAutoCompletion
                 var userGroupIds = httpContextAccessor.HttpContext?.User.GetGroupClaims();
                 var context = await contextRepo.GetContextsForUserAsync(oid!, userGroupIds ?? [], cancellationToken);
 
-                values = context.Select(z => z.Metadata.ContainsKey("name") ? z.Metadata["name"].ToString()! : z.ContextId);
+                values = context.Select(z => z.Metadata.TryGetValue("name", out object? value) ? value.ToString()! : z.ContextId);
                 break;
             default:
                 break;

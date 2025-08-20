@@ -1,0 +1,149 @@
+{
+  "prompts": [
+    {
+      "prompt": "Create a new Agent2Agent agent with name **{agentName}**, URL **{agentUrl}**, model **{agentModel}**, and description:\n\n> {description}",
+      "template": {
+        "name": "a2a-editor-create-agent",
+        "description": "Creates a new Agent2Agent agent.",
+        "arguments": [
+          {
+            "name": "agentName",
+            "description": "The name of the new agent.",
+            "required": true
+          },
+          {
+            "name": "agentUrl",
+            "description": "The server-relative URL of the new agent.",
+            "required": true
+          },
+          {
+            "name": "agentModel",
+            "description": "The AI model the agent should use.",
+            "required": false
+          },
+          {
+            "name": "description",
+            "description": "Optional description of the agent.",
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "For agent **{agentName}**, add an extension with URI **{extensionUri}**.\n\n- Required: {required}\n- Description: {description}\n- Parameters: {parameters}",
+      "template": {
+        "name": "a2a-editor-add-extension",
+        "description": "Adds an extension to an existing agent.",
+        "arguments": [
+          {
+            "name": "agentName",
+            "description": "Name of the agent.",
+            "required": true
+          },
+          {
+            "name": "extensionUri",
+            "description": "The URI of the extension.",
+            "required": true
+          },
+          {
+            "name": "required",
+            "description": "Whether the extension is required (true/false).",
+            "required": true
+          },
+          {
+            "name": "description",
+            "description": "Optional description of the extension.",
+            "required": false
+          },
+          {
+            "name": "parameters",
+            "description": "Optional parameters for the extension (JSON).",
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "For agent **{agentName}**, create a new skill with ID **{skillId}**, name **{skillName}**, and description:\n\n> {skillDescription}\n\nConfirm the skill was added.",
+      "template": {
+        "name": "a2a-editor-create-skill",
+        "description": "Creates a new skill for a given agent.",
+        "arguments": [
+          {
+            "name": "agentName",
+            "description": "The agent to attach the skill to.",
+            "required": true
+          },
+          {
+            "name": "skillId",
+            "description": "Unique identifier for the skill.",
+            "required": true
+          },
+          {
+            "name": "skillName",
+            "description": "Human-readable skill name.",
+            "required": true
+          },
+          {
+            "name": "skillDescription",
+            "description": "Description of the skill.",
+            "required": false
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "For agent **{agentName}** and skill **{skillId}**, create a new tag: **{tagName}**.\n\nConfirm and return the updated tag list.",
+      "template": {
+        "name": "a2a-editor-create-tag",
+        "description": "Adds a new tag to a specific skill of an agent.",
+        "arguments": [
+          {
+            "name": "agentName",
+            "description": "The agent that owns the skill.",
+            "required": true
+          },
+          {
+            "name": "skillId",
+            "description": "The skill ID where the tag will be added.",
+            "required": true
+          },
+          {
+            "name": "tagName",
+            "description": "The name of the new tag.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Set app registration for agent **{agentName}**:\n\n- Client ID: {clientId}\n- Audience: {audience}\n- Scope: {scope}\n\nConfirm and return the registration details.",
+      "template": {
+        "name": "a2a-editor-set-app-registration",
+        "description": "Sets Entra ID app registration details for an agent.",
+        "arguments": [
+          {
+            "name": "agentName",
+            "description": "The agent to configure.",
+            "required": true
+          },
+          {
+            "name": "clientId",
+            "description": "The Entra ID Application (client) ID.",
+            "required": true
+          },
+          {
+            "name": "audience",
+            "description": "The resource URI (audience).",
+            "required": true
+          },
+          {
+            "name": "scope",
+            "description": "Delegated or application scope.",
+            "required": true
+          }
+        ]
+      }
+    }
+  ]
+}

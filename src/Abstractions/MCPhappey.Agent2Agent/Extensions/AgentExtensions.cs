@@ -19,7 +19,7 @@ public static class AgentExtensions
                 Model = agent.Model,
                 Temperature = agent.Temperature,
                 Owners = [.. agent.Owners.Select(r => r.Id)],
-                McpServers = [.. agent.Servers.Select(r => r.McpServer.Url)]
+           //     McpServers = [.. agent.Servers.Select(r => r.McpServer.Url)]
             },
             Auth = agent.AppRegistration != null ? new AgentAuth()
             {

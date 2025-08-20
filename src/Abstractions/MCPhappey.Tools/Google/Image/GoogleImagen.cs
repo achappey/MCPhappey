@@ -65,7 +65,7 @@ public static class GoogleImagen
                     MimeType = MediaTypeNames.Image.Png
                 }
             }
-        }, cancellationToken);
+        }, new Mscc.GenerativeAI.RequestOptions(), cancellationToken: cancellationToken);
 
         List<ResourceLinkBlock> resourceLinks = [];
 

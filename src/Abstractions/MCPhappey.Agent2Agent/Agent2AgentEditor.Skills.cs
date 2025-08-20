@@ -14,7 +14,7 @@ namespace MCPhappey.Agent2Agent;
 
 public static partial class Agent2AgentEditor
 {
-    [McpServerTool(Destructive = false)]
+    [McpServerTool(Destructive = true, OpenWorld = false)]
     [Description("Create a new skill for an Agent2Agent agent.")]
     public static async Task<CallToolResult> Agent2AgentEditor_CreateSkill(
             IServiceProvider serviceProvider,

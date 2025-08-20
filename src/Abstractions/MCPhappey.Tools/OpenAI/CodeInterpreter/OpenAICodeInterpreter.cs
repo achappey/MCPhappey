@@ -1,0 +1,68 @@
+using System.ComponentModel;
+using System.Text.Json;
+using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Services;
+using Microsoft.Extensions.DependencyInjection;
+using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
+
+namespace MCPhappey.Tools.OpenAI.CodeInterpreter;
+
+public static class OpenAICodeInterpreter
+{
+    [Description("Run a prompt with OpenAI Code interpreter tool.")]
+    [McpServerTool(Title = "OpenAI Code interpreter", Name = "openai_codeinterpreter_run",
+        Destructive = false,
+        ReadOnly = true)]
+    public static async Task<ContentBlock> OpenAICodeInterpreter_Run(
+          [Description("Prompt to execute (code is allowed).")]
+            string prompt,
+          IServiceProvider serviceProvider,
+          RequestContext<CallToolRequestParams> requestContext,
+          //       [Description("Optional file URLs to download and attach before running the prompt.")]
+          //     string[]? fileUrls = null,
+          [Description("Target model (e.g. gpt-5 or gpt-5-mini).")]
+            string model = "gpt-5",
+          CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
+
+        var mcpServer = requestContext.Server;
+        var samplingService = serviceProvider.GetRequiredService<SamplingService>();
+        var downloader = serviceProvider.GetRequiredService<DownloadService>();
+
+        // 1) Download + upload files (optional)
+        //   var attachedLinks = new List<FileItem>();
+        /*    if (fileUrls?.Length > 0)
+            {
+                foreach (var url in fileUrls)
+                {
+                    var data = await downloader.ScrapeContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
+                    attachedLinks.AddRange(data);
+                }
+
+                if (attachedLinks.Count > 0)
+                {
+                    await mcpServer.SendMessageNotificationAsync(
+                        $"Attached {attachedLinks.Count} file(s) for code execution.", LoggingLevel.Info, cancellationToken);
+                }
+            }*/
+
+        var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
+        {
+            Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
+                {
+                    {"openai", new {
+                        code_interpreter = new { type = "auto" }
+                     } },
+                }),
+            Temperature = 1,
+            MaxTokens = 8192,
+            ModelPreferences = model.ToModelPreferences(),
+            Messages = [prompt.ToUserSamplingMessage()]
+        }, cancellationToken);
+
+        return respone.Content;
+    }
+}
+

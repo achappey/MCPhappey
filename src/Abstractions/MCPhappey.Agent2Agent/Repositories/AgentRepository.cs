@@ -1,5 +1,5 @@
+using MCPhappey.Agent2Agent.Database.Context;
 using MCPhappey.Agent2Agent.Database.Models;
-using MCPhappey.Servers.SQL.Context;
 using Microsoft.EntityFrameworkCore;
 
 namespace MCPhappey.Agent2Agent.Repositories;
@@ -13,10 +13,8 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
     public async Task<Agent?> GetAgent(string name, CancellationToken cancellationToken = default) =>
         await databaseContext.Agents
             .Include(r => r.Owners)
-            .Include(r => r.Servers)
-            .ThenInclude(r => r.McpServer)
-            .Include(r => r.Anthropic)
-            .Include(r => r.OpenAI)
+            .Include(r => r.AgentCard)
+            .ThenInclude(r => r.Extensions)
             .Include(r => r.AgentCard)
             .ThenInclude(r => r.Skills)
             .ThenInclude(r => r.SkillTags)
@@ -26,17 +24,11 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
             .ThenInclude(r => r.Examples)
             .FirstOrDefaultAsync(r => r.AgentCard.Name == name, cancellationToken);
 
-    public async Task<McpServer?> GetMcpServer(string url, CancellationToken cancellationToken = default) =>
-        await databaseContext.McpServers
-        .FirstOrDefaultAsync(r => r.Url == url, cancellationToken);
-
     public async Task<List<Agent>> GetAgents(CancellationToken cancellationToken = default) =>
         await databaseContext.Agents.AsNoTracking()
+            .Include(r => r.AgentCard)
+            .ThenInclude(r => r.Extensions)
             .Include(r => r.Owners)
-            .Include(r => r.Servers)
-            .ThenInclude(r => r.McpServer)
-            .Include(r => r.Anthropic)
-            .Include(r => r.OpenAI)
             .Include(r => r.AgentCard)
             .ThenInclude(r => r.Skills)
             .ThenInclude(r => r.SkillTags)
@@ -61,14 +53,14 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
 
         return agent;
     }
+    /*
+        public async Task<McpServer> CreateMcpServer(McpServer server, CancellationToken cancellationToken)
+        {
+            var result = await databaseContext.McpServers.AddAsync(server, cancellationToken);
+            await databaseContext.SaveChangesAsync(cancellationToken);
 
-    public async Task<McpServer> CreateMcpServer(McpServer server, CancellationToken cancellationToken)
-    {
-        var result = await databaseContext.McpServers.AddAsync(server, cancellationToken);
-        await databaseContext.SaveChangesAsync(cancellationToken);
-
-        return result.Entity;
-    }
+            return result.Entity;
+        }*/
 
     public async Task<Extension> CreateExtension(Extension extension, CancellationToken cancellationToken)
     {

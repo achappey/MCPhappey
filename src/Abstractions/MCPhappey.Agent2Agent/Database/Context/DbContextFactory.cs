@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 
-namespace MCPhappey.Servers.SQL.Context;
+namespace MCPhappey.Agent2Agent.Database.Context;
 
 public class DbContextFactory : IDesignTimeDbContextFactory<A2ADatabaseContext>
 {

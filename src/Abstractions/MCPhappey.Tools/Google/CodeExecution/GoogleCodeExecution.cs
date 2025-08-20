@@ -1,7 +1,5 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
@@ -66,26 +64,6 @@ public static class GoogleCodeExecution
         }, cancellationToken);
 
         return respone.Content;
-    }
-
-    [Description("Please fill in the AI image request details.")]
-    public class GoogleImagenNewImage
-    {
-        [JsonPropertyName("prompt")]
-        [Required]
-        [Description("The image prompt.")]
-        public string Prompt { get; set; } = default!;
-
-        [JsonPropertyName("filename")]
-        [Required]
-        [Description("The new image file name.")]
-        public string Filename { get; set; } = default!;
-
-        [JsonPropertyName("numberOfImages")]
-        [Required]
-        [Range(1, 4)]
-        [Description("The number of images to create.")]
-        public int NumberOfImages { get; set; } = 1;
     }
 }
 

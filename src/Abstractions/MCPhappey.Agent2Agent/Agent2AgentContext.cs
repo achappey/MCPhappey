@@ -20,7 +20,8 @@ namespace MCPhappey.Agent2Agent;
 
 public static class Agent2AgentContextPlugin
 {
-    [McpServerTool(Name = "agent2agent_get_authenticated_card", Title = "Read A2A Agent card", OpenWorld = false)]
+    [McpServerTool(Name = "agent2agent_get_authenticated_card",
+        Title = "Read A2A Agent card", OpenWorld = false, Destructive = false)]
     [Description("Get a complete A2A Agent card")]
     public static async Task<CallToolResult> Agent2Agent_GetAuthenticatedCard(
           IServiceProvider serviceProvider,
@@ -146,7 +147,7 @@ public static class Agent2AgentContextPlugin
         {
             var context = await contextRepo.GetContextAsync(contextId, cancellationToken);
             if (context == null)
-                return "Context not found".ToErrorCallToolResponse();
+                return "Context not found. Please create a new context first or use an existing context.".ToErrorCallToolResponse();
 
             var userAllowed =
                 (context.UserIds != null && context.UserIds.Contains(oid)) ||

@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-CodeInterpreter",
+    "title": "OpenAI-CodeInterpreter",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.CodeInterpreter.OpenAICodeInterpreter, MCPhappey.Tools"
+  ]
+}

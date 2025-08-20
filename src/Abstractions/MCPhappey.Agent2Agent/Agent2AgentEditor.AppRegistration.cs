@@ -21,7 +21,6 @@ public static partial class Agent2AgentEditor
             RequestContext<CallToolRequestParams> requestContext,
             string agentName,
             string clientId,
-            string clientSecret,
             string audience,
             string scope,
             CancellationToken cancellationToken = default)
@@ -33,7 +32,7 @@ public static partial class Agent2AgentEditor
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewA2AAgentAppRegistration()
         {
             ClientId = clientId,
-            ClientSecret = clientSecret,
+            ClientSecret = string.Empty,
             Audience = audience,
             Scope = scope,
         }, cancellationToken);
@@ -52,8 +51,6 @@ public static partial class Agent2AgentEditor
             Scope = typedResult.Scope,
         }, cancellationToken);
 
-        // currentAgent.AppRegistration = server;
-        //await serverRepository.UpdateAgent(currentAgent!);
         return JsonSerializer.Serialize(new
         {
             server.ClientId,

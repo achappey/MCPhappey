@@ -1,7 +1,7 @@
 using MCPhappey.Agent2Agent.Database.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace MCPhappey.Servers.SQL.Context;
+namespace MCPhappey.Agent2Agent.Database.Context;
 
 public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : DbContext(options)
 {
@@ -12,10 +12,6 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
   public DbSet<Skill> Skills { get; set; } = null!;
 
   public DbSet<SkillTag> SkillTags { get; set; } = null!;
-
-  public DbSet<McpServer> McpServers { get; set; } = null!;
-
-  public DbSet<AgentServer> AgentServers { get; set; } = null!;
 
   public DbSet<AgentOwner> AgentOwners { get; set; } = null!;
 
@@ -30,32 +26,6 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
   protected override void OnModelCreating(ModelBuilder modelBuilder)
   {
     base.OnModelCreating(modelBuilder);
-
-
-    modelBuilder.Entity<Agent>(e =>
-   {
-     e.Navigation(x => x.Anthropic).IsRequired();   // 👈 required nav
-     e.OwnsOne(x => x.Anthropic, nav =>
-     {
-       nav.ToJson();
-       nav.OwnsOne(m => m.CodeExecution);
-       nav.OwnsOne(m => m.Thinking);
-       nav.OwnsOne(m => m.WebSearch);
-     });
-   });
-
-
-    modelBuilder.Entity<Agent>(builder =>
-        builder.OwnsOne(a => a.OpenAI, nav =>
-            {
-              nav.ToJson();                // <- key line
-
-              // Optional: fine-tune nested owned objects (they’ll be nested JSON)
-              nav.OwnsOne(m => m.CodeInterpreter);
-              nav.OwnsOne(m => m.Reasoning);
-              nav.OwnsOne(m => m.WebSearchPreview);
-              nav.OwnsOne(m => m.FileSearch);
-            }));
 
     // === Agent ===
     modelBuilder.Entity<Agent>(builder =>
@@ -86,18 +56,6 @@ public class A2ADatabaseContext(DbContextOptions<A2ADatabaseContext> options) : 
       builder.Property(ar => ar.Audience).IsRequired();
       builder.Property(ar => ar.Scope).IsRequired();
     });
-
-    modelBuilder.Entity<AgentServer>(builder =>
-        {
-          builder.HasKey(st => new { st.AgentId, st.McpServerId }); // Composite PK
-          builder.HasOne(st => st.Agent)
-                  .WithMany(s => s.Servers)
-                  .HasForeignKey(st => st.McpServerId);
-
-          builder.HasOne(st => st.McpServer)
-                  .WithMany(t => t.AgentServers)
-                  .HasForeignKey(st => st.AgentId);
-        });
 
     // === AgentCard ===
     modelBuilder.Entity<AgentCard>(builder =>

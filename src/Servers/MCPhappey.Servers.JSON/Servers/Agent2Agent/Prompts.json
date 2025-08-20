@@ -23,9 +23,9 @@
       }
     },
     {
-      "prompt": "Start a new Agent2Agent task in context with name {context} for agent at **{agentUrl}** with this message:\n\n> {taskMessage}\n\nConfirm the task was created and provide a link to view its details.",
+      "prompt": "Start a new Agent2Agent task in context with name {context} for agent at **{agentUrl}** with this message:\n\n> {taskMessage}",
       "template": {
-        "name": "a2a-create-task",
+        "name": "a2a-create-context-task",
         "description": "Creates a new task in an existing A2A context for a given agent URL.",
         "arguments": [
           {
@@ -66,6 +66,25 @@
         "name": "a2a-inactive-owner-items",
         "description": "Helps identify stale contexts or tasks owned by the user that may need action.",
         "arguments": []
+      }
+    },
+    {
+      "prompt": "Start a new Agent2Agent task for agent at **{agentUrl}** with the following details:\n\n{taskDetails}",
+      "template": {
+        "name": "a2a-start-task",
+        "description": "Starts a new task at a specific Agent2Agent agent without requiring a context.",
+        "arguments": [
+          {
+            "name": "agentUrl",
+            "description": "The URL of the agent to send the task to.",
+            "required": true
+          },
+          {
+            "name": "taskDetails",
+            "description": "The details or instructions for the new task.",
+            "required": true
+          }
+        ]
       }
     }
   ]

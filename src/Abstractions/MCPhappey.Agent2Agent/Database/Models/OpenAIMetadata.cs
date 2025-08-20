@@ -5,25 +5,6 @@ using Microsoft.EntityFrameworkCore;
 
 namespace MCPhappey.Agent2Agent.Database.Models;
 
-public class OpenAIMetadata
-{
-    [JsonPropertyName("parallel_tool_calls")]
-    public bool ParallelToolCalls { get; set; } = true;
-
-    [JsonPropertyName("code_interpreter")]
-    public CodeInterpreter? CodeInterpreter { get; set; }
-
-    [JsonPropertyName("web_search_preview")]
-    public WebSearchPreview? WebSearchPreview { get; set; }
-
-    [JsonPropertyName("reasoning")]
-    public Reasoning? Reasoning { get; set; }
-
-    [JsonPropertyName("file_search")]
-    public FileSearch? FileSearch { get; set; }
-}
-
-
 public enum ReasoningEffort
 {
     [EnumMember(Value = "minimal")]
