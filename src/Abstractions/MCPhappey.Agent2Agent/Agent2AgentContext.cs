@@ -100,10 +100,12 @@ public static class Agent2AgentContextPlugin
             Status = new A2A.Models.TaskStatus()
             {
                 State = A2A.TaskState.Unknown,
+                Timestamp = DateTimeOffset.Now
             },
             Message = new Message()
             {
                 Role = A2A.MessageRole.User,
+                ContextId = contextId,
                 MessageId = Guid.NewGuid().ToString(),
                 Parts = [new TextPart() {
                     Text = typedResult.Message
@@ -183,6 +185,7 @@ public static class Agent2AgentContextPlugin
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
          [Description("Url of the agent")] string agentUrl,
+         [Description("Id of the context to execute the task in.")] string contextId,
          [Description("Id of the task to send the message to")] string taskId,
          [Description("Task message/comment")] string taskMessage,
          [Description("Comma seperated list of referenced task ids.")] string? referencedTaskIds = null,
@@ -210,7 +213,27 @@ public static class Agent2AgentContextPlugin
 
             if (!userAllowed)
                 return "You do not have access to this task's context".ToErrorCallToolResponse();
+
+            if (contextId != currentTask?.ContextId)
+            {
+                var otherContext = await contextRepo.GetContextAsync(contextId, cancellationToken);
+                if (otherContext == null)
+                    return "Context not found".ToErrorCallToolResponse();
+
+                var userAllowedOtherContext =
+                    (otherContext.UserIds != null && otherContext.UserIds.Contains(oid)) ||
+                    (otherContext.SecurityGroupIds != null && userGroupIds != null && otherContext.SecurityGroupIds.Intersect(userGroupIds).Any());
+
+                if (!userAllowedOtherContext)
+                    return "You do not have access to this context".ToErrorCallToolResponse();
+
+                otherContext.TaskIds = [.. otherContext.TaskIds, taskId];
+                await contextRepo.SaveContextAsync(otherContext, cancellationToken);
+                context.TaskIds = [.. otherContext.TaskIds.Where(a => a != taskId)];
+                await contextRepo.SaveContextAsync(context, cancellationToken);
+            }
         }
+
         var refTaskIds = referencedTaskIds?.Split(",") ?? [];
         await System.Threading.Tasks.Task.WhenAll(refTaskIds.Select(t => taskRepo.GetTaskAsync(t, cancellationToken)));
         // 3. Check access
