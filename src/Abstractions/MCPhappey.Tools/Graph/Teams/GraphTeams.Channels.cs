@@ -10,7 +10,7 @@ namespace MCPhappey.Tools.Graph.Teams;
 public static partial class GraphTeams
 {
     [Description("Create a new channel in a Microsoft Teams.")]
-    [McpServerTool(Title = "Create channel in Microsoft Team",
+    [McpServerTool(Title = "Create channel in Microsoft Team", Destructive = true,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateChannel(
         string teamId,
@@ -61,7 +61,7 @@ public static partial class GraphTeams
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
     [McpServerTool(Title = "Create message in Teams channel",
-        Destructive = false, OpenWorld = false)]
+        Destructive = true, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_CreateChannelMessage(
         [Description("ID of the Team.")] string teamId,
         [Description("ID of the Channel.")] string channelId,
@@ -109,7 +109,7 @@ public static partial class GraphTeams
 
     [Description("Create a reply to a Teams channel message, mentioning specified users.")]
     [McpServerTool(Title = "Reply in Teams channel with mentions",
-        Destructive = false, OpenWorld = false)]
+        Destructive = true, OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTeams_ReplyWithMentions(
         [Description("ID of the Team.")] string teamId,
         [Description("ID of the Channel.")] string channelId,

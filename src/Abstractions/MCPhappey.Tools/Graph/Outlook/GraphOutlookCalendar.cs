@@ -13,7 +13,7 @@ namespace MCPhappey.Tools.Graph.Outlook;
 public static class GraphOutlookCalendar
 {
     [Description("Create a new calendar event in the user's Outlook calendar.")]
-    [McpServerTool(Title = "Create Outlook calendar event")]
+    [McpServerTool(Title = "Create Outlook calendar event", Destructive = true)]
     public static async Task<CallToolResult?> GraphOutlookCalendar_CreateCalendarEvent(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

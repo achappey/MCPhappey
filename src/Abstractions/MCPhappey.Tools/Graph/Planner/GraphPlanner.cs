@@ -11,7 +11,7 @@ namespace MCPhappey.Tools.Graph.Planner;
 public static partial class GraphPlanner
 {
     [Description("Create a new Microsoft Planner task")]
-    [McpServerTool(Title = "Create a new Microsoft Planner task", OpenWorld = false, Destructive = false)]
+    [McpServerTool(Title = "Create a new Microsoft Planner task", OpenWorld = false, Destructive = true)]
     public static async Task<CallToolResult?> GraphPlanner_CreateTask(
             [Description("Planner id")]
             string plannerId,
@@ -58,7 +58,7 @@ public static partial class GraphPlanner
 
 
     [Description("Create a new Planner bucket in a plan")]
-    [McpServerTool(Title = "Create a new Planner bucket in a plan", OpenWorld = false, Destructive = false)]
+    [McpServerTool(Title = "Create a new Planner bucket in a plan", OpenWorld = false, Destructive = true)]
     public static async Task<CallToolResult?> GraphPlanner_CreateBucket(
         [Description("Planner id (plan to add bucket to)")]
         string plannerId,
@@ -95,7 +95,7 @@ public static partial class GraphPlanner
     }
 
     [Description("Create a new Planner plan")]
-    [McpServerTool(Title = "Create a new Planner plan", OpenWorld = false, Destructive = false)]
+    [McpServerTool(Title = "Create a new Planner plan", OpenWorld = false, Destructive = true)]
     public static async Task<CallToolResult?> GraphPlanner_CreatePlan(
             [Description("Group id (Microsoft 365 group that will own the plan)")]
         string groupId,

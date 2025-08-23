@@ -170,7 +170,7 @@ public static class GraphOutlookMail
     }
 
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
-    [McpServerTool(Title = "Send e-mail via Outlook")]
+    [McpServerTool(Title = "Send e-mail via Outlook", Destructive = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_SendMail(
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,

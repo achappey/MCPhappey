@@ -13,7 +13,6 @@ public static partial class GraphWorkbooks
     [Description("Get filtered rows from an Excel table on OneDrive/SharePoint using a 'values' filter (multiple allowed values) via Microsoft Graph.")]
     [McpServerTool(
         Title = "Get filtered rows from Excel table by values",
-        Destructive = false,
         ReadOnly = true,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_GetRowsByValuesFilter(
@@ -151,7 +150,6 @@ public static partial class GraphWorkbooks
     [Description("Get filtered rows from an Excel table on OneDrive or SharePoint via Microsoft Graph, without persisting changes.")]
     [McpServerTool(Title = "Get filtered rows from Excel table by custom query",
         ReadOnly = true,
-        Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_GetFilteredRows(
         string excelFileUrl,

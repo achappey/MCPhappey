@@ -45,7 +45,7 @@ public static partial class GraphWorkbooks
 
     [Description("Add a chart to an Excel worksheet using Microsoft Graph.")]
     [McpServerTool(Title = "Add chart to Excel worksheet",
-        OpenWorld = false)]
+        OpenWorld = false, Destructive = true)]
     public static async Task<CallToolResult?> GraphExcel_AddChart(
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,

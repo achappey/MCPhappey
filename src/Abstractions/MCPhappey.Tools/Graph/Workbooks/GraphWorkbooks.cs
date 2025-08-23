@@ -21,6 +21,7 @@ public static partial class GraphWorkbooks
     [Description("Add a new worksheet to an Excel workbook on OneDrive/SharePoint. Optionally set a name and activate it.")]
     [McpServerTool(
         Title = "Add worksheet to Excel",
+        Destructive = true,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_AddWorksheet(
         string excelFileUrl,
