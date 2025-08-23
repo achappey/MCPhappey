@@ -13,7 +13,6 @@ public static class GoogleCodeExecution
 {
     [Description("Run a prompt with Google code execution. Optionally attach files by URL first.")]
     [McpServerTool(Title = "Google Code Execution",
-        Destructive = false,
         ReadOnly = true)]
     public static async Task<ContentBlock> GoogleCodeExecution_Run(
           [Description("Prompt to execute (code is allowed).")]

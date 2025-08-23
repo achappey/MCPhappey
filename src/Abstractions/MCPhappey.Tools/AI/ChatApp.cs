@@ -14,7 +14,6 @@ public static class ChatApp
 {
     [Description("Generate a conversation name from initial user and assistant messages")]
     [McpServerTool(Title = "Generate conversation name",
-         Destructive = false,
          ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_GenerateConversationName(
         [Description("User message")] string userMessage,
@@ -53,7 +52,6 @@ public static class ChatApp
 
     [Description("Get MCP server usage statistics")]
     [McpServerTool(Title = "Get server usage statistics",
-         Destructive = false,
          ReadOnly = true)]
     public static async Task<CallToolResult> ChatApp_GetMcpServerStats(
         IServiceProvider serviceProvider,
@@ -117,7 +115,6 @@ public static class ChatApp
 
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]
     [McpServerTool(Title = "Generate welcome message",
-        Destructive = false,
         ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_GenerateWelcomeMessage(
         [Description("Language of the requested welcome message")] string language,
@@ -159,7 +156,6 @@ public static class ChatApp
 
     [Description("Explain a tool call to an end user in simple words")]
     [McpServerTool(Title = "Explain tool call in simple words",
-        Destructive = false,
         ReadOnly = true)]
     public static async Task<ContentBlock> ChatApp_ExplainToolCall(
        [Description("Stringified json of all toolcall data")] string toolcall,

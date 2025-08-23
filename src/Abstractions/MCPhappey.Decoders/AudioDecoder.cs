@@ -18,8 +18,6 @@ public class AudioDecoder(OpenAIClient openAIClient, string _mimeType, string ex
 
     public Task<FileContent> DecodeAsync(BinaryData data, CancellationToken cancellationToken = default)
     {
-       // using var stream = data.ToStream();
-        // Bestandsnaam kan leeg zijn, geef evt. standaardnaam
         return DecodeAsync(data.ToStream(), cancellationToken, $"audiofile.{extension}");
     }
 

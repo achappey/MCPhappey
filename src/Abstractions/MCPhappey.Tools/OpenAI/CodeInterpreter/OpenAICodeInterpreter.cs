@@ -19,34 +19,11 @@ public static class OpenAICodeInterpreter
             string prompt,
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
-          //       [Description("Optional file URLs to download and attach before running the prompt.")]
-          //     string[]? fileUrls = null,
           [Description("Target model (e.g. gpt-5 or gpt-5-mini).")]
             string model = "gpt-5",
           CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
-        var mcpServer = requestContext.Server;
-        var samplingService = serviceProvider.GetRequiredService<SamplingService>();
-        var downloader = serviceProvider.GetRequiredService<DownloadService>();
-
-        // 1) Download + upload files (optional)
-        //   var attachedLinks = new List<FileItem>();
-        /*    if (fileUrls?.Length > 0)
-            {
-                foreach (var url in fileUrls)
-                {
-                    var data = await downloader.ScrapeContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
-                    attachedLinks.AddRange(data);
-                }
-
-                if (attachedLinks.Count > 0)
-                {
-                    await mcpServer.SendMessageNotificationAsync(
-                        $"Attached {attachedLinks.Count} file(s) for code execution.", LoggingLevel.Info, cancellationToken);
-                }
-            }*/
 
         var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
         {

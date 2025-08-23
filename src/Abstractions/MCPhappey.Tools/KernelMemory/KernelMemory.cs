@@ -57,24 +57,11 @@ public static class KernelMemory
             cancellationToken: cancellationToken);
 
         return answer.Results.Select(b => b.ToSearchResult());
-        /*
-                return new
-                {
-                    answer.Query,
-                    answer.NoResult,
-                    Results = answer.Results.Select(b => new
-                    {
-                        b.SourceUrl,
-                        b.Partitions.OrderByDescending(y => y.LastUpdate).FirstOrDefault()?.LastUpdate,
-                        Citations = b.Partitions.Select(z => z.Text)
-                    })
-                }.ToJsonContentBlock(index)
-                .ToCallToolResult();*/
     }
 
     [Description("Ask Microsoft Kernel Memory")]
     [McpServerTool(Title = "Ask Microsoft kernel memory",
-        ReadOnly = true, Destructive = false)]
+        ReadOnly = true)]
     public static async Task<CallToolResult> KernelMemory_Ask(
         [Description("Question prompt")]
         string prompt,

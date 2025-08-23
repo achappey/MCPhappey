@@ -1,10 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using MCPhappey.Common.Extensions;
 using MCPhappey.Simplicate.Extensions;
-using MCPhappey.Simplicate.Options;
-using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -21,14 +18,9 @@ public static class SimplicateCRM
         [Description("A note or description about the organization.")] string? note = null,
         [Description("The primary email address for the organization.")] string? email = null,
         [Description("The main website URL of the organization.")] Uri? url = null,
-        CancellationToken cancellationToken = default)
-    {
-        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
-
-        // Simplicate CRM Organization endpoint
-        string baseUrl = simplicateOptions.GetApiUrl("/crm/organization");
-
-        var (dtoItem, notAccepted, result) = await requestContext.Server.TryElicit(
+        CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
+                requestContext,
+                "/crm/organization",
                 new SimplicateNewOrganization
                 {
                     Name = name,
@@ -38,17 +30,6 @@ public static class SimplicateCRM
                 },
                 cancellationToken
             );
-
-        if (notAccepted != null) return notAccepted;
-
-        // Use your POST extension to create the org
-        return (await serviceProvider.PostSimplicateItemAsync(
-            baseUrl,
-            dtoItem,
-            requestContext: requestContext,
-            cancellationToken: cancellationToken
-        ))?.ToCallToolResult();
-    }
 
     [Description("Create a new person in Simplicate CRM")]
     [McpServerTool(Title = "Create new person in Simplicate", OpenWorld = false)]
@@ -61,34 +42,20 @@ public static class SimplicateCRM
         [Description("The person's primary email address.")] string? email = null,
         [Description("The person's phone number.")] string? phone = null,
         [Description("The person's website URL, if available.")] Uri? websiteUrl = null,
-      CancellationToken cancellationToken = default)
-    {
-        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
-
-        string baseUrl = simplicateOptions.GetApiUrl("/crm/person");
-        var (dtoItem, notAccepted, result) = await requestContext.Server.TryElicit(
-               new SimplicateNewPerson()
-               {
-                   FirstName = firstName,
-                   FamilyName = familyName,
-                   Note = note,
-                   Email = email,
-                   Phone = phone,
-                   WebsiteUrl = websiteUrl
-               },
-               cancellationToken
-           );
-
-        if (notAccepted != null) return notAccepted;
-
-        return (await serviceProvider.PostSimplicateItemAsync(
-            baseUrl,
-            dtoItem,
-            requestContext: requestContext,
-            cancellationToken: cancellationToken
-        ))?.ToCallToolResult();
-
-    }
+      CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
+        requestContext,
+        "/crm/person",
+        new SimplicateNewPerson
+        {
+            FirstName = firstName,
+            FamilyName = familyName,
+            Note = note,
+            Email = email,
+            Phone = phone,
+            WebsiteUrl = websiteUrl
+        },
+        cancellationToken
+    );
 
     [Description("Please fill in the person details")]
     public class SimplicateNewPerson

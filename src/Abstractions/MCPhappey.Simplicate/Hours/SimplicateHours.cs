@@ -76,7 +76,7 @@ public static class SimplicateHours
 
     [Description("Get total registered hours grouped by employee, optionally filtered by date range (max 65 days), project, or employee.")]
     [McpServerTool(Title = "Get Simplicate hour totals by employee",
-        OpenWorld = false, Destructive = false, ReadOnly = true)]
+        OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SimplicateHours_GetHourTotalsByEmployee(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -95,7 +95,7 @@ public static class SimplicateHours
 
     [Description("Get total registered hours grouped by hour type, optionally filtered by date range (max 65 days), project, or employee.")]
     [McpServerTool(Title = "Get Simplicate hour totals by hour type",
-        OpenWorld = false, Destructive = false, ReadOnly = true)]
+        OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SimplicateHours_GetHourTotalsByHourType(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -114,7 +114,7 @@ public static class SimplicateHours
 
     [Description("Get total registered hours grouped by project, optionally filtered by date range (max 65 days), or approval status.")]
     [McpServerTool(Title = "Get Simplicate hour totals by project",
-        OpenWorld = false, Destructive = false, ReadOnly = true)]
+        OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult> SimplicateHours_GetHourTotalsByProject(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,

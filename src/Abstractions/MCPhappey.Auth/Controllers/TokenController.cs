@@ -3,7 +3,6 @@ using System.Security.Claims;
 using System.Text.Json;
 using MCPhappey.Auth.Cache;
 using MCPhappey.Auth.Models;
-using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
 namespace MCPhappey.Auth.Controllers;
@@ -77,23 +76,6 @@ public static class TokenController
                  $"https://login.microsoftonline.com/{oauth.TenantId}/discovery/v2.0/keys",
                  httpClientFactory);
 
-            // STEP 1: Pick correct JWKS endpoint based on issuer.
-            /*    string jwksUrl;
-                if (tokenIssuer != null &&
-                    (tokenIssuer.StartsWith("https://sts.windows.net/") ||
-                     tokenIssuer.StartsWith("https://login.microsoftonline.com/")))
-                {
-                    // Azure AD token
-                    jwksUrl = $"https://login.microsoftonline.com/{oauth.TenantId}/discovery/v2.0/keys";
-                }
-                else
-                {
-                    // Your own tokens
-                    jwksUrl = $"{tokenIssuer}/.well-known/jwks.json";
-                }
-
-                var keys = await JwksCache.GetAsync(jwksUrl, httpClientFactory);*/
-            // 0-a) Validate the incoming Azure-AD access token (signature, exp, aud …)
             var tvp = new TokenValidationParameters
             {
                 ValidIssuers =
@@ -182,7 +164,6 @@ public static class TokenController
                 expires_in = 3600
             });
         }
-        // var serverRedirectUri = $"{ctx.Request.Scheme}://{ctx.Request.Host}/sharepoint/callback"; // Or build this per-s
 
         // Must match redirect_uri used during /authorize
         var tokenRequest = new Dictionary<string, string>

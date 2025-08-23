@@ -19,26 +19,51 @@ public static class SimplicateProjects
         [Description("Name of the new project")] string name,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
-    {
-        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
-
-        // Simplicate CRM Organization endpoint
-        string baseUrl = simplicateOptions.GetApiUrl("/projects/project");
-        var (dto, notAccepted, result) = await requestContext.Server.TryElicit(new SimplicateNewProject()
+        CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
+        requestContext,
+        "/projects/project",
+        new SimplicateNewProject
         {
-            Name = name,
-        }, cancellationToken);
+            Name = name
+        },
+        cancellationToken
+    );
 
-        if (notAccepted != null) return notAccepted;
-        // Use your POST extension to create the org
-        return (await serviceProvider.PostSimplicateItemAsync(
-            baseUrl,
-            dto!,
-            requestContext: requestContext,
-            cancellationToken: cancellationToken
-        ))?.ToCallToolResult();
-    }
+    [Description("Create a new project service in Simplicate")]
+    [McpServerTool(OpenWorld = false, Title = "Create new project service in Simplicate")]
+    public static async Task<CallToolResult?> SimplicateProjects_CreateProjectService(
+    [Description("Name of the new project service")] string name,
+    [Description("Id of the project")] string projectId,
+    IServiceProvider serviceProvider,
+    RequestContext<CallToolRequestParams> requestContext,
+    CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
+            requestContext,
+            "/projects/projectservice",
+            new SimplicateNewProjectService
+            {
+                Name = name,
+                ProjectId = projectId
+            },
+            cancellationToken
+    );
+
+    [Description("Add a project employee in Simplicate")]
+    [McpServerTool(OpenWorld = false, Title = "Add a project employee in Simplicate")]
+    public static async Task<CallToolResult?> SimplicateProjects_AddProjectEmployee(
+      [Description("Id of the project")] string projectId,
+      [Description("Id of the employee")] string employeeId,
+      IServiceProvider serviceProvider,
+      RequestContext<CallToolRequestParams> requestContext,
+      CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
+        requestContext,
+        "/projects/projectemployee",
+        new SimplicateAddProjectEmployee
+        {
+            ProjectId = projectId,
+            EmployeeId = employeeId
+        },
+        cancellationToken
+    );
 
     [Description("Get projects grouped by project manager filtered by my organization profile, optionally filtered by date (equal or greater than), project.")]
     [McpServerTool(OpenWorld = false,
@@ -80,7 +105,6 @@ public static class SimplicateProjects
         if (!string.IsNullOrWhiteSpace(date))
             filters.Add($"q[end_date][ge]={Uri.EscapeDataString(date)}");
 
-        //  if (!string.IsNullOrWhiteSpace(managerName)) filters.Add($"q[project_manager.name]=*{Uri.EscapeDataString(managerName)}*");
         if (!string.IsNullOrWhiteSpace(myOrganizationProfileName)) filters.Add($"q[my_organization_profile.organization.name]=*{Uri.EscapeDataString(myOrganizationProfileName)}*");
         if (projectStatusLabel.HasValue) filters.Add($"q[project_status.label]=*{Uri.EscapeDataString(projectStatusLabel.Value.ToString())}*");
 
@@ -103,6 +127,59 @@ public static class SimplicateProjects
                 g => g.Select(t => t.Name)) ?? [];
     }
 
+    [Description("Please fill in the project employee details")]
+    public class SimplicateAddProjectEmployee
+    {
+        [JsonPropertyName("project_id")]
+        [Required]
+        [Description("The id of the project.")]
+        public string? ProjectId { get; set; }
+
+        [JsonPropertyName("employee_id")]
+        [Required]
+        [Description("The id of the employee.")]
+        public string? EmployeeId { get; set; }
+    }
+
+    [Description("Please fill in the project service details")]
+    public class SimplicateNewProjectService
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("The name of the project service.")]
+        public string? Name { get; set; }
+
+        [JsonPropertyName("project_id")]
+        [Required]
+        [Description("The id of the project.")]
+        public string? ProjectId { get; set; }
+
+        [JsonPropertyName("track_hours")]
+        [Required]
+        [DefaultValue(true)]
+        [Description("Track project service hours.")]
+        public bool? TrackHours { get; set; } = true;
+
+        [JsonPropertyName("track_cost")]
+        [Required]
+        [DefaultValue(true)]
+        [Description("Track project service costs.")]
+        public bool? TrackCost { get; set; } = true;
+
+        [JsonPropertyName("vat_class_id")]
+        [Required]
+        [Description("Id of the vat class.")]
+        public string VatClassId { get; set; } = default!;
+
+        [JsonPropertyName("start_date")]
+        [Description("Start date")]
+        public DateTime? StartDate { get; set; }
+
+        [JsonPropertyName("end_date")]
+        [Description("End date.")]
+        public DateTime? EndDate { get; set; }
+    }
+
     [Description("Please fill in the project details")]
     public class SimplicateNewProject
     {
@@ -110,7 +187,6 @@ public static class SimplicateProjects
         [Required]
         [Description("The name of the project.")]
         public string? Name { get; set; }
-
     }
 
 

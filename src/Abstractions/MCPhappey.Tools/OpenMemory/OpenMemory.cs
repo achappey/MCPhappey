@@ -71,7 +71,6 @@ public static class OpenMemory
 
     [Description("Ask a question to personal user memory")]
     [McpServerTool(Title = "Ask memory",
-        Idempotent = true,
         OpenWorld = false,
         ReadOnly = true)]
     public static async Task<CallToolResult> OpenMemory_AskMemory(

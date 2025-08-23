@@ -53,15 +53,7 @@ public class AgentRepository(A2ADatabaseContext databaseContext)
 
         return agent;
     }
-    /*
-        public async Task<McpServer> CreateMcpServer(McpServer server, CancellationToken cancellationToken)
-        {
-            var result = await databaseContext.McpServers.AddAsync(server, cancellationToken);
-            await databaseContext.SaveChangesAsync(cancellationToken);
-
-            return result.Entity;
-        }*/
-
+  
     public async Task<Extension> CreateExtension(Extension extension, CancellationToken cancellationToken)
     {
         var result = await databaseContext.Extensions.AddAsync(extension, cancellationToken);

@@ -12,9 +12,7 @@ public static partial class OpenAIVectorStores
 {
     [Description("Search a vector store for relevant chunks based on a query.")]
     [McpServerTool(Title = "Search a vector store at OpenAI", ReadOnly = true,
-        Idempotent = true,
-        OpenWorld = false,
-        Destructive = false)]
+        OpenWorld = false)]
     public static async Task<CallToolResult?> OpenAIVectorStores_Search(
           [Description("The vector store id.")] string vectorStoreId,
           [Description("The vector store prompt query.")] string query,
@@ -45,7 +43,6 @@ public static partial class OpenAIVectorStores
     [Description("Ask a question against an OpenAI vector store using file_search via sampling.")]
     [McpServerTool(
            Title = "Ask OpenAI vector store",
-           Destructive = false,
            ReadOnly = true)]
     public static async Task<CallToolResult?> OpenAIVectorStores_Ask(
            [Description("The OpenAI vector store id.")] string vectorStoreId,

@@ -2,7 +2,6 @@ using MCPhappey.Auth.Extensions;
 using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
-using MCPhappey.Tools.OpenAI.Containers;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Server;
 using OpenAI;

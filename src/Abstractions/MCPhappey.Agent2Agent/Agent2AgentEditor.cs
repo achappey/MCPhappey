@@ -267,12 +267,7 @@ public static partial class Agent2AgentEditor
         [Required]
         [Description("The Agent url.")]
         public string Url { get; set; } = default!;
-
-        /*  [JsonPropertyName("temperature")]
-          [Range(0, 1)]
-          [Description("The Agent temperature.")]
-          public float? Temperature { get; set; }*/
-
+      
         [JsonPropertyName("description")]
         [Description("The Agent description.")]
         public string? Description { get; set; }

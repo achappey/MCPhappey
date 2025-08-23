@@ -11,7 +11,7 @@ namespace MCPhappey.Simplicate.Invoices;
 
 public static partial class SimplicateInvoices
 {
-    [McpServerTool(OpenWorld = false, Destructive = false, ReadOnly = true, UseStructuredContent = true)]
+    [McpServerTool(OpenWorld = false, ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns a list of payments received.")]
     public static async Task<List<SimplicateInvoicePayment>> SimplicateInvoices_GetPayments(
           IServiceProvider serviceProvider,

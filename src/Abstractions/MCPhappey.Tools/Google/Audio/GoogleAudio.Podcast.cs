@@ -14,7 +14,6 @@ public static partial class GoogleAudio
 {
     [Description("Creates a full podcast audio script from a document, using AI to generate a storyline and script.")]
     [McpServerTool(
-        Destructive = false,
         Title = "Create podcast script from document",
         ReadOnly = true
     )]

@@ -14,7 +14,6 @@ public static partial class GoogleAudio
 {
     [Description("Generate audio from the input prompt")]
     [McpServerTool(Title = "Generate speech from input prompt",
-        Destructive = false,
         ReadOnly = true)]
     public static async Task<CallToolResult?> GoogleAudio_CreateSpeech(
         [Description("The input prompt to generate the audio")]

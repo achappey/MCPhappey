@@ -214,6 +214,34 @@ public static class SimplicateExtensions
         return results;
     }
 
+    /// <summary>
+    /// Common case: elicit and POST the same DTO type.
+    /// Requires a public parameterless ctor to satisfy TryElicit's constraint.
+    /// </summary>
+    public static async Task<CallToolResult?> PostSimplicateResourceAsync<TDto>(
+        this IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        string relativePath,                   // e.g. "/projects/projectservice"
+        TDto seedDto,
+        CancellationToken cancellationToken = default)
+        where TDto : class, new()              // <-- add new()
+    {
+        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+        var url = simplicateOptions.GetApiUrl(relativePath);
+
+        var (dto, notAccepted, _) = await requestContext.Server.TryElicit(seedDto, cancellationToken);
+        if (notAccepted != null) return notAccepted;
+
+        var scraper = serviceProvider.GetServices<IContentScraper>()
+                                     .OfType<SimplicateScraper>()
+                                     .First();
+
+        var content = await scraper.PostSimplicateItemAsync(
+            serviceProvider, url, dto!, requestContext: requestContext, cancellationToken: cancellationToken);
+
+        return content?.ToCallToolResult();
+    }
+
     public static async Task<ContentBlock?> PostSimplicateItemAsync<T>(
           this IServiceProvider serviceProvider,
           string baseUrl, // e.g. "https://{subdomain}.simplicate.nl/api/v2/project/project"

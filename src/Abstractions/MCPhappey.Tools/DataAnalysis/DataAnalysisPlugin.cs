@@ -14,7 +14,6 @@ public static partial class DataAnalysisPlugin
     [Description("Get a preview of data from a specific worksheet or table in an Excel file. Returns columns, row count, and sample rows for AI analysis.")]
     [McpServerTool(
         Title = "Get Excel data sample",
-        Destructive = false,
         ReadOnly = true)]
     public static async Task<CallToolResult?> DataAnalysis_GetExcelDataSample(
                  [Description("OneDrive/SharePoint sharing URL of the Excel file")]
@@ -54,9 +53,7 @@ public static partial class DataAnalysisPlugin
     [Description("Get a preview of data from a CSV file, including columns, row count, and sample rows for AI analysis.")]
     [McpServerTool(
         Title = "Get CSV data sample",
-        Destructive = false,
         OpenWorld = false,
-        Idempotent = true,
         ReadOnly = true)]
     public static async Task<CallToolResult?> DataAnalysis_GetCSVDataSample(
          [Description("Url of the CSV file")]

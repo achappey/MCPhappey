@@ -279,7 +279,14 @@ public static class Agent2AgentContextPlugin
         // One-liner again
         return await requestContext.ConfirmAndDeleteAsync<DeleteA2AContext>(
             context.Metadata.TryGetValue("name", out object? value) ? value.ToString()! : context.ContextId,
-            async _ => await contextRepo.DeleteContextAsync(contextId, cancellationToken),
+            async _ =>
+            {
+                await contextRepo.DeleteContextAsync(contextId, cancellationToken);
+                foreach (var taskId in context.TaskIds)
+                {
+                    await taskRepo.DeleteTaskAsync(taskId, cancellationToken);
+                }
+            },
             "Context deleted.",
             cancellationToken);
     }

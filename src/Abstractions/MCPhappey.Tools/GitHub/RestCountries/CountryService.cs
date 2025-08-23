@@ -13,9 +13,7 @@ public static class CountryService
     [Description("Search country codes and names")]
     [McpServerTool(Title = "Search country codes and names",
         Name = "github_rest_countries_search_codes",
-        Destructive = false,
         ReadOnly = true,
-        Idempotent = true,
         OpenWorld = false)]
     public static async Task<EmbeddedResourceBlock> GitHubRestCountries_SearchCodes(
         [Description("Search query by name (contains)")] string name)
@@ -32,9 +30,7 @@ public static class CountryService
     [Description("Get all country details by the alpha-2 code")]
     [McpServerTool(Title = "Get all country details by the alpha-2 code",
         Name = "github_rest_countries_get_detail",
-        Destructive = false,
         ReadOnly = true,
-        Idempotent = true,
         OpenWorld = false,
         UseStructuredContent = true)]
     public static async Task<RESTCountries.NET.Models.Country?> GitHubRestCountries_GetDetail(
@@ -45,8 +41,6 @@ public static class CountryService
     [Description("Get countries by region")]
     [McpServerTool(Title = "Get countries by region",
         Name = "github_rest_countries_get_by_region",
-        Destructive = false,
-        Idempotent = true,
         ReadOnly = true,
         UseStructuredContent = true,
         OpenWorld = false)]

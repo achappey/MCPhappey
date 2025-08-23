@@ -26,7 +26,6 @@ public static partial class OpenAIVectorStores
     [Description("Update a vector store at OpenAI")]
     [McpServerTool(
        Title = "Update a vector store",
-       Destructive = false,
        OpenWorld = false)]
     public static async Task<CallToolResult?> OpenAIVectorStores_Update(
        [Description("The vector store id.")] string vectorStoreId,
@@ -174,7 +173,7 @@ public static partial class OpenAIVectorStores
         }));
 
     [Description("Add a file to a vector store")]
-    [McpServerTool(Title = "Add file to vector store", Destructive = false, OpenWorld = false)]
+    [McpServerTool(Title = "Add file to vector store", Destructive = true, OpenWorld = false)]
     public static async Task<CallToolResult?> OpenAIVectorStores_AddFile(
        [Description("The vector store name.")] string vectorStoreId,
        [Description("Url of the file to add.")] string fileUrl,

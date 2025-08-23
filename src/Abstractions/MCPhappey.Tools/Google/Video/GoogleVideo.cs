@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -14,7 +13,6 @@ public static class GoogleVideo
 {
     [Description("Prompt a YouTube video using Google Gemini AI.")]
     [McpServerTool(
-        Destructive = false,
         Title = "Prompt YouTube video with Gemini",
         ReadOnly = true)]
     public static async Task<CallToolResult?> GoogleVideo_PromptYouTube(
