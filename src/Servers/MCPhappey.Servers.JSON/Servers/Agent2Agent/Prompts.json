@@ -4,6 +4,7 @@
       "prompt": "List all my current Agent2Agent contexts and for each:\n\n1. Show the context **name** and **ID**.\n2. Count the total number of **tasks** in that context.\n3. Highlight any tasks **updated in the last 24 hours**.\n4. Mark contexts where I am the **owner**.\n\nPresent the results in a clear table, followed by a short summary of where my attention is most needed.",
       "template": {
         "name": "a2a-context-overview",
+        "title": "Context overview with recent activity",
         "description": "Gives a full overview of all accessible A2A contexts, their tasks, and recent activity.",
         "arguments": []
       }
@@ -12,6 +13,7 @@
       "prompt": "Given context with name {context}, list all tasks in this Agent2Agent context and for each task:\n\n1. Show **task ID**, **status**, and **last updated** timestamp.\n2. Summarize the **most recent message**.\n3. Indicate if there are any **artifacts** attached and link them.\n\nAt the end, suggest which tasks might need a follow-up message.",
       "template": {
         "name": "a2a-context-task-summary",
+        "title": "Task summary for a specific context",
         "description": "Summarizes all tasks within a specific A2A context, including status, recency, and artifacts.",
         "arguments": [
           {
@@ -26,6 +28,7 @@
       "prompt": "Start a new Agent2Agent task in context with name {context} for agent at **{agentUrl}** with this message:\n\n> {taskMessage}",
       "template": {
         "name": "a2a-create-context-task",
+        "title": "Create a new task in a context",
         "description": "Creates a new task in an existing A2A context for a given agent URL.",
         "arguments": [
           {
@@ -50,6 +53,7 @@
       "prompt": "For task **{taskId}**:\n\n1. Retrieve and list all artifacts with **names**, **file types**, and sizes.\n2. Upload all available artifacts to my OneDrive.\n3. Provide a clickable link to each uploaded file.",
       "template": {
         "name": "a2a-task-artifact-upload",
+        "title": "Upload task artifacts to OneDrive",
         "description": "Fetches artifacts from a given task and uploads them to the user's OneDrive.",
         "arguments": [
           {
@@ -64,6 +68,7 @@
       "prompt": "Find and list all A2A contexts or tasks where I am the **owner**, but which have had **no updates in the last 30 days**.\n\nSuggest whether they should be **closed** or **followed up**.",
       "template": {
         "name": "a2a-inactive-owner-items",
+        "title": "Find inactive contexts or tasks owned by me",
         "description": "Helps identify stale contexts or tasks owned by the user that may need action.",
         "arguments": []
       }
@@ -72,6 +77,7 @@
       "prompt": "Start a new Agent2Agent task for agent at **{agentUrl}** with the following details:\n\n{taskDetails}",
       "template": {
         "name": "a2a-start-task",
+        "title": "Start a new task without context",
         "description": "Starts a new task at a specific Agent2Agent agent without requiring a context.",
         "arguments": [
           {

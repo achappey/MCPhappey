@@ -4,6 +4,7 @@
       "prompt": "Create a new Agent2Agent agent with name **{agentName}**, URL **{agentUrl}**, model **{agentModel}**, and description:\n\n> {description}",
       "template": {
         "name": "a2a-editor-create-agent",
+        "title": "Create a new agent",
         "description": "Creates a new Agent2Agent agent.",
         "arguments": [
           {
@@ -33,6 +34,7 @@
       "prompt": "For agent **{agentName}**, add an extension with URI **{extensionUri}**.\n\n- Required: {required}\n- Description: {description}\n- Parameters: {parameters}",
       "template": {
         "name": "a2a-editor-add-extension",
+        "title": "Add an extension to an agent",
         "description": "Adds an extension to an existing agent.",
         "arguments": [
           {
@@ -67,6 +69,7 @@
       "prompt": "For agent **{agentName}**, create a new skill with ID **{skillId}**, name **{skillName}**, and description:\n\n> {skillDescription}\n\nConfirm the skill was added.",
       "template": {
         "name": "a2a-editor-create-skill",
+        "title": "Create a new skill for an agent",
         "description": "Creates a new skill for a given agent.",
         "arguments": [
           {
@@ -96,6 +99,7 @@
       "prompt": "For agent **{agentName}** and skill **{skillId}**, create a new tag: **{tagName}**.\n\nConfirm and return the updated tag list.",
       "template": {
         "name": "a2a-editor-create-tag",
+        "title": "Add a new tag to a skill",
         "description": "Adds a new tag to a specific skill of an agent.",
         "arguments": [
           {
@@ -120,6 +124,7 @@
       "prompt": "Set app registration for agent **{agentName}**:\n\n- Client ID: {clientId}\n- Audience: {audience}\n- Scope: {scope}\n\nConfirm and return the registration details.",
       "template": {
         "name": "a2a-editor-set-app-registration",
+        "title": "Set app registration for an agent",
         "description": "Sets Entra ID app registration details for an agent.",
         "arguments": [
           {

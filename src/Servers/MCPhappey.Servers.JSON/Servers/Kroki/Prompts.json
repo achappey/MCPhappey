@@ -4,6 +4,7 @@
       "prompt": "Create a simple process flow diagram for: {processDescription}. Output as PlantUML code, showing all main steps as nodes and arrows for the flow.",
       "template": {
         "name": "diagram-process-flow",
+        "title": "Process flow diagram",
         "description": "Generates a process flow diagram (PlantUML) for a described process.",
         "arguments": [
           {
@@ -18,6 +19,7 @@
       "prompt": "Convert this text into a mindmap diagram using Mermaid format. Central topic: {centralTopic}. Use the provided key points as branches.",
       "template": {
         "name": "diagram-mindmap",
+        "title": "Mindmap diagram",
         "description": "Turns a central topic and branches into a Mermaid mindmap diagram.",
         "arguments": [
           {
@@ -37,6 +39,7 @@
       "prompt": "Summarize the following problem and possible causes as an Ishikawa (fishbone) diagram using PlantUML. Main problem: {mainProblem}. Causes: {causesList}.",
       "template": {
         "name": "diagram-fishbone",
+        "title": "Fishbone (Ishikawa) diagram",
         "description": "Generates a PlantUML fishbone diagram for a problem and its causes.",
         "arguments": [
           {
@@ -56,6 +59,7 @@
       "prompt": "Create an entity-relationship diagram (ERD) in PlantUML for the following entities and their relationships: {entitiesAndRelations}.",
       "template": {
         "name": "diagram-erd",
+        "title": "Entity-relationship diagram",
         "description": "Builds a PlantUML ERD diagram based on described entities and relationships.",
         "arguments": [
           {
@@ -70,6 +74,7 @@
       "prompt": "Visualize the following project timeline as a Gantt chart using Mermaid. Project steps: {projectSteps}.",
       "template": {
         "name": "diagram-gantt",
+        "title": "Gantt chart",
         "description": "Generates a Mermaid Gantt chart for a given project timeline.",
         "arguments": [
           {
@@ -84,6 +89,7 @@
       "prompt": "Create a sequence diagram that visualizes the interaction between the following actors: {actorsList}. Focus on the main message exchanges and keep it simple.",
       "template": {
         "name": "diagram-sequence",
+        "title": "Sequence diagram",
         "description": "Builds a PlantUML sequence diagram to show interaction flow between listed actors.",
         "arguments": [
           {
@@ -98,6 +104,7 @@
       "prompt": "Generate a flowchart that outlines the decision-making steps for: {decisionTopic}. Include key decision points and possible outcomes.",
       "template": {
         "name": "diagram-decision-flowchart",
+        "title": "Decision flowchart",
         "description": "Creates a Mermaid flowchart showing steps, decisions, and outcomes for a given topic.",
         "arguments": [
           {
@@ -112,6 +119,7 @@
       "prompt": "Visualize the following system architecture as a component diagram using PlantUML. Components: {componentList}. Show how they connect or interact.",
       "template": {
         "name": "diagram-component",
+        "title": "Component diagram",
         "description": "Generates a PlantUML component diagram based on provided system components.",
         "arguments": [
           {
@@ -126,6 +134,7 @@
       "prompt": "Create a state diagram that illustrates the possible states and transitions for: {systemOrProcess}. Use PlantUML state diagram syntax.",
       "template": {
         "name": "diagram-state",
+        "title": "State diagram",
         "description": "Creates a PlantUML state diagram for the states and transitions of a process or system.",
         "arguments": [
           {
@@ -140,6 +149,7 @@
       "prompt": "Summarize the following data flow as a data flow diagram (DFD) using PlantUML. Describe entities, data stores, and the flow of data between them: {dataFlowDescription}.",
       "template": {
         "name": "diagram-dataflow",
+        "title": "Data flow diagram",
         "description": "Builds a PlantUML data flow diagram (DFD) based on described entities and flows.",
         "arguments": [
           {

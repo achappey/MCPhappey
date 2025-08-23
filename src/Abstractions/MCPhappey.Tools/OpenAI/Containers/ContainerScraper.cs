@@ -1,3 +1,4 @@
+using System.Text;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
@@ -22,24 +23,90 @@ public class ContainerScraper : IContentScraper
         var client = openAiClient
                     .GetContainerClient();
 
+        if (!Uri.TryCreate(url, UriKind.Absolute, out var uri))
+            return [];
 
-        if (url.StartsWith($"{ContainerExtensions.BASE_URL}/", StringComparison.OrdinalIgnoreCase)
-            && url.EndsWith("/files", StringComparison.OrdinalIgnoreCase))
+        var segments = uri.AbsolutePath.TrimEnd('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
+
+        string? containerId = null;
+        string? fileId = null;
+
+        // Case 1: Container files list
+        if (url.StartsWith($"{ContainerExtensions.BASE_URL}/", StringComparison.OrdinalIgnoreCase) &&
+            url.EndsWith("/files", StringComparison.OrdinalIgnoreCase) &&
+            segments.Length >= 4 &&
+            segments[1] == "containers" &&
+            segments[^1] == "files")
         {
-            string? vectorStoreId = null;
-            if (Uri.TryCreate(url, UriKind.Absolute, out var uri))
-            {
-                var segs = uri.AbsolutePath.TrimEnd('/').Split('/', StringSplitOptions.RemoveEmptyEntries);
-                if (segs.Length >= 4 && segs[1] == "containers" && segs[^1] == "files")
-                    vectorStoreId = segs[2];
-            }
+            containerId = segments[2];
+            var files = await client.GetContainerFilesAsync(containerId)
+                .ToAsyncEnumerable()
+                .ToListAsync(cancellationToken);
 
-            var list = await client.GetContainerFilesAsync(vectorStoreId).ToAsyncEnumerable().ToListAsync(cancellationToken: cancellationToken);
+            return files.Select(f => f.ToFileItem(url));
+        }
 
-            return list.Select(a => a.ToFileItem(url));
+        // Case 2: File content
+        bool isContentEndpoint =
+            segments.Length >= 6 &&
+            segments[0] == "v1" &&
+            segments[1] == "containers" &&
+            segments[3] == "files" &&
+            segments[^1] == "content";
+
+        if (isContentEndpoint)
+        {
+            containerId = segments[2];
+            fileId = segments[4];
+
+            var response = await client.GetContainerFileContentAsync(containerId, fileId);
+            var raw = response.GetRawResponse();
+
+            var encoding = raw.Headers.TryGetValue("Content-Type", out var ct) &&
+                           ct?.Contains("charset=", StringComparison.OrdinalIgnoreCase) == true
+                ? Encoding.GetEncoding(ct.Split("charset=")[1].Trim())
+                : Encoding.UTF8;
+
+            Stream contentStream = raw.ContentStream
+                  ?? throw new InvalidOperationException("No content stream in response.");
+
+            using var ms = new MemoryStream();
+            await contentStream.CopyToAsync(ms, cancellationToken);
+            // string text = encoding.GetString(bytes);
+            return [(await BinaryData.FromStreamAsync(ms, cancellationToken)).ToFileItem(url, ct ?? "application/octet-stream")];
+        }
+
+        // Case 3: File metadata
+        bool isFileEndpoint =
+            segments.Length >= 5 &&
+            segments[0] == "v1" &&
+            segments[1] == "containers" &&
+            segments[3] == "files";
+
+        if (isFileEndpoint)
+        {
+            containerId = segments[2];
+            fileId = segments[4];
+
+            var response = await client.GetContainerFileAsync(containerId, fileId);
+            var raw = response.GetRawResponse();
+
+            var encoding = raw.Headers.TryGetValue("Content-Type", out var ct) &&
+                           ct?.Contains("charset=", StringComparison.OrdinalIgnoreCase) == true
+                ? Encoding.GetEncoding(ct.Split("charset=")[1].Trim())
+                : Encoding.UTF8;
+
+            Stream contentStream = raw.ContentStream
+                  ?? throw new InvalidOperationException("No content stream in response.");
+
+            using var ms = new MemoryStream();
+            await contentStream.CopyToAsync(ms, cancellationToken);
+            var bytes = ms.ToArray();
+            string text = encoding.GetString(bytes);
+            return [text.ToFileItem(url)];
         }
 
         return [];
-    }
 
+    }
 }
