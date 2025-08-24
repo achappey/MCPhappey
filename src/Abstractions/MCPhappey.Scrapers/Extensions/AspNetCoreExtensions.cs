@@ -62,6 +62,15 @@ public static class AspNetCoreExtensions
                             return new TeamsScraper(httpClientFactory, server, oAuthSettings);
                         });
                     }
+
+                    if (scopes.Contains("Tasks.") || scopes.Contains("Group."))
+                    {
+                        services.AddSingleton<IContentScraper>(sp =>
+                        {
+                            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+                            return new PlannerScraper(httpClientFactory, server, oAuthSettings);
+                        });
+                    }
                 }
             }
 

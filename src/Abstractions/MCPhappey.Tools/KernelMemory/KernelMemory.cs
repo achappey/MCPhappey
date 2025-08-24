@@ -10,24 +10,25 @@ namespace MCPhappey.Tools.KernelMemory;
 
 public static class KernelMemory
 {
+    private static Common.Models.SearchResultContentBlock ToSearchResult(this string citation)
+      => new()
+      {
+          Text = citation
+      };
+
     private static Common.Models.SearchResult ToSearchResult(this Citation citation)
         => new()
         {
             Title = citation.SourceName,
             Source = citation.SourceUrl!,
-            Content = citation.Partitions.Select(a => new Common.Models.SearchResultContentBlock()
-            {
-                Text = a.Text
-            }),
-            Citations = new Common.Models.CitationConfiguration()
-            {
-                Enabled = true
-            }
+            Content = citation.Partitions.Select(a => a.Text.ToSearchResult()),
+            Citations = new()
         };
 
     [Description("Search Microsoft Kernel Memory")]
     [McpServerTool(Title = "Search Microsoft kernel memory",
-        ReadOnly = true, Destructive = false, Idempotent = true, UseStructuredContent = true)]
+        ReadOnly = true,
+        UseStructuredContent = true)]
     public static async Task<IEnumerable<Common.Models.SearchResult>> KernelMemory_Search(
         [Description("Search query")]
         string query,
@@ -40,19 +41,16 @@ public static class KernelMemory
         int? limit = 10,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(query);
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(index);
-        var memory = serviceProvider.GetService<IKernelMemory>();
+        var memory = serviceProvider.GetRequiredService<IKernelMemory>();
         var appSettings = serviceProvider.GetService<OAuthSettings>();
         if (appSettings?.ClientId.Equals(index, StringComparison.OrdinalIgnoreCase) == true)
         {
-            //         return "Not authorized".ToErrorCallToolResponse();
             throw new UnauthorizedAccessException();
         }
 
-        ArgumentNullException.ThrowIfNull(memory);
-
-        var answer = await memory.SearchAsync(query, index, minRelevance: minRelevance ?? 0,
+        var answer = await memory.SearchAsync(query,
+            index,
+            minRelevance: minRelevance ?? 0,
             limit: limit ?? int.MaxValue,
             cancellationToken: cancellationToken);
 
@@ -72,16 +70,13 @@ public static class KernelMemory
         double? minRelevance = 0,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(index);
-        var memory = serviceProvider.GetService<IKernelMemory>();
+        var memory = serviceProvider.GetRequiredService<IKernelMemory>();
         var appSettings = serviceProvider.GetService<OAuthSettings>();
         if (appSettings?.ClientId.Equals(index, StringComparison.OrdinalIgnoreCase) == true)
         {
             return "Not authorized".ToErrorCallToolResponse();
         }
 
-        ArgumentNullException.ThrowIfNull(memory);
         var answer = await memory.AskAsync(prompt, index, minRelevance: minRelevance ?? 0,
             cancellationToken: cancellationToken);
 
@@ -101,8 +96,10 @@ public static class KernelMemory
     }
 
     [Description("List available Microsoft Kernel Memory indexes")]
-    [McpServerTool(Title = "List kernel memory indexes", Idempotent = true,
-        ReadOnly = true, Destructive = false, OpenWorld = false)]
+    [McpServerTool(Title = "List kernel memory indexes",
+        Idempotent = true,
+        ReadOnly = true,
+        OpenWorld = false)]
     public static async Task<CallToolResult> KernelMemory_ListIndexes(
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken = default)

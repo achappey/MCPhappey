@@ -35,5 +35,5 @@ public class SearchResultContentBlock
 public class CitationConfiguration
 {
     [JsonPropertyName("enabled")]
-    public bool Enabled { get; set; }
+    public bool Enabled { get; set; } = true;
 }

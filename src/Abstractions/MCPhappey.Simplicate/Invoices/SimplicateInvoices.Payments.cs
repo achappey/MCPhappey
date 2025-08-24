@@ -132,7 +132,7 @@ public static partial class SimplicateInvoices
                 cancellationToken: cancellationToken
             );
 
-            if (!invoicePayments.Any())
+            if (invoicePayments.Count == 0)
                 continue;
 
             var totalPaid = invoicePayments.Sum(p => p.Amount);
@@ -169,9 +169,9 @@ public static partial class SimplicateInvoices
                        return new PaidInvoicePaymentTermSummary
                        {
                            TotalInvoices = list.Count,
-                           AveragePaymentTermDays = list.Any() ? list.Average(x => x.PaymentTermDays) : 0,
-                           MinPaymentTermDays = list.Any() ? list.Min(x => x.PaymentTermDays) : (int?)null,
-                           MaxPaymentTermDays = list.Any() ? list.Max(x => x.PaymentTermDays) : (int?)null,
+                           AveragePaymentTermDays = list.Count != 0 ? list.Average(x => x.PaymentTermDays) : 0,
+                           MinPaymentTermDays = list.Count != 0 ? list.Min(x => x.PaymentTermDays) : null,
+                           MaxPaymentTermDays = list.Count != 0 ? list.Max(x => x.PaymentTermDays) : null,
                        };
                    }
                );

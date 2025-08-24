@@ -1,6 +1,7 @@
 using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol;
 using System.Net.Mime;
+using System.Text;
 using System.Text.Json;
 
 namespace MCPhappey.Common.Extensions;
@@ -74,15 +75,16 @@ public static class FileItemExtensions
         => fileItem.MimeType.StartsWith("text/")
             || fileItem.MimeType.Equals(MediaTypeNames.Application.Json)
             || fileItem.MimeType.Equals(MediaTypeNames.Application.ProblemJson)
-            || fileItem.MimeType.Equals("application/hal+json")
+            || (fileItem.MimeType.StartsWith("application/") && fileItem.MimeType.EndsWith("+json"))
+            || (fileItem.MimeType.StartsWith("application/", StringComparison.OrdinalIgnoreCase) && fileItem.MimeType.EndsWith("+xml"))
             || fileItem.MimeType.Equals(MediaTypeNames.Application.Xml) ? new TextResourceContents()
             {
-                Text = fileItem.Contents.ToString(),
+                Text = Encoding.UTF8.GetString(fileItem.Contents.ToArray()),
                 MimeType = fileItem.MimeType,
                 Uri = fileItem.Uri,
             } : new BlobResourceContents()
             {
-                Blob = Convert.ToBase64String(fileItem.Contents),
+                Blob = Convert.ToBase64String(fileItem.Contents.ToArray()),
                 MimeType = fileItem.MimeType,
                 Uri = fileItem.Uri,
             };

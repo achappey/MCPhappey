@@ -97,8 +97,6 @@ public class TeamsScraper(IHttpClientFactory httpClientFactory, ServerConfig ser
             contextText = $"{team?.DisplayName} - {channel?.DisplayName}";
         }
 
-        //   var extension = msg?.Body?.ContentType == BodyType.Text ? "md" : "html";
-
         fileItems.Add(new FileItem
         {
             Filename = $"TeamsMessage_{messageId}.json",

@@ -24,7 +24,7 @@ public sealed class OutlookScraper(
     public bool SupportsHost(ServerConfig currentConfig, string url) =>
         (new Uri(url).Host.EndsWith("outlook.office.com", StringComparison.OrdinalIgnoreCase) ||
          new Uri(url).Host.EndsWith("outlook.office365.com", StringComparison.OrdinalIgnoreCase)) &&
-        serverConfig.Server.OBO?.ContainsKey(MCPhappey.Common.Constants.Hosts.MicrosoftGraph) == true;
+        serverConfig.Server.OBO?.ContainsKey(Common.Constants.Hosts.MicrosoftGraph) == true;
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
         IMcpServer mcpServer,

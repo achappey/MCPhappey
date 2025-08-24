@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using MCPhappey.Auth.Extensions;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common.Extensions;
 using Microsoft.Extensions.DependencyInjection;
@@ -13,8 +12,6 @@ namespace MCPhappey.Tools.OpenMemory;
 
 public static class OpenMemory
 {
-    public const string MemoryPurpose = "Memory";
-
     [Description("Save a personal user memory")]
     [McpServerTool(Title = "Save memory",
         OpenWorld = false)]
@@ -28,11 +25,6 @@ public static class OpenMemory
         var kernelMemory = serviceProvider.GetRequiredService<IKernelMemory>();
         var appSettings = serviceProvider.GetService<OAuthSettings>();
         ArgumentNullException.ThrowIfNull(memory);
-        var userId = serviceProvider.GetUserId();
-        var tagCollections = new TagCollection
-        {
-            { MemoryPurpose, userId }
-        };
 
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                 new OpenMemoryNewMemory
@@ -45,7 +37,7 @@ public static class OpenMemory
         if (typed == null) return "Invalid response".ToErrorCallToolResponse();
 
         var answer = await kernelMemory.ImportTextAsync(typed.Memory, index: appSettings?.ClientId!,
-            tags: tagCollections,
+            tags: serviceProvider.ToTagCollection(),
             cancellationToken: cancellationToken);
 
         return answer.ToTextCallToolResponse();
@@ -53,6 +45,7 @@ public static class OpenMemory
 
     [Description("Delete a personal user memory")]
     [McpServerTool(Title = "Delete memory",
+        Destructive = true,
         OpenWorld = false)]
     public static async Task<CallToolResult> OpenMemory_DeleteMemory(
         [Description("Id of the memory")]
@@ -81,18 +74,12 @@ public static class OpenMemory
         double? minRelevance = 0,
         CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
         var appSettings = serviceProvider.GetService<OAuthSettings>();
         ArgumentNullException.ThrowIfNullOrWhiteSpace(appSettings?.ClientId);
-        var userId = serviceProvider.GetUserId();
-        var memory = serviceProvider.GetService<IKernelMemory>();
-        var memFilter = new MemoryFilter
-        {
-            { MemoryPurpose, userId }
-        };
-        ArgumentNullException.ThrowIfNull(memory);
+        var memory = serviceProvider.GetRequiredService<IKernelMemory>();
+
         var answer = await memory.AskAsync(prompt, appSettings.ClientId, minRelevance: minRelevance ?? 0,
-            filter: memFilter,
+            filter: serviceProvider.ToMemoryFilter(),
             cancellationToken: cancellationToken);
 
         return new
@@ -124,19 +111,11 @@ public static class OpenMemory
         int? limit = 10,
       CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
         var appSettings = serviceProvider.GetService<OAuthSettings>();
         ArgumentNullException.ThrowIfNullOrWhiteSpace(appSettings?.ClientId);
-        var userId = serviceProvider.GetUserId();
-        var memory = serviceProvider.GetService<IKernelMemory>();
-        var memFilter = new MemoryFilter
-        {
-            { MemoryPurpose, userId }
-        };
-
-        ArgumentNullException.ThrowIfNull(memory);
+        var memory = serviceProvider.GetRequiredService<IKernelMemory>();
         var answer = await memory.SearchAsync(prompt, appSettings.ClientId, minRelevance: minRelevance ?? 0,
-            filter: memFilter,
+            filter: serviceProvider.ToMemoryFilter(),
             limit: limit ?? int.MaxValue,
             cancellationToken: cancellationToken);
 
@@ -163,13 +142,7 @@ public static class OpenMemory
         ArgumentNullException.ThrowIfNull(memory);
         var appSettings = serviceProvider.GetService<OAuthSettings>();
         ArgumentNullException.ThrowIfNullOrWhiteSpace(appSettings?.ClientId);
-        var userId = serviceProvider.GetUserId();
-        var memFilter = new MemoryFilter
-        {
-            { MemoryPurpose, userId }
-        };
-
-        var indexes = await memory.SearchAsync("*", index: appSettings.ClientId, filter: memFilter,
+        var indexes = await memory.SearchAsync("*", index: appSettings.ClientId, filter: serviceProvider.ToMemoryFilter(),
             limit: int.MaxValue,
             cancellationToken: cancellationToken);
 

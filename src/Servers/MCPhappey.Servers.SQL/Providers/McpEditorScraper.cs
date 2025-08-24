@@ -98,7 +98,7 @@ public class McpEditorScraper(IEnumerable<IContentDecoder> contentDecoders) : IC
                     }
                     catch
                     {
-                        return (Name: (string?)null, Version: (Version?)null);
+                        return (Name: null, Version: null);
                     }
                 })
                 .Where(a => a.Name != null

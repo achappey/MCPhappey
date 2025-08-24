@@ -76,7 +76,7 @@ public static class HttpExtensions
             {
                 Title = title,
                 Description = desc,
-                Default = col.DefaultValue?.Value == null ? (bool?)null : col.DefaultValue.Value == "1"
+                Default = col.DefaultValue?.Value == null ? null : col.DefaultValue.Value == "1"
             };
         }
 

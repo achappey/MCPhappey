@@ -13,7 +13,7 @@ namespace MCPhappey.Simplicate.Extensions;
 public static class SimplicateExtensions
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-    { PropertyNameCaseInsensitive = true };
+        { PropertyNameCaseInsensitive = true };
 
     public static string GetApiUrl(
            this SimplicateOptions options,
@@ -61,13 +61,11 @@ public static class SimplicateExtensions
             builder.Query = string.Join("&", queryDict.SelectMany(kvp => kvp.Value.Select(v => $"{kvp.Key}={Uri.EscapeDataString(v!)}")));
             string url = builder.Uri.ToString();
 
-            //  string url = $"{baseUrl}?&limit={pageSize}&offset={offset}&metadata=count";
-
             await requestContext.Server.SendProgressNotificationAsync(
                 requestContext,
                 pageNumber,
                 progressTextSelector(pageNumber),
-                totalPages > 0 ? totalPages : (int?)null,
+                totalPages > 0 ? totalPages : null,
                 cancellationToken);
 
             var result = await downloadService.GetSimplicatePageAsync(
@@ -182,7 +180,7 @@ public static class SimplicateExtensions
                 requestContext,
                 pageNumber,
                 progressTextSelector(pageNumber),
-                totalPages > 0 ? totalPages : (int?)null,
+                totalPages > 0 ? totalPages : null,
                 cancellationToken
             );
 
