@@ -1,10 +1,9 @@
 using System.Reflection;
 using System.Text.Json;
-using System.Threading.Tasks;
-using HtmlAgilityPack;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using Microsoft.SemanticKernel;
+using ModelContextProtocol.Client;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -24,10 +23,10 @@ public static partial class ModelContextToolExtensions
         }
     }
 
-    public static ToolsCapability? ToToolsCapability(this Server server, Kernel kernel,
+    public static async Task<ToolsCapability?> ToToolsCapability(this Server server, Kernel kernel,
         Dictionary<string, string>? headers = null)
     {
-        if (server.Plugins?.Any() != true) return null;
+        if (server.Plugins?.Any() != true && server.McpExtension == null) return null;
 
         List<McpServerTool>? tools = [];
 
@@ -36,7 +35,7 @@ public static partial class ModelContextToolExtensions
             tools.AddRange(kernel.GetToolsFromType(pluginTypeName) ?? []);
         }
 
-        return tools.BuildCapability(server, headers);
+        return await tools.BuildCapability(server, headers);
     }
 
     public static IEnumerable<McpServerTool>? GetToolsFromType(this Kernel kernel, string pluginTypeName)
@@ -62,10 +61,11 @@ public static partial class ModelContextToolExtensions
         return pluginTools;
     }
 
-
-    private static ToolsCapability? BuildCapability(this IEnumerable<McpServerTool>? tools, Server server,
+    private static async Task<ToolsCapability?> BuildCapability(this IEnumerable<McpServerTool>? tools, Server server,
         Dictionary<string, string>? headers = null)
     {
+        if (server.McpExtension != null) return await server.ExtendCapabilities();
+
         if (tools == null || !tools.Any())
             return null;
 
@@ -97,6 +97,96 @@ public static partial class ModelContextToolExtensions
                     request.Services!.WithHeaders(headers);
 
                     return await tool.InvokeAsync(request, cancellationToken);
+                }
+        };
+    }
+
+
+    private static async Task<ToolsCapability?> ExtendCapabilities(this Server server,
+        Dictionary<string, string>? headers = null, CancellationToken cancellationToken = default)
+    {
+        var client = await McpClientFactory.CreateAsync(
+                  new SseClientTransport(new SseClientTransportOptions
+                  {
+                      Endpoint = new Uri(server.McpExtension?.Url!),
+
+                  }),
+                  clientOptions: new McpClientOptions()
+                  {
+                  },
+                  cancellationToken: cancellationToken);
+
+        if (client.ServerCapabilities.Tools == null) return null;
+
+        return new ToolsCapability
+        {
+            ListToolsHandler = async (request, cancellationToken)
+                       =>
+                   {
+                       await using var client = await McpClientFactory.CreateAsync(
+                        new SseClientTransport(new SseClientTransportOptions
+                        {
+                            Endpoint = new Uri(server.McpExtension?.Url!),
+                        }),
+                        clientOptions: new McpClientOptions()
+                        {
+                            ClientInfo = request.Server.ClientInfo,
+                            Capabilities = new ClientCapabilities()
+                            {
+                                Sampling = request.Server.ClientCapabilities?.Sampling?.SamplingHandler != null ? new SamplingCapability()
+                                {
+                                    SamplingHandler = request.Server.ClientCapabilities?.Sampling?.SamplingHandler
+                                } : null
+                            }
+                        },
+                        cancellationToken: cancellationToken);
+                       var tools = await client.ListToolsAsync(cancellationToken: cancellationToken);
+
+                       return await Task.FromResult(new ListToolsResult()
+                       {
+                           Tools = [.. tools.Select(a => a.ProtocolTool)],
+                       });
+                   },
+            CallToolHandler = async (request, cancellationToken)
+                =>
+                {
+                    await using var client = await McpClientFactory.CreateAsync(
+                       new SseClientTransport(new SseClientTransportOptions
+                       {
+                           Endpoint = new Uri(server.McpExtension?.Url!),
+                       }),
+                       clientOptions: new McpClientOptions()
+                       {
+                           ClientInfo = request.Server.ClientInfo,
+                           Capabilities = new ClientCapabilities()
+                           {
+                               Sampling = request.Server.ClientCapabilities?.Sampling?.SamplingHandler != null ? new SamplingCapability()
+                               {
+                                   SamplingHandler = request.Server.ClientCapabilities?.Sampling?.SamplingHandler
+                               } : null
+                           }
+                       },
+                       cancellationToken: cancellationToken);
+
+                    var tools = await client.ListToolsAsync(cancellationToken: cancellationToken);
+                    var tool = tools.FirstOrDefault(a => a.ProtocolTool.Name == request.Params?.Name);
+
+                    if (tool == null)
+                    {
+                        return JsonSerializer.Serialize($"Tool {tool?.ProtocolTool.Name} not found").ToErrorCallToolResponse();
+                    }
+
+                    request.Services!.WithHeaders(headers);
+
+                    var args = request.Params?.Arguments?
+                        .ToDictionary(
+                            kvp => kvp.Key,
+                            kvp => kvp.Value.ValueKind == JsonValueKind.Undefined
+                                ? null
+                                : kvp.Value.Deserialize<object?>()
+                        );
+
+                    return await client.CallToolAsync(tool?.ProtocolTool.Name!, args, cancellationToken: cancellationToken);
                 }
         };
     }

@@ -28,7 +28,7 @@ public static class ModelContextProtocolExtensions
                      Resources = server.ToResourcesCapability(headers),
                      Prompts = server.ToPromptsCapability(headers),
                      Completions = server.ToCompletionsCapability(completionService, headers),
-                     Tools = server.Server.ToToolsCapability(kernel, headers)
+                     Tools = await server.Server.ToToolsCapability(kernel, headers)
                  };
 
                  await Task.CompletedTask;

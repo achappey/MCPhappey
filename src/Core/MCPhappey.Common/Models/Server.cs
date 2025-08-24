@@ -114,10 +114,25 @@ public class Server
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? Instructions { get; set; }
 
+    [JsonPropertyName("baseMcp")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? BaseMcp { get; set; }
+
     [JsonPropertyName("hidden")]
     public bool? Hidden { get; set; }
 
+    [JsonIgnore]
+    public McpExtension? McpExtension { get; set; }
 }
+
+public class McpExtension
+{
+    public string? Url { get; set; }
+
+    // Optional: headers (like Authorization or x-api-key)
+    public Dictionary<string, string>? Headers { get; set; }
+}
+
 
 public class ServerInfo
 {

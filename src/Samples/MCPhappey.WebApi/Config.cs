@@ -1,4 +1,5 @@
 using MCPhappey.Auth.Models;
+using MCPhappey.Common.Models;
 using MCPhappey.Simplicate.Options;
 using MCPhappey.Tools.AI;
 
@@ -21,7 +22,9 @@ public class Config
     public Agent2AgentStorage? Agent2AgentStorage { get; set; }
 
     public Dictionary<string, Dictionary<string, string>>? DomainHeaders { get; set; }
-    
+
+    public Dictionary<string, McpExtension>? McpExtensions { get; set; }
+
     public Dictionary<string, Dictionary<string, string>>? DomainQueryStrings { get; set; }
 
 }

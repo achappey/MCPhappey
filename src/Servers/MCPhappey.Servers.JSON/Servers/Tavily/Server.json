@@ -3,9 +3,7 @@
     "name": "Tavily",
     "version": "1.0.0"
   },
-  "plugins": [
-    "MCPhappey.Tools.Tavily.TavilyService, MCPhappey.Tools"
-  ],
+  "baseMcp": "mcp.tavily.com",
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }

@@ -13,7 +13,6 @@ public static partial class GraphWorkbooks
 {
     [Description("Get an Excel chart as an image from a user's OneDrive or SharePoint via Microsoft Graph.")]
     [McpServerTool(Title = "Get Excel chart as image",
-        Destructive = false,
         ReadOnly = true, OpenWorld = false)]
     public static async Task<ImageContentBlock> GraphWorkbooks_GetWorkbookChart(
         string excelFileUrl,
@@ -87,7 +86,7 @@ public static partial class GraphWorkbooks
             .Add
             .PostAsync(requestBody, cancellationToken: cancellationToken);
 
-        var url = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook/worksheets/{worksheetName}/charts/{chart.Id}";
+        var url = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook/worksheets/{worksheetName}/charts/{chart?.Id}";
 
         return chart.ToJsonContentBlock(url).ToCallToolResult();
     }

@@ -12,7 +12,6 @@ using MCPhappey.Simplicate.Extensions;
 using OpenAI;
 using MCPhappey.Agent2Agent.Extensions;
 using Microsoft.Net.Http.Headers;
-using MCPhappey.Tools.Tavily;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -23,6 +22,17 @@ var servers = basePath.GetServers(appConfig?.Simplicate?.Organization ?? "").ToL
 if (!string.IsNullOrEmpty(appConfig?.McpDatabase))
 {
     servers.AddRange(builder.AddSqlMcpServers(appConfig.McpDatabase));
+}
+
+if (appConfig?.McpExtensions != null)
+{
+    foreach (var server in servers.Where(s => !string.IsNullOrEmpty(s.Server.BaseMcp)))
+    {
+        if (appConfig.McpExtensions.TryGetValue(server.Server.BaseMcp!, out var ext))
+        {
+            server.Server.McpExtension = appConfig.McpExtensions[server.Server.BaseMcp!];
+        }
+    }
 }
 
 var apiKey = appConfig?.DomainHeaders?
@@ -133,16 +143,6 @@ if (appConfig?.Agent2AgentStorage != null)
         appConfig.Agent2AgentStorage.TaskContainer,
         appConfig.Agent2AgentStorage.ContextContainer,
         appConfig.Agent2AgentStorage.Database);
-}
-
-var tavilyApiKey = appConfig?.DomainHeaders?
-            .FirstOrDefault(a => a.Key == "api.tavily.com")
-            .Value
-            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
-
-if (tavilyApiKey != null)
-{
-    builder.Services.AddTavily(tavilyApiKey);
 }
 
 builder.Services.AddMcpCoreServices(servers);
