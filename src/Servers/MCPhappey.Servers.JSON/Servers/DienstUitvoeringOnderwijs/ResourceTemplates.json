@@ -1,5 +1,5 @@
 {
-  "resources": [
+  "resourceTemplates": [
     {
       "uriTemplate": "https://onderwijsdata.duo.nl/api/3/action/datastore_search?resource_id=0423457d-c69e-4950-a12c-51912fc48faf&q={query}&limit={limit}",
       "name": "slagingspercentages-examencijfers-per-vestiging",
