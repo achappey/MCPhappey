@@ -20,11 +20,12 @@ public static class GoogleImagen
         string prompt,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("AI image model: imagen-3.0-generate-002, imagen-4.0-generate-001, imagen-4.0-ultra-generate-001 or imagen-4.0-fast-generate-001")]
+        [Description("AI image model")]
         Model? imageModel = Model.imagen40generate001,
-        [Description("The aspect ratio of the generated image. 1:1, 9:16, 16:9, 3:4, or 4:3")]
-        string aspectRatio = "1:1",
-        [Description("The number of images to generate. Max. 4.")]
+        [Description("The aspect ratio of the generated image.")]
+        Mscc.GenerativeAI.ImageAspectRatio? aspectRatio = Mscc.GenerativeAI.ImageAspectRatio.Ratio1x1,
+        [Description("The number of images to generate.")]
+        [Range(1, 4)]
         int numberOfImages = 1,
         [Description("New image file name, without extension")]
         string? filename = null,
@@ -41,6 +42,7 @@ public static class GoogleImagen
                            Prompt = prompt,
                            Model = imageModel ?? Model.imagen40generate001,
                            NumberOfImages = numberOfImages,
+                           AspectRatio = aspectRatio ?? Mscc.GenerativeAI.ImageAspectRatio.Ratio1x1,
                            Filename = filename?.ToOutputFileName()
                             ?? requestContext.ToOutputFileName()
                        },
@@ -58,7 +60,7 @@ public static class GoogleImagen
             Parameters = new()
             {
                 SampleCount = typed.NumberOfImages,
-                AspectRatio = aspectRatio,
+                AspectRatio = typed.AspectRatio,
                 PersonGeneration = Mscc.GenerativeAI.PersonGeneration.AllowAdult,
                 OutputOptions = new()
                 {
@@ -100,6 +102,11 @@ public static class GoogleImagen
         [Required]
         [Description("The AI image model.")]
         public Model Model { get; set; } = Model.imagen30generate002;
+
+        [JsonPropertyName("aspectRatio")]
+        [Required]
+        [Description("The image aspect ratio.")]
+        public Mscc.GenerativeAI.ImageAspectRatio AspectRatio { get; set; } = Mscc.GenerativeAI.ImageAspectRatio.Ratio1x1;
 
         [JsonPropertyName("numberOfImages")]
         [Required]

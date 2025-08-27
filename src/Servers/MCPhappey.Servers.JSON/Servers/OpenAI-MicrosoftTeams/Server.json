@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-MicrosoftTeams",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.MicrosoftTeams.OpenAITeams, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/ChannelMessage.Read.All"
+  }
+}

@@ -26,6 +26,19 @@ public static class GraphClientExtensions
         return await httpClientFactory.GetOboGraphClient(tokenService?.Bearer!, server?.Server!, oAuthSettings!);
     }
 
+    public static async Task<string> GetOboGraphToken(this IServiceProvider serviceProvider,
+      IMcpServer mcpServer)
+    {
+        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var tokenService = serviceProvider.GetService<HeaderProvider>();
+        var server = serviceProvider.GetServerConfig(mcpServer);
+        var oAuthSettings = serviceProvider.GetService<OAuthSettings>();
+        var delegated = await httpClientFactory.GetOboToken(tokenService?.Bearer!, Hosts.MicrosoftGraph, server?.Server!, oAuthSettings!);
+
+        return delegated;
+    }
+
+
     public static async Task<GraphServiceClient> GetOboGraphClient(this IHttpClientFactory httpClientFactory,
         string token,
         Server server,
