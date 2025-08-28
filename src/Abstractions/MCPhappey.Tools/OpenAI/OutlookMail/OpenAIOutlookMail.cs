@@ -9,7 +9,8 @@ namespace MCPhappey.Tools.OpenAI.OutlookMail;
 
 public static class OpenAIOutlookMail
 {
-    private static readonly string[] value = ["list_messages", "search_messages", "get_profile", "get_recent_emails", "fetch_message", "fetch_messages_batch"];
+    private static readonly string[] value = ["list_messages", "search_messages", "get_profile",
+            "get_recent_emails", "fetch_message", "fetch_messages_batch"];
 
     [Description("OpenAI Outlook Email connector.")]
     [McpServerTool(Title = "OpenAI Outlook Email connector", Name = "openai_outlook_email",
@@ -20,8 +21,6 @@ public static class OpenAIOutlookMail
             string prompt,
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
-      //    [Description("Target model (e.g. gpt-5 or gpt-5-mini).")]
-       //     string model = "gpt-5-mini",
           CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);

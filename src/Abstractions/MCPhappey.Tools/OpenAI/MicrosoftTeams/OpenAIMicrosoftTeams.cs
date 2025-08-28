@@ -20,7 +20,6 @@ public static class OpenAITeams
           [Description("Prompt to execute.")] string prompt,
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
-        //  [Description("Target model (e.g. gpt-5 or gpt-5-mini).")] string model = "gpt-5-mini",
           CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
@@ -33,7 +32,7 @@ public static class OpenAITeams
                 {"openai", new {
                     reasoning = new
                             {
-                                effort = "low"
+                                effort = "medium"
                             },
                     mcp_list_tools = new[] {
                         new {
