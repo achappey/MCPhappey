@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "PhoneNumbers",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.PhoneNumbers.PhoneNumberPlugin, MCPhappey.Tools"
+  ]
+}
