@@ -45,7 +45,7 @@ public static class OpenAIOutlookMail
                 }),
             Temperature = 1,
             MaxTokens = 8192,
-            ModelPreferences = "gpt-5-mini".ToModelPreferences(),
+            ModelPreferences = "gpt-5".ToModelPreferences(),
             Messages = [prompt.ToUserSamplingMessage()]
         }, cancellationToken);
 

@@ -12,6 +12,7 @@ using MCPhappey.Simplicate.Extensions;
 using OpenAI;
 using MCPhappey.Agent2Agent.Extensions;
 using Microsoft.Net.Http.Headers;
+using MCPhappey.Tools.Deskbird;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -33,6 +34,19 @@ if (appConfig?.McpExtensions != null)
             server.Server.McpExtension = appConfig.McpExtensions[server.Server.BaseMcp!];
         }
     }
+}
+
+var deskbirdKey = appConfig?.DomainHeaders?
+            .FirstOrDefault(a => a.Key == "connect.deskbird.com")
+            .Value
+            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+
+if (deskbirdKey != null)
+{
+    builder.Services.AddSingleton(new DeskbirdSettings()
+    {
+        ApiKey = deskbirdKey
+    });
 }
 
 var apiKey = appConfig?.DomainHeaders?
@@ -113,6 +127,8 @@ if (appConfig?.OAuth != null)
 {
     builder.Services.WithOboScrapers(servers, appConfig.OAuth);
 }
+
+
 
 if (openAiClient != null)
 {
