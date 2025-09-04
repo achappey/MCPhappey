@@ -46,7 +46,7 @@ public static class AspNetCoreWebAppExtensions
                 await next();
                 return;
             }
-    
+
             var validator = context.RequestServices.GetRequiredService<IJwtValidator>();
             var oAuthSettings = context.RequestServices.GetRequiredService<OAuthSettings>();
             var matchedServer = servers.FirstOrDefault(a =>
@@ -71,12 +71,28 @@ public static class AspNetCoreWebAppExtensions
             var principal = await validator.ValidateAsync(token!, baseUrl,
                            string.Join(", ", jwt.Audiences), oAuthSettings);
 
-            var userRoles = principal?.Claims
+            var userRoles2 = principal?.Claims
                                 .Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
                                 .Select(c => c.Value)
                                 .ToList() ?? [];
 
-            if (matchedServer.IsAuthorized(context.Request.Headers.ToDictionary(k => k.Key, v => v.Value.ToString()), userRoles))
+            var roleClaims =
+                principal?.FindAll("roles").Select(c => c.Value)
+                .Concat(principal.FindAll(ClaimTypes.Role).Select(c => c.Value))
+                .Concat(principal.FindAll("role").Select(c => c.Value)) // just in case
+                .Distinct(StringComparer.OrdinalIgnoreCase)
+                .ToList() ?? [];
+
+            var scopeClaims = (principal?.FindFirst("scp")?.Value ?? "")
+                .Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            var userPermissions = roleClaims
+                .Union(scopeClaims, StringComparer.OrdinalIgnoreCase)
+                .ToList();
+
+
+
+            if (matchedServer.IsAuthorized(context.Request.Headers.ToDictionary(k => k.Key, v => v.Value.ToString()), userPermissions))
             {
                 await next();
                 return;
@@ -99,7 +115,7 @@ public static class AspNetCoreWebAppExtensions
             if (requiredRoles.Count != 0)
             {
                 // Check if the user has at least one required role
-                if (!requiredRoles.Intersect(userRoles, StringComparer.OrdinalIgnoreCase).Any())
+                if (!requiredRoles.Intersect(userPermissions, StringComparer.OrdinalIgnoreCase).Any())
                 {
                     context.Response.StatusCode = 403;
                     await context.Response.WriteAsync("Forbidden: user lacks required role(s)");

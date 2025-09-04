@@ -13,15 +13,26 @@ public static class TokenController
     public static string CreateJwt(string issuer, string subject, string audience, IEnumerable<string> scopes,
         SigningCredentials signingCredentials,
         IDictionary<string, object>? additionalClaims = null,
-        DateTime? expires = null)
+        DateTime? expires = null,
+        IEnumerable<string>? roles = null
+    )
     {
         var handler = new JwtSecurityTokenHandler();
         var claims = new List<Claim>
         {
             new("sub", subject),
-            new("scp", string.Join(" ", scopes)),
             new("iat", DateTimeOffset.UtcNow.ToUnixTimeSeconds().ToString()),
         };
+
+        if (scopes != null && scopes.Any())
+            claims.Add(new Claim("scp", string.Join(" ", scopes)));
+
+        if (roles != null)
+        {
+            foreach (var r in roles.Where(r => !string.IsNullOrWhiteSpace(r)))
+                claims.Add(new Claim("roles", r));
+        }
+
 
         if (additionalClaims != null)
         {
@@ -104,7 +115,7 @@ public static class TokenController
             var scopeList = string.IsNullOrEmpty(scopes)
                             ? oauth.Scopes.Split(' ', StringSplitOptions.RemoveEmptyEntries)
                             : scopes.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-
+            var roles = jwt1.Claims.Where(c => c.Type == "roles").Select(c => c.Value);
             // 0-c) Mint the MCP token, embedding the inbound token as act
             var mcpToken1 = CreateJwt($"{ctx.Request.Scheme}://{ctx.Request.Host}",
                                      sub1!, resource,
@@ -115,7 +126,7 @@ public static class TokenController
                                          ["obo"] = subjectTok,   // aud = MCP (for hop-3 OBO)
                                          ["act"] = actTok,
                                          ["oid"] = oid1
-                                     }, expires: exp1);
+                                     }, expires: exp1, roles: roles);
 
             return Results.Json(new
             {
@@ -200,12 +211,13 @@ public static class TokenController
         var exp = azureExp.AddMinutes(-2);
 
         var baseUri = $"{ctx.Request.Scheme}://{ctx.Request.Host}";
+        var rolesFromSubject = jwt.Claims.Where(c => c.Type == "roles").Select(c => c.Value);
         var mcpToken = CreateJwt(baseUri, sub!, resource, scopes: oauth.Scopes?.Split(" ") ?? [], signingCredentials,
             additionalClaims: new Dictionary<string, object>
             {
                 ["act"] = azureAccessToken!,
                 ["oid"] = oid!
-            }, expires: exp);
+            }, expires: exp, roles: rolesFromSubject);
 
         return Results.Json(new
         {
