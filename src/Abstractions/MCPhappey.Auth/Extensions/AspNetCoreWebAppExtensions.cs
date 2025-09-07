@@ -71,11 +71,6 @@ public static class AspNetCoreWebAppExtensions
             var principal = await validator.ValidateAsync(token!, baseUrl,
                            string.Join(", ", jwt.Audiences), oAuthSettings);
 
-            var userRoles2 = principal?.Claims
-                                .Where(c => c.Type == "http://schemas.microsoft.com/ws/2008/06/identity/claims/role")
-                                .Select(c => c.Value)
-                                .ToList() ?? [];
-
             var roleClaims =
                 principal?.FindAll("roles").Select(c => c.Value)
                 .Concat(principal.FindAll(ClaimTypes.Role).Select(c => c.Value))
@@ -89,8 +84,6 @@ public static class AspNetCoreWebAppExtensions
             var userPermissions = roleClaims
                 .Union(scopeClaims, StringComparer.OrdinalIgnoreCase)
                 .ToList();
-
-
 
             if (principal is null && matchedServer.IsAuthorized(context.Request.Headers.ToDictionary(k => k.Key, v => v.Value.ToString()), userPermissions))
             {
@@ -150,7 +143,9 @@ public static class AspNetCoreWebAppExtensions
 
         if (matchedServer.Server.Owners?.Any() == true)
         {
-            var oid = principal.FindFirst("oid")?.Value;
+            var oid = principal.FindFirstValue("oid")
+                ?? principal.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier");
+                
             ownersValid = !string.IsNullOrEmpty(oid)
                 && matchedServer.Server.Owners.Contains(oid, StringComparer.OrdinalIgnoreCase);
         }

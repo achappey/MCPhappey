@@ -34,7 +34,7 @@ public static class ServerExtensions
                          serverConfig.Server.Headers.All(a => headers.ContainsKey(a.Key));
 
         // Role check
-        var requiredRoles = serverConfig.Server.Roles?.ToList() ?? new List<string>();
+        var requiredRoles = serverConfig.Server.Roles?.ToList() ?? [];
         bool rolesOk = !requiredRoles.Any() ||
                        (userRoles != null && requiredRoles.Intersect(userRoles, StringComparer.OrdinalIgnoreCase).Any());
 
