@@ -1,0 +1,15 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-Microsoft",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.OutlookMail.OpenAIOutlookMail, MCPhappey.Tools",
+    "MCPhappey.Tools.OpenAI.OutlookCalendar.OpenAIOutlookCalendar, MCPhappey.Tools",
+    "MCPhappey.Tools.OpenAI.SharePoint.OpenAISharePoint, MCPhappey.Tools",
+    "MCPhappey.Tools.OpenAI.MicrosoftTeams.OpenAITeams, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Read https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/Sites.Read.All https://graph.microsoft.com/Files.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/ChannelMessage.Read.All"
+  }
+}

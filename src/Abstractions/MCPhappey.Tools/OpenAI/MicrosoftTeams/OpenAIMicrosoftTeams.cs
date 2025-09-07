@@ -15,6 +15,7 @@ public static class OpenAITeams
     [Description("OpenAI Microsoft Teams connector.")]
     [McpServerTool(Title = "OpenAI Microsoft Teams connector", Name = "openai_microsoft_teams",
         Destructive = false,
+        OpenWorld = true,
         ReadOnly = true)]
     public static async Task<ContentBlock> OpenAI_MicrosoftTeams(
           [Description("Prompt to execute.")] string prompt,
@@ -32,7 +33,7 @@ public static class OpenAITeams
                 {"openai", new {
                     reasoning = new
                             {
-                                effort = "medium"
+                                effort = "minimal"
                             },
                     mcp_list_tools = new[] {
                         new {

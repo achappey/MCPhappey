@@ -46,7 +46,7 @@ public class GraphCompletion : IAutoCompletion
                 {
                     if (!string.IsNullOrWhiteSpace(argValue))
                         requestConfiguration.QueryParameters.Filter = $"startswith(displayName,'{argValue.Replace("'", "''")}')";
-                 //   requestConfiguration.Quer yParameters.Top = 100;
+
                 }, cancellationToken);
 
                 result = roles?.Value?.Select(r => r.DisplayName)
@@ -54,7 +54,143 @@ public class GraphCompletion : IAutoCompletion
                                         .Order()
                                         .ToList() ?? [];
                 break;
+            case "mail":
+                var messages = await client.Me.Messages.GetAsync(requestConfiguration =>
+                {
+                    requestConfiguration.QueryParameters.Top = 100;
+                    requestConfiguration.QueryParameters.Select = ["subject", "from"];
+                    if (!string.IsNullOrWhiteSpace(argValue))
+                    {
+                        // Search works across subject, body, from, etc.
+                        requestConfiguration.QueryParameters.Search = $"\"{argValue}\"";
+                    }
+                }, cancellationToken);
 
+                result = messages?.Value?
+                .Select(m =>
+                {
+                    var from = m.From?.EmailAddress;
+                    var sender = from == null ? null :
+                        string.IsNullOrWhiteSpace(from.Name)
+                            ? from.Address
+                            : $"{from.Name} <{from.Address}>";
+
+                    // Prefer subject if available, else sender
+                    return !string.IsNullOrWhiteSpace(m.Subject)
+                        ? $"{m.Subject} — {sender}"
+                        : sender;
+                })
+                        .OfType<string>()
+                        .Where(s => !string.IsNullOrWhiteSpace(s))
+                        .Distinct()
+                        .Take(100)
+                        .ToList() ?? [];
+                break;
+            case "calendarEventSeries":
+                var escapedSeries = argValue?.Replace("'", "''") ?? "";
+
+                var series = await client.Me.Events.GetAsync(rc =>
+                {
+                    rc.QueryParameters.Top = 100;
+                    rc.QueryParameters.Select = ["subject", "organizer", "start", "end", "location", "type"];
+                    rc.QueryParameters.Orderby = ["start/dateTime asc"];
+
+                    // Base filter: only recurring series masters
+                    var baseFilter = "type eq 'seriesMaster'";
+
+                    if (string.IsNullOrWhiteSpace(argValue))
+                    {
+                        // Upcoming series only
+                        var now = DateTimeOffset.UtcNow.ToString("o");
+                        rc.QueryParameters.Filter = $"{baseFilter} and start/dateTime ge '{now}'";
+                    }
+                    else
+                    {
+                        // Fast prefix-style filtering on common fields
+                        rc.QueryParameters.Filter =
+                            $"{baseFilter} and (" +
+                            $"startswith(subject,'{escapedSeries}') or " +
+                            $"startswith(organizer/emailAddress/name,'{escapedSeries}') or " +
+                            $"startswith(location/displayName,'{escapedSeries}'))";
+                    }
+                }, cancellationToken);
+
+                result = series?.Value?
+                    .Select(e =>
+                    {
+                        var subj = string.IsNullOrWhiteSpace(e.Subject) ? "(no subject)" : e.Subject;
+                        var start = e.Start?.DateTime;
+                        var tz = e.Start?.TimeZone;
+                        var when = !string.IsNullOrWhiteSpace(start) && !string.IsNullOrWhiteSpace(tz)
+                                    ? $"{start} {tz}"
+                                    : start ?? "";
+                        var org = e.Organizer?.EmailAddress;
+                        var organizer = org == null
+                            ? ""
+                            : (string.IsNullOrWhiteSpace(org.Name) ? org.Address : $"{org.Name} <{org.Address}>");
+                        var loc = e.Location?.DisplayName;
+
+                        // Tag as series for clarity
+                        var tag = "[series]";
+
+                        return string.Join(" — ", new[] { subj, when, organizer, loc, tag }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                    })
+                    .OfType<string>()
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Distinct()
+                    .Take(100)
+                    .ToList() ?? [];
+                break;
+
+            case "calendarEvent":
+                var escaped = argValue?.Replace("'", "''") ?? "";
+
+                var events = await client.Me.Events.GetAsync(rc =>
+                {
+                    rc.QueryParameters.Top = 100;
+                    rc.QueryParameters.Select = ["subject", "organizer", "start", "end", "location"];
+                    rc.QueryParameters.Orderby = ["start/dateTime asc"];
+
+                    if (string.IsNullOrWhiteSpace(argValue))
+                    {
+                        // Upcoming events only
+                        var now = DateTimeOffset.UtcNow.ToString("o");
+                        rc.QueryParameters.Filter = $"start/dateTime ge '{now}'";
+                    }
+                    else
+                    {
+                        // Lightweight filter across common fields
+                        rc.QueryParameters.Filter =
+                            $"startswith(subject,'{escaped}') or " +
+                            $"startswith(organizer/emailAddress/name,'{escaped}') or " +
+                            $"startswith(location/displayName,'{escaped}')";
+                    }
+                }, cancellationToken);
+
+                result = events?.Value?
+                    .Select(e =>
+                    {
+                        var subj = string.IsNullOrWhiteSpace(e.Subject) ? "(no subject)" : e.Subject;
+                        var start = e.Start?.DateTime;
+                        var tz = e.Start?.TimeZone;
+                        var when = !string.IsNullOrWhiteSpace(start) && !string.IsNullOrWhiteSpace(tz)
+                                    ? $"{start} {tz}"
+                                    : start ?? "";
+                        var org = e.Organizer?.EmailAddress;
+                        var organizer = org == null
+                            ? ""
+                            : (string.IsNullOrWhiteSpace(org.Name) ? org.Address : $"{org.Name} <{org.Address}>");
+                        var loc = e.Location?.DisplayName;
+
+                        // Nice, compact line for autocomplete
+                        return string.Join(" — ", new[] { subj, when, organizer, loc }.Where(s => !string.IsNullOrWhiteSpace(s)));
+                    })
+                    .OfType<string>()
+                    .Where(s => !string.IsNullOrWhiteSpace(s))
+                    .Distinct()
+                    .Take(100)
+                    .ToList() ?? [];
+                break;
 
             case "siteName":
                 var sites = await client.Sites.GetAsync(requestConfiguration =>

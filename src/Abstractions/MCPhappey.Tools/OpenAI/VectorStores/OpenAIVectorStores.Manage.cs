@@ -148,8 +148,7 @@ public static partial class OpenAIVectorStores
 
             var imageInput = new OpenAINewVectorStore
             {
-                Name = name,
-                WaitUntilCompleted = true,
+                Name = name
             };
 
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
@@ -167,9 +166,9 @@ public static partial class OpenAIVectorStores
             if (!string.IsNullOrEmpty(typed.Description))
                 options.Metadata.Add(VectorStoreExtensions.DESCRIPTION_KEY, typed.Description);
 
-            var item = await client.CreateVectorStoreAsync(typed.WaitUntilCompleted, options, cancellationToken);
+            var item = await client.CreateVectorStoreAsync(options, cancellationToken);
 
-            return item?.ToJsonContentBlock($"{VectorStoreExtensions.BASE_URL}/{item.VectorStoreId}").ToCallToolResult();
+            return item?.ToJsonContentBlock($"{VectorStoreExtensions.BASE_URL}/{item.Value.Id}").ToCallToolResult();
         }));
 
     [Description("Add a file to a vector store")]
@@ -198,8 +197,7 @@ public static partial class OpenAIVectorStores
                 fileIds.Add(fileItem.Value.Id);
             }
 
-            var item = client
-                .CreateBatchFileJobAsync(vectorStoreId, fileIds, waitUntilCompleted ?? true, cancellationToken);
+            var item = client.AddFileBatchToVectorStoreAsync(vectorStoreId, fileIds, cancellationToken);
 
             return item?.ToJsonContentBlock($"{VectorStoreExtensions.BASE_URL}/{vectorStoreId}/files").ToCallToolResult();
         }));
@@ -231,12 +229,6 @@ public static partial class OpenAIVectorStores
         [JsonPropertyName("description")]
         [Description("The vector description.")]
         public string? Description { get; set; }
-
-        [JsonPropertyName("waitUntilCompleted")]
-        [DefaultValue(true)]
-        [Required]
-        [Description("Wait until completed.")]
-        public bool WaitUntilCompleted { get; set; }
     }
 
     [Description("Please fill in the vector store details.")]

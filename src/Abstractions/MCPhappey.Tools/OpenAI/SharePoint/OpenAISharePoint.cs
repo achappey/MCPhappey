@@ -14,6 +14,7 @@ public static class OpenAISharePoint
     [Description("OpenAI SharePoint connector.")]
     [McpServerTool(Title = "OpenAI SharePoint connector", Name = "openai_sharepoint",
         Destructive = false,
+        OpenWorld = true,
         ReadOnly = true)]
     public static async Task<ContentBlock> OpenAI_SharePoint(
           [Description("Prompt to execute.")]
@@ -32,7 +33,7 @@ public static class OpenAISharePoint
                     {"openai", new {
                         reasoning = new
                             {
-                                effort = "medium"
+                                effort = "minimal"
                             },
                         mcp_list_tools = new[] { new { type = "mcp",
                             server_label = "sharepoint",

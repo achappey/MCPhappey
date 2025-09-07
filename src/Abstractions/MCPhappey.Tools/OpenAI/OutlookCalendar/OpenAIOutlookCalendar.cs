@@ -15,6 +15,7 @@ public static class OpenAIOutlookCalendar
     [Description("OpenAI Outlook Calendar connector.")]
     [McpServerTool(Title = "OpenAI Outlook Calendar connector", Name = "openai_outlook_calendar",
         Destructive = false,
+        OpenWorld = true,
         ReadOnly = true)]
     public static async Task<ContentBlock> OpenAI_OutlookCalendar(
           [Description("Prompt to execute.")] string prompt,
@@ -32,7 +33,7 @@ public static class OpenAIOutlookCalendar
                 {"openai", new {
                     reasoning = new
                             {
-                                effort = "medium"
+                               effort = "minimal"
                             },
 
                     mcp_list_tools = new[] {

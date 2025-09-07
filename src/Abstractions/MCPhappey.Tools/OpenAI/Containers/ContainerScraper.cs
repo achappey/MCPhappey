@@ -39,8 +39,7 @@ public class ContainerScraper : IContentScraper
             segments[^1] == "files")
         {
             containerId = segments[2];
-            var files = await client.GetContainerFilesAsync(containerId)
-                .ToAsyncEnumerable()
+            var files = await client.GetContainerFilesAsync(containerId, cancellationToken: cancellationToken)
                 .ToListAsync(cancellationToken);
 
             return files.Select(f => f.ToFileItem(url));

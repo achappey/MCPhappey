@@ -15,6 +15,7 @@ public static class OpenAIOutlookMail
     [Description("OpenAI Outlook Email connector.")]
     [McpServerTool(Title = "OpenAI Outlook Email connector", Name = "openai_outlook_email",
         Destructive = false,
+        OpenWorld = true,
         ReadOnly = true)]
     public static async Task<ContentBlock> OpenAI_OutlookEmail(
           [Description("Prompt to execute.")]
@@ -33,14 +34,14 @@ public static class OpenAIOutlookMail
                     {"openai", new {
                          reasoning = new
                             {
-                                effort = "medium"
+                                effort = "minimal"
                             },
                         mcp_list_tools = new[] { new { type = "mcp",
-                        server_label = "outlook_email",
-                        authorization = oboToken,
-                        connector_id = "connector_outlookemail",
-                        require_approval = "never",
-                        allowed_tools = value, } }
+                            server_label = "outlook_email",
+                            authorization = oboToken,
+                            connector_id = "connector_outlookemail",
+                            require_approval = "never",
+                            allowed_tools = value, } }
                      } },
                 }),
             Temperature = 1,
