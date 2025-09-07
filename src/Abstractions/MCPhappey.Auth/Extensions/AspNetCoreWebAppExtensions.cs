@@ -92,7 +92,7 @@ public static class AspNetCoreWebAppExtensions
 
 
 
-            if (matchedServer.IsAuthorized(context.Request.Headers.ToDictionary(k => k.Key, v => v.Value.ToString()), userPermissions))
+            if (principal is null && matchedServer.IsAuthorized(context.Request.Headers.ToDictionary(k => k.Key, v => v.Value.ToString()), userPermissions))
             {
                 await next();
                 return;
@@ -104,7 +104,7 @@ public static class AspNetCoreWebAppExtensions
                 return;
             }
 
-            if (!IsOwnerOrGroupAuthorized(matchedServer, principal))
+            if (matchedServer.SourceType == ServerSourceType.Dynamic && !IsOwnerOrGroupAuthorized(matchedServer, principal))
             {
                 context.Response.StatusCode = 403;
                 await context.Response.WriteAsync("Forbidden: user is not authorized for this server");
@@ -145,8 +145,8 @@ public static class AspNetCoreWebAppExtensions
 
     static bool IsOwnerOrGroupAuthorized(ServerConfig matchedServer, ClaimsPrincipal principal)
     {
-        var ownersValid = true;
-        var groupsValid = true;
+        var ownersValid = false;
+        var groupsValid = false;
 
         if (matchedServer.Server.Owners?.Any() == true)
         {
