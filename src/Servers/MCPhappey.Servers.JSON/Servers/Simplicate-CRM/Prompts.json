@@ -93,7 +93,7 @@
       "prompt": "Voor branche {brancheNaam}: welke drie bedrijven hebben de meeste actieve contactpersonen? Geef per bedrijf het aantal actieve contacten, en beschrijf kort wat deze bedrijven typeert volgens hun profiel.",
       "template": {
         "name": "crm-top-bedrijven-op-actieve-contacten",
-        "title": "bedrijven op actieve contactpersonen per branche",
+        "title": "Bedrijven op actieve contactpersonen per branche",
         "description": "Vindt de top 3 bedrijven per branche op basis van aantal actieve contactpersonen en beschrijft opvallende kenmerken.",
         "arguments": [
           {
@@ -117,6 +117,81 @@
             "required": true
           }
         ]
+      }
+    },
+    {
+      "prompt": "Geef alle bedrijven waarvoor ik de relatiemanager ben. Toon per bedrijf: naam, branche, status, datum van toevoegen en het aantal gekoppelde contactpersonen. Gebruik mijn huidige gebruikerscontext en haal alle resultaten op met interne paginering.",
+      "template": {
+        "name": "crm-mijn-bedrijven",
+        "title": "Bedrijven onder mijn relatiebeheer",
+        "description": "Lijst van alle bedrijven waarbij de huidige gebruiker als relatiemanager staat ingesteld.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Geef alle actieve personen waarvoor ik als relatiemanager of eigenaar ben ingesteld. Toon per contact: naam, functie, e-mail, gekoppeld bedrijf en status. Gebruik mijn huidige gebruikerscontext en haal alle resultaten op met interne paginering.",
+      "template": {
+        "name": "crm-mijn-personen",
+        "title": "Personen onder mijn relatiebeheer",
+        "description": "Alle actieve personen gekoppeld aan de huidige gebruiker als relatiemanager/eigenaar.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Geef alle bedrijven die gekoppeld zijn aan team {teamNaam}. Toon per bedrijf: naam, branche, status, datum van toevoegen en het aantal gekoppelde contactpersonen. Gebruik interne paginering totdat de lijst compleet is.",
+      "template": {
+        "name": "crm-bedrijven-per-team",
+        "title": "Bedrijven per team",
+        "description": "Lijst van alle bedrijven die zijn gekoppeld aan een specifiek team via de team-property.",
+        "arguments": [
+          {
+            "name": "teamNaam",
+            "description": "Naam van het team waarop je wilt filteren.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Geef alle actieve personen die gekoppeld zijn aan team {teamNaam}. Toon per contact: naam, functie, e-mail, gekoppeld bedrijf en status. Gebruik interne paginering totdat de lijst compleet is.",
+      "template": {
+        "name": "crm-personen-per-team",
+        "title": "Personen per team",
+        "description": "Alle actieve personen die via de team-property gekoppeld zijn aan een specifiek team.",
+        "arguments": [
+          {
+            "name": "teamNaam",
+            "description": "Naam van het team waarop je wilt filteren.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Maak een piechart van het aantal bedrijven per branche. Werkwijze: (1) haal eerst de volledige stamlijst ‘branches’ op (id + label); (2) negeer lege/onbekende/null-waarden; (3) voor elke geldige branche voer een telling uit met limit=1&metadata=count en een filter query die exact op die branche-id matcht; (4) combineer resultaten tot een dataset {label, count}; (5) visualiseer als een piechart met duidelijke kleurverschillen tussen de segmenten en zonder legend; (6) sorteer segmenten aflopend op count.",
+      "template": {
+        "name": "crm-chart-bedrijven-per-branche",
+        "title": "Chart: Bedrijven per branche",
+        "description": "Maakt een piechart van bedrijven per branche, met stamlijst en count-queries. Lege waarden worden genegeerd. Segmenten hebben duidelijke kleuren en geen legend.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Maak een piechart van het aantal bedrijven per relatiesoort. Werkwijze: (1) haal eerst de stamlijst ‘relatiesoorten’ op (id + label); (2) negeer lege/onbekende/null-waarden; (3) voor elke geldige relatiesoort doe een telling met limit=1&metadata=count en een filter query die exact op die relatiesoort-id matcht; (4) combineer resultaten tot een dataset {label, count}; (5) visualiseer als piechart met duidelijke kleurverschillen per segment en zonder legend; (6) sorteer segmenten aflopend op count.",
+      "template": {
+        "name": "crm-chart-bedrijven-per-relatiesoort",
+        "title": "Chart: Bedrijven per relatiesoort",
+        "description": "Maakt een piechart van bedrijven per relatiesoort, met stamlijst en count-queries. Lege waarden worden genegeerd. Segmenten hebben duidelijke kleuren en geen legend.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Geef een overzicht met kerncijfers uit het CRM. Gebruik uitsluitend count-requests (limit=1&metadata=count) met filters. Haal de volgende waarden op: totaal aantal bedrijven, totaal aantal personen, totaal aantal contactpersonen, en het gemiddelde aantal contactpersonen per bedrijf (berekend uit de counts).",
+      "template": {
+        "name": "crm-totaaloverzicht",
+        "title": "CRM totaaloverzicht",
+        "description": "Toont kerncijfers: totaal aantal bedrijven, personen, contactpersonen en gemiddeld aantal contactpersonen per bedrijf. Alles gebaseerd op count-requests met filters.",
+        "arguments": []
       }
     }
   ]

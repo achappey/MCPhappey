@@ -3,11 +3,15 @@
     "name": "Simplicate-HRM",
     "version": "1.0.0"
   },
+  "instructions": "There is NO need to include unused filter properties in resources. Resource templates are only supplied with all options to show all working options compact.",
   "headers": {
     "Authentication-Key": "Simplicate Api Key",
     "Authentication-Secret": "Simplicate Api Secret"
   },
-  "plugins": ["MCPhappey.Simplicate.HRM.SimplicateHRM, MCPhappey.Simplicate"],
+  "plugins": [
+    "MCPhappey.Simplicate.HRM.SimplicateHRM, MCPhappey.Simplicate",
+    "MCPhappey.Simplicate.SimplicateCurrentUser, MCPhappey.Simplicate"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   }

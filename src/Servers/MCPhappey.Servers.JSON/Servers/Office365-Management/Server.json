@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "Office365-Management",
+    "version": "1.0.0"
+  },
+  "obo": {
+    "manage.office.com": "https://manage.office.com/.default"
+  }
+}

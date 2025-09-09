@@ -55,27 +55,17 @@ public static partial class ModelContextEditor
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid response".ToErrorCallToolResponse();
 
-        var resource = await downloadService.ScrapeContentAsync(
-                serviceProvider,
-                requestContext.Server,
-                typed.Uri, cancellationToken);
+        var item = await serverRepository.AddServerResource(server.Id, typed.Uri,
+            typed.Name.Slugify().ToLowerInvariant(),
+            typed.Description,
+            typed.Title,
+            (float?)typed.Priority,
+            typed.AssistantAudience,
+            typed.UserAudience);
 
-        if (resource.Any())
-        {
-            var item = await serverRepository.AddServerResource(server.Id, typed.Uri,
-                typed.Name.Slugify().ToLowerInvariant(),
-                typed.Description,
-                typed.Title,
-                (float?)typed.Priority,
-                typed.AssistantAudience,
-                typed.UserAudience);
-
-            return item.ToResource()
-                   .ToJsonContentBlock($"mcp-editor://server/{serverName}/resources/{item.Name}")
-                   .ToCallToolResult();
-        }
-
-        return $"No resource found with URI {typed.Uri}".ToErrorCallToolResponse();
+        return item.ToResource()
+               .ToJsonContentBlock($"mcp-editor://server/{serverName}/resources/{item.Name}")
+               .ToCallToolResult();
     }
 
     [Description("Updates a resource of a MCP-server")]

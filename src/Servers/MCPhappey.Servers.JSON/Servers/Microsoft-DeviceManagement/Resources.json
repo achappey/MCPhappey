@@ -1,6 +1,18 @@
 {
   "resources": [
     {
+      "uri": "https://graph.microsoft.com/beta/devices?$top=100&$select=id,displayName,deviceId,operatingSystem,operatingSystemVersion,trustType,accountEnabled,approximateLastSignInDateTime",
+      "name": "all-devices",
+      "title": "All directory devices",
+      "description": "Retrieve the first 100 Entra ID devices with basic details like OS, trust type, enabled status and last sign-in.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
       "uri": "https://graph.microsoft.com/beta/deviceManagement/managedDevices?$top=100&$select=id,deviceName,userDisplayName,userPrincipalName,operatingSystem,osVersion,manufacturer,model,serialNumber,managementAgent,complianceState,lastSyncDateTime,enrolledDateTime,azureADDeviceId",
       "name": "managed-devices",
       "title": "All managed devices (top 100)",

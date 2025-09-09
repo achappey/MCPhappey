@@ -73,7 +73,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/deviceManagement/managedDevices?$filter=lastSyncDateTime lt {isoDateTime}&$top=100&$select=id,deviceName,userPrincipalName,lastSyncDateTime,operatingSystem,serialNumber,model,complianceState",
+      "uriTemplate": "https://graph.microsoft.com/beta/deviceManagement/managedDevices?$filter=lastSyncDateTime le {isoDateTime}&$top=100&$select=id,deviceName,userPrincipalName,lastSyncDateTime,operatingSystem,serialNumber,model,complianceState",
       "name": "stale-devices-since",
       "title": "Devices not synced since {isoDateTime}",
       "description": "Find stale devices that have not synced since an ISO 8601 datetime (e.g., 2025-08-01T00:00:00Z).",
@@ -101,6 +101,66 @@
       "name": "devices-by-management-agent",
       "title": "Devices by management agent",
       "description": "Segment devices by management agent (examples: microsoftSense, intuneClient, eas, mdm). Replace {agent}.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/devices?$filter=startswith(displayName,'{prefix}')&$top=100&$select=id,displayName,deviceId,operatingSystem,operatingSystemVersion,approximateLastSignInDateTime,accountEnabled",
+      "name": "devices-by-name-prefix",
+      "title": "Devices by name prefix",
+      "description": "Find directory devices where the displayName starts with a given prefix (e.g., 'LAP-').",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/devices/{deviceId}?$select=id,displayName,deviceId,operatingSystem,operatingSystemVersion,trustType,profileType,accountEnabled,approximateLastSignInDateTime,extensionAttributes",
+      "name": "device-details",
+      "title": "Device details by ID",
+      "description": "Retrieve Entra ID device object details by object ID or deviceId.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/devices?$filter=deviceId eq '{azureAdDeviceId}'&$select=id,displayName,deviceId,operatingSystem,operatingSystemVersion,trustType,accountEnabled",
+      "name": "device-by-azuread-id",
+      "title": "Find device by Azure AD deviceId",
+      "description": "Locate a device in Entra ID using its Azure AD deviceId (GUID).",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/devices?$filter=accountEnabled eq false&$top=100&$select=id,displayName,deviceId,operatingSystem,operatingSystemVersion,approximateLastSignInDateTime",
+      "name": "disabled-devices",
+      "title": "Disabled devices",
+      "description": "List all devices in Entra ID that are currently disabled.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uriTemplate": "https://graph.microsoft.com/beta/devices?$filter=approximateLastSignInDateTime le {isoDateTime}&$top=100&$select=id,displayName,deviceId,operatingSystem,operatingSystemVersion,approximateLastSignInDateTime",
+      "name": "stale-entra-devices",
+      "title": "Devices stale since {isoDateTime}",
+      "description": "Find Entra ID devices that haven’t signed in since the given ISO 8601 datetime.",
       "mimeType": "application/json",
       "annotations": {
         "audience": [

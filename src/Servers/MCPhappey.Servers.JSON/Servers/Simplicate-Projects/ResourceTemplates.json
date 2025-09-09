@@ -9,7 +9,7 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project?q[name]=*{nameFilter}*&q[teams.name]=*{teamName}*&q[my_organization_profile.organization.name]=*{myOrganizationName}*&q[employees.name]=*{employeeNameFilter}*&q[project_status.id]=projectstatus:{statusIdFilter}*&q[project_manager.name]=*{managerNameFilter}*&q[organization.name]=*{orgNameFilter}*&q[start_date][ge]={startDateGE}&q[end_date][le]={endDateLE}&offset={offset}&limit={limit}&sort={sortColumn}&select=project_manager.,project_status.,hours_rate_type,abnormal_address,abnormal_person_id,abnormal_organization_id,organization.,person.,separate_invoice_recipient.,contact.,my_organization_profile.,divergent_payment_term.,abnormal_contact_id,created_at,updated_at,simplicate_url,is_reverse_billing,is_invoice_approval,name,billable,can_register_mileage,project_number,note,start_date,end_date,invoice_reference,employees.,budget.",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/project?q[name]=*{nameFilter}*&q[teams.name]=*{teamName}*&q[my_organization_profile.organization.name]=*{myOrganizationName}*&q[employees.name]=*{employeeNameFilter}*&q[project_status.id]=projectstatus:{statusIdFilter}*&q[project_manager.name]=*{managerNameFilter}*&q[organization.name]=*{orgNameFilter}*&q[start_date][ge]={startDateGE}&q[end_date][le]={endDateLE}&offset={offset}&limit={limit}&sort={sortColumn}&select=project_manager.,project_status.,hours_rate_type,abnormal_address,abnormal_person_id,abnormal_organization_id,organization.,person.,separate_invoice_recipient.,contact.,my_organization_profile.,divergent_payment_term.,abnormal_contact_id,created_at,updated_at,simplicate_url,is_reverse_billing,is_invoice_approval,name,billable,can_register_mileage,project_number,note,start_date,end_date,invoice_reference,employees.,budget.&metadata=count",
       "name": "projecten-gefilterd",
       "title": "Projecten (gefilterd)",
       "description": "Haalt projecten op met filters voor naam, status, team, medewerker, projectleider, organisatie en datumbereiken.",
@@ -41,7 +41,7 @@
       "annotations": { "audience": ["assistant"] }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/document?q[project.id]=project:{projectIdFilter}*&q[title]=*{titleFilter}*&q[document_type.id]=documenttype:{docTypeIdFilter}*&offset={offset}&limit={limit}&sort={sortColumn}",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/projects/document?q[project.id]=project:{projectIdFilter}*&q[title]=*{titleFilter}*&q[document_type.id]=documenttype:{docTypeIdFilter}*&offset={offset}&limit={limit}&sort={sortColumn}&metadata=count",
       "name": "projectdocumenten-gefilterd",
       "title": "Projectdocumenten (gefilterd)",
       "description": "Haalt documenten op die aan projecten zijn gekoppeld, met filters voor project, titel en documenttype. Ondersteunt paginering en sortering.",

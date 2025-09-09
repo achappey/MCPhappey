@@ -13,7 +13,7 @@ public class GraphRetireDevice
 }
 
 
-[Description("Please fill in the retire device details.")]
+[Description("Please fill in the device name: {0}")]
 public class GraphDeleteDevice : IHasName
 {
     [JsonPropertyName("deivceName")]

@@ -13,7 +13,7 @@
       }
     },
     {
-      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee?q[name]=*{nameFilter}*&q[employment_status]={employmentStatus}&q[teams.name]=*{teamName}*&q[is_user]={isUser}&q[status.label]=*{statusLabelFilter}*&q[employeetype.id]=employeetype:{employeeTypeIdFilter}*&offset={offset}&limit={limit}&sort={sortColumn}&select=id,person.,status.,civil_status.,name,type.,bank_account,function,type.,employment_status,work_email,work_phone,work_mobile,avatar.,created_at,updated_at,is_user",
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/hrm/employee?q[name]=*{nameFilter}*&q[employment_status]={employmentStatus}&q[teams.name]=*{teamName}*&q[is_user]={isUser}&q[status.label]=*{statusLabelFilter}*&q[employeetype.id]=employeetype:{employeeTypeIdFilter}*&offset={offset}&limit={limit}&sort={sortColumn}&select=id,person.,status.,civil_status.,name,type.,bank_account,function,type.,employment_status,work_email,work_phone,work_mobile,avatar.,created_at,updated_at,is_user&metadata=count",
       "name": "employees",
       "title": "Medewerkers (gefilterd)",
       "description": "Haalt alle medewerkers op, met filters voor naam, gebruiker status (true | false), in dienst status ('active' | 'inactive'), team naam, statuslabel, team en medewerkerstype. Ondersteunt paginering en sortering.",
