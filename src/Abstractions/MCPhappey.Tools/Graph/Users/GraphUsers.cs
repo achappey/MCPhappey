@@ -9,6 +9,50 @@ namespace MCPhappey.Tools.Graph.Users;
 
 public static class GraphUsers
 {
+    [Description("Add a user to a group")]
+    [McpServerTool(Title = "Add user to group", OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphUsers_AddUserToGroup(
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("The user id.")] string userId,
+        [Description("The group id.")] string groupId,
+        CancellationToken cancellationToken = default
+    ) => await requestContext.WithExceptionCheck(async () =>
+    {
+        var mcpServer = requestContext.Server;
+
+        var (typed, notAccepted, _) = await mcpServer.TryElicit(
+            new GraphAddUserToGroup()
+            {
+                UserId = userId ?? string.Empty,
+                GroupId = groupId ?? string.Empty
+            },
+            cancellationToken
+        );
+
+        if (notAccepted != null) return notAccepted;
+        if (string.IsNullOrWhiteSpace(typed?.UserId))
+            throw new ArgumentException("User id is required.");
+        if (string.IsNullOrWhiteSpace(typed?.GroupId))
+            throw new ArgumentException("Group id is required.");
+
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        var refUser = new ReferenceCreate
+        {
+            OdataId = $"https://graph.microsoft.com/beta/users/{typed.UserId}"
+        };
+
+        await client.Groups[typed.GroupId].Members.Ref.PostAsync(refUser, cancellationToken: cancellationToken);
+
+        return new
+        {
+            Message = $"User {typed.UserId} added to group {typed.GroupId}.",
+            typed.UserId,
+            typed.GroupId
+        }.ToJsonContentBlock($"https://graph.microsoft.com/beta/groups/{typed.GroupId}/members")
+        .ToCallToolResult();
+    });
+
     [Description("Create a new user")]
     [McpServerTool(Title = "Create new user", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_CreateUser(

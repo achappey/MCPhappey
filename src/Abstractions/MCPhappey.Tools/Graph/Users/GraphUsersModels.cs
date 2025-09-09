@@ -70,6 +70,20 @@ public class GraphNewUser
     public string? BusinessPhone { get; set; }
 }
 
+[Description("Please provide the user and group to link.")]
+public class GraphAddUserToGroup
+{
+    [Required]
+    [JsonPropertyName("userId")]
+    [Description("The unique ID of the user to add.")]
+    public string UserId { get; set; } = default!;
+
+    [Required]
+    [JsonPropertyName("groupId")]
+    [Description("The unique ID of the group to which the user will be added.")]
+    public string GroupId { get; set; } = default!;
+}
+
 [Description("Please fill in the user details.")]
 public class GraphUpdateUser
 {
