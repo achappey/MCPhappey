@@ -171,7 +171,7 @@
       "prompt": "Maak een piechart van het aantal bedrijven per branche. Werkwijze: (1) haal eerst de volledige stamlijst ‘branches’ op (id + label); (2) negeer lege/onbekende/null-waarden; (3) voor elke geldige branche voer een telling uit met limit=1&metadata=count en een filter query die exact op die branche-id matcht; (4) combineer resultaten tot een dataset {label, count}; (5) visualiseer als een piechart met duidelijke kleurverschillen tussen de segmenten en zonder legend; (6) sorteer segmenten aflopend op count.",
       "template": {
         "name": "crm-chart-bedrijven-per-branche",
-        "title": "Chart: Bedrijven per branche",
+        "title": "Bedrijven per branche",
         "description": "Maakt een piechart van bedrijven per branche, met stamlijst en count-queries. Lege waarden worden genegeerd. Segmenten hebben duidelijke kleuren en geen legend.",
         "arguments": []
       }
@@ -180,7 +180,7 @@
       "prompt": "Maak een piechart van het aantal bedrijven per relatiesoort. Werkwijze: (1) haal eerst de stamlijst ‘relatiesoorten’ op (id + label); (2) negeer lege/onbekende/null-waarden; (3) voor elke geldige relatiesoort doe een telling met limit=1&metadata=count en een filter query die exact op die relatiesoort-id matcht; (4) combineer resultaten tot een dataset {label, count}; (5) visualiseer als piechart met duidelijke kleurverschillen per segment en zonder legend; (6) sorteer segmenten aflopend op count.",
       "template": {
         "name": "crm-chart-bedrijven-per-relatiesoort",
-        "title": "Chart: Bedrijven per relatiesoort",
+        "title": "Bedrijven per relatiesoort",
         "description": "Maakt een piechart van bedrijven per relatiesoort, met stamlijst en count-queries. Lege waarden worden genegeerd. Segmenten hebben duidelijke kleuren en geen legend.",
         "arguments": []
       }
