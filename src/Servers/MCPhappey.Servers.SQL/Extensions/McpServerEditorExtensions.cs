@@ -7,6 +7,9 @@ namespace MCPhappey.Servers.SQL.Extensions;
 
 public static class McpServerEditorExtensions
 {
+    public static double? GetPriority(this float? value, int digits)
+        => value.HasValue ? Math.Round(value.Value, digits) : null;
+
     public static async Task<IEnumerable<Models.Server>> GetStatistics(this IServiceProvider serviceProvider, CancellationToken ct = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();
@@ -29,6 +32,7 @@ public static class McpServerEditorExtensions
     public static async Task<IEnumerable<Models.Server>> GetServers(this IServiceProvider serviceProvider, CancellationToken ct = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();
+
         if (string.IsNullOrEmpty(tokenService?.Bearer))
         {
             throw new UnauthorizedAccessException();

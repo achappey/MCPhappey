@@ -6,12 +6,12 @@ using MCPhappey.Common.Models;
 
 namespace MCPhappey.Servers.SQL.Tools.Models;
 
-[Description("Please confirm the name of the resource you want to delete.")]
+[Description("Please confirm the name of the resource you want to delete: {0}")]
 public class ConfirmDeleteResource : IHasName
 {
     [JsonPropertyName("name")]
     [Required]
-    [Description("Enter the exact name of the resource to confirm deletion: {0}")]
+    [Description("Enter the exact name of the resource to confirm deletion.")]
     public string Name { get; set; } = default!;
 }
 

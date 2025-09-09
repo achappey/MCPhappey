@@ -44,7 +44,7 @@ public static class ElicitFormExtensions
         {
             // Only use string.Format if message is not null/empty
             if (!string.IsNullOrEmpty(message))
-                description = string.Format(descAttr.Description, message);
+                description = string.Format(descAttr.Description, $"<b>{message}</b>");
             else
                 description = descAttr.Description;
         }

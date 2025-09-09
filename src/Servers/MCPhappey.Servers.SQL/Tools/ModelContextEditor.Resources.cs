@@ -46,7 +46,7 @@ public static partial class ModelContextEditor
             Uri = uri,
             Name = name.Slugify().ToLowerInvariant(),
             Title = title,
-            Priority = priority,
+            Priority = priority.GetPriority(1),
             AssistantAudience = assistantAudience,
             UserAudience = userAudience,
             Description = description
@@ -75,7 +75,7 @@ public static partial class ModelContextEditor
                    .ToCallToolResult();
         }
 
-        return "No resource found".ToErrorCallToolResponse();
+        return $"No resource found with URI {typed.Uri}".ToErrorCallToolResponse();
     }
 
     [Description("Updates a resource of a MCP-server")]
@@ -109,7 +109,7 @@ public static partial class ModelContextEditor
             Uri = newUri ?? resource.Uri,
             AssistantAudience = assistantAudience ?? resource.AssistantAudience,
             UserAudience = userAudience ?? resource.UserAudience,
-            Priority = priority ?? resource.Priority,
+            Priority = (priority ?? resource.Priority).GetPriority(1),
         }, cancellationToken);
 
         if (notAccepted != null) return notAccepted;

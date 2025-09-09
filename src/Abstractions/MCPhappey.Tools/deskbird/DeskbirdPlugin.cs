@@ -5,6 +5,7 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -32,43 +33,32 @@ public static class DeskbirdPlugin
       {
           var settings = serviceProvider.GetService<DeskbirdSettings>();
 
-          // 1) Elicit typed input (prefill with provided argument)
-          var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
-              new CancelDeskbirdBooking { BookingId = bookingId },
-              cancellationToken);
+          return await requestContext.ConfirmAndDeleteAsync<ConfirmCancelBooking>(
+                    expectedName: bookingId,
+                    deleteAction: async _ =>
+                    {
 
-          if (notAccepted != null) return notAccepted;
+                        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+                        var http = httpClientFactory.CreateClient();
+                        http.BaseAddress = new Uri(BASE_URL.TrimEnd('/') + "/");
+                        http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings?.ApiKey);
+                        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-          if (typed is null || string.IsNullOrWhiteSpace(typed.BookingId))
-              return "BookingId is required.".ToErrorCallToolResponse();
+                        var req = new HttpRequestMessage(HttpMethod.Patch, $"bookings/{bookingId}/cancel");
+                        using var res = await http.SendAsync(req, cancellationToken);
 
-          // Optional UUID sanity check (Deskbird uses UUIDs)
-          if (!Guid.TryParse(typed.BookingId, out _))
-              return "BookingId must be a valid UUID.".ToErrorCallToolResponse();
+                        if (!res.IsSuccessStatusCode)
+                        {
+                            var body = await res.Content.ReadAsStringAsync(cancellationToken);
 
-          // 2) Build HTTP client
-          var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-          var http = httpClientFactory.CreateClient();
-          http.BaseAddress = new Uri(BASE_URL.TrimEnd('/') + "/");
-          http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings?.ApiKey);
-          http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                            throw new Exception($"Deskbird cancel error {(int)res.StatusCode} {res.ReasonPhrase}: {body}");
+                        }
 
-          // 3) PATCH /bookings/{bookingId}/cancel  (no body)
-          var req = new HttpRequestMessage(HttpMethod.Patch, $"bookings/{typed.BookingId}/cancel");
-          using var res = await http.SendAsync(req, cancellationToken);
-
-          if (!res.IsSuccessStatusCode)
-          {
-              var body = await res.Content.ReadAsStringAsync(cancellationToken);
-              return $"Deskbird cancel error {(int)res.StatusCode} {res.ReasonPhrase}: {body}".ToErrorCallToolResponse();
-          }
-
-          // 4) Return a tiny success payload as a content block
-          var success = new { bookingId = typed.BookingId, cancelled = true };
-          return success.ToJsonContentBlock($"{http.BaseAddress}bookings/{typed.BookingId}/cancel").ToCallToolResult();
+                    },
+                    successText: $"Booking {bookingId} has been cancelled.",
+                    ct: cancellationToken);
       });
 
-    // Typed Elicit DTO
     [Description("Please provide the Deskbird booking ID to cancel.")]
     public class CancelDeskbirdBooking
     {
@@ -189,4 +179,14 @@ public static class DeskbirdPlugin
 public class DeskbirdSettings
 {
     public string ApiKey { get; set; } = default!;
+}
+
+
+[Description("Please confirm the id of the booking you want to cancel.")]
+public class ConfirmCancelBooking : IHasName
+{
+    [JsonPropertyName("name")]
+    [Required]
+    [Description("Enter the exact id of the booking to confirm cancellation: {0}")]
+    public string Name { get; set; } = default!;
 }

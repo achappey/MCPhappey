@@ -1,7 +1,7 @@
 {
   "prompts": [
     {
-      "prompt": "Test all available tools, resources, and resource templates from the current MCP server context. For each one, first try to discover all required parameters and constraints using context, related endpoints, or available metadata—ask me for missing information only if it cannot be found automatically. Attempt to execute or read each item with valid values. Mark each test result: use ✅ for success and ❌ for any failures or issues. For each, provide only a short summary with the status, error message (if any), and key insight—never include full raw data or all response content. At the end, provide a concise report summarizing the overall test status, major errors, and suggested next actions.",
+      "prompt": "Test all available tools, resources, and resource templates from the current MCP server context, except the ModelContext-Utils MCP. Only test other MCP servers. If no other MCP servers are connected, inform the user and ask to connect the MCP they would like to test. For each one, first try to discover all required parameters and constraints using context, related endpoints, or available metadata—ask me for missing information only if it cannot be found automatically. Attempt to execute or read each item with valid values. Mark each test result: use ✅ for success and ❌ for any failures or issues. For each, provide only a short summary with the status, error message (if any), and key insight—never include full raw data or all response content. At the end, provide a concise report summarizing the overall test status, major errors, and suggested next actions.",
       "template": {
         "name": "full-mcp-context-test",
         "title": "Full MCP context test",

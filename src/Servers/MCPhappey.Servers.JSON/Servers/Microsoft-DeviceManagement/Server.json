@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "Microsoft-DeviceManagement",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.Graph.Devices.GraphDevices, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/DeviceManagementServiceConfig.ReadWrite.All https://graph.microsoft.com/DeviceManagementManagedDevices.ReadWrite.All https://graph.microsoft.com/DeviceManagementConfiguration.ReadWrite.All https://graph.microsoft.com/DeviceManagementManagedDevices.PrivilegedOperations.All"
+  }
+}

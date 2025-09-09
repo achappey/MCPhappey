@@ -109,6 +109,18 @@
       }
     },
     {
+      "uri": "https://graph.microsoft.com/beta/security/auditLog/queries?$top=50&$select=id,displayName,filter,status,createdDateTime,lastModifiedDateTime",
+      "name": "security-auditlog-queries",
+      "title": "Audit log queries",
+      "description": "Retrieve audit log queries from Microsoft Graph Security API. Supports filters and pagination.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
       "uri": "https://graph.microsoft.com/beta/identityProtection/riskyUsers?$top=50&$select=id,userPrincipalName,riskLevel,riskState,riskLastUpdatedDateTime",
       "name": "identityprotection-risky-users",
       "title": "Risky users",
