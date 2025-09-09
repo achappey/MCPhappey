@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
+using MCPhappey.Common.Models;
 using Microsoft.Graph.Beta.Models;
 
 namespace MCPhappey.Tools.Graph.Users;
@@ -109,4 +110,14 @@ public class GraphUpdateUser
     [Description("The users's business phone number.")]
     public string? BusinessPhone { get; set; }
 
+}
+
+
+
+[Description("Please fill in the user name: {0}")]
+public class GraphDeleteUser : IHasName
+{
+    [JsonPropertyName("name")]
+    [Description("Name of the user.")]
+    public string Name { get; set; } = default!;
 }

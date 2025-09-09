@@ -16,7 +16,7 @@ public class GraphRetireDevice
 [Description("Please fill in the device name: {0}")]
 public class GraphDeleteDevice : IHasName
 {
-    [JsonPropertyName("deivceName")]
+    [JsonPropertyName("name")]
     [Description("Name of the device.")]
     public string Name { get; set; } = default!;
 }

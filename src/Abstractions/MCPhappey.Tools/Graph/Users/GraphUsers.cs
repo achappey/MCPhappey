@@ -26,7 +26,7 @@ public static class GraphUsers
       [Description("The users's compay name.")] string? companyName = null,
       [Description("Force password change.")] bool? forceChangePasswordNextSignIn = null,
       [Description("The users's password.")] string? password = null,
-      CancellationToken cancellationToken = default)
+      CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var mcpServer = requestContext.Server;
 
@@ -74,7 +74,7 @@ public static class GraphUsers
         var newUser = await client.Users.PostAsync(user, cancellationToken: cancellationToken);
 
         return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser?.Id}").ToCallToolResult();
-    }
+    });
 
     [Description("Update a Microsoft 365 user")]
     [McpServerTool(Title = "Update a user",
@@ -91,7 +91,7 @@ public static class GraphUsers
         [Description("The users's mobile phone.")] string? mobilePhone = null,
         [Description("The users's business phone.")] string? businessPhone = null,
         [Description("Account enabled.")] bool? accountEnabled = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var mcpServer = requestContext.Server;
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
@@ -130,5 +130,43 @@ public static class GraphUsers
 
         return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{patchedUser?.Id}")
              .ToCallToolResult();
-    }
+    });
+
+    [Description("Delete an user.")]
+    [McpServerTool(Title = "Delete user", OpenWorld = false, Destructive = true, ReadOnly = false)]
+    public static async Task<CallToolResult?> GraphUsers_DeleteUser(
+    [Description("User id.")]
+        string? userId,
+    IServiceProvider serviceProvider,
+    RequestContext<CallToolRequestParams> requestContext,
+    CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+    {
+        if (string.IsNullOrWhiteSpace(userId))
+            throw new ArgumentException("Provide either entraDeviceId or managedDeviceId.");
+
+        var mcpServer = requestContext.Server;
+        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
+
+        // Fetch Entra device display name for human confirmation
+        var device = await client.Users[userId!]
+            .GetAsync(rq =>
+            {
+                rq.QueryParameters.Select = ["id", "displayName"];
+            }, cancellationToken);
+
+        if (device is null)
+            throw new InvalidOperationException($"User '{userId}' not found.");
+
+        var display = string.IsNullOrWhiteSpace(device.DisplayName) ? device.Id : device.DisplayName;
+
+        return await requestContext.ConfirmAndDeleteAsync<GraphDeleteUser>(
+            expectedName: display!,
+            deleteAction: async _ =>
+            {
+                // DELETE /devices/{id}
+                await client.Users[device!.Id!].DeleteAsync(cancellationToken: cancellationToken);
+            },
+            successText: $"User '{display}' ({device.Id}) deleted.",
+            ct: cancellationToken);
+    });
 }
