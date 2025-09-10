@@ -101,21 +101,6 @@
       }
     },
     {
-      "prompt": "Vergelijk voor bedrijf {naamBedrijf} de vijf laatst toegevoegde contactpersonen met de vijf oudste contactpersonen. Wat valt op in functietitel, afdeling of e-maildomein? Benoem opvallende verschillen of trends.",
-      "template": {
-        "name": "crm-vergelijk-contactpersoon-groepen",
-        "title": "Vergelijk nieuwste en oudste contactpersonen bedrijf",
-        "description": "Vergelijkt de nieuwste en oudste contactpersonen binnen een bedrijf om trends te signaleren.",
-        "arguments": [
-          {
-            "name": "naamBedrijf",
-            "description": "Naam van het bedrijf die je wilt analyseren.",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
       "prompt": "Geef alle bedrijven waarvoor ik de relatiemanager ben. Toon per bedrijf: naam, branche, status, datum van toevoegen en het aantal gekoppelde contactpersonen. Gebruik mijn huidige gebruikerscontext en haal alle resultaten op met interne paginering.",
       "template": {
         "name": "crm-mijn-bedrijven",
@@ -129,7 +114,7 @@
       "template": {
         "name": "crm-mijn-personen",
         "title": "Personen onder mijn relatiebeheer",
-        "description": "Alle actieve personen gekoppeld aan de huidige gebruiker als relatiemanager/eigenaar.",
+        "description": "Alle actieve personen gekoppeld aan de huidige gebruiker als relatiebeheerder.",
         "arguments": []
       }
     },
@@ -173,7 +158,23 @@
           {
             "name": "medewerkerNaam",
             "title": "Relatiebeheerder",
-            "description": "Naam van de relatiebeheerder zoals vastgelegd op het veld ‘bedrijf.relatiebeheerder’. Matching mag case-insensitive zijn.",
+            "description": "Naam van de relatiebeheerder.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Geef een overzicht van alle bedrijven van team {teamNaam}. Werkwijze: (1) filter bedrijven op team (case-insensitive match op {teamNaam}); (2) gebruik de velden bedrijfsnaam, branche en relatiebeheerder; (3) groepeer resultaten per relatiebeheerder en tel het aantal bedrijven; (4) maak daarna ook een verdeling van de branches per relatiebeheerder.\n\nOutput:\n- Korte tekst: totaal aantal bedrijven, top 3 relatiebeheerders (met aantal bedrijven en belangrijkste branches).\n- Grafiek 1: staafdiagram met het aantal bedrijven per relatiebeheerder (sorteer aflopend).\n- Grafiek 2: donut/piechart met de totale verdeling van branches in het team.\n- Sluit af met 2–3 bullets ‘Key callouts’ (bijv. wie het grootste portfolio heeft, opvallende branch-concentratie, of ontbrekende branches).\n\nToon geen volledige lijst met alle bedrijven, alleen de samenvatting + de grafieken.",
+      "template": {
+        "name": "crm-team-analyse",
+        "title": "Relatiebeheerders en branches per team",
+        "description": "Toont een kort overzicht van bedrijven in één team met tekstuele samenvatting en twee duidelijke grafieken (bedrijven per relatiebeheerder en totale branchmix).",
+        "arguments": [
+          {
+            "name": "teamNaam",
+            "title": "Teamnaam",
+            "description": "Naam van het team.",
             "required": true
           }
         ]
@@ -189,7 +190,7 @@
           {
             "name": "medewerkerNaam",
             "title": "Relatiebeheerder",
-            "description": "Exacte naam van de relatiebeheerder zoals vastgelegd op het veld ‘bedrijf.relatiebeheerder’. Matching mag case-insensitive zijn.",
+            "description": "Naam van de relatiebeheerder.",
             "required": true
           }
         ]

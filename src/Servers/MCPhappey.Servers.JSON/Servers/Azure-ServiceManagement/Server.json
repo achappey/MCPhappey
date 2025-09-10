@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "Azure-ServiceManagement",
+    "version": "1.0.0"
+  },
+  "obo": {
+    "management.azure.com": "https://management.azure.com/.default"
+  }
+}
