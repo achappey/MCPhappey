@@ -116,7 +116,7 @@ public static class ChatApp
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]
     [McpServerTool(Title = "Generate welcome message",
         ReadOnly = true)]
-    public static async Task<ContentBlock> ChatApp_GenerateWelcomeMessage(
+    public static async Task<ContentBlock?> ChatApp_GenerateWelcomeMessage(
         [Description("Language of the requested welcome message")] string language,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -139,19 +139,35 @@ public static class ChatApp
             reasoning = new { effort = "minimal" },
         };
 
-        var result = await samplingService.GetPromptSample(
-            serviceProvider,
-            mcpServer,
-            "welcome-message",
-            arguments: new Dictionary<string, JsonElement>() {
-                { "language", JsonSerializer.SerializeToElement(language) },
-                { "currentDateTime", JsonSerializer.SerializeToElement(currentDateTime ?? DateTime.UtcNow.ToString()) }
-            },
-            modelHint: modelName,
-            metadata: new Dictionary<string, object>() { { "openai", options } },
-            cancellationToken: cancellationToken);
+        const int MaxLength = 60;
 
-        return result.Content;
+        var args = new Dictionary<string, JsonElement>
+        {
+            { "language", JsonSerializer.SerializeToElement(language) },
+            { "currentDateTime", JsonSerializer.SerializeToElement(currentDateTime ?? DateTime.UtcNow.ToString()) }
+        };
+
+        var meta = new Dictionary<string, object> { { "openai", options } };
+
+        async Task<ContentBlock?> SampleAsync() =>
+            (await samplingService.GetPromptSample(
+                serviceProvider,
+                mcpServer,
+                "welcome-message",
+                arguments: args,
+                modelHint: modelName,
+                metadata: meta,
+                cancellationToken: cancellationToken
+            ))?.Content;
+
+        var content = await SampleAsync();
+        if (content is TextContentBlock textContentBlock && textContentBlock.Text.Length > MaxLength)
+        {
+            // Eén retry; tweede resultaat niet opnieuw checken
+            content = await SampleAsync();
+        }
+
+        return content;
     }
 
     [Description("Explain a tool call to an end user in simple words")]

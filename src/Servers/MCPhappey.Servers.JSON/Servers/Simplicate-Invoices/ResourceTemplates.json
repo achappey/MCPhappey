@@ -20,6 +20,16 @@
         "audience": ["assistant"]
       }
     },
+ {
+      "uriTemplate": "https://{organization}.simplicate.app/api/v2/invoices/invoice?q[total_excluding_vat][le]=0&limit={limit}&offset={offset}&sort={sortColumn}&select=payment_term.,invoice_lines.,organization.,person.,my_organization_profile.,subscription_cycle.,project.,projects.,reminder.,invoice_number,status,total_excluding_vat,total_vat,total_including_vat,total_outstanding,sending_method,created_at,updated_at,simplicate_url,composition_type,date,subject,reference,comments&metadata=count",
+      "name": "credit-facturen",
+      "title": "Credit facturen",
+      "description": "Haal credit facturen op. Combineer eventueel met andere filters uit facturen-alle-filters indien nodig.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": ["assistant"]
+      }
+    },    
     {
       "uriTemplate": "https://{organization}.simplicate.app/api/v2/invoices/payment?q[invoice_id]=invoice:{invoiceId}&q[date]={paymentDate}",
       "name": "betalingen-per-factuur",

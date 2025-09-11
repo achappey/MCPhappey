@@ -1,6 +1,42 @@
 {
   "prompts": [
     {
+      "prompt": "Geef mij een overzicht van mijn eigen resterende verlofsaldo per verloftype. Laat per type het resterende saldo zien en markeer indien het minder dan 2 dagen betreft.",
+      "template": {
+        "name": "mijn-verlofsaldo-overzicht",
+        "title": "Mijn verlofsaldo",
+        "description": "Toont het actuele resterende verlofsaldo van de ingelogde medewerker per type, met waarschuwing bij laag saldo.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Welke geplande verlofdagen heb ik dit jaar nog staan? Toon datum, type verlof en status (goedgekeurd/in behandeling).",
+      "template": {
+        "name": "mijn-geplande-verlofdagen",
+        "title": "Mijn geplande verlofdagen",
+        "description": "Geeft een overzicht van de nog komende goedgekeurde of aangevraagde verlofdagen van de ingelogde medewerker.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Laat mijn actuele contractgegevens zien: type contract, begindatum, einddatum en het aantal contracturen per week.",
+      "template": {
+        "name": "mijn-contractgegevens",
+        "title": "Mijn contractgegevens",
+        "description": "Toont de belangrijkste contractgegevens van de ingelogde medewerker.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Welke HRM-documenten zijn er het meest recent aan mijn dossier toegevoegd? Noem type, titel en aanmaakdatum.",
+      "template": {
+        "name": "mijn-meest-recente-documenten",
+        "title": "Mijn meest recente documenten",
+        "description": "Geeft de meest recente HRM-documenten van de ingelogde medewerker.",
+        "arguments": []
+      }
+    },
+    {
       "prompt": "Zoek het vakantie verlof totaal voor team {teamNaam} (leaveType: 'Vakantie verlof'). Presenteer de lijst met medewerkers, de naam met resterend aantal uren dit jaar, in de vorm van een informele e-mail die we kunnen sturen aan de HR-verantwoordelijke van {teamNaam}. Geef de mail in html opmaak en het email onderwerp als losse tekst, geen andere teksten in je antwoord. Gebruik geen borders in de tabel.",
       "template": {
         "name": "hrm-resterend-verlofsaldo-team",

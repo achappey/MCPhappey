@@ -98,7 +98,7 @@
         "arguments": [
           {
             "name": "medewerkerNamen",
-            "description": "Lijst met namen van de medewerkers, bijvoorbeeld ['Kelvin', 'Arthur'].",
+            "description": "Lijst met namen van de medewerkers, bijvoorbeeld ['Henk', 'Loes'].",
             "required": true
           }
         ]

@@ -1,6 +1,54 @@
 {
   "prompts": [
     {
+      "prompt": "Maak een performance-overzicht voor salesverantwoordelijke {medewerkerNaam}. Gebruik alle sales waarbij deze persoon als verantwoordelijke staat ingesteld. Bereken: totaal aantal sales, % geaccepteerd (status = 'Geaccepteerd'), % verloren (status = 'Verloren'), gemiddelde waarde van geaccepteerde sales en een verdeling van de verloren-redenen. Presenteer dit in een tabel én genereer twee grafieken: (1) staafdiagram met aantallen en percentages voor deze medewerker, (2) donutgrafiek met verdeling van verloren-redenen voor deze medewerker.",
+      "template": {
+        "name": "sales-performance-medewerker",
+        "title": "Salesperformance medewerker",
+        "description": "Toont de complete salesperformance van één medewerker, inclusief percentages en redenverdeling, met grafieken.",
+        "arguments": [
+          {
+            "name": "medewerkerNaam",
+            "description": "Naam van de medewerker waarvoor je de salesperformance wilt tonen.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Toon alle openstaande sales waarvoor de huidige gebruiker als verantwoordelijke staat ingesteld. Geef per sales: naam, klant, waarde, fase en verwachte sluitingsdatum. Sorteer op verwachte sluitingsdatum oplopend.",
+      "template": {
+        "name": "sales-open-huidige-user",
+        "title": "Mijn openstaande sales",
+        "description": "Geeft alle open sales terug waar de huidige gebruiker verantwoordelijke voor is.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Toon alle recent aangemaakte offertes van de afgelopen 7 dagen. Geef per sale/offerte: naam, klant, verantwoordelijke, status, aangemaakt-op datum en bedrag. Sorteer op aangemaakt-op datum aflopend.",
+      "template": {
+        "name": "sales-recent-aangemaakte-offertes",
+        "title": "Recent aangemaakte offertes",
+        "description": "Geeft een overzicht van recent aangemaakte offertes (sales) in een opgegeven periode.",
+        "arguments": []
+      }
+    },
+    {
+      "prompt": "Toon alle openstaande sales van het team {teamNaam}. Geef per sales: naam, klant, waarde, fase en verwachte sluitingsdatum. Sorteer op verwachte sluitingsdatum oplopend.",
+      "template": {
+        "name": "sales-openstaande-sales-team",
+        "title": "Openstaande sales per team",
+        "description": "Geeft alle openstaande sales terug waar een opgegeven team verantwoordelijk voor is.",
+        "arguments": [
+          {
+            "name": "teamNaam",
+            "description": "Naam van het team waarvan je de openstaande sales wilt zien.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "Analyseer de meegeleverde lijst met sales op reden {salesReden}. Geef per reden van (niet) geaccepteerde sales een overzicht van het aantal sales, het totaal verwachte omzetbedrag en het aantal unieke verantwoordelijke medewerkers. Presenteer het resultaat als een tabel met de kolommen: Reden, Aantal Sales, Totale Verwachte Omzet en Aantal Medewerkers.",
       "template": {
         "name": "sales-overzicht-per-reden",

@@ -17,7 +17,7 @@ public static partial class SimplicateInvoices
         ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns, per own organization profile, a grouped summary of outstanding debtors: for each customer, shows the total outstanding amount, number of open invoices, and the average number of days invoices have been open (as of today). Perfect for actionable debtor KPI dashboards without hardcoded periods.")]
     public static async Task<Dictionary<string, List<SimplicateOpenInvoiceWithDaysOpen>>?>
-        SimplicateInvoices_GetOpenInvoicesWithDaysOpenByMyOrganization(
+        SimplicateInvoices_GetWithDaysOpenByMyOrganization(
             IServiceProvider serviceProvider,
             RequestContext<CallToolRequestParams> requestContext,
             [Description("Optional organization name to filter on")] string? organizationName = null,
@@ -73,7 +73,7 @@ public static partial class SimplicateInvoices
         ReadOnly = true, UseStructuredContent = true)]
     [Description("Returns, per project manager, a list of invoices with invoice number and amount. Ideal for project control and cashflow management.")]
     public static async Task<Dictionary<string, List<SimplicateInvoice>>?>
-        SimplicateInvoices_GetExpiredInvoicesByProjectManager(
+        SimplicateInvoices_GetExpiredByProjectManager(
             IServiceProvider serviceProvider,
             RequestContext<CallToolRequestParams> requestContext,
             [Description("Optional invoice status to filter on")] InvoiceStatusLabel? invoiceStatus = null,
@@ -117,7 +117,7 @@ public static partial class SimplicateInvoices
     [McpServerTool(OpenWorld = false, ReadOnly = true, Destructive = false,
         UseStructuredContent = true)]
     [Description("Get total invoices grouped by my organization profile, optionally filtered by date range and organization.")]
-    public static async Task<Dictionary<string, SimplicateInvoiceTotals>?> SimplicateInvoices_GetInvoiceTotalsByMyOrganization(
+    public static async Task<Dictionary<string, SimplicateInvoiceTotals>?> SimplicateInvoices_GetTotalsByMyOrganization(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         string? fromDate = null,
