@@ -1,6 +1,15 @@
 {
   "prompts": [
     {
+      "prompt": "Toon alle actieve projecten waarbij de huidige medewerker betrokken is. Geef per project de naam, de status, de projectmanager en de rol van de medewerker.",
+      "template": {
+        "name": "actieve-projecten-huidige-medewerker",
+        "title": "Actieve projecten huidige medewerker",
+        "description": "Toont alle actieve projecten waaraan de huidige medewerker deelneemt, inclusief kerngegevens.",
+        "arguments": []
+      }
+    },
+    {
       "prompt": "Welke actieve projecten zijn over hun einddatum heen? Toon projectnaam, projectmanager, status en einddatum. Sorteer op einddatum oplopend (oudste overschrijding eerst).",
       "template": {
         "name": "projecten-over-deadline",
@@ -37,15 +46,6 @@
       }
     },
     {
-      "prompt": "Welke actieve projecten hebben geen totaalbudget ingevuld? Toon projectnaam, status en projectmanager.",
-      "template": {
-        "name": "projecten-zonder-budget",
-        "title": "Projecten zonder budget",
-        "description": "Hygiënelijst van actieve projecten zonder ingevuld totaalbudget.",
-        "arguments": []
-      }
-    },
-    {
       "prompt": "Welke actieve projecten lopen het langst? Toon projectnaam, startdatum, status en projectmanager. Sorteer op startdatum oplopend (oudst eerst).",
       "template": {
         "name": "langst-lopende-projecten-actief",
@@ -64,14 +64,14 @@
       }
     },
     {
-      "prompt": "Voor projectleider {projectleiderNaam}: geef alle actieve projecten met einddatum en status. Sorteer op einddatum oplopend.",
+      "prompt": "Voor projectleider {medewerkerNaam}: geef alle actieve projecten met einddatum en status. Sorteer op einddatum oplopend.",
       "template": {
         "name": "actieve-projecten-projectleider",
         "title": "Actieve projecten (projectleider)",
         "description": "Focuslijst voor één projectleider.",
         "arguments": [
           {
-            "name": "projectleiderNaam",
+            "name": "medewerkerNaam",
             "description": "Naam van de projectleider.",
             "required": true
           }
@@ -79,15 +79,15 @@
       }
     },
     {
-      "prompt": "Voor bedrijf {naamBedrijf}: geef alle actieve projecten met projectmanager, status en einddatum. Sorteer op einddatum aflopend.",
+      "prompt": "Voor team {teamNaam}: geef alle actieve projecten met projectmanager, status en einddatum. Sorteer op einddatum aflopend.",
       "template": {
-        "name": "actieve-projecten-bedrijf",
-        "title": "Actieve projecten (bedrijf)",
-        "description": "Alle lopende projecten voor één klant/bedrijf.",
+        "name": "actieve-projecten-team",
+        "title": "Actieve projecten (team)",
+        "description": "Alle lopende projecten voor één team.",
         "arguments": [
           {
-            "name": "naamBedrijf",
-            "description": "Naam van het bedrijf/klant.",
+            "name": "teamNaam",
+            "description": "Naam van het team.",
             "required": true
           }
         ]
@@ -136,30 +136,15 @@
       }
     },
     {
-      "prompt": "Welke drie projecten van bedrijf {naamBedrijf} zijn het laatst gestart? Geef per project de naam, startdatum, status en projectmanager.",
+      "prompt": "Geef een overzicht van alle projecten die we voor bedrijf {naamBedrijf} hebben uitgevoerd? Geef per project de naam, startdatum, status en projectmanager.",
       "template": {
-        "name": "recent-gestarte-projecten-bedrijf",
-        "title": "Recent gestarte projecten (bedrijf)",
-        "description": "Toont een overzicht van de meest recent gestarte projecten van een bedrijf.",
+        "name": "alle-projecten-bedrijf",
+        "title": "Alle projecten (bedrijf)",
+        "description": "Toont een overzicht van de alle projecten van een bedrijf.",
         "arguments": [
           {
             "name": "naamBedrijf",
             "description": "Naam van her bedrijf.",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Voor project {projectNaam}: welke documenttypes zijn aan het project gekoppeld, en zijn er recente documenten toegevoegd (binnen de laatste maand)? Geef het antwoord met type, titel en datum van toevoegen.",
-      "template": {
-        "name": "project-documenttypes-recent",
-        "title": "Documenttypes en recente documenten",
-        "description": "Overzicht van documenttypes en recente documenten binnen een project.",
-        "arguments": [
-          {
-            "name": "projectNaam",
-            "description": "Naam van het project.",
             "required": true
           }
         ]
@@ -175,21 +160,6 @@
           {
             "name": "teamNaam",
             "description": "Naam van het team.",
-            "required": true
-          }
-        ]
-      }
-    },
-    {
-      "prompt": "Geef voor project {projectNaam} een overzicht van alle actieve projectdocumenten, gegroepeerd op documenttype. Benoem het aantal per type en noem van elk type het meest recent toegevoegde document.",
-      "template": {
-        "name": "project-documenten-overzicht",
-        "title": "Overzicht projectdocumenten",
-        "description": "Toont per documenttype het aantal documenten en de meest recente titel binnen een project.",
-        "arguments": [
-          {
-            "name": "projectNaam",
-            "description": "Naam van het project.",
             "required": true
           }
         ]

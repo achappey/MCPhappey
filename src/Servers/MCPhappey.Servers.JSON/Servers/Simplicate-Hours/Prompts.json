@@ -1,6 +1,51 @@
 {
   "prompts": [
     {
+      "prompt": "Maak een staafdiagram dat laat zien hoeveel uren medewerker {medewerkerNaam} per week heeft geschreven in de afgelopen maand. Toon per week het totaal aantal uren als een staaf. Zet onder de grafiek een overzicht met de weeknummers en het totaal aantal uren.",
+      "template": {
+        "name": "uren-per-week-medewerker-staafdiagram",
+        "title": "Uren per week (staafdiagram)",
+        "description": "Toont per week het totaal aantal geschreven uren van één medewerker in de afgelopen maand als staafdiagram.",
+        "arguments": [
+          {
+            "name": "medewerkerNaam",
+            "description": "Naam van de medewerker.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Maak een cirkeldiagram dat laat zien hoe de uren van medewerker {medewerkerNaam} in de afgelopen maand verdeeld zijn over de verschillende urentypes (bijvoorbeeld werk, vakantie, ziekte). Toon per urentype het totaal aantal uren als een sector. Zet onder de grafiek ook een overzicht met per urentype het totaal aantal uren.",
+      "template": {
+        "name": "uren-verdeling-urentypes-medewerker-maand-cirkeldiagram",
+        "title": "Urenverdeling per urentype (cirkeldiagram)",
+        "description": "Toont voor één medewerker hoe de geschreven uren van de afgelopen maand verdeeld zijn over de verschillende urentypes, als cirkeldiagram.",
+        "arguments": [
+          {
+            "name": "medewerkerNaam",
+            "description": "Naam van de medewerker.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
+      "prompt": "Maak een cirkeldiagram dat laat zien hoe de uren van medewerker {medewerkerNaam} in de afgelopen maand verdeeld zijn over de verschillende projecten. Toon per project het totaal aantal geschreven uren als een sector in het diagram. Zet onder de grafiek ook een klein overzicht met per project het totaal aantal uren.",
+      "template": {
+        "name": "uren-verdeling-projecten-medewerker-maand",
+        "title": "Urenverdeling per project",
+        "description": "Toont voor één medewerker hoe de geschreven uren van de afgelopen maand verdeeld zijn over de verschillende projecten, als cirkeldiagram.",
+        "arguments": [
+          {
+            "name": "medewerkerNaam",
+            "description": "Naam van de medewerker.",
+            "required": true
+          }
+        ]
+      }
+    },
+    {
       "prompt": "Zoek naar project met naam {projectNaam} in de projectlijst en selecteer de id. Zoek daarna naar projectdienst {projectdienstNaam} en selecteer de id. Zoek ook naar urentype {urenType} en selecteer de id. Gebruik ReadResource om te zoeken in de lijsten. Schrijf {uren} uur, gelijkmatig verdeeld over alle werkdagen van de **laatst volledig afgesloten week**. Schrijf het overzicht per dag en zorg dat het totaal exact {uren} uur is. Schrijf de uren direct nadat je alle gegevens gevonden hebt, je hoeft niet nogmaals om bevestiging te vragen. Gebruik als omschrijving: '{omschrijving}'",
       "template": {
         "name": "project-uren-verdelen-laatste-week",
@@ -73,7 +118,6 @@
         ]
       }
     },
-
     {
       "prompt": "Geef per project het totaal aantal geregistreerde uren waarvan de goedkeuringsstatus gelijk is aan {approvalStatus}. Toon de projectnaam en het totaal aantal uur per project.",
       "template": {

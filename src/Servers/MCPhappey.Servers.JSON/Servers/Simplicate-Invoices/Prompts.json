@@ -16,7 +16,7 @@
       }
     },
     {
-      "prompt": "Geef alle conceptfacturen ouder dan {aantalDagen} dagen. Toon per factuur het factuurnummer, debiteur, bedrag, aanmaakdatum en verantwoordelijke.",
+      "prompt": "Geef alle conceptfacturen ouder dan {aantalDagen} dagen. Toon per factuur het factuurnummer, debiteur, bedrag en aanmaakdatum.",
       "template": {
         "name": "conceptfacturen-ouder-dan-x-dagen",
         "title": "Conceptfacturen ouder dan X dagen",

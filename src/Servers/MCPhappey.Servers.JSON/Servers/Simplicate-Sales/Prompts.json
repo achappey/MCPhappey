@@ -93,7 +93,7 @@
       }
     },
     {
-      "prompt": "Genereer een sales forecast voor de komende {aantalMaandenForecast} maanden op basis van de openstaande deals. Neem de verwachte sluitingsdatum en de gewogen waarde (waarde * scoringspercentage) per deal mee. Geef een totaal gewogen waarde per maand en per maand de top 5 grootste deals met naam en klant.",
+      "prompt": "Genereer een sales forecast voor de komende {aantalMaandenForecast} maanden voor team {teamNaam} op basis van de openstaande deals. Neem de verwachte sluitingsdatum en de gewogen waarde (waarde * scoringspercentage) per deal mee. Geef een totaal gewogen waarde per maand en per maand de top 5 grootste deals met naam en klant.",
       "template": {
         "name": "sales-genereer-forecast",
         "title": "Sales forecast",
@@ -102,6 +102,11 @@
           {
             "name": "aantalMaandenForecast",
             "description": "Het aantal maanden vooruit waarvoor de forecast gemaakt moet worden.",
+            "required": true
+          },
+          {
+            "name": "teamNaam",
+            "description": "Naam van het team waarvan je de openstaande sales wilt zien.",
             "required": true
           }
         ]
