@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "OpenXML-PowerPoint",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenXML.PowerPoint.PowerPointPlugin, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Files.ReadWrite"
+  }
+}
