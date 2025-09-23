@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Google-Audio",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Text-to-speech and audio processing with Google. Generate natural voices, support multi‑speaker TTS (keep ≤4 turns), and handle audio for narration, prompts and apps. Note: multi‑speaker synthesis can be slow; batch thoughtfully."
   },
   "instructions": "Do not include more than 4 speaker turns in a single TTS tool call. Creating Audio Speech, especially multi speaker TTS, can be slow. ",
   "plugins": ["MCPhappey.Tools.Google.Audio.GoogleAudio, MCPhappey.Tools"],

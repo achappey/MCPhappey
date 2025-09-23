@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Repositories;
 using MCPhappey.Servers.SQL.Tools.Models;
@@ -15,16 +16,20 @@ public static partial class ModelContextSecurityEditor
     [Description("Adds an owner to a MCP-server")]
     [McpServerTool(
         Title = "Add an owner to an MCP-server",
+        Destructive = true,
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextSecurityEditor_AddOwner(
+    public static async Task<CallToolResult?> ModelContextSecurityEditor_AddOwner(
        [Description("Name of the server")] string serverName,
        [Description("User id of new owner")] string ownerUserId,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
-       CancellationToken cancellationToken = default)
+       CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
+        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        var user = await graphClient.Users[ownerUserId].GetAsync();
+
         var dto = await requestContext.Server.GetElicitResponse(new McpServerOwner()
         {
             UserId = ownerUserId
@@ -44,21 +49,24 @@ public static partial class ModelContextSecurityEditor
             return $"Owner {typed.UserId} does not match {ownerUserId}.".ToErrorCallToolResponse();
         }
 
-        await serverRepository.AddServerOwner(server.Id, typed.UserId);
+        var owner = await graphClient.Users[typed.UserId].GetAsync();
+
+        await serverRepository.AddServerOwner(server.Id, owner?.Id!);
 
         return $"Owner {typed.UserId} added to MCP server {serverName}".ToTextCallToolResponse();
-    }
+    });
 
     [Description("Removes an owner from a MCP-server")]
     [McpServerTool(
         Title = "Remove an owner from an MCP-server",
+        Destructive = true,
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextSecurityEditor_RemoveOwner(
+    public static async Task<CallToolResult?> ModelContextSecurityEditor_RemoveOwner(
        [Description("Name of the server")] string serverName,
        [Description("User id of owner")] string ownerUserId,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
-       CancellationToken cancellationToken = default)
+       CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
@@ -87,17 +95,18 @@ public static partial class ModelContextSecurityEditor
         await serverRepository.DeleteServerOwner(server.Id, typed.UserId);
 
         return $"Owner {typed.UserId} deleted from MCP server {serverName}".ToTextCallToolResponse();
-    }
+    });
 
     [Description("Updates the security of a MCP-server")]
     [McpServerTool(
         Title = "Update the security of an MCP-server",
+        Destructive = true,
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextSecurityEditor_UpdateServerSecurity(
+    public static async Task<CallToolResult?> ModelContextSecurityEditor_UpdateServerSecurity(
       [Description("Name of the server")] string serverName,
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
-      CancellationToken cancellationToken = default)
+      CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
@@ -105,8 +114,11 @@ public static partial class ModelContextSecurityEditor
         {
             Secured = server.Secured
         }, cancellationToken);
+        
         var notAccepted = dto?.NotAccepted();
+
         if (notAccepted != null) return notAccepted;
+
         var typed = dto?.GetTypedResult<UpdateMcpServerSecurity>() ?? throw new Exception();
 
         if (typed.Secured.HasValue)
@@ -123,18 +135,19 @@ public static partial class ModelContextSecurityEditor
             server.Secured,
             SecurityGroups = server.Groups.Select(z => z.Id)
         }).ToTextCallToolResponse();
-    }
+    });
 
     [Description("Adds a security group to a MCP-server")]
     [McpServerTool(
         Title = "Add a security group to an MCP-server",
+        Destructive = true,
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextSecurityEditor_AddSecurityGroup(
+    public static async Task<CallToolResult?> ModelContextSecurityEditor_AddSecurityGroup(
         [Description("Name of the server")] string serverName,
         [Description("Entra id of security group to add")] string securityGroupId,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
@@ -157,18 +170,19 @@ public static partial class ModelContextSecurityEditor
         await serverRepository.AddServerGroup(server.Id, typed.GroupId);
 
         return $"Security group {typed.GroupId} added to MCP server {serverName}".ToTextCallToolResponse();
-    }
+    });
 
     [Description("Removes a security group from a MCP-server")]
     [McpServerTool(
         Title = "Remove a security group from an MCP-server",
+        Destructive = true,
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextSecurityEditor_RemoveSecurityGroup(
+    public static async Task<CallToolResult?> ModelContextSecurityEditor_RemoveSecurityGroup(
         [Description("Name of the server")] string serverName,
         [Description("Entra id of security group to remove")] string securityGroupId,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
@@ -192,6 +206,6 @@ public static partial class ModelContextSecurityEditor
         await serverRepository.DeleteServerGroup(server.Id, typed.GroupId);
 
         return $"Security group {typed.GroupId} removed from MCP server {serverName}".ToTextCallToolResponse();
-    }
+    });
 }
 

@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "OpenAI-Audio",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Use OpenAI for speech-to-text, text-to-speech and audio transformations. Transcribe recordings, generate high‑quality voices, and process audio files for captions, summaries and voice assistants with seamless storage integration."
   },
   "plugins": ["MCPhappey.Tools.OpenAI.Audio.OpenAIAudio, MCPhappey.Tools"],
   "obo": {

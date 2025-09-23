@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Google-Models",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "List and inspect available Google models and capabilities. Choose models for chat, multimodal, generation and reasoning with the right context limits and features for your task."
   }
 }

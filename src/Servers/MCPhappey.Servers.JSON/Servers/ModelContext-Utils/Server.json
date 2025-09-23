@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "ModelContext-Utils",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Utilities to test MCP servers and resources. Inspect tools, resolve parameters, validate resource templates and run end-to-end checks. Prefer reading existing context before asking, enabling efficient and reliable server testing workflows."
   },
   "plugins": [
     "MCPhappey.Tools.ModelContext.ModelContextUtils, MCPhappey.Tools"

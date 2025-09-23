@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Pexels",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Search and retrieve high‑quality free photos and videos from Pexels. Curate inspiration boards, find trending content, and download assets for documents, presentations and apps with clear licensing."
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

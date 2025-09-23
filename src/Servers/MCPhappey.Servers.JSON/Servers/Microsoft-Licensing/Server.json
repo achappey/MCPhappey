@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-Licensing",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Manage Microsoft 365/Entra ID licenses via Microsoft Graph. List available SKUs, audit assignments, and apply or remove licenses for users and groups to support provisioning and cost optimization."
   },
   "plugins": [
     "MCPhappey.Tools.Graph.Licensing.GraphLicensing, MCPhappey.Tools"

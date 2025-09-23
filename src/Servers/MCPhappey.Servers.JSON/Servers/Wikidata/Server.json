@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Wikidata",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Query and extract structured knowledge from Wikidata. Use SPARQL and entity lookups to retrieve facts, relationships and identifiers for integration, enrichment and research across domains."
   }
 }

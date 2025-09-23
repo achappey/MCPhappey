@@ -2,7 +2,8 @@
   "serverInfo": {
     "name": "OpenAI-Files",
     "title": "OpenAI-Files",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Manage files with OpenAI models: upload, index, search, and attach files to runs and assistants. Retrieve contents and metadata, organize datasets, and streamline workflows that require persistent storage and retrieval alongside model operations."
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

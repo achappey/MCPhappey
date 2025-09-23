@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-OneDrive",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Access and manage files in OneDrive and SharePoint via Microsoft Graph. Search, read and write documents, list folders, and retrieve sharing links to power content workflows, automations and knowledge discovery with delegated permissions."
   },
   "instructions": "Can read all kind of SharePoint links, news pages, Graph API urls as resources.",
   "plugins": ["MCPhappey.Tools.Graph.OneDrive.GraphOneDrive, MCPhappey.Tools"],

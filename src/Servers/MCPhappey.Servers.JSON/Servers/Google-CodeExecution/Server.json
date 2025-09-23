@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Google-CodeExecution",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Execute code with Google’s code execution capabilities to test snippets, run tools and produce artifacts. Useful for lightweight computations, validations and transforming data within controlled environments."
   },
   "plugins": [
     "MCPhappey.Tools.Google.CodeExecution.GoogleCodeExecution, MCPhappey.Tools"

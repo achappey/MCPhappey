@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "PDOK",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Publieke Dienstverlening op de Kaart (PDOK) server voor Nederlandse geo-informatie. Vind en haal open datasets en services op (WMS/WFS/REST) voor kaarten, adressen en locaties. Geschikt voor analyses, kaarten en ruimtelijke workflows."
   }
 }

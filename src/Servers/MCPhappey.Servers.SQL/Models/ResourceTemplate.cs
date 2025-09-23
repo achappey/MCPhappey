@@ -22,5 +22,5 @@ public class ResourceTemplate
 
     public bool? AssistantAudience { get; set; }
 
-    public ICollection<PromptResourceTemplate> PromptResourceTemplates { get; set; } = [];
+  //  public ICollection<PromptResourceTemplate> PromptResourceTemplates { get; set; } = [];
 }

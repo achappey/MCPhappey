@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "TenderNed",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Officieel aanbestedingsplatform van de Nederlandse overheid. Zoek, filter en analyseer aankondigingen, publicaties en gunningen. Handig voor marktverkenning, inschrijvingen en rapportages over lopende en toekomstige opdrachten binnen diverse sectoren."
   }
 }

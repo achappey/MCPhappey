@@ -26,6 +26,13 @@ public class ServerConfig
 
 }
 
+public class MCPServerRegistry
+{
+    [JsonPropertyName("servers")]
+    public IEnumerable<RegistryServer> Servers { get; set; } = [];
+}
+
+
 public class MCPServerList
 {
     [JsonPropertyName("servers")]
@@ -141,6 +148,12 @@ public class ServerInfo
 
     [JsonPropertyName("title")]
     public string? Title { get; set; }
+
+    [JsonPropertyName("description")]
+    public string? Description { get; set; }
+
+    [JsonPropertyName("websiteUrl")]
+    public string? WebsiteUrl { get; set; }
 
     [JsonPropertyName("version")]
     public string Version { get; set; } = null!;

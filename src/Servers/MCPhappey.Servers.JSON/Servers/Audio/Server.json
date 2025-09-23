@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Audio",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Transcribe, synthesize, and process audio. Convert speech to text, generate natural-sounding speech from text, and handle audio files for summaries, captions and voice interactions within workflows."
   },
   "plugins": ["MCPhappey.Tools.AI.AudioPlugin, MCPhappey.Tools"],
   "obo": {

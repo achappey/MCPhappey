@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "SharePoint",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Search and read SharePoint links, news pages, Teams messages and Graph API resources as unified resources. Discover and retrieve sites, lists and files; use write operations only when creating, updating or deleting items in workflows."
   },
   "plugins": ["MCPhappey.Tools.SharePoint.SharePointSearch, MCPhappey.Tools"],
   "instructions": "You can read all kind of SharePoint links, news pages, Graph API, Teams message link urls as resources. Also links that are not specified and/or come up from search results.",

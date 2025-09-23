@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "OpenAI-SharePoint",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Use OpenAI to search, summarize and extract insights from SharePoint content. Read sites, lists and files via Microsoft Graph and generate answers, briefs and classifications while respecting user permissions."
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.SharePoint.OpenAISharePoint, MCPhappey.Tools"

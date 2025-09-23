@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-Users",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Manage Microsoft Entra ID users via Microsoft Graph: read profiles, update properties, manage photos, presence and mailbox settings. Automate provisioning, audits and user data retrieval with delegated permissions and secure OBO flow scopes."
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/ProfilePhoto.ReadWrite.All https://graph.microsoft.com/MailboxSettings.ReadWrite https://graph.microsoft.com/Presence.Read.All"

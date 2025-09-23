@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-Lists",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Create and manage Microsoft Lists via Microsoft Graph. Read and update items, columns and views; track work with filters and sorting; and automate list-backed workflows across SharePoint sites with delegated permissions."
   },
   "plugins": ["MCPhappey.Tools.Graph.Lists.GraphLists, MCPhappey.Tools"],
   "obo": {

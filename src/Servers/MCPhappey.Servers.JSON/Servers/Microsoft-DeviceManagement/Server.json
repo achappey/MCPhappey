@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-DeviceManagement",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Manage Intune/Endpoint Manager via Microsoft Graph. Query and remediate devices, configurations, compliance and actions. Automate inventory, policies and support workflows with appropriate privileged permissions."
   },
   "plugins": [
     "MCPhappey.Tools.Graph.Devices.GraphDevices, MCPhappey.Tools"

@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Declaree",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Automate expense management with Declaree: submit receipts, categorize expenses, track approvals and reimbursements, and export data. Use the API with bearer tokens to fetch claims, monitor statuses and enforce policies in finance and travel workflows."
   },
   "headers": {
     "Authorization": "Bearer [Declaree_API_key]"

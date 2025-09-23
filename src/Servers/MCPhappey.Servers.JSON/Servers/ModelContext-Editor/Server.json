@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "ModelContext-Editor",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Admin editor for MCP content: browse and edit servers, resources, resource templates and prompts. Enables structured curation, governance and versioning of assets."
   },
   "instructions": "Always use the ReadResource tool to retrieve servers, resources, resourceTemplates and prompts. Only use other tools when items need to be created, updated or deleted.",
   "plugins": ["MCPhappey.Servers.SQL.Tools.ModelContextEditor, MCPhappey.Servers.SQL"],

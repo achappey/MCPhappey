@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "SharePoint-REST",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Call SharePoint REST APIs directly using tenant app permissions. Retrieve lists, items, files and site data by crafting REST URLs. Useful when Graph abstraction is insufficient or legacy endpoints are required."
   },
   "obo": {
     ".sharepoint.com": "https://{tenantName}.sharepoint.com/.default"

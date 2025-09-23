@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Tavily",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Real‑time web search and retrieval via Tavily. Execute searches, extract summaries and references, and use focused endpoints for news, Q&A and research to produce up‑to‑date answers with citations."
   },
   "baseMcp": "mcp.tavily.com",
   "obo": {

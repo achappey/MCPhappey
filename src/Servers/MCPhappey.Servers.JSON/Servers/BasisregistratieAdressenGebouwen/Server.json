@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "BasisregistratieAdressenGebouwen",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "BAG server voor officiële adressen en gebouwen in Nederland. Zoek panden, verblijfsobjecten en adressen; haal geometrie en kenmerken op voor kaarten, analyses en validatie. Betrouwbare basisregistratie voor locatie‑ en adresgegevens."
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

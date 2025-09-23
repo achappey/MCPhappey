@@ -1,8 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
-using MCPhappey.Core.Services;
-using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -17,7 +15,6 @@ public static class OpenAICodeInterpreter
     public static async Task<ContentBlock> OpenAICodeInterpreter_Run(
           [Description("Prompt to execute (code is allowed).")]
             string prompt,
-          IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
           [Description("Target model (e.g. gpt-5 or gpt-5-mini).")]
             string model = "gpt-5",

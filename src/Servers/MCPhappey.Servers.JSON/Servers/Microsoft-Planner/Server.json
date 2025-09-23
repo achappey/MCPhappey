@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-Planner",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Plan and track work with Microsoft Planner via Graph. Create and manage plans, buckets, tasks and assignments; update statuses, due dates and checklists. Automate project workflows and reporting across teams with delegated permissions."
   },
   "plugins": ["MCPhappey.Tools.Graph.Planner.GraphPlanner, MCPhappey.Tools"],
   "obo": {

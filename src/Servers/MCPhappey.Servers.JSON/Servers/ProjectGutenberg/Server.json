@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "ProjectGutenberg",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Search and retrieve free ebooks from Project Gutenberg. Find titles by author, language, topic and format, and download EPUB, HTML or plain text for reading, research and analysis."
   }
 }

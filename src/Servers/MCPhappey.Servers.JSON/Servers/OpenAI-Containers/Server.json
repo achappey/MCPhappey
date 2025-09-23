@@ -2,7 +2,8 @@
   "serverInfo": {
     "name": "OpenAI-Containers",
     "title": "OpenAI-Containers",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Manage and run OpenAI containers for isolated tool execution. Build, configure and invoke containerized environments to execute tasks reproducibly, share artifacts, and integrate with assistants and workflows."
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.Containers.OpenAIContainers, MCPhappey.Tools"

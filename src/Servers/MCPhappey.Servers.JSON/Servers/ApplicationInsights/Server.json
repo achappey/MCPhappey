@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "ApplicationInsights",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Query Azure Application Insights metrics and logs using an API key. Retrieve traces, requests and performance data for diagnostics, monitoring and reporting."
   },
   "headers": {
     "x-api-key": "Application Insights API key"

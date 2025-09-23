@@ -18,8 +18,10 @@ public class Prompt
 
     public ICollection<PromptArgument> Arguments { get; set; } = [];
 
-    public ICollection<PromptResource> PromptResources { get; set; } = [];
+    public ICollection<PromptIcon> Icons { get; set; } = [];
 
-    public ICollection<PromptResourceTemplate> PromptResourceTemplates { get; set; } = [];
+    // public ICollection<PromptResource> PromptResources { get; set; } = [];
+
+    // public ICollection<PromptResourceTemplate> PromptResourceTemplates { get; set; } = [];
 
 }

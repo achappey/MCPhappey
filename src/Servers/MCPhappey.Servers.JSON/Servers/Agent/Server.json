@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "AgentTools",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Utility tools for agent workflows: create and route tasks, exchange messages and orchestrate actions between components. Designed to support scheduling, coordination and automation within MCP."
   },
   "plugins": ["MCPhappey.Tools.Agent.AgentService, MCPhappey.Tools"]
 }

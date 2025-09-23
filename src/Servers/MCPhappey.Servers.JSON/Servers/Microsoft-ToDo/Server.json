@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-ToDo",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Manage tasks with Microsoft To Do via Microsoft Graph: create lists and tasks, set due dates, reminders and categories, read progress, and update status. Automate personal productivity and team task workflows with delegated permissions."
   },
   "plugins": ["MCPhappey.Tools.Graph.ToDo.GraphToDo, MCPhappey.Tools"],
   "obo": {

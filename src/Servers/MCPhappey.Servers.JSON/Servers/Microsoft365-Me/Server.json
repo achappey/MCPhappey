@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft365-Me",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Access your Microsoft 365 profile, files, people and activity via Microsoft Graph. Retrieve and relate contacts, documents and sites with delegated permissions to build personalized assistants, summaries and workflows centered around the signed-in user."
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/People.Read.All"

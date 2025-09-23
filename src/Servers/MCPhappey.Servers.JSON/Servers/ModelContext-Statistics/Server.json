@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "ModelContext-Statistics",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Generate and explore usage statistics for the MCP environment. Aggregate events, server and tool activity, and prompt performance to monitor quality and adoption. Produce summaries for dashboards and reviews using authenticated access."
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

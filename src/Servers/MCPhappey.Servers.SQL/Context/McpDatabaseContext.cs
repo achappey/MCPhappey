@@ -23,43 +23,51 @@ public class McpDatabaseContext(DbContextOptions<McpDatabaseContext> options) : 
 
   public DbSet<ServerApiKey> ServerApiKeys { get; set; } = null!;
 
-  public DbSet<PromptResource> PromptResources { get; set; } = null!;
+  public DbSet<Icon> Icons { get; set; } = null!;
 
-  public DbSet<PromptResourceTemplate> PromptResourceTemplates { get; set; } = null!;
+  public DbSet<ServerIcon> ServerIcons { get; set; } = null!;
 
-  protected override void OnModelCreating(ModelBuilder modelBuilder)
+  public DbSet<PromptIcon> PromptIcons { get; set; } = null!;
+
+  public DbSet<ResourceIcon> ResourceIcons { get; set; } = null!;
+
+  //  public DbSet<PromptResource> PromptResources { get; set; } = null!;
+
+  // public DbSet<PromptResourceTemplate> PromptResourceTemplates { get; set; } = null!;
+
+  // protected override void OnModelCreating(ModelBuilder modelBuilder)
+  // {
+  /*modelBuilder.Entity<PromptResourceTemplate>(entity =>
   {
-    modelBuilder.Entity<PromptResourceTemplate>(entity =>
-    {
-      entity.HasKey(e => new { e.PromptId, e.ResourceTemplateId });
+    entity.HasKey(e => new { e.PromptId, e.ResourceTemplateId });
 
-      entity.HasOne(e => e.Prompt)
-      .WithMany(p => p.PromptResourceTemplates)
-      .HasForeignKey(e => e.PromptId)
-      .OnDelete(DeleteBehavior.Cascade);
+    entity.HasOne(e => e.Prompt)
+    .WithMany(p => p.PromptResourceTemplates)
+    .HasForeignKey(e => e.PromptId)
+    .OnDelete(DeleteBehavior.Cascade);
 
-      entity.HasOne(e => e.ResourceTemplate)
-      .WithMany(r => r.PromptResourceTemplates)
-      .HasForeignKey(e => e.ResourceTemplateId)
-      .OnDelete(DeleteBehavior.Restrict);
-    });
+    entity.HasOne(e => e.ResourceTemplate)
+    .WithMany(r => r.PromptResourceTemplates)
+    .HasForeignKey(e => e.ResourceTemplateId)
+    .OnDelete(DeleteBehavior.Restrict);
+  });
 
-    modelBuilder.Entity<PromptResource>(entity =>
-    {
-      entity.HasKey(e => new { e.PromptId, e.ResourceId });
+  modelBuilder.Entity<PromptResource>(entity =>
+  {
+    entity.HasKey(e => new { e.PromptId, e.ResourceId });
 
-      entity.HasOne(e => e.Prompt)
-      .WithMany(p => p.PromptResources)
-      .HasForeignKey(e => e.PromptId)
-      .OnDelete(DeleteBehavior.Cascade);
+    entity.HasOne(e => e.Prompt)
+    .WithMany(p => p.PromptResources)
+    .HasForeignKey(e => e.PromptId)
+    .OnDelete(DeleteBehavior.Cascade);
 
-      entity.HasOne(e => e.Resource)
-      .WithMany(r => r.PromptResources)
-      .HasForeignKey(e => e.ResourceId)
-      .OnDelete(DeleteBehavior.Restrict);
-    });
-
-    base.OnModelCreating(modelBuilder);
-  }
+    entity.HasOne(e => e.Resource)
+    .WithMany(r => r.PromptResources)
+    .HasForeignKey(e => e.ResourceId)
+    .OnDelete(DeleteBehavior.Restrict);
+  });
+*/
+  //  base.OnModelCreating(modelBuilder);
+  //  }
 
 }

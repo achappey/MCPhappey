@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Azure-Vault",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Access Azure Key Vault secrets, keys and certificates with app permissions. Retrieve and manage secrets securely for automations, apps and workflows."
   },
   "obo": {
     ".vault.azure.net": "https://vault.azure.net/.default"

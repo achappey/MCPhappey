@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Google-Video",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Search and analyze online videos using Google capabilities. Find relevant clips, retrieve metadata and thumbnails, and prepare links for embedding or transcription workflows. Useful for research, content curation and summarization across channels."
   },
   "plugins": ["MCPhappey.Tools.Google.Video.GoogleVideo, MCPhappey.Tools"],
   "obo": {

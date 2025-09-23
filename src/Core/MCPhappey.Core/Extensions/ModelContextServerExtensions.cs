@@ -30,15 +30,25 @@ public static partial class ModelContextServerExtensions
     public static IEnumerable<ServerConfig> WithoutHiddenServers(this IEnumerable<ServerConfig> servers)
         => servers.Where(a => a.Server.Hidden != true);
 
-    public static MCPServerList ToMcpServerList(this IEnumerable<ServerConfig> servers, string baseUrl, bool sse = false)
+    public static MCPServerRegistry ToMcpServerRegistry(this IEnumerable<ServerConfig> servers, string baseUrl, bool sse = false)
      => new()
      {
          Servers = servers
             .WithoutHiddenServers()
             .OrderBy(a => a.Server.ServerInfo.Name)
-            .ToDictionary(a => a.Server.ServerInfo.Name, a => sse ? a.ToSseMcpServer(baseUrl)
-                    : a.ToMcpServer(baseUrl))
+            .Select(a => a.ToRegistryServer(baseUrl))
      };
+
+    public static MCPServerList ToMcpServerList(this IEnumerable<ServerConfig> servers, string baseUrl, bool sse = false)
+        => new()
+        {
+            Servers = servers
+                .WithoutHiddenServers()
+                .OrderBy(a => a.Server.ServerInfo.Name)
+                .ToDictionary(a => a.Server.ServerInfo.Name, a => sse ? a.ToSseMcpServer(baseUrl)
+                        : a.ToMcpServer(baseUrl))
+        };
+
 
     public static MCPServerSettingsList ToMcpServerSettingsList(this IEnumerable<ServerConfig> servers, string baseUrl)
      => new()
@@ -48,6 +58,20 @@ public static partial class ModelContextServerExtensions
                 .OrderBy(a => a.Server.ServerInfo.Name)
                 .ToDictionary(a => a.Server.ServerInfo.Name, a => a.ToMcpServerSettings(baseUrl))
      };
+
+    public static string WithoutScheme(this string url)
+          => new Uri(url).Authority.TrimEnd('/');
+
+    public static RegistryServer ToRegistryServer(this ServerConfig server, string baseUrl)
+            => new()
+            {
+                Description = server.Server.ServerInfo.Description,
+                Version = server.Server.ServerInfo.Version,
+                Name = $"{baseUrl.WithoutScheme()}/{server.Server.ServerInfo.Name.ToLowerInvariant()}",
+                Remotes = [new ServerRemote() {
+                    Url =  $"{baseUrl}/{server.Server.ServerInfo.Name.ToLowerInvariant()}",
+                }]
+            };
 
     public static MCPServer ToMcpServer(this ServerConfig server, string baseUrl)
         => new()

@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "OpenAI-Outlook",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Use OpenAI with Microsoft Outlook to search, summarize and draft emails and meetings. Read mail and calendars via Graph with delegated scopes. Generate replies, extract actions and propose schedules while respecting user context and permissions."
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.OutlookMail.OpenAIOutlookMail, MCPhappey.Tools",

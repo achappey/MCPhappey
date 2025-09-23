@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "HTTP",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "HTTP utility server providing simple GET, POST and download capabilities via the HTTPService plugin. Use it to fetch APIs, submit forms and retrieve files during workflows. Designed for quick integrations and robust error handling in automations."
   },
   "plugins": ["MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"]
 }

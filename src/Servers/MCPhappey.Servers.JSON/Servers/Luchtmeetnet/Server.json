@@ -1,6 +1,8 @@
 {
   "serverInfo": {
     "name": "Luchtmeetnet",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "websiteUrl": "https://www.luchtmeetnet.nl",
+    "description": "Luchtmeetnet server voor actuele luchtkwaliteitsdata in Nederland. Haal metingen en stationsinformatie op via de officiële bron. Handig voor analyses, rapportages en alerts rond fijnstof, stikstofdioxide en ozon. Gebruik als betrouwbare dataset in workflows."
   }
 }

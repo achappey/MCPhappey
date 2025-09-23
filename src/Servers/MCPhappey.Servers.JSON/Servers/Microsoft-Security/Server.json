@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-Security",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Investigate and remediate security across Microsoft 365 and Entra ID via Microsoft Graph. Query audit logs, risky users, alerts and incidents; manage auth methods and device compliance. Enable SOC automation, threat intelligence and response with delegated scopes."
   },
   "plugins": [
     "MCPhappey.Tools.Graph.Audit.GraphAudit, MCPhappey.Tools"

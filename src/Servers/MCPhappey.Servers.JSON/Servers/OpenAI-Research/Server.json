@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "OpenAI-Research",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Research with OpenAI models across web and documents: plan literature reviews, extract key findings, track citations, and synthesize insights. Useful for hypothesis exploration, structured note‑taking, and iterative evidence gathering within reproducible workflows."
   },
   "plugins": ["MCPhappey.Tools.OpenAI.Research.OpenAIResearch, MCPhappey.Tools"]
 }

@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Microsoft-Teams",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Integrate with Microsoft Teams via Microsoft Graph. Create and manage chats, channels, messages, presence and tabs with delegated permissions. Automate collaboration workflows, post updates, and gather context from teams securely using OBO flows and granular scopes."
   },
   "plugins": ["MCPhappey.Tools.Graph.Teams.GraphTeams, MCPhappey.Tools"],
   "obo": {

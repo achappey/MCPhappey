@@ -28,6 +28,9 @@ public static class AspNetCoreWebAppExtensions
             this WebApplication webApp,
             List<ServerConfig> servers)
     {
+        webApp.MapGet("/v0/servers", (HttpContext context)
+                   => Results.Json(servers.ToMcpServerRegistry($"{context.Request.Scheme}://{context.Request.Host}")));
+
         webApp.MapGet("/mcp.json", (HttpContext context)
                    => Results.Json(servers.ToMcpServerList($"{context.Request.Scheme}://{context.Request.Host}")));
 

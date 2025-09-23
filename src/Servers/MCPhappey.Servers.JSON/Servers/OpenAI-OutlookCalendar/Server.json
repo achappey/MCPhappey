@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "OpenAI-OutlookCalendar",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Plan and analyze calendars with OpenAI. Read events, propose times, detect conflicts, and generate agendas or summaries. Works via Microsoft Graph with delegated scopes to keep scheduling and meeting context secure and consistent across workflows."
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.OutlookCalendar.OpenAIOutlookCalendar, MCPhappey.Tools"

@@ -1,7 +1,10 @@
 {
   "serverInfo": {
     "name": "COELO",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "websiteUrl": "https://coelo.nl",
+    "description": "Centrum voor Onderzoek van de Economie van de Lagere Overheden",
+    "icons": []
   },
   "plugins": [
     "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"

@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "EuropeanCentralBank",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Access official ECB data and resources for euro area monetary statistics, interest rates, exchange rates and publications. Use this server to retrieve datasets and metadata for analysis, dashboards and economic research workflows."
   }
 }

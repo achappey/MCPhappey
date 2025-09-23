@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "PowerBI",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Connect to Microsoft Power BI to query datasets, refresh models, execute reports, and manage workspaces. Automate insights and export visuals or data with delegated permissions for analytics, embedding and operational reporting."
   },
   "plugins": ["MCPhappey.Tools.PowerBI.PowerBI, MCPhappey.Tools"],
   "obo": {

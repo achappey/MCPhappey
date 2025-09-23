@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "RijksdienstWegverkeer",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "RDW server voor voertuig- en kentekengegevens in Nederland. Haal specificaties, APK‑status, terugroepacties en registratie‑informatie op voor analyses, toezicht en rapportages. Geschikt voor datakoppelingen en controles op voertuigniveau."
   }
 }

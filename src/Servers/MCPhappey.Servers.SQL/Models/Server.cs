@@ -11,6 +11,10 @@ public class Server
 
     public string? Title { get; set; }
 
+    public string? Description { get; set; }
+
+    public string? WebsiteUrl { get; set; }
+
     public bool Secured { get; set; }
 
     public bool? Hidden { get; set; }
@@ -30,4 +34,6 @@ public class Server
     public ICollection<ServerApiKey> ApiKeys { get; set; } = [];
 
     public string? Instructions { get; set; }
+
+    public ICollection<ServerIcon> Icons { get; set; } = [];
 }

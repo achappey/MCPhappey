@@ -18,6 +18,14 @@ public class NewMcpServer
     [Description("The MCP server title.")]
     public string? Title { get; set; }
 
+    [JsonPropertyName("description")]
+    [Description("The MCP server description.")]
+    public string? Description { get; set; }
+
+    [JsonPropertyName("websiteUrl")]
+    [Description("The MCP website url.")]
+    public Uri? WebsiteUrl { get; set; }
+
     [JsonPropertyName("instructions")]
     [Description("The MCP server instructions.")]
     public string? Instructions { get; set; }
@@ -81,6 +89,14 @@ public class UpdateMcpServer
     [JsonPropertyName("title")]
     [Description("The MCP server title.")]
     public string? Title { get; set; }
+
+    [JsonPropertyName("description")]
+    [Description("The MCP server description.")]
+    public string? Description { get; set; }
+
+    [JsonPropertyName("websiteUrl")]
+    [Description("The MCP website url.")]
+    public Uri? WebsiteUrl { get; set; }
 
     [JsonPropertyName("instructions")]
     [Description("The MCP server instructions.")]

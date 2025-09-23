@@ -22,5 +22,7 @@ public class Resource
 
     public bool? AssistantAudience { get; set; }
 
-    public ICollection<PromptResource> PromptResources { get; set; } = [];
+    public ICollection<ResourceIcon> Icons { get; set; } = [];
+
+    //  public ICollection<PromptResource> PromptResources { get; set; } = [];
 }

@@ -4,6 +4,7 @@ using DocumentFormat.OpenXml.Wordprocessing;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Models;
 using MCPhappey.Servers.SQL.Repositories;
@@ -74,6 +75,8 @@ public static partial class ModelContextEditor
                 {
                     s.Server.ServerInfo.Name,
                     s.Server.ServerInfo.Title,
+                    s.Server.ServerInfo.WebsiteUrl,
+                    s.Server.ServerInfo.Description,
                     s.Server.Instructions,
                     Secured = true,
                     Prompts = s.PromptList?.Prompts?.Select(p => new
@@ -111,6 +114,8 @@ public static partial class ModelContextEditor
                     s.Name,
                     s.Instructions,
                     s.Title,
+                    s.Description,
+                    s.WebsiteUrl,
                     s.Secured,
                     Prompts = s.Prompts?.Select(p => new
                     {
@@ -154,6 +159,8 @@ public static partial class ModelContextEditor
             Name = typedResult.Name.Slugify(),
             Instructions = src.Instructions,
             Title = src.Title,
+            Description = src.Description,
+            WebsiteUrl = src.WebsiteUrl,
             Secured = src.Secured,
             Owners = [new ServerOwner { Id = userId }]
         }, cancellationToken);
@@ -233,16 +240,20 @@ public static partial class ModelContextEditor
     [Description("Create a new MCP-server")]
     [McpServerTool(Title = "Create a new MCP-server",
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextEditor_CreateServer(
+    public static async Task<CallToolResult?> ModelContextEditor_CreateServer(
         [Description("Name of the new server")]
         string serverName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Optional title for the server")]
         string? serverTitle = null,
+        [Description("Optional description for the server")]
+        string? serverDescription = null,
         [Description("Instructions of the new server")]
         string? instructions = null,
-        CancellationToken cancellationToken = default)
+        [Description("Website url")]
+        string? websiteUrl = null,
+        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var userId = serviceProvider.GetUserId();
@@ -254,13 +265,14 @@ public static partial class ModelContextEditor
         var (typedResult, notAccepted, result) = await requestContext.Server.TryElicit(new NewMcpServer()
         {
             Name = serverName,
+            WebsiteUrl = string.IsNullOrEmpty(websiteUrl) ? null : new Uri(websiteUrl),
             Title = serverTitle,
+            Description = serverDescription,
             Instructions = instructions,
             Secured = true,
         }, cancellationToken);
 
         if (notAccepted != null) return notAccepted;
-
         if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
 
         var server = await serverRepository.CreateServer(new SQL.Models.Server()
@@ -268,6 +280,8 @@ public static partial class ModelContextEditor
             Name = typedResult.Name.Slugify(),
             Instructions = typedResult.Instructions,
             Title = typedResult.Title,
+            Description = typedResult.Description,
+            WebsiteUrl = typedResult.WebsiteUrl?.ToString(),
             Secured = typedResult.Secured ?? true,
             Hidden = typedResult.Hidden,
             Owners = [new ServerOwner() {
@@ -280,11 +294,12 @@ public static partial class ModelContextEditor
             server.Name,
             Owners = server.Owners.Select(z => z.Id),
             server.Secured,
+            server.WebsiteUrl,
             server.Hidden,
             SecurityGroups = server.Groups.Select(z => z.Id)
         })
         .ToJsonCallToolResponse($"mcp-editor://server/{serverName}");
-    }
+    });
 
     [Description("Updates a MCP-server")]
     [McpServerTool(Title = "Update an MCP-server",
@@ -295,6 +310,10 @@ public static partial class ModelContextEditor
       RequestContext<CallToolRequestParams> requestContext,
         [Description("New server title")]
         string? serverTitle = null,
+        [Description("Optional description for the server")]
+        string? serverDescription = null,
+        [Description("Website url")]
+        string? websiteUrl = null,
         [Description("Updated instructions for the server")]
         string? instructions = null,
         [Description("If the server should be hidden")]
@@ -305,7 +324,9 @@ public static partial class ModelContextEditor
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new UpdateMcpServer()
         {
             Name = serverName,
+            WebsiteUrl = string.IsNullOrEmpty(websiteUrl) ? null : new Uri(websiteUrl),
             Title = serverTitle ?? server.Title,
+            Description = serverDescription ?? server.Description,
             Instructions = instructions ?? server.Instructions,
             Hidden = hidden ?? server.Hidden
         }, cancellationToken);
@@ -320,6 +341,8 @@ public static partial class ModelContextEditor
         server.Instructions = typed.Instructions;
         server.Hidden = typed.Hidden;
         server.Title = typed.Title;
+        server.Description = typed.Description;
+        server.WebsiteUrl = typed.WebsiteUrl?.ToString();
 
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var updated = await serverRepository.UpdateServer(server);
@@ -329,6 +352,8 @@ public static partial class ModelContextEditor
             server.Name,
             Owners = server.Owners.Select(z => z.Id),
             server.Secured,
+            server.Description,
+            server.WebsiteUrl,
             SecurityGroups = server.Groups.Select(z => z.Id),
             server.Hidden
         })
@@ -338,11 +363,11 @@ public static partial class ModelContextEditor
     [Description("Deletes a MCP-server")]
     [McpServerTool(Title = "Delete an MCP-server",
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextEditor_DeleteServer(
+    public static async Task<CallToolResult?> ModelContextEditor_DeleteServer(
         [Description("Name of the server")] string serverName,
         RequestContext<CallToolRequestParams> requestContext,
         IServiceProvider serviceProvider,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
         var repo = serviceProvider.GetRequiredService<ServerRepository>();
 
@@ -356,7 +381,7 @@ public static partial class ModelContextEditor
             },
             "Server deleted.",
             cancellationToken);
-    }
+    });
 
     [Description("Adds an plugin to a MCP-server")]
     [McpServerTool(Title = "Add an plugin to a MCP-server",
