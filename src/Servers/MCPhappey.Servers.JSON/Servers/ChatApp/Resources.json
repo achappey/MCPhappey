@@ -11,18 +11,6 @@
           "assistant"
         ]
       }
-    },
-    {
-      "uri": "https://registry.modelcontextprotocol.io/v0/servers?limit=100&version=latest",
-      "name": "official-mcp-server-registry",
-      "title": "Official MCP store",
-      "description": "List first page of MCP servers from the official community maintained MCP store",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": [
-          "assistant"
-        ]
-      }
     }
   ]
 }
