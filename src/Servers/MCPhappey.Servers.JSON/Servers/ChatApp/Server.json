@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "ChatApp",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Support for an AI chat app with prompts and Model Context Protocol (MCP) registry resources"
   },
   "plugins": ["MCPhappey.Tools.AI.ChatApp, MCPhappey.Tools"]
 }

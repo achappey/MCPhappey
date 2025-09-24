@@ -67,7 +67,7 @@ public static partial class ModelContextServerExtensions
             {
                 Description = server.Server.ServerInfo.Description,
                 Version = server.Server.ServerInfo.Version,
-                Name = $"{baseUrl.WithoutScheme()}/{server.Server.ServerInfo.Name.ToLowerInvariant()}",
+                Name = $"{baseUrl.WithoutScheme()}/{server.Server.ServerInfo.Name}",
                 Remotes = [new ServerRemote() {
                     Url =  $"{baseUrl}/{server.Server.ServerInfo.Name.ToLowerInvariant()}",
                 }]
