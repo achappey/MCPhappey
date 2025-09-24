@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "deskbird",
     "version": "1.0.0",
-    "description": "Workplace management with deskbird: read bookings, desks and schedules; filter by date range and paginate efficiently. Automate occupancy insights, reservations and attendance reporting using the Deskbird plugin with delegated Microsoft Graph user context."
+    "description": "Workplace management with deskbird: read bookings, desks and schedules; filter by date range and paginate efficiently. Automate occupancy insights, reservations and attendance reporting using the deskbird plugin with delegated user context."
   },
   "roles": ["deskbird.ReadAll"],
   "plugins": ["MCPhappey.Tools.Deskbird.DeskbirdPlugin, MCPhappey.Tools"],

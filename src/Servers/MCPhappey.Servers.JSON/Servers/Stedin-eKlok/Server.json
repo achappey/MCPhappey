@@ -1,0 +1,8 @@
+{
+  "serverInfo": {
+    "name": "Stedin-eKlok",
+    "version": "1.0.0",
+    "description": "Toegang tot de openbare eKlok-feed als tijdreeks met 'range'- en kleurindicatoren en NL-geformatteerde timestamps. Nuttig voor monitoring, visualisatie en planning op basis van de aangeleverde indices."
+  },
+  "instructions": "Respecteer de gebruiksvoorwaarden van eKlok. Bij het presenteren of visualiseren van resultaten op basis van deze feed, vermeld de bron als: Data: eKlok (eklok.nl) en link waar passend."
+}

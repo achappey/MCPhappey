@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "HTML",
     "version": "1.0.0",
-    "description": "Fill and render HTML templates for pages or fragments. Always pass the replacements argument to HTMLPlugin_FillTemplate. Useful for emails, documents and web content; can save to SharePoint/OneDrive via Microsoft Graph when authorized."
+    "description": "Fill and render HTML templates for pages or fragments. Useful for emails, documents and web content."
   },
   "instructions": "Always add the replacements argument on the HTMLPlugin_FillTemplate, otherwise it will fail",
   "plugins": ["MCPhappey.Tools.HTML.HTMLPlugin, MCPhappey.Tools"],

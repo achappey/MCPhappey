@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "OpenXML-PowerPoint",
     "version": "1.0.0",
-    "description": "Create and edit PowerPoint files using Open XML. Generate slides, layouts and shapes; insert images, charts and tables; and save back to OneDrive/SharePoint via Graph. Ideal for automated reporting, decks and templated presentations from data."
+    "description": "Create and edit PowerPoint files using Open XML. Generate slides, layouts and shapes. Insert images, charts and tables."
   },
   "plugins": [
     "MCPhappey.Tools.OpenXML.PowerPoint.PowerPointPlugin, MCPhappey.Tools"
