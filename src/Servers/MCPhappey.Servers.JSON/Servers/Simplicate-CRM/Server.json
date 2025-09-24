@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Simplicate-CRM",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Integratie met Simplicate CRM voor relaties: organisaties, personen/contacten, adressen en activiteiten; ondersteunt select-velden en relatie-navigatie via puntnotatie."
   },
   "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries. There is NO need to include unused filter properties in resources. Resource templates are only supplied with all options to show all working options compact.",
   "headers": {

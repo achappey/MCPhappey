@@ -68,6 +68,7 @@ public static class DatabaseExtensions
             ServerInfo = new()
             {
                 Name = server.Name,
+                Description = server.Description,
                 Title = server.Title,
                 Version = "1.0.0"
             },

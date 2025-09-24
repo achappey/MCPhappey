@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Azure-ServiceManagement",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "MCP for Azure Management REST API to list resource groups, deployments, role and policy assignments, activity logs, and enumerate resources within specific subscriptions or resource groups."
   },
   "obo": {
     "management.azure.com": "https://management.azure.com/.default"

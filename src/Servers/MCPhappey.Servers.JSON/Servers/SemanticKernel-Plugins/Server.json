@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "SemanticKernel-Plugins",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "MCP server exposing Microsoft Semantic Kernel built-in plugins, including Core TimePlugin and TextPlugin, to provide time utilities and text processing capabilities through structured, pluggable tools."
   },
   "plugins": [
     "Microsoft.SemanticKernel.Plugins.Core.TimePlugin, Microsoft.SemanticKernel.Plugins.Core",

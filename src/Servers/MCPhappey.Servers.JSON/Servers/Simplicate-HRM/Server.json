@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Simplicate-HRM",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "HR-integratie voor Simplicate voor medewerkers, contracten en verlof/afwezigheid."
   },
   "instructions": "There is NO need to include unused filter properties in resources. Resource templates are only supplied with all options to show all working options compact.",
   "headers": {

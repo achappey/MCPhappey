@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Simplicate-Export",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "CSV-exportintegratie voor Simplicate om asynchrone datadumps aan te vragen. Retourneert een download-URL i.p.v. inline data."
   },
   "headers": {
     "Authentication-Key": "Simplicate Api Key",

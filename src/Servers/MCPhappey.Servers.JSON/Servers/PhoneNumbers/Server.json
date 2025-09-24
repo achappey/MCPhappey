@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "PhoneNumbers",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "MCP server plugin exposing phone number tools: parse, format, validate, detect type and region, using Google’s libphonenumber for structured, standardized phone number handling."
   },
   "plugins": [
     "MCPhappey.Tools.PhoneNumbers.PhoneNumberPlugin, MCPhappey.Tools"

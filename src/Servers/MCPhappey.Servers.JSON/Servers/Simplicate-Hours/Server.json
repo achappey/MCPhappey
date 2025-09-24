@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Simplicate-Hours",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Uren-integratie voor Simplicate voor urenregistraties en timesheets."
   },
   "instructions": "Use the select parameter as a comma separated string to only include fields in the response you're interested in. If it's a nested property in the response, you may end the property name with a . (period) to include all its children.",
   "headers": {

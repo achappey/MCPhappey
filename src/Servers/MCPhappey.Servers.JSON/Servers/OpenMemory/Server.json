@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "OpenMemory",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "MCP that lets assistants save, delete, search, list, and query a user’s personal memories securely using KernelMemory and OAuth context."
   },
   "instructions": "Use 0 relevance by default. Only use higher relevance when needed and never go beyond 0.6, since that will almost never return anything. ",
   "plugins": ["MCPhappey.Tools.OpenMemory.OpenMemory, MCPhappey.Tools"],

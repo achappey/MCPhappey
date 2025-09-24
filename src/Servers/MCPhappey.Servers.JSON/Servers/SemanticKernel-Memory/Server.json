@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "SemanticKernel-Memory",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "MCP that allows assistants to search, ask, and list Microsoft Kernel Memory indexes, retrieving relevant sources and citations with configurable relevance and limits."
   },
   "plugins": ["MCPhappey.Tools.KernelMemory.KernelMemory, MCPhappey.Tools"],
   "obo": {

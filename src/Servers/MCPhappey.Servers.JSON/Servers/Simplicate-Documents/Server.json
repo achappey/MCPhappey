@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Simplicate-Documents",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Documentbeheer-integratie voor Simplicate om bestanden en mappen te zoeken, uploaden en koppelen aan modules."
   },
   "headers": {
     "Authentication-Key": "Simplicate Api Key",

@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "ModelContext-Security",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Provides resources and tools around custom MCP server security settings, like owners and access groups."
   },
   "plugins": ["MCPhappey.Servers.SQL.Tools.ModelContextSecurityEditor, MCPhappey.Servers.SQL"],
   "instructions": "Only owners can edit servers. Securitygroups are used to limit access to the MCP server. Security groups are recommended on secured servers. Protected resources (like SharePoint, Micosoft Graph and Simplicate resources) can only be used when secured == true on the server.",

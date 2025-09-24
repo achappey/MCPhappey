@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "OpenAI-MicrosoftTeams",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "MCP that connects OpenAI to Microsoft Teams via delegated (OBO) tokens, enabling search, fetch, chat member and profile actions through structured prompts."
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.MicrosoftTeams.OpenAITeams, MCPhappey.Tools"

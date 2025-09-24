@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Simplicate-Sales",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "Salespijplijn-integratie voor Simplicate met sales, offertes en fases."
   },
   "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries.",
   "headers": {

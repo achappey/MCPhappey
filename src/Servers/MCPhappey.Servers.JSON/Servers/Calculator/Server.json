@@ -1,7 +1,8 @@
 {
   "serverInfo": {
     "name": "Calculator",
-    "version": "1.0.0"
+    "version": "1.0.0",
+    "description": "MCP that provides basic arithmetic operations—add, subtract, multiply, divide, and round—enabling assistants to perform simple math directly through structured API calls."
   },
   "plugins": ["MCPhappey.Tools.AI.MathPlugin, MCPhappey.Tools"]
 }
