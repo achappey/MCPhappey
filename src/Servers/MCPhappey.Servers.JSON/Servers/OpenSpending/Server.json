@@ -2,6 +2,7 @@
   "serverInfo": {
     "name": "OpenSpending",
     "version": "1.0.0",
+    "websiteUrl": "https://openspending.nl",
     "description": "OpenSpending server voor inkomsten en uitgaven van overheden in Nederland. Zoek bronnen, datasets en trends per jaar, categorie of organisatie. Handig voor begrotingen, verantwoording en analyses met betrouwbare open data."
   }
 }

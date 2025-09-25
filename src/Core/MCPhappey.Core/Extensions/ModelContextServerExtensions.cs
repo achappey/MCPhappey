@@ -67,7 +67,17 @@ public static partial class ModelContextServerExtensions
             {
                 Description = server.Server.ServerInfo.Description,
                 Version = server.Server.ServerInfo.Version,
+                WebsiteUrl = server.Server.ServerInfo.WebsiteUrl,
                 Name = $"{baseUrl.WithoutScheme()}/{server.Server.ServerInfo.Name}",
+                Repository = new()
+                {
+                    Source = "github",
+                    Url = "https://github.com/achappey/MCPhappey",
+                    Subfolder = server.SourceType == ServerSourceType.Static ?
+                        $"/src/Servers/MCPhappey.Servers.JSON/Servers/{server.Server.ServerInfo.Name}" :
+                        "/src/Servers/MCPhappey.Servers.SQL"
+
+                },
                 Remotes = [new ServerRemote() {
                     Url =  $"{baseUrl}/{server.Server.ServerInfo.Name.ToLowerInvariant()}",
                 }]

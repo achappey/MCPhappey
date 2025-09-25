@@ -2,6 +2,7 @@
   "serverInfo": {
     "name": "GitHub-RestCountries",
     "version": "1.0.0",
+    "websiteUrl": "https://github.com/apilayer/restcountries",
     "description": "Query comprehensive country data: names, ISO codes, regions, capitals, population, currencies, languages and flags. Useful for lookups, validation and enrichment in apps, dashboards and workflows using the Rest Countries dataset."
   },
   "plugins": [

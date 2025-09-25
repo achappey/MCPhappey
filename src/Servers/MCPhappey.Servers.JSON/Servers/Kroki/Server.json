@@ -2,8 +2,11 @@
   "serverInfo": {
     "name": "Kroki",
     "version": "1.0.0",
+    "websiteUrl": "https://kroki.io",
     "description": "Render diagrams from text descriptions using Kroki. Supply PlantUML, Mermaid, Graphviz and more, and receive ready-to-use images. Ideal for documentation pipelines and visualizing architectures directly from source."
   },
   "instructions": "Invoke the Kroki tool to render the diagrams; do not output code or text in codeblocks, unless explicitly requested.",
-  "plugins": ["MCPhappey.Tools.Kroki.KrokiDiagrams, MCPhappey.Tools"]
+  "plugins": [
+    "MCPhappey.Tools.Kroki.KrokiDiagrams, MCPhappey.Tools"
+  ]
 }

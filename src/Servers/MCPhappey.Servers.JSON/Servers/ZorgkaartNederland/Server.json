@@ -2,6 +2,7 @@
   "serverInfo": {
     "name": "ZorgkaartNederland",
     "version": "1.0.0",
+    "websiteUrl": "https://www.zorgkaartnederland.nl",
     "description": "MCP-resourcecollectie voor ZorgkaartNederland die actualiteiten, zorginstellingen, organisatietypes en organisatie-details ontsluit via parametrische URI-templates voor zoeken, filteren en ophalen van waarderingen, wachttijden, specialisten en faciliteiten."
   },
   "plugins": [

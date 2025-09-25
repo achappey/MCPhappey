@@ -2,10 +2,15 @@
   "serverInfo": {
     "name": "deskbird",
     "version": "1.0.0",
-    "description": "Workplace management with deskbird: read bookings, desks and schedules; filter by date range and paginate efficiently. Automate occupancy insights, reservations and attendance reporting using the deskbird plugin with delegated user context."
+    "websiteUrl": "https://www.deskbird.com",
+    "description": "Workplace management with deskbird: read bookings, desks and schedules. Filter by date range and paginate efficiently. Automate occupancy insights, reservations and attendance reporting using the deskbird plugin."
   },
-  "roles": ["deskbird.ReadAll"],
-  "plugins": ["MCPhappey.Tools.Deskbird.DeskbirdPlugin, MCPhappey.Tools"],
+  "roles": [
+    "deskbird.ReadAll"
+  ],
+  "plugins": [
+    "MCPhappey.Tools.Deskbird.DeskbirdPlugin, MCPhappey.Tools"
+  ],
   "instructions": "Always use deskbird with a lowercase 'd'.\nFilter /bookings by startDate and endDate.\nUse limit 100 per request (max 500, but responses are large).",
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

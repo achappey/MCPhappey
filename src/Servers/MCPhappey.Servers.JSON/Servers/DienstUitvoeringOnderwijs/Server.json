@@ -2,6 +2,7 @@
   "serverInfo": {
     "name": "DienstUitvoeringOnderwijs",
     "version": "1.0.0",
+    "websiteUrl": "https://www.duo.nl",
     "description": "Server voor Dienst Uitvoering Onderwijs (DUO). Raadpleeg informatie en datasets over studiefinanciering, onderwijsinstellingen en registraties. Handig voor analyses, rapportages en beleidsvragen binnen het Nederlandse onderwijsdomein."
   }
 }

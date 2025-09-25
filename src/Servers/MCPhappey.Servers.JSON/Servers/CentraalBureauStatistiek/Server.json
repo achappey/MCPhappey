@@ -2,6 +2,7 @@
   "serverInfo": {
     "name": "CentraalBureauStatistiek",
     "version": "1.0.0",
+    "websiteUrl": "https://www.cbs.nl",
     "description": "Centraal Bureau voor de Statistiek (CBS) open data. Zoek en raadpleeg datasets, tabellen en tijdreeksen over bevolking, economie, arbeid, gezondheid en meer."
   }
 }

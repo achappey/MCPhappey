@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "Microsoft-OneNote",
+    "version": "1.0.0",
+    "description": "Expose OneNote notebooks, sections and pages via Microsoft Graph"
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Notes.ReadWrite.All"
+  }
+}

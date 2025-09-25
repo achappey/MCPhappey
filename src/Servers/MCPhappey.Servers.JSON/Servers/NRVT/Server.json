@@ -2,6 +2,7 @@
     "serverInfo": {
         "name": "NRVT",
         "version": "1.0.0",
+        "websiteUrl": "https://www.nrvt.nl",
         "description": "Informatiebronnen van het Nederlands Register Vastgoed Taxateurs (NRVT): downloads, regelgeving, modellen, tucht, nieuws en zoekfunctie. Gebruik dit voor onderzoek, documentverzameling en citaten."
     },
     "plugins": [

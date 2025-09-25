@@ -1,12 +1,11 @@
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
 using MCPhappey.Servers.SQL.Extensions;
-using MCPhappey.Servers.SQL.Repositories;
 using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Servers.SQL.Providers;
 
-public class SqlServerDataProvider(ServerRepository serverRepository) : IServerDataProvider
+public class SqlServerDataProvider(Repositories.ServerRepository serverRepository) : IServerDataProvider
 {
     public async Task<IEnumerable<PromptTemplate>> GetPromptsAsync(string serverName, CancellationToken ct = default)
     {

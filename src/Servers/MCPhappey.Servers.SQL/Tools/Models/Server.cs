@@ -19,7 +19,7 @@ public class NewMcpServer
     public string? Title { get; set; }
 
     [JsonPropertyName("description")]
-    [Description("The MCP server description.")]
+    [Description("The MCP server description. Be aware: the server description will be publicly available and visible to anyone who queries or browses the registry.")]
     public string? Description { get; set; }
 
     [JsonPropertyName("websiteUrl")]
@@ -91,7 +91,7 @@ public class UpdateMcpServer
     public string? Title { get; set; }
 
     [JsonPropertyName("description")]
-    [Description("The MCP server description.")]
+    [Description("The MCP server description. Be aware: the server description will be publicly available and visible to anyone who queries or browses the registry.")]
     public string? Description { get; set; }
 
     [JsonPropertyName("websiteUrl")]
