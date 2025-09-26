@@ -1,0 +1,11 @@
+{
+    "serverInfo": {
+        "name": "CapitalValue-NL",
+        "version": "1.0.0",
+        "websiteUrl": "https://www.capitalvalue.nl",
+        "description": ""
+    },
+    "plugins": [
+        "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"
+    ]
+}

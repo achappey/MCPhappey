@@ -19,7 +19,7 @@ public static class HTTPService
         [Description("The url to fetch.")]
         string url,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
@@ -40,7 +40,7 @@ public static class HTTPService
         [Description("The url to fetch.")]
         string url,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         [Description("Css selector.")]
         string? cssSelector = null,
         [Description("Extract only a specific HTML attribute from matched nodes (e.g., href, src, value).")]

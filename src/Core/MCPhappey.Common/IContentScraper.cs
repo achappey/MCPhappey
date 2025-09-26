@@ -36,5 +36,5 @@ public interface IContentScraper
     //
     // Returns:
     //     Content extracted from the url
-    Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default);
+    Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default);
 }

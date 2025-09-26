@@ -2,9 +2,12 @@
   "serverInfo": {
     "name": "Microsoft-OutlookCalendar",
     "version": "1.0.0",
+    "websiteUrl": "https://outlook.office.com/calendar",
     "description": "Read and manage Outlook calendars via Microsoft Graph. List events, check availability, create meetings, and send invites. Generate summaries and agendas, detect conflicts, and automate scheduling with delegated user permissions."
   },
-  "plugins": ["MCPhappey.Tools.Graph.Outlook.GraphOutlookCalendar, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Graph.Outlook.GraphOutlookCalendar, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/Mail.ReadWrite"
   }

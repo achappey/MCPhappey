@@ -9,7 +9,7 @@ namespace MCPhappey.Core.Services;
 public class SamplingService(PromptService promptService)
 {
     public async Task<CreateMessageResult> GetPromptSample(IServiceProvider serviceProvider,
-        IMcpServer mcpServer, string name,
+        McpServer mcpServer, string name,
         IReadOnlyDictionary<string, JsonElement>? arguments = null,
         string? modelHint = null,
         float? temperature = null,
@@ -39,7 +39,7 @@ public class SamplingService(PromptService promptService)
     }
 
     public async Task<T?> GetPromptSample<T>(IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string name,
         IReadOnlyDictionary<string, JsonElement> arguments,
         string? modelHint = null,

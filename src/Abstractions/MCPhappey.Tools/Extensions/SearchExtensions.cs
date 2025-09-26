@@ -15,7 +15,7 @@ public static class SearchExtensions
     private const int TOKEN_SIZE = 30000;
 
     public static async Task<CallToolResult> ExtractWithFacts(this IServiceProvider serviceProvider,
-       IMcpServer mcpServer,
+       McpServer mcpServer,
        RequestContext<CallToolRequestParams> requestContext,
        string facts,
        string factsSourceUrl,

@@ -13,7 +13,7 @@ public static class NotificationExtensions
         => messageLevel >= (minLevel ?? LoggingLevel.Info);
 
     public static async Task<int?> SendProgressNotificationAsync(
-       this IMcpServer mcpServer,
+       this McpServer mcpServer,
        RequestContext<CallToolRequestParams> requestContext,
        int? progressCounter,
        string? message,
@@ -46,7 +46,7 @@ public static class NotificationExtensions
     }
 
     public static async Task SendMessageNotificationAsync(
-      this IMcpServer requestContext,
+      this McpServer requestContext,
       string? message,
       LoggingLevel loggingLevel = LoggingLevel.Info,
       CancellationToken cancellationToken = default)

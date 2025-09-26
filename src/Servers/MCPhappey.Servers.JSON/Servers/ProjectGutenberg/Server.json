@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "ProjectGutenberg",
+    "title": "Project Gutenberg",
     "version": "1.0.0",
     "websiteUrl": "https://www.gutenberg.org",
     "description": "Search and retrieve free ebooks from Project Gutenberg. Find titles by author, language, topic and format, and download EPUB, HTML or plain text for reading, research and analysis."

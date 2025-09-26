@@ -14,7 +14,7 @@ public class EditorCompletion : IAutoCompletion
             || serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Security");
 
     public async Task<Completion> GetCompletion(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         CompleteRequestParams? completeRequestParams,
         CancellationToken cancellationToken = default)
@@ -91,4 +91,6 @@ public class EditorCompletion : IAutoCompletion
         };
     }
 
+    public IEnumerable<string> GetArguments(IServiceProvider serviceProvider)
+        => ["server", "resourceName", "promptName"];
 }

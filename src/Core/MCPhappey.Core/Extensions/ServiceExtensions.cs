@@ -19,7 +19,7 @@ public static class ServiceExtensions
     }
 
     public static ServerConfig? GetServerConfig(this IServiceProvider serviceProvider,
-           IMcpServer mcpServer)
+           McpServer mcpServer)
     {
         var configs = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
         return configs.GetServerConfig(mcpServer);

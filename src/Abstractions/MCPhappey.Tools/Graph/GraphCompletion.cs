@@ -12,7 +12,7 @@ public class GraphCompletion : IAutoCompletion
         => serverConfig.Server.ServerInfo.Name.StartsWith("Microsoft-");
 
     public async Task<Completion> GetCompletion(
-     IMcpServer mcpServer,
+     McpServer mcpServer,
      IServiceProvider serviceProvider,
      CompleteRequestParams? completeRequestParams,
      CancellationToken cancellationToken = default)
@@ -358,6 +358,27 @@ public class GraphCompletion : IAutoCompletion
             Values = [.. result]
         };
 
+    }
+
+    public IEnumerable<string> GetArguments(IServiceProvider serviceProvider)
+    {
+        return
+        [
+        "appName",
+        "roleName",
+        "mail",
+        "calendarEventSeries",
+        "calendarEvent",
+        "siteName",
+        "driveName",
+        "teamName",
+        "userPrincipalName",
+        "userDisplayName",
+        "departmentName",
+        "plannerName",
+        "groupName",
+        "securityGroupName"
+    ];
     }
 
 }

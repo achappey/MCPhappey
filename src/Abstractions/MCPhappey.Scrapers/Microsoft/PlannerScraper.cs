@@ -18,7 +18,7 @@ public class PlannerScraper(IHttpClientFactory httpClientFactory, ServerConfig s
         => new Uri(url).Host.Equals("planner.cloud.microsoft", StringComparison.OrdinalIgnoreCase)
             && serverConfig.Server.OBO?.ContainsKey(Hosts.MicrosoftGraph) == true;
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider,
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer, IServiceProvider serviceProvider,
            string url, CancellationToken cancellationToken = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();

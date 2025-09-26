@@ -10,7 +10,7 @@ public class StaticHeaderScraper(IHttpClientFactory httpClientFactory, string ho
 {
     public bool SupportsHost(ServerConfig serverConfig, string url) => new Uri(url).Host == hostName;
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {
         var httpClient = httpClientFactory.CreateClient();
 

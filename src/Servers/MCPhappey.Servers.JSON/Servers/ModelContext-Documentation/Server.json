@@ -2,6 +2,7 @@
   "serverInfo": {
     "name": "ModelContext-Documentation",
     "version": "1.0.0",
+    "websiteUrl": "https://modelcontextprotocol.io",
     "description": "Documentation server for the MCP stack. Browse guides, references and examples to understand servers, tools and resources. Retrieve templates and samples to accelerate onboarding, implementation, and correct usage across workflows."
   }
 }

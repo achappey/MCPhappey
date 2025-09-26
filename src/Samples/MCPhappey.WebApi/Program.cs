@@ -13,6 +13,7 @@ using OpenAI;
 using MCPhappey.Agent2Agent.Extensions;
 using Microsoft.Net.Http.Headers;
 using MCPhappey.Tools.Deskbird;
+using MCPhappey.Tools.Perplexity;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -46,6 +47,20 @@ if (deskbirdKey != null)
     builder.Services.AddSingleton(new DeskbirdSettings()
     {
         ApiKey = deskbirdKey
+    });
+}
+
+
+var perplexityKey = appConfig?.DomainHeaders?
+            .FirstOrDefault(a => a.Key == "api.perplexity.ai")
+            .Value
+            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+
+if (perplexityKey != null)
+{
+    builder.Services.AddSingleton(new PerplexitySettings()
+    {
+        ApiKey = perplexityKey
     });
 }
 

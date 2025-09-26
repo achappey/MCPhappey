@@ -80,6 +80,7 @@ public static class HttpExtensions
   public static string? GetUserId(this IServiceProvider serviceProvider)
   {
     var token = serviceProvider.GetRequiredService<HeaderProvider>();
+    if (string.IsNullOrEmpty(token.Bearer)) return null;
     var outerJwt = new JwtSecurityTokenHandler().ReadJwtToken(token.Bearer);
     var userId = outerJwt.Claims.FirstOrDefault(c => c.Type == "oid")?.Value;
 

@@ -11,7 +11,7 @@ public class McpStatisticsScraper(IReadOnlyList<ServerConfig> serverConfigs) : I
     public bool SupportsHost(ServerConfig serverConfig, string url)
         => new Uri(url).Scheme.Equals("mcp-servers", StringComparison.OrdinalIgnoreCase);
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer,
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer,
         IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();

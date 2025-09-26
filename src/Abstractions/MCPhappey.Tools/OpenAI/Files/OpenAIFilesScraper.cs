@@ -16,7 +16,7 @@ public class OpenAIFilesScraper : IContentScraper
         => url.StartsWith(BASE_URL, StringComparison.OrdinalIgnoreCase);
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         string url,
         CancellationToken cancellationToken = default)

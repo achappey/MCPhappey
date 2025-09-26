@@ -15,7 +15,7 @@ public class ContainerScraper : IContentScraper
     public bool SupportsHost(ServerConfig serverConfig, string url)
         => url.StartsWith(ContainerExtensions.BASE_URL, StringComparison.OrdinalIgnoreCase);
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer,
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer,
         IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();

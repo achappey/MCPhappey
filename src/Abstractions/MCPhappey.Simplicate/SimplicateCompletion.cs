@@ -17,7 +17,7 @@ public class SimplicateCompletion(
         => serverConfig.Server.ServerInfo.Name.StartsWith("Simplicate-");
 
     public async Task<Completion> GetCompletion(
-     IMcpServer mcpServer,
+     McpServer mcpServer,
      IServiceProvider serviceProvider,
      CompleteRequestParams? completeRequestParams,
      CancellationToken cancellationToken = default)
@@ -74,13 +74,18 @@ public class SimplicateCompletion(
         Func<T, Dictionary<string, string>?, string> selector,
         string argValue,
         Dictionary<string, string>? context, // <--- new param
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         CancellationToken cancellationToken)
     {
         var url = simplicateOptions.GetApiUrl($"/{urlFactory(argValue, context)}");
         var items = await downloadService.GetSimplicatePageAsync<T>(serviceProvider, mcpServer, url, cancellationToken);
         return items?.Data?.Take(100).Select(item => selector(item, context)).Where(a => !string.IsNullOrEmpty(a)).ToList() ?? [];
+    }
+
+    public IEnumerable<string> GetArguments(IServiceProvider serviceProvider)
+    {
+        return completionSources.Keys;
     }
 
     private readonly Dictionary<string, object> completionSources = new()

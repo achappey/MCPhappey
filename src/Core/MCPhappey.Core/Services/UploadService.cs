@@ -9,7 +9,7 @@ namespace MCPhappey.Core.Services;
 public class UploadService(
     IReadOnlyList<ServerConfig> servers)
 {
-    public async Task<Resource?> UploadToRoot(IMcpServer mcpServer,
+    public async Task<Resource?> UploadToRoot(McpServer mcpServer,
         IServiceProvider serviceProvider,
         string filename,
         BinaryData binaryData,

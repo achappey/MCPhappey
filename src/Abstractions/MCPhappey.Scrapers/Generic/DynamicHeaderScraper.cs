@@ -12,7 +12,7 @@ public class DynamicHeaderScraper(IHttpClientFactory httpClientFactory) : IConte
 
     public bool SupportsHost(ServerConfig serverConfig, string url) => SupportedHosts.Contains(new Uri(url).Host);
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer, IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();
         var httpClient = httpClientFactory.CreateClient();

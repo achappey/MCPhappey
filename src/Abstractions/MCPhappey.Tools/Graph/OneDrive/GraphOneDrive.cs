@@ -14,6 +14,7 @@ public static class GraphOneDrive
 {
     [Description("Uploads a file to the specified OneDrive location.")]
     [McpServerTool(Title = "Upload file to OneDrive",
+        Name = "graph_onedrive_upload_file",
         Destructive = true,
         Idempotent = true,
         OpenWorld = false)]
@@ -49,6 +50,7 @@ public static class GraphOneDrive
 
     [Description("Create a folder in the specified OneDrive or SharePoint document library.")]
     [McpServerTool(Title = "Create OneDrive/SharePoint folder",
+        Name = "graph_onedrive_create_folder",
         OpenWorld = false, Destructive = true, Idempotent = true)]
     public static async Task<CallToolResult?> GraphOneDrive_CreateFolder(
             [Description("The OneDrive or SharePoint Drive ID.")] string driveId,

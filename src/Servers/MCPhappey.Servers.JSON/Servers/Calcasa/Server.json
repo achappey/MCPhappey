@@ -1,0 +1,11 @@
+{
+    "serverInfo": {
+        "name": "Calcasa",
+        "version": "1.0.0",
+        "websiteUrl": "https://calcasa.nl",
+        "description": "Ontsluit alle Calcasa WOX-kwartaalberichten. Hij biedt een indexresource en PDF-resources per kwartaal, plus prompts om het meest recente rapport live te analyseren, kerncijfers te extraheren en kwartalen te vergelijken."
+    },
+    "plugins": [
+        "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"
+    ]
+}

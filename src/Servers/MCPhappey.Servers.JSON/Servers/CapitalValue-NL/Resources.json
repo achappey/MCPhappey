@@ -1,0 +1,256 @@
+{
+  "resources": [
+    {
+      "name": "home",
+      "uri": "https://www.capitalvalue.nl/",
+      "description": "Homepage van Capital Value: ingangen naar transacties, taxaties, consultancy, research en kennis.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "woningvastgoed",
+      "uri": "https://www.capitalvalue.nl/woningvastgoed/",
+      "description": "Landing Woningvastgoed: diensten en ingangen voor transacties, taxaties, consultancy, research.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "zorgvastgoed",
+      "uri": "https://www.capitalvalue.nl/zorgvastgoed/",
+      "description": "Landing Zorgvastgoed: diensten en ingangen voor transacties, taxaties, consultancy, research.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "transacties",
+      "uri": "https://www.capitalvalue.nl/transacties/",
+      "description": "Overzicht transacties (wonen en zorg).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "taxaties",
+      "uri": "https://www.capitalvalue.nl/taxaties/",
+      "description": "Landing voor Taxaties (wonen en zorg).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "consultancy",
+      "uri": "https://www.capitalvalue.nl/consultancy/",
+      "description": "Consultancy-landing: producten en onderzoeken (o.a. market monitor, yield forecasts, WWS-advies).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "research",
+      "uri": "https://www.capitalvalue.nl/research/",
+      "description": "Research-landing met ingangen naar Woningvastgoed en Zorgvastgoed onderzoek.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "woningvastgoed-research",
+      "uri": "https://www.capitalvalue.nl/woningvastgoed/research/",
+      "description": "Themapagina research Woningvastgoed.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "zorgvastgoed-research",
+      "uri": "https://www.capitalvalue.nl/zorgvastgoed/research/",
+      "description": "Themapagina research Zorgvastgoed.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "nieuws-overzicht",
+      "uri": "https://www.capitalvalue.nl/nieuws/",
+      "description": "Nieuws-overzicht (persberichten, marktupdates).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "insights-overzicht",
+      "uri": "https://www.capitalvalue.nl/insights/",
+      "description": "Insights-overzicht (verdiepende analyses, marktcommentaar).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "blogs-overzicht",
+      "uri": "https://www.capitalvalue.nl/blogs/",
+      "description": "Blogs-overzicht.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "events-overzicht",
+      "uri": "https://www.capitalvalue.nl/events/",
+      "description": "Events-overzicht (Shared Value, PROVADA, etc.).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "cases-overzicht",
+      "uri": "https://www.capitalvalue.nl/cases/",
+      "description": "Cases-overzicht met klantreferenties en voorbeeldprojecten.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "team-overzicht",
+      "uri": "https://www.capitalvalue.nl/human-capital/team/",
+      "description": "Team-overzicht met profielen (wonen, zorg, taxaties, consultancy, research).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "nationale-woningbouw-monitor",
+      "uri": "https://www.capitalvalue.nl/nationale-woningbouw-monitor/",
+      "description": "Dashboard/monitor met woningbouwcijfers en toelichting.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "consultancy-kwartaaldata",
+      "uri": "https://www.capitalvalue.nl/woningvastgoed/consultancy/kwartaaldata/",
+      "description": "Consultancy: kwartaaldata woningmarkt (productpagina).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "consultancy-yieldforecast",
+      "uri": "https://www.capitalvalue.nl/woningvastgoed/consultancy/yieldforecastwoningmarkt/",
+      "description": "Consultancy: yield forecast woningmarkt (productpagina).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "consultancy-waardebepaling",
+      "uri": "https://www.capitalvalue.nl/woningvastgoed/consultancy/indicatieve-waardebepaling/",
+      "description": "Consultancy: indicatieve waardebepaling (productpagina).",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "consultancy-wws-advies",
+      "uri": "https://www.capitalvalue.nl/woningvastgoed/consultancy/wws-advies/",
+      "description": "Consultancy: WWS-advies t.b.v. Wet betaalbare huur.",
+      "mimeType": "text/html"
+    },
+    {
+      "name": "corporaties-landing",
+      "uri": "https://www.capitalvalue.nl/corporaties/",
+      "description": "Themapagina voor corporaties (diensten en publicaties).",
+      "mimeType": "text/html",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "aanbod-corporatie-zorg",
+      "uri": "https://www.capitalvalue.nl/aanbod-corporatie-en-zorgwoningen/",
+      "description": "Overzichtspagina met aanbod corporatie- en zorgwoningen.",
+      "mimeType": "text/html",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "sitemap-index",
+      "uri": "https://www.capitalvalue.nl/sitemap.xml",
+      "description": "Sitemap-index (Yoast); startpunt naar deel-sitemaps.",
+      "mimeType": "application/xml",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "sitemap-pages",
+      "uri": "https://www.capitalvalue.nl/page-sitemap.xml",
+      "description": "Sitemap voor statische pagina’s.",
+      "mimeType": "application/xml",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "sitemap-posts-1",
+      "uri": "https://www.capitalvalue.nl/post-sitemap.xml",
+      "description": "Sitemap posts (deel 1; nieuws/insights).",
+      "mimeType": "application/xml",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "sitemap-posts-2",
+      "uri": "https://www.capitalvalue.nl/post-sitemap2.xml",
+      "description": "Sitemap posts (deel 2; recente nieuws/insights/events).",
+      "mimeType": "application/xml",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "sitemap-team",
+      "uri": "https://www.capitalvalue.nl/post-team-sitemap.xml",
+      "description": "Sitemap voor teamprofielen.",
+      "mimeType": "application/xml",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "sitemap-cases",
+      "uri": "https://www.capitalvalue.nl/post-cases-sitemap.xml",
+      "description": "Sitemap voor cases.",
+      "mimeType": "application/xml",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "sitemap-categories",
+      "uri": "https://www.capitalvalue.nl/category-sitemap.xml",
+      "description": "Sitemap voor categorie-overzichten (nieuws, insights, events, blogs).",
+      "mimeType": "application/xml",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "en-home",
+      "uri": "https://www.capitalvalue.nl/en/",
+      "description": "Engelstalige landing met ingangen naar Residential/Healthcare Real Estate, News, Insights, Events.",
+      "mimeType": "text/html",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "en-residential",
+      "uri": "https://www.capitalvalue.nl/en/residential-real-estate/",
+      "description": "EN: Residential Real Estate landing (transactions, valuations, consultancy, research).",
+      "mimeType": "text/html",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "name": "en-healthcare",
+      "uri": "https://www.capitalvalue.nl/en/healthcare-real-estate/",
+      "description": "EN: Healthcare Real Estate landing (transactions, valuations, consultancy, research).",
+      "mimeType": "text/html",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    }
+  ]
+}

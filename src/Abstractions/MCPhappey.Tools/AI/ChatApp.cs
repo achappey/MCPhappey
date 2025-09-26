@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using DocumentFormat.OpenXml.Wordprocessing;
+using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
@@ -111,6 +112,19 @@ public static class ChatApp
         var stream = await response.Content.ReadAsStringAsync(cancellationToken);
 
         return stream.ToJsonCallToolResponse(queryUri);
+    }
+
+    [Description("Get available completions that can be used in prompts and can be completed during using those prompts.")]
+    [McpServerTool(Title = "Get prompt completions",
+        ReadOnly = true)]
+    public static async Task<CallToolResult> ChatApp_GetCompletions(
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       CancellationToken cancellationToken = default)
+    {
+        var config = serviceProvider.GetServices<IAutoCompletion>();
+
+        return await Task.FromResult(string.Join(",", config.SelectMany(z => z.GetArguments(serviceProvider))).ToTextCallToolResponse());
     }
 
     [Description("Generate a very short, friendly welcome message for a chatbot interface")]

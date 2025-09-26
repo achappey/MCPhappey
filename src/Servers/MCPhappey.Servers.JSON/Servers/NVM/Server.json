@@ -1,0 +1,11 @@
+{
+    "serverInfo": {
+        "name": "NVM",
+        "version": "1.0.0",
+        "websiteUrl": "https://www.nvm.nl",
+        "description": "Ontsluit zoveel mogelijk NVM-bronnen: Wonen, Business, Agrarisch & Landelijk, nieuws, zoekfunctie, sitemap en directe media/PDF-rapporten (o.a. kwartaalcijfers, COROP-analyses). Doel: snel vinden, ophalen en citeren van actuele marktinformatie, bijlagen en regionale rapportages, inclusief RSS-updates."
+    },
+    "plugins": [
+        "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"
+    ]
+}

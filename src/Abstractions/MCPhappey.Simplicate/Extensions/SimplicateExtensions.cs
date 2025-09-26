@@ -23,7 +23,7 @@ public static class SimplicateExtensions
     public static async Task<SimplicateData<JsonElement>?> GetSimplicatePageAsync(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string url,
         CancellationToken cancellationToken = default)
     {
@@ -38,7 +38,7 @@ public static class SimplicateExtensions
     public static async Task<List<JsonElement>> GetAllSimplicatePagesAsync(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string baseUrl,
         Func<int, string> progressTextSelector,
         RequestContext<CallToolRequestParams> requestContext,
@@ -125,7 +125,7 @@ public static class SimplicateExtensions
     public static async Task<SimplicateData<T>?> GetSimplicatePageAsync<T>(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string url,
         CancellationToken cancellationToken = default)
     {
@@ -141,7 +141,7 @@ public static class SimplicateExtensions
     public static async Task<SimplicateItemData<T>?> GetSimplicateItemAsync<T>(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string url,
         CancellationToken cancellationToken = default)
     {
@@ -158,7 +158,7 @@ public static class SimplicateExtensions
     public static async Task<List<T>> GetAllSimplicatePagesAsync<T>(
         this DownloadService downloadService,
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string baseUrl,
         string filterString,
         Func<int, string> progressTextSelector,

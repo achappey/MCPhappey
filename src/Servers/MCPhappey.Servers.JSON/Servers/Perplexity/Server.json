@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "Perplexity",
+    "version": "1.0.0",
+    "websiteUrl": "https://www.perplexity.ai",
+    "description": "A Perplexity plugin that delivers ranked, continuously updated web search results with advanced filtering and customization. Supports multi-query search, token limits per page, and optional country-based filtering to provide fast, tailored information retrieval directly within your environment."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Perplexity.PerplexityPlugin, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

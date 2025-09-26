@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "Microsoft-Bookings",
+    "title": "Microsoft Bookings",
+    "version": "1.0.0",
+    "description": "Microsoft Bookings exposes read-only Microsoft Graph endpoints. Quickly list booking businesses, appointments, services, staff and customers. Parameterised templates make it easy to retrieve details for a specific business or appointment.",
+    "websiteUrl": "https://outlook.office.com/bookings"
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Bookings.ReadWrite.All https://graph.microsoft.com/Bookings.Manage.All"
+  }
+}

@@ -14,7 +14,7 @@ namespace MCPhappey.Tools.PowerBI;
 public static class PowerBIClientExtensions
 {
     public static async Task<PowerBIClient> GetOboPowerBIClient(this IServiceProvider serviceProvider,
-    IMcpServer mcpServer)
+        McpServer mcpServer)
     {
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var tokenService = serviceProvider.GetService<HeaderProvider>();

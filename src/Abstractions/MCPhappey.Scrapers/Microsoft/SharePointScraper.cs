@@ -16,7 +16,7 @@ public class SharePointScraper(IHttpClientFactory httpClientFactory, ServerConfi
             && serverConfig.Server.OBO?.ContainsKey(Hosts.MicrosoftGraph) == true
             && !url.Contains("/_api/");
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer, IServiceProvider serviceProvider,
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer, IServiceProvider serviceProvider,
          string url, CancellationToken cancellationToken = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();

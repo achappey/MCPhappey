@@ -14,7 +14,7 @@ public class VectorStoreScraper : IContentScraper
     public bool SupportsHost(ServerConfig serverConfig, string url)
         => url.StartsWith(VectorStoreExtensions.BASE_URL, StringComparison.OrdinalIgnoreCase);
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer,
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer,
         IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {
         

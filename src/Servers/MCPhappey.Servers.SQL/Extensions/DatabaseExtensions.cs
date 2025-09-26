@@ -7,7 +7,7 @@ namespace MCPhappey.Servers.SQL.Extensions;
 public static class DatabaseExtensions
 {
     private static readonly string DEFAULT_SCOPES
-        = "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read https://graph.microsoft.com/User.ReadWrite.All";
+        = "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read https://graph.microsoft.com/User.ReadWrite.All https://graph.microsoft.com/Notes.ReadWrite.All";
 
     public static Server ToMcpServer(this Models.Server server)
     {
@@ -70,6 +70,7 @@ public static class DatabaseExtensions
                 Name = server.Name,
                 Description = server.Description,
                 Title = server.Title,
+                WebsiteUrl = server.WebsiteUrl,
                 Version = "1.0.0"
             },
             Groups = server.Secured && server.Groups.Count != 0

@@ -1,0 +1,11 @@
+{
+  "serverInfo": {
+    "name": "Microsoft-DeviceUpdates",
+    "title": "Microsoft device updates",
+    "version": "1.0.0",
+    "description": "Microsoft device updates provides read-only access to Windows Update catalog entries, deployments and audiences. Includes parameterised templates to retrieve details for a specific update, deployment or applicable content so assistants can surface enterprise update status without full re-fetches."
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/WindowsUpdates.ReadWrite.All"
+  }
+}

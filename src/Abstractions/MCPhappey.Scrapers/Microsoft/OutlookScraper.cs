@@ -27,7 +27,7 @@ public sealed class OutlookScraper(
         serverConfig.Server.OBO?.ContainsKey(Common.Constants.Hosts.MicrosoftGraph) == true;
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         string url,
         CancellationToken cancellationToken = default)

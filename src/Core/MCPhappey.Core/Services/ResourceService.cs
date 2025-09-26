@@ -28,7 +28,7 @@ public class ResourceService(DownloadService downloadService, IServerDataProvide
         };
 
     public async Task<ReadResourceResult> GetServerResource(IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string uri,
         CancellationToken cancellationToken = default)
     {

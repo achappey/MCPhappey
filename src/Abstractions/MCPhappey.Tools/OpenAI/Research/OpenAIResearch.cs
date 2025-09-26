@@ -111,7 +111,7 @@ public static class OpenAIResearch
         return result.ToTextCallToolResponse();
     }
 
-    private static async Task<string?> GetWebResearch(IMcpServer mcpServer,
+    private static async Task<string?> GetWebResearch(McpServer mcpServer,
         SamplingService samplingService,
         RequestContext<CallToolRequestParams> requestContext,
         int? counter,

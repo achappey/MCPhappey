@@ -2,9 +2,12 @@
   "serverInfo": {
     "name": "Microsoft-OutlookMail",
     "version": "1.0.0",
+    "websiteUrl": "https://outlook.office.com/mail",
     "description": "Send and manage email via Microsoft Graph: read, search, draft and send messages, handle attachments and folders, and automate notifications and triage. Supports delegated permissions for secure, context‑aware mail workflows."
   },
-  "plugins": ["MCPhappey.Tools.Graph.Outlook.GraphOutlookMail, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Graph.Outlook.GraphOutlookMail, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/Mail.ReadWrite https://graph.microsoft.com/Mail.Send.Shared"
   }

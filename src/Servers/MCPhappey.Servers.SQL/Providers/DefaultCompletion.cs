@@ -17,7 +17,7 @@ public class DefaultCompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAut
             && serverConfig.Server.ServerInfo.Name.StartsWith("ModelContext-Security") == false;
 
     public async Task<Completion> GetCompletion(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         CompleteRequestParams? completeRequestParams,
         CancellationToken cancellationToken = default)
@@ -45,7 +45,6 @@ public class DefaultCompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAut
 
         var result = await completionService.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
 
-
         if (result.Values.Count > 0)
         {
             return result;
@@ -65,4 +64,19 @@ public class DefaultCompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAut
         return await simplicateCompletion.GetCompletion(mcpServer, serviceProvider, completeRequestParams, cancellationToken);
     }
 
+    public IEnumerable<string> GetArguments(IServiceProvider serviceProvider)
+    {
+        var completionServices = serviceProvider.GetServices<IAutoCompletion>();
+        List<string> items = [];
+
+        foreach (var completion in completionServices)
+        {
+            if (ReferenceEquals(completion, this))
+                continue;
+
+            items.AddRange(completion.GetArguments(serviceProvider));
+        }
+
+        return items;
+    }
 }

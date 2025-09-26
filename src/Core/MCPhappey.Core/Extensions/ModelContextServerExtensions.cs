@@ -19,7 +19,7 @@ public static partial class ModelContextServerExtensions
          }
      };
 
-    public static ServerConfig? GetServerConfig(this IEnumerable<ServerConfig> servers, IMcpServer mcpServer)
+    public static ServerConfig? GetServerConfig(this IEnumerable<ServerConfig> servers, McpServer mcpServer)
        => servers.GetServerConfig(mcpServer.ServerOptions.ServerInfo?.Name!);
 
     public static ServerConfig? GetServerConfig(this IEnumerable<ServerConfig> servers, string name)
@@ -122,7 +122,7 @@ public static partial class ModelContextServerExtensions
         $"{httpContext.Request.Scheme}://{httpContext.Request.Host}{server.GetServerRelativeUrl()}";
 
 
-    public static async Task<ResourceLinkBlock?> Upload(this IMcpServer mcpServer,
+    public static async Task<ResourceLinkBlock?> Upload(this McpServer mcpServer,
                 IServiceProvider serviceProvider,
                 string filename,
                 BinaryData binaryData,

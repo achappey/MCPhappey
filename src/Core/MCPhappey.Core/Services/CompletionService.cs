@@ -15,7 +15,7 @@ public class CompletionService(
     public async Task<CompleteResult> GetCompletion(CompleteRequestParams? completeRequestParams,
          ServerConfig serverConfig,
          IServiceProvider serviceProvider,
-         IMcpServer mcpServer,
+         McpServer mcpServer,
          CancellationToken cancellationToken = default)
     {
         var bestDecoder = autoCompletions

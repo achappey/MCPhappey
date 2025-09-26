@@ -25,7 +25,7 @@ public class Agent2AgentScraper(
         => new Uri(host).Scheme == "a2a";
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         string url,
         CancellationToken cancellationToken = default)

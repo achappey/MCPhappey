@@ -38,7 +38,7 @@ public class SimplicateScraper(
         => new Uri(host).Host == $"{simplicateOptions.Organization}.simplicate.app";
 
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         string url,
         CancellationToken cancellationToken = default)

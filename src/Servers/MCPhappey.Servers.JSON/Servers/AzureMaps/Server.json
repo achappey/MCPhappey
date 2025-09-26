@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "AzureMaps",
+    "title": "Azure Maps",
     "version": "1.0.0",
     "description": "Use Azure Maps for geocoding, routing, search and map tiles. Query locations, calculate routes and retrieve spatial data for applications and workflows using your subscription key."
   },

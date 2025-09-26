@@ -1,0 +1,11 @@
+{
+    "serverInfo": {
+        "name": "Kadaster",
+        "version": "1.0.0",
+        "websiteUrl": "https://www.Kadaster.nl",
+        "description": "kadaster.nl met kernbronnen: woningmarkt-kwartaalberichten, agrarisch, vastgoeddashboard, nieuws, RSS, sitemap, publicatieplanning en themapagina’s. Templates dekken artikelen (/-/slug), woningmarkt- en vastgoedinformatie-subpages, algemene zakelijk-subpages, site search en media."
+    },
+    "plugins": [
+        "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"
+    ]
+}

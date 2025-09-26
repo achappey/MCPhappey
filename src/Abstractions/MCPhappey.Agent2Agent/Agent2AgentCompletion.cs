@@ -15,7 +15,7 @@ public class Agent2AgentCompletion : IAutoCompletion
         => serverConfig.Server.ServerInfo.Name.StartsWith("Agent2Agent");
 
     public async Task<Completion> GetCompletion(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         CompleteRequestParams? completeRequestParams,
         CancellationToken cancellationToken = default)
@@ -53,4 +53,5 @@ public class Agent2AgentCompletion : IAutoCompletion
         };
     }
 
+    public IEnumerable<string> GetArguments(IServiceProvider serviceProvider) => ["context"];
 }

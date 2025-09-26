@@ -9,7 +9,7 @@ namespace MCPhappey.Common.Extensions;
 public static class ElicitExtensions
 {
     public static async Task<(T? typedResult, CallToolResult? notAccepted, ElicitResult? elicitResult)> TryElicit<T>(
-     this IMcpServer mcpServer,
+     this McpServer mcpServer,
      T elicitRequest,
      CancellationToken cancellationToken = default)
      where T : class, new()
@@ -28,7 +28,7 @@ public static class ElicitExtensions
         return (typed, null, result);
     }
 
-    public static async Task<ElicitResult?> GetElicitResponse<T>(this IMcpServer mcpServer,
+    public static async Task<ElicitResult?> GetElicitResponse<T>(this McpServer mcpServer,
         string? message = null,
         CancellationToken cancellationToken = default) where T : new()
     {
@@ -40,7 +40,7 @@ public static class ElicitExtensions
         => elicitResult.Action != "accept" ?
         JsonSerializer.Serialize(elicitResult, JsonSerializerOptions.Web).ToErrorCallToolResponse() : null;
 
-    public static async Task<ElicitResult?> GetElicitResponse<T>(this IMcpServer mcpServer, T defaultValues, CancellationToken cancellationToken) where T : new()
+    public static async Task<ElicitResult?> GetElicitResponse<T>(this McpServer mcpServer, T defaultValues, CancellationToken cancellationToken) where T : new()
     {
         var elicitParams = CreateElicitRequestParamsForType<T>();
         elicitParams.Message = elicitParams.Message.ToElicitDefaultData(defaultValues);

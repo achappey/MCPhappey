@@ -29,9 +29,10 @@ public class PromptService(IServerDataProvider dynamicDataService)
 
     public async Task<GetPromptResult> GetServerPrompt(
         IServiceProvider serviceProvider,
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         string name,
-        IReadOnlyDictionary<string, JsonElement>? arguments = null)
+        IReadOnlyDictionary<string, JsonElement>? arguments = null,
+        CancellationToken cancellationToken = default)
     {
         var serverConfig = serviceProvider.GetServerConfig(mcpServer) ?? throw new Exception();
         var prompts = await GetServerPromptTemplates(serverConfig);

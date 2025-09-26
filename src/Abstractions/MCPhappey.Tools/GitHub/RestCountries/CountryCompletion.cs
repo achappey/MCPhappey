@@ -12,7 +12,7 @@ public class CountryCompletion : IAutoCompletion
         => serverConfig.Server.ServerInfo.Name.Equals("GitHub-RestCountries", StringComparison.OrdinalIgnoreCase);
 
     public async Task<Completion> GetCompletion(
-     IMcpServer mcpServer,
+     McpServer mcpServer,
      IServiceProvider serviceProvider,
      CompleteRequestParams? completeRequestParams,
      CancellationToken cancellationToken = default)
@@ -69,4 +69,6 @@ public class CountryCompletion : IAutoCompletion
 
     }
 
+    public IEnumerable<string> GetArguments(IServiceProvider serviceProvider)
+        => ["countryA", "countryB", "countryName", "region"];
 }

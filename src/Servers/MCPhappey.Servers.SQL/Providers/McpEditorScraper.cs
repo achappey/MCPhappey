@@ -16,7 +16,7 @@ public class McpEditorScraper(IEnumerable<IContentDecoder> contentDecoders) : IC
     public bool SupportsHost(ServerConfig serverConfig, string url)
         => new Uri(url).Scheme.Equals("mcp-editor", StringComparison.OrdinalIgnoreCase);
 
-    public async Task<IEnumerable<FileItem>?> GetContentAsync(IMcpServer mcpServer,
+    public async Task<IEnumerable<FileItem>?> GetContentAsync(McpServer mcpServer,
         IServiceProvider serviceProvider, string url, CancellationToken cancellationToken = default)
     {
         var tokenService = serviceProvider.GetService<HeaderProvider>();

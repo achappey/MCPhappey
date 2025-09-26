@@ -1,9 +1,10 @@
 {
   "serverInfo": {
     "name": "COELO",
+    "title": "Centrum voor Onderzoek van de Economie van de Lagere Overheden (COELO)",
     "version": "1.0.0",
     "websiteUrl": "https://coelo.nl",
-    "description": "COELO met sitemaps van alle pagina’s en berichten, jaarlijkse Atlas van lokale lasten (2022-2025) en een lokale-lasten-calculator met gemeentelijke ID’s voor assistenten.",
+    "description": "COELO (Centrum voor Onderzoek van de Economie van de Lagere Overheden) met sitemaps van alle pagina’s en berichten, jaarlijkse Atlas van lokale lasten (2022-2025) en een lokale-lasten-calculator met gemeentelijke ID’s voor assistenten.",
     "icons": []
   },
   "plugins": [

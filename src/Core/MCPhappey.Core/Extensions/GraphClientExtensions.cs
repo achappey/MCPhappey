@@ -16,7 +16,7 @@ namespace MCPhappey.Core.Extensions;
 public static class GraphClientExtensions
 {
     public static async Task<GraphServiceClient> GetOboGraphClient(this IServiceProvider serviceProvider,
-      IMcpServer mcpServer)
+      McpServer mcpServer)
     {
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var tokenService = serviceProvider.GetService<HeaderProvider>();
@@ -27,7 +27,7 @@ public static class GraphClientExtensions
     }
 
     public static async Task<string> GetOboGraphToken(this IServiceProvider serviceProvider,
-      IMcpServer mcpServer)
+      McpServer mcpServer)
     {
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var tokenService = serviceProvider.GetService<HeaderProvider>();
@@ -50,7 +50,7 @@ public static class GraphClientExtensions
         return new GraphServiceClient(authProvider);
     }
 
-    public static async Task<HttpClient> GetGraphHttpClient(this IServiceProvider serviceProvider, IMcpServer mcpServer)
+    public static async Task<HttpClient> GetGraphHttpClient(this IServiceProvider serviceProvider, McpServer mcpServer)
     {
         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var tokenService = serviceProvider.GetRequiredService<HeaderProvider>();

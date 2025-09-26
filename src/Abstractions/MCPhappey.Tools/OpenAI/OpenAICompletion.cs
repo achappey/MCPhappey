@@ -14,7 +14,7 @@ public class OpenAICompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAuto
         => serverConfigs.Any(a => serverConfig.Server.ServerInfo.Name.StartsWith("OpenAI-") == true);
 
     public async Task<Completion> GetCompletion(
-        IMcpServer mcpServer,
+        McpServer mcpServer,
         IServiceProvider serviceProvider,
         CompleteRequestParams? completeRequestParams,
         CancellationToken cancellationToken = default)
@@ -50,4 +50,26 @@ public class OpenAICompletion(IReadOnlyList<ServerConfig> serverConfigs) : IAuto
 
     }
 
+    public IEnumerable<string> GetArguments(IServiceProvider serviceProvider)
+    {
+        var completionServices = serviceProvider.GetServices<IAutoCompletion>();
+        var userId = serviceProvider.GetUserId();
+
+        if (string.IsNullOrEmpty(userId)) return [];
+
+        IEnumerable<string> values = [];
+
+        var completionService = completionServices.First(a => a.SupportsHost(new ServerConfig()
+        {
+            Server = new Server()
+            {
+                ServerInfo = new ServerInfo()
+                {
+                    Name = "Microsoft-"
+                }
+            }
+        }));
+
+        return completionService.GetArguments(serviceProvider);
+    }
 }
