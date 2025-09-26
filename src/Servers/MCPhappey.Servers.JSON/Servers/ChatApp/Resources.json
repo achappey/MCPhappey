@@ -1,7 +1,7 @@
 {
   "resources": [
     {
-      "uri": "http://localhost:3001/v0/servers",
+      "uri": "https://mcp.fakton.com/v0/servers",
       "name": "default-mcp-server-registry",
       "title": "Default MCP store",
       "description": "List all MCP servers from the default MCP store",
