@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Abstractions\MCPhappey.Auth\MCPhappey.Auth.csproj" PrivateAssets="All" />
+    <ProjectReference Include="..\..\Abstractions\MCPhappey.Telemetry\MCPhappey.Telemetry.csproj" PrivateAssets="All" />
     <ProjectReference Include="..\MCPhappey.Common\MCPhappey.Common.csproj" PrivateAssets="All" />
   </ItemGroup>  
 

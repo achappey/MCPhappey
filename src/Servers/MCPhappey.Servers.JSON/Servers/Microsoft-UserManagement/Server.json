@@ -4,7 +4,9 @@
     "version": "1.0.0",
     "description": "Administer Microsoft Entra ID users via Microsoft Graph: create and update accounts, manage memberships and properties, assign roles, and enforce lifecycle policies. Automate provisioning, access changes and audits with delegated permissions across tenants."
   },
-  "plugins": ["MCPhappey.Tools.Graph.Users.GraphUsers, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Graph.Users.GraphUserManagement, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/User.ReadWrite.All"
   }

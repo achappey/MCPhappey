@@ -9,208 +9,79 @@ namespace MCPhappey.Tools.Graph.Users;
 
 public static class GraphUsers
 {
-    [Description("Add a user to a group")]
-    [McpServerTool(Title = "Add user to group", OpenWorld = false)]
-    public static async Task<CallToolResult?> GraphUsers_AddUserToGroup(
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        [Description("The user id.")] string userId,
-        [Description("The group id.")] string groupId,
-        CancellationToken cancellationToken = default
-    ) => await requestContext.WithExceptionCheck(async () =>
-    {
-        var mcpServer = requestContext.Server;
-
-        var (typed, notAccepted, _) = await mcpServer.TryElicit(
-            new GraphAddUserToGroup()
-            {
-                UserId = userId ?? string.Empty,
-                GroupId = groupId ?? string.Empty
-            },
-            cancellationToken
-        );
-
-        if (notAccepted != null) return notAccepted;
-        if (string.IsNullOrWhiteSpace(typed?.UserId))
-            throw new ArgumentException("User id is required.");
-        if (string.IsNullOrWhiteSpace(typed?.GroupId))
-            throw new ArgumentException("Group id is required.");
-
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-        var refUser = new ReferenceCreate
+    [Description("List all users grouped by department.")]
+    [McpServerTool(Title = "Group users by department", OpenWorld = false, ReadOnly = true)]
+    public static async Task<CallToolResult?> GraphUsers_GroupUsersByDepartment(
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            [Description("Include users without a department (null/empty). Default is false.")]
+            bool includeEmpty = false,
+            [Description("Include disabled users. Default is false.")]
+            bool includeDisabled = false,
+            CancellationToken cancellationToken = default
+        ) => await requestContext.WithExceptionCheck(async () =>
         {
-            OdataId = $"https://graph.microsoft.com/beta/users/{typed.UserId}"
-        };
+            var mcpServer = requestContext.Server;
+            using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
-        await client.Groups[typed.GroupId].Members.Ref.PostAsync(refUser, cancellationToken: cancellationToken);
+            // Map: Department -> List of user display names (or IDs if displayName is empty)
+            var map = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
-        return new
-        {
-            Message = $"User {typed.UserId} added to group {typed.GroupId}.",
-            typed.UserId,
-            typed.GroupId
-        }.ToJsonContentBlock($"https://graph.microsoft.com/beta/groups/{typed.GroupId}/members")
-        .ToCallToolResult();
-    });
-
-    [Description("Create a new user")]
-    [McpServerTool(Title = "Create new user", OpenWorld = false)]
-    public static async Task<CallToolResult?> GraphUsers_CreateUser(
-      IServiceProvider serviceProvider,
-      RequestContext<CallToolRequestParams> requestContext,
-      [Description("The users's given name.")] string? givenName = null,
-      [Description("The users's display name.")] string? displayName = null,
-      [Description("The users's principal name.")] string? userPrincipalName = null,
-      [Description("The users's mail nickname.")] string? mailNickname = null,
-      [Description("The users's job title.")] string? jobTitle = null,
-      [Description("The users's mobile phone.")] string? mobilePhone = null,
-      [Description("The users's business phone.")] string? businessPhone = null,
-      [Description("Account enabled.")] bool? accountEnabled = null,
-      [Description("The users's department.")] string? department = null,
-      [Description("The users's compay name.")] string? companyName = null,
-      [Description("Force password change.")] bool? forceChangePasswordNextSignIn = null,
-      [Description("The users's password.")] string? password = null,
-      CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
-    {
-        var mcpServer = requestContext.Server;
-
-        var (typed, notAccepted, result) = await mcpServer.TryElicit(
-            new GraphNewUser
+            // First page
+            var page = await client.Users.GetAsync(req =>
             {
-                GivenName = givenName ?? string.Empty,
-                DisplayName = displayName ?? string.Empty,
-                UserPrincipalName = userPrincipalName ?? string.Empty,
-                MailNickname = mailNickname ?? string.Empty,
-                Department = department ?? string.Empty,
-                MobilePhone = mobilePhone,
-                BusinessPhone = businessPhone,
-                CompanyName = companyName ?? string.Empty,
-                AccountEnabled = accountEnabled ?? true,
-                JobTitle = jobTitle ?? string.Empty,
-                ForceChangePasswordNextSignIn = forceChangePasswordNextSignIn ?? true,
-                Password = password ?? string.Empty
-            },
-            cancellationToken
-        );
+                req.QueryParameters.Select = new[] { "id", "userPrincipalName", "department" };
+                req.QueryParameters.Top = 999; // big page size; paging handled below
 
-        if (notAccepted != null) return notAccepted;
-
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-        var user = new User()
-        {
-            DisplayName = typed?.DisplayName,
-            GivenName = typed?.GivenName,
-            MailNickname = typed?.MailNickname,
-            JobTitle = typed?.JobTitle,
-            CompanyName = typed?.CompanyName,
-            Department = typed?.Department,
-            MobilePhone = typed?.MobilePhone,
-            BusinessPhones = string.IsNullOrWhiteSpace(typed?.BusinessPhone) ? null : [typed.BusinessPhone],
-            AccountEnabled = typed?.AccountEnabled,
-            PasswordProfile = new PasswordProfile()
-            {
-                ForceChangePasswordNextSignIn = typed?.ForceChangePasswordNextSignIn,
-                Password = typed?.Password
-            },
-            UserPrincipalName = typed?.UserPrincipalName
-        };
-
-        var newUser = await client.Users.PostAsync(user, cancellationToken: cancellationToken);
-
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser?.Id}").ToCallToolResult();
-    });
-
-    [Description("Update a Microsoft 365 user")]
-    [McpServerTool(Title = "Update a user",
-        OpenWorld = false)]
-    public static async Task<CallToolResult?> GraphUsers_UpdateUser(
-        [Description("User id to update.")] string userId,
-        IServiceProvider serviceProvider,
-        RequestContext<CallToolRequestParams> requestContext,
-        [Description("The users's given name.")] string? givenName = null,
-        [Description("The users's display name.")] string? displayName = null,
-        [Description("The users's job title.")] string? jobTitle = null,
-        [Description("The users's compay name.")] string? companyName = null,
-        [Description("The users's department.")] string? department = null,
-        [Description("The users's mobile phone.")] string? mobilePhone = null,
-        [Description("The users's business phone.")] string? businessPhone = null,
-        [Description("Account enabled.")] bool? accountEnabled = null,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
-    {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-        var newUser = await client.Users[userId].GetAsync(cancellationToken: cancellationToken);
-
-        var (typed, notAccepted, result) = await mcpServer.TryElicit(
-            new GraphUpdateUser
-            {
-                GivenName = givenName ?? newUser?.GivenName ?? string.Empty,
-                Department = department ?? newUser?.Department,
-                CompanyName = companyName ?? newUser?.CompanyName,
-                MobilePhone = mobilePhone ?? newUser?.MobilePhone,
-                BusinessPhone = businessPhone ?? newUser?.BusinessPhones?.FirstOrDefault(),
-                DisplayName = displayName ?? newUser?.DisplayName ?? string.Empty,
-                AccountEnabled = accountEnabled ?? (newUser != null
-                    && newUser.AccountEnabled.HasValue && newUser.AccountEnabled.Value),
-                JobTitle = jobTitle ?? newUser?.JobTitle ?? string.Empty,
-            },
-            cancellationToken
-        );
-        if (notAccepted != null) return notAccepted;
-
-        var user = new User()
-        {
-            DisplayName = typed?.DisplayName,
-            GivenName = typed?.GivenName,
-            JobTitle = typed?.JobTitle,
-            MobilePhone = typed?.MobilePhone,
-            BusinessPhones = string.IsNullOrWhiteSpace(typed?.BusinessPhone) ? null : [typed.BusinessPhone],
-            Department = typed?.Department,
-            CompanyName = typed?.CompanyName,
-            AccountEnabled = typed?.AccountEnabled,
-        };
-
-        var patchedUser = await client.Users[userId].PatchAsync(user, cancellationToken: cancellationToken);
-
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{patchedUser?.Id}")
-             .ToCallToolResult();
-    });
-
-    [Description("Delete an user.")]
-    [McpServerTool(Title = "Delete user", OpenWorld = false, Destructive = true, ReadOnly = false)]
-    public static async Task<CallToolResult?> GraphUsers_DeleteUser(
-    [Description("User id.")]
-        string? userId,
-    IServiceProvider serviceProvider,
-    RequestContext<CallToolRequestParams> requestContext,
-    CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
-    {
-        if (string.IsNullOrWhiteSpace(userId))
-            throw new ArgumentException("Provide either entraDeviceId or managedDeviceId.");
-
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
-        // Fetch Entra device display name for human confirmation
-        var device = await client.Users[userId!]
-            .GetAsync(rq =>
-            {
-                rq.QueryParameters.Select = ["id", "displayName"];
+                if (!includeDisabled)
+                {
+                    // Apply server-side filter
+                    req.QueryParameters.Filter = "accountEnabled eq true";
+                }
+                
             }, cancellationToken);
 
-        if (device is null)
-            throw new InvalidOperationException($"User '{userId}' not found.");
-
-        var display = string.IsNullOrWhiteSpace(device.DisplayName) ? device.Id : device.DisplayName;
-
-        return await requestContext.ConfirmAndDeleteAsync<GraphDeleteUser>(
-            expectedName: display!,
-            deleteAction: async _ =>
+            while (page != null)
             {
-                // DELETE /devices/{id}
-                await client.Users[device!.Id!].DeleteAsync(cancellationToken: cancellationToken);
-            },
-            successText: $"User '{display}' ({device.Id}) deleted.",
-            ct: cancellationToken);
-    });
+                foreach (var u in page.Value ?? Enumerable.Empty<User>())
+                {
+                    var dept = string.IsNullOrWhiteSpace(u?.Department) ? null : u!.Department!;
+                    if (dept is null && !includeEmpty) continue;
+
+                    var key = dept ?? "(none)";
+                    if (!map.TryGetValue(key, out var list))
+                    {
+                        list = [];
+                        map[key] = list;
+                    }
+
+                    if (!string.IsNullOrWhiteSpace(u?.UserPrincipalName))
+                        list.Add(u.UserPrincipalName);
+                }
+
+                // Next page?
+                if (!string.IsNullOrWhiteSpace(page.OdataNextLink))
+                {
+                    page = await client.Users.WithUrl(page.OdataNextLink).GetAsync(cancellationToken: cancellationToken);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            // Sort departments and names for stable output
+            var ordered = map
+                .OrderBy(kv => kv.Key, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(
+                    kv => kv.Key,
+                    kv => kv.Value.OrderBy(v => v, StringComparer.OrdinalIgnoreCase).ToList(),
+                    StringComparer.OrdinalIgnoreCase
+                );
+
+            return ordered
+                .ToJsonContentBlock("https://graph.microsoft.com/beta/users?$select=id,displayName,department")
+                .ToCallToolResult();
+        });
+
 }

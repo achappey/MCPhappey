@@ -1,0 +1,11 @@
+{
+    "serverInfo": {
+        "name": "Bogus",
+        "version": "1.0.0",
+        "websiteUrl": "https://github.com/bchavez/Bogus",
+        "description": "Wrapper for Bogus. Generate deterministic fake data: people, companies, lorem text, numbers, and dates. Supports locales and optional seeds for repeatable outputs—perfect for seeding, demos, and tests."
+    },
+    "plugins": [
+        "MCPhappey.Tools.GitHub.Bogus.BogusService, MCPhappey.Tools"
+    ]
+}

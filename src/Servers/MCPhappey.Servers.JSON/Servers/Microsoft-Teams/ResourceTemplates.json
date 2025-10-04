@@ -21,7 +21,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/members?$select=displayName,userId,email,roles",
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/members",
       "name": "team-members",
       "title": "Get team members",
       "description": "Lists all members of a specified Team with their names, user IDs, email addresses, and roles.",
@@ -31,17 +31,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages?$filter=createdDateTime ge '{startDateTime}' and createdDateTime le '{endDateTime}'&$select=id,replyToId,createdDateTime,body",
-      "name": "channel-messages-by-date",
-      "title": "Get channel messages by date",
-      "description": "Retrieves messages from a specified channel in a Team within a given date range.",
-      "mimeType": "application/json",
-      "annotations": {
-        "audience": ["assistant"]
-      }
-    },
-    {
-      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages/{messageId}/replies?$select=id,replyToId,createdDateTime,body",
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages/{messageId}/replies",
       "name": "message-replies",
       "title": "Get message replies",
       "description": "Retrieves replies to a specific message in a channel.",
@@ -51,7 +41,7 @@
       }
     },
     {
-      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/tabs?$select=displayName,webUrl,teamsApp@odata.bind",
+      "uriTemplate": "https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/tabs?$select=displayName,webUrl",
       "name": "channel-tabs",
       "title": "Get channel tabs",
       "description": "Retrieves the list of tabs (like Planner, OneNote, etc.) configured in a specific Teams channel.",

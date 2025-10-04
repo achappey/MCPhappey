@@ -157,8 +157,15 @@ public static class SharePointSearch
         var allContent = new List<string>();
         foreach (var url in urls)
         {
-            var scraped = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken);
-            allContent.AddRange(scraped.Select(c => c.Contents.ToString()));
+            try
+            {
+                var scraped = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, url, cancellationToken);
+                allContent.AddRange(scraped.Select(c => c.Contents.ToString()));
+            }
+            catch (Exception e)
+            {
+                return $"Error retrieving file content {e.Message}".ToErrorCallToolResponse();
+            }
         }
 
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();

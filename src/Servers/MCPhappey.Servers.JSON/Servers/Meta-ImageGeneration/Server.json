@@ -1,0 +1,17 @@
+{
+  "serverInfo": {
+    "name": "Meta-ImageGeneration",
+    "title": "Meta Image Generation",
+    "version": "1.0.0",
+    "description": "AI image generation server that not only produces images across providers (OpenAI, Google Imagen, Google Nano Banana, xAI Grok), but also enriches results with meta information, benchmarks, and leaderboards."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Google.Image.GoogleNanoBanana, MCPhappey.Tools",
+    "MCPhappey.Tools.Google.Image.GoogleImagen, MCPhappey.Tools",
+    "MCPhappey.Tools.OpenAI.Image.OpenAIImages, MCPhappey.Tools",
+    "MCPhappey.Tools.xAI.GrokImageService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

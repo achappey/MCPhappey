@@ -14,13 +14,14 @@ public class NewMcpServer
     [Description("The MCP server name.")]
     public string Name { get; set; } = default!;
 
+    [JsonPropertyName("description")]
+    [Required]
+    [Description("The MCP server description. Description will be PUBLICLY available and visible to anyone who queries or browses the registry.")]
+    public string Description { get; set; } = null!;
+
     [JsonPropertyName("title")]
     [Description("The MCP server title.")]
     public string? Title { get; set; }
-
-    [JsonPropertyName("description")]
-    [Description("The MCP server description. Be aware: the server description will be publicly available and visible to anyone who queries or browses the registry.")]
-    public string? Description { get; set; }
 
     [JsonPropertyName("websiteUrl")]
     [Description("The MCP website url.")]

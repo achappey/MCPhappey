@@ -174,8 +174,8 @@ public static class DeskbirdPlugin
         public bool IsAnonymousBooking { get; set; } = false;
 
     }
-
 }
+
 public class DeskbirdSettings
 {
     public string ApiKey { get; set; } = default!;

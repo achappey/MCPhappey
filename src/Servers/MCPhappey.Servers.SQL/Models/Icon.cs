@@ -8,10 +8,10 @@ public class Icon
 
     public string? MimeType { get; set; }
 
-    public string? Sizes { get; set; }
+    public ICollection<IconSize> Sizes { get; set; } = [];
 
     public ICollection<ServerIcon> ServerIcons { get; set; } = [];
-    
+
     public ICollection<ResourceIcon> ResourceIcons { get; set; } = [];
 
     public ICollection<PromptIcon> PromptIcons { get; set; } = [];

@@ -243,12 +243,12 @@ public static partial class ModelContextEditor
     public static async Task<CallToolResult?> ModelContextEditor_CreateServer(
         [Description("Name of the new server")]
         string serverName,
+        [Description("Publicly visible description for the server. Used for discovery in the registry")]
+        string serverDescription,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Optional title for the server")]
         string? serverTitle = null,
-        [Description("Optional description for the server")]
-        string? serverDescription = null,
         [Description("Instructions of the new server")]
         string? instructions = null,
         [Description("Website url")]
@@ -420,6 +420,40 @@ public static partial class ModelContextEditor
 
         return $"Plugin {typed.PluginName} added to MCP server {serverName}".ToTextCallToolResponse();
     }
+
+    [Description("Get tools from a plugin")]
+    [McpServerTool(Title = "Get plugin tools",
+       OpenWorld = false)]
+    public static async Task<CallToolResult?> ModelContextEditor_GetPluginTools(
+      [Description("Name of the plugin")] string pluginName,
+      IServiceProvider serviceProvider,
+      RequestContext<CallToolRequestParams> requestContext,
+      CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+    {
+        var kernel = serviceProvider.GetRequiredService<Kernel>();
+
+        return await Task.FromResult(
+                kernel.GetToolsFromType(pluginName).ToJsonContentBlock("mcp-editor://tools").ToCallToolResult());
+    });
+
+    [Description("Get all tools from all plugins. Name and descriptions only.")]
+    [McpServerTool(Title = "Get all tools",
+      OpenWorld = false)]
+    public static async Task<CallToolResult?> ModelContextEditor_GetAllTools(
+     IServiceProvider serviceProvider,
+     RequestContext<CallToolRequestParams> requestContext,
+     CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+   {
+       var repo = serviceProvider.GetRequiredService<IReadOnlyList<ServerConfig>>();
+       var kernel = serviceProvider.GetRequiredService<Kernel>();
+
+       return await Task.FromResult(repo.GetAllPlugins().SelectMany(v => kernel.GetToolsFromType(v)?.Select(a => new
+       {
+           Plugin = v,
+           a.ProtocolTool.Name,
+           a.ProtocolTool.Description
+       }) ?? []).ToJsonContentBlock("mcp-editor://tools").ToCallToolResult());
+   });
 
     [Description("Removes a plugin from a MCP-server")]
     [McpServerTool(Title = "Remove a plugin from an MCP-server",

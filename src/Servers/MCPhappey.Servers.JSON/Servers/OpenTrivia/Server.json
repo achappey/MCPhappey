@@ -1,0 +1,8 @@
+{
+  "serverInfo": {
+    "name": "OpenTrivia",
+    "version": "1.0.0",
+    "websiteUrl": "https://opentdb.com",
+    "description": "The Open Trivia Database offers a free API for retrieving trivia questions across categories, difficulties, and formats. No API key is required, and session tokens help prevent duplicates. Results support multiple encoding options, making it simple to integrate trivia games or quizzes into apps and projects."
+  }
+}

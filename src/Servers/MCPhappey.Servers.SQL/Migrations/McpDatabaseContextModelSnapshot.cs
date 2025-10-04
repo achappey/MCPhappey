@@ -33,9 +33,6 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.Property<string>("MimeType")
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<string>("Sizes")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<string>("Source")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -43,6 +40,21 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Icons");
+                });
+
+            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.IconSize", b =>
+                {
+                    b.Property<int>("SizeId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("IconId")
+                        .HasColumnType("int");
+
+                    b.HasKey("SizeId", "IconId");
+
+                    b.HasIndex("IconId");
+
+                    b.ToTable("IconSizes");
                 });
 
             modelBuilder.Entity("MCPhappey.Servers.SQL.Models.Prompt", b =>
@@ -347,6 +359,42 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.ToTable("Tools");
                 });
 
+            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.Size", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("Value")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("Sizes");
+                });
+
+            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.IconSize", b =>
+                {
+                    b.HasOne("MCPhappey.Servers.SQL.Models.Icon", "Icon")
+                        .WithMany("Sizes")
+                        .HasForeignKey("IconId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("MCPhappey.Servers.SQL.Models.Size", "Size")
+                        .WithMany()
+                        .HasForeignKey("SizeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Icon");
+
+                    b.Navigation("Size");
+                });
+
             modelBuilder.Entity("MCPhappey.Servers.SQL.Models.Prompt", b =>
                 {
                     b.HasOne("MCPhappey.Servers.SQL.Models.Server", "Server")
@@ -499,6 +547,8 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.Navigation("ResourceIcons");
 
                     b.Navigation("ServerIcons");
+
+                    b.Navigation("Sizes");
                 });
 
             modelBuilder.Entity("MCPhappey.Servers.SQL.Models.Prompt", b =>

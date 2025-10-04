@@ -18,18 +18,32 @@ public static class SimplicateCRM
         [Description("A note or description about the organization.")] string? note = null,
         [Description("The primary email address for the organization.")] string? email = null,
         [Description("The main website URL of the organization.")] Uri? url = null,
+        [Description("Industry id.")] string? industryId = null,
         CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
                 requestContext,
                 "/crm/organization",
-                new SimplicateNewOrganization
+               new SimplicateNewOrganization
+               {
+                   Name = name,
+                   Note = note,
+                   Email = email,
+                   Url = url,
+                   IndustryId = industryId
+               },
+                dto => new
                 {
-                    Name = name,
-                    Note = note,
-                    Email = email,
-                    Url = url
+                    name = dto.Name,
+                    note = dto.Note,
+                    email = dto.Email,
+                    url = dto.Url,
+                    industry = !string.IsNullOrEmpty(dto.IndustryId) ? new
+                    {
+                        id = dto.IndustryId
+                    } : null
                 },
                 cancellationToken
             );
+
 
     [Description("Create a new person in Simplicate CRM")]
     [McpServerTool(Title = "Create new person in Simplicate", Destructive = true, OpenWorld = false)]
@@ -109,7 +123,10 @@ public static class SimplicateCRM
         [JsonPropertyName("url")]
         [Description("The main website URL of the organization.")]
         public Uri? Url { get; set; }
-    }
 
+        [JsonPropertyName("industry.id")]
+        [Description("Industry id")]
+        public string? IndustryId { get; set; }
+    }
 }
 

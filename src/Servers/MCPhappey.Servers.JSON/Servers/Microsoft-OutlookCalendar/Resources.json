@@ -7,7 +7,21 @@
       "description": "Lists the next 10 upcoming calendar events, including subject, start/end time, location, and organizer.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uri": "https://graph.microsoft.com/beta/me/calendars?$select=id,name,owner",
+      "name": "list-calendars",
+      "title": "List calendars",
+      "description": "Get all calendars available to the signed-in user, including delegated/shared calendars.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
       }
     }
   ]

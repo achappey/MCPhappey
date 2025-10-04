@@ -7,6 +7,29 @@ namespace MCPhappey.Servers.SQL.Providers;
 
 public class SqlServerDataProvider(Repositories.ServerRepository serverRepository) : IServerDataProvider
 {
+    public async Task<ServerConfig?> GetServer(string serverName, CancellationToken ct = default)
+    {
+        var server = await serverRepository.GetServer(serverName, ct)
+            ?? throw new Exception("Not found");
+
+        return new ServerConfig()
+        {
+            Server = server.ToMcpServer(),
+            SourceType = ServerSourceType.Dynamic
+        };
+    }
+
+    public async Task<IEnumerable<ServerConfig?>> GetServers(CancellationToken ct = default)
+    {
+        var servers = await serverRepository.GetServers(ct);
+
+        return servers.Select(a => new ServerConfig()
+        {
+            Server = a.ToMcpServer(),
+            SourceType = ServerSourceType.Dynamic
+        });
+    }
+
     public async Task<IEnumerable<PromptTemplate>> GetPromptsAsync(string serverName, CancellationToken ct = default)
     {
         var server = await serverRepository.GetServer(serverName, ct);

@@ -13,6 +13,18 @@
       }
     },
     {
+      "uri": "https://ai.fakton.com/v0/servers",
+      "name": "ai-mcp-server-registry",
+      "title": "AI MCP store",
+      "description": "List all MCP servers from the AI MCP store",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
       "uri": "https://registry.modelcontextprotocol.io/v0/servers?limit=100&version=latest",
       "name": "official-mcp-server-registry",
       "title": "Official MCP store",

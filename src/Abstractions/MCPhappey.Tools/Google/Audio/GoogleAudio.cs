@@ -31,7 +31,6 @@ public static partial class GoogleAudio
 
             string ttsModel = "gemini-2.5-flash-preview-tts";
             var modelClient = googleAI.GenerativeModel(ttsModel);
-
             var item = await modelClient.GenerateContent(new GenerateContentRequest()
             {
                 Model = ttsModel,
@@ -53,7 +52,7 @@ public static partial class GoogleAudio
             }, cancellationToken: cancellationToken);
 
             var audioPart = item.Candidates?.FirstOrDefault()?.Content?.Parts.FirstOrDefault();
-            var base64 = audioPart?.InlineData.Data;
+            var base64 = audioPart?.InlineData?.Data;
             byte[] pcmBytes = Convert.FromBase64String(base64!);
 
             using var pcmStream = new MemoryStream(pcmBytes);

@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "Mistral-DocumentAI",
+    "version": "1.0.0",
+    "websiteUrl": "https://docs.mistral.ai/capabilities/document_ai/document_ai_overview",
+    "description": "Mistral Document AI offers enterprise-level document processing, combining cutting-edge OCR technology with advanced structured data extraction. Experience faster processing speeds, unparalleled accuracy, and cost-effective solutions, all scalable to meet your needs. Unlock the full potential of your documents with our multilingual support, annotations and adaptable workflows for all document types, enabling you to extract, comprehend, and analyze information with ease."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Mistral.DocumentAI.MistralDocumentAIPlugin, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.Read.All"
+  }
+}

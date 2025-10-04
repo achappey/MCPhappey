@@ -13,7 +13,7 @@ namespace MCPhappey.Simplicate.Extensions;
 public static class SimplicateExtensions
 {
     private static readonly JsonSerializerOptions JsonSerializerOptions = new()
-        { PropertyNameCaseInsensitive = true };
+    { PropertyNameCaseInsensitive = true };
 
     public static string GetApiUrl(
            this SimplicateOptions options,
@@ -239,6 +239,44 @@ public static class SimplicateExtensions
 
         return content?.ToCallToolResult();
     }
+
+    /// <summary>
+    /// Common case: elicit a DTO, then map it into the proper JSON structure and POST.
+    /// Requires a public parameterless ctor to satisfy TryElicit's constraint.
+    /// </summary>
+    public static async Task<CallToolResult?> PostSimplicateResourceAsync<TDto>(
+        this IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        string relativePath,                       // e.g. "/projects/projectservice"
+        TDto seedDto,
+        Func<TDto, object> mapper,                 // <-- new: map DTO → object/dynamic/anon type
+        CancellationToken cancellationToken = default)
+        where TDto : class, new()
+    {
+        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+        var url = simplicateOptions.GetApiUrl(relativePath);
+
+        // Let Elicit fill the flat DTO
+        var (dto, notAccepted, _) = await requestContext.Server.TryElicit(seedDto, cancellationToken);
+        if (notAccepted != null) return notAccepted;
+
+        // Map flat DTO into the correct Simplicate structure
+        var mappedObject = mapper(dto!);
+
+        var scraper = serviceProvider.GetServices<IContentScraper>()
+                                     .OfType<SimplicateScraper>()
+                                     .First();
+
+        var content = await scraper.PostSimplicateItemAsync(
+            serviceProvider,
+            url,
+            mappedObject,
+            requestContext: requestContext,
+            cancellationToken: cancellationToken);
+
+        return content?.ToCallToolResult();
+    }
+
 
     public static async Task<ContentBlock?> PostSimplicateItemAsync<T>(
           this IServiceProvider serviceProvider,

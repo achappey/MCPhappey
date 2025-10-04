@@ -39,8 +39,9 @@ public static class OpenAISharePoint
                             server_label = "sharepoint",
                             authorization = oboToken,
                             connector_id = "connector_sharepoint",
-                            require_approval = "never",
-                            allowed_tools = value, } }
+                            require_approval = "never"
+                           // allowed_tools = value
+                        , } }
                      } },
                 }),
             Temperature = 1,

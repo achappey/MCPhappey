@@ -84,7 +84,8 @@ public static class HttpExtensions
     var outerJwt = new JwtSecurityTokenHandler().ReadJwtToken(token.Bearer);
     var userId = outerJwt.Claims.FirstOrDefault(c => c.Type == "oid")?.Value;
 
-    return userId;
+    return userId ?? outerJwt.Claims
+      .FirstOrDefault(c => c.Type == "http://schemas.microsoft.com/identity/claims/objectidentifier")?.Value;
   }
 
   public static async Task<HttpClient> GetOboHttpClient(this IHttpClientFactory httpClientFactory,

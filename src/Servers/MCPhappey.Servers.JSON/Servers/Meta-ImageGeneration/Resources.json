@@ -1,0 +1,28 @@
+{
+  "resources": [
+    {
+      "uri": "https://artificialanalysis.ai/api/text-to-image/arena/preferences/total?supports_image_input=false",
+      "name": "text-to-image-leaderboard",
+      "title": "Text-to-Image leaderboard",
+      "description": "Leaderboard of AI models ranked for pure text-to-image generation, based on user preferences in the Artificial Analysis Arena.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uri": "https://artificialanalysis.ai/api/text-to-image/arena/preferences/total?supports_image_input=true",
+      "name": "image-editing-leaderboard",
+      "title": "Image editing leaderboard",
+      "description": "Leaderboard of AI models ranked for image editing and inpainting tasks (text + image input), from the Artificial Analysis Arena.",
+      "mimeType": "application/json",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    }
+  ]
+}

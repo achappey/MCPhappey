@@ -31,4 +31,8 @@ public class McpDatabaseContext(DbContextOptions<McpDatabaseContext> options) : 
 
   public DbSet<ResourceIcon> ResourceIcons { get; set; } = null!;
 
+  public DbSet<IconSize> IconSizes { get; set; } = null!;
+  
+  public DbSet<Size> Sizes { get; set; } = null!;
+
 }

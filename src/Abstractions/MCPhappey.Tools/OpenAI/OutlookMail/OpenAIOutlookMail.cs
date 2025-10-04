@@ -40,8 +40,9 @@ public static class OpenAIOutlookMail
                             server_label = "outlook_email",
                             authorization = oboToken,
                             connector_id = "connector_outlookemail",
-                            require_approval = "never",
-                            allowed_tools = value, } }
+                            require_approval = "never"
+                            //allowed_tools = value,
+                             } }
                      } },
                 }),
             Temperature = 1,

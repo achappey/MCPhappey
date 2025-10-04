@@ -32,15 +32,14 @@ public class ContainerScraper : IContentScraper
         string? fileId = null;
 
         // Case 1: Container files list
-        if (url.StartsWith($"{ContainerExtensions.BASE_URL}/", StringComparison.OrdinalIgnoreCase) &&
-            url.EndsWith("/files", StringComparison.OrdinalIgnoreCase) &&
-            segments.Length >= 4 &&
+        if (segments.Length >= 4 &&
+            segments[0] == "v1" &&
             segments[1] == "containers" &&
             segments[^1] == "files")
         {
             containerId = segments[2];
-            var files = await client.GetContainerFilesAsync(containerId, cancellationToken: cancellationToken)
-                .ToListAsync(cancellationToken);
+            var files = await client.GetContainerFilesAsync(containerId)
+                .ToListAsync();
 
             return files.Select(f => f.ToFileItem(url));
         }

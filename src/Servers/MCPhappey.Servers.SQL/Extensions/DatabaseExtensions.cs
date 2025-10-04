@@ -30,12 +30,22 @@ public static class DatabaseExtensions
                 obo.TryAdd(host, $"https://{host}/.default");
             }
 
-            foreach (var host in server.Resources
+            IEnumerable<string> allResources = [..server.Resources.Select(a => a.Uri),
+                ..server.ResourceTemplates.Select(a => a.TemplateUri)];
+
+            foreach (var host in allResources
                 .Select(r =>
                 {
-                    var uri = new Uri(r.Uri);
-                    return (uri.Host, Path: uri.AbsolutePath);
+                    try
+                    {
+                        var uri = new Uri(r);
+                        return (uri.Host, Path: uri.AbsolutePath);
+                    }
+                    catch (Exception) { }
+                    return (Host: string.Empty, Path: string.Empty);
+
                 })
+                .Where(x => !string.IsNullOrEmpty(x.Host))
                 .Where(x =>
                     !string.IsNullOrEmpty(x.Host)
                     && x.Host.EndsWith(".sharepoint.com", StringComparison.OrdinalIgnoreCase)

@@ -41,8 +41,8 @@ public static class OpenAITeams
                             server_label = "microsoft_teams",
                             authorization = oboToken,
                             connector_id = "connector_microsoftteams",
-                            require_approval = "never",
-                            allowed_tools = value,
+                            require_approval = "never"
+                       //     allowed_tools = value,
                         }
                     }
                 }},

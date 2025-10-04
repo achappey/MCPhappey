@@ -36,7 +36,7 @@ public static partial class ModelContextServerExtensions
          Servers = servers
             .WithoutHiddenServers()
             .OrderBy(a => a.Server.ServerInfo.Name)
-            .Select(a => a.ToRegistryServer(baseUrl))
+            .Select(a => a.ToMCPServerRegistryItem(baseUrl))
      };
 
     public static MCPServerList ToMcpServerList(this IEnumerable<ServerConfig> servers, string baseUrl, bool sse = false)
@@ -61,6 +61,12 @@ public static partial class ModelContextServerExtensions
 
     public static string WithoutScheme(this string url)
           => new Uri(url).Authority.TrimEnd('/');
+
+    public static MCPServerRegistryItem ToMCPServerRegistryItem(this ServerConfig server, string baseUrl)
+               => new()
+               {
+                   Server = server.ToRegistryServer(baseUrl)
+               };
 
     public static RegistryServer ToRegistryServer(this ServerConfig server, string baseUrl)
             => new()

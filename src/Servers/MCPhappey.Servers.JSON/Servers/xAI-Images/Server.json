@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "xAI-Images",
+    "version": "1.0.0",
+    "websiteUrl": "https://x.ai",
+    "description": "xAI Grok AI image generation"
+  },
+  "plugins": [
+    "MCPhappey.Tools.xAI.GrokImageService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

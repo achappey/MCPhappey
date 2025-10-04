@@ -7,7 +7,9 @@
       "description": "List all available Anthropic Claude models",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -17,7 +19,10 @@
       "description": "Official system card PDF introducing Claude Opus 4 and Claude Sonnet 4: architecture, safety evaluations, Responsible Scaling Policy assessments, alignment and model-welfare evaluations, and AI Safety Level deployment decisions.",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant", "user"]
+        "audience": [
+          "assistant",
+          "user"
+        ]
       }
     },
     {
@@ -27,7 +32,23 @@
       "description": "Official system card PDF for Claude 3.7 Sonnet, a hybrid reasoning model featuring standard and extended thinking modes, trained to minimize harm via Responsible Scaling Policy, prompt-injection safeguards, and alignment evaluations.",
       "mimeType": "text/plain",
       "annotations": {
-        "audience": ["assistant", "user"]
+        "audience": [
+          "assistant",
+          "user"
+        ]
+      }
+    },
+    {
+      "uri": "https://assets.anthropic.com/m/12f214efcc2f457a/original/Claude-Sonnet-4-5-System-Card.pdf",
+      "name": "anthropic-claude-sonnet-4-5-system-card",
+      "title": "Anthropic Claude Sonnet 4.5 System Card (Sep 2025)",
+      "description": "Official system card PDF for Claude Sonnet 4.5, covering model architecture, safety evaluations, alignment research, Responsible Scaling Policy compliance, AI Safety Level considerations, and updates compared to earlier Claude Sonnet versions.",
+      "mimeType": "text/plain",
+      "annotations": {
+        "audience": [
+          "assistant",
+          "user"
+        ]
       }
     }
   ]

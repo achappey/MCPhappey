@@ -3,6 +3,8 @@ using MCPhappey.Common.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using MCPhappey.Auth.Extensions;
+using Microsoft.Extensions.DependencyInjection;
+using MCPhappey.Core.Services;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -28,6 +30,25 @@ public static class AspNetCoreWebAppExtensions
             this WebApplication webApp,
             List<ServerConfig> servers)
     {
+        /*  webApp.MapGet("/v0/servers", async (HttpContext context) =>
+              {
+                  var dataService = context.RequestServices.GetRequiredService<IServerDataProvider>();
+
+                  // get servers from repo/service
+                  var repoServers = await dataService.GetServers(context.RequestAborted) ?? [];
+
+                  // merge with static list
+                  var allServers = servers
+                      .Where(a => a.SourceType == ServerSourceType.Static)
+                      .Concat(repoServers.OfType<ServerConfig>() ?? Enumerable.Empty<ServerConfig>())
+                      .ToList();
+
+                  var registry = allServers?.ToMcpServerRegistry(
+                      $"{context.Request.Scheme}://{context.Request.Host}");
+
+                  return Results.Json(registry);
+              });*/
+
         webApp.MapGet("/v0/servers", (HttpContext context)
                    => Results.Json(servers.ToMcpServerRegistry($"{context.Request.Scheme}://{context.Request.Host}")));
 

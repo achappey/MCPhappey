@@ -26,10 +26,21 @@ public class ServerConfig
 
 }
 
+
+public class MCPServerRegistryItem
+{
+    [JsonPropertyName("server")]
+    public RegistryServer Server { get; set; } = null!;
+
+    [JsonPropertyName("_meta")]
+    public Dictionary<string, Dictionary<string, object>>? Meta { get; set; }
+
+}
+
 public class MCPServerRegistry
 {
     [JsonPropertyName("servers")]
-    public IEnumerable<RegistryServer> Servers { get; set; } = [];
+    public IEnumerable<MCPServerRegistryItem> Servers { get; set; } = [];
 }
 
 

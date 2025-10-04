@@ -10,7 +10,7 @@ namespace MCPhappey.Tools.AI;
 
 public static class WebSearch
 {
-    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "claude-sonnet-4-20250514"];
+    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "claude-3-5-haiku-latest"];
     private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro", "claude-opus-4-1-20250805"];
 
     [Description("Parallel web search across multiple AI models, optionally filtered by date range. If a date range is used, include it in the prompt, as some providers don’t support date filters.")]
@@ -70,7 +70,7 @@ public static class WebSearch
                                 }
                             } },
                             { "openai", new {
-                                web_search_preview = new {
+                                web_search = new {
                                     search_context_size = searchContextSize
                                 },
                                 reasoning = new {
@@ -173,7 +173,7 @@ public static class WebSearch
                         }
                      } },
                     { "openai", new {
-                        web_search_preview = new {
+                        web_search = new {
                             search_context_size = searchContextSize
                          },
                          reasoning = new {

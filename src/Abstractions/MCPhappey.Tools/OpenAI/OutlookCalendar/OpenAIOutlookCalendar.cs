@@ -42,8 +42,8 @@ public static class OpenAIOutlookCalendar
                             server_label = "outlook_calendar",
                             authorization = oboToken,
                             connector_id = "connector_outlookcalendar",
-                            require_approval = "never",
-                            allowed_tools = value,
+                            require_approval = "never"
+                        //    allowed_tools = value,
                         }
                     }
                 }},

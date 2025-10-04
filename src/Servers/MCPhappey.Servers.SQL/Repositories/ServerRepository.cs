@@ -236,7 +236,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
     }
 
     public async Task<Resource> AddServerResource(int serverId, string uri,
-        string? name = null,
+        string name,
         string? description = null,
         string? title = null,
         float? priority = null,
@@ -246,7 +246,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         var item = await databaseContext.Resources.AddAsync(new()
         {
             Uri = uri,
-            Name = name ?? string.Empty,
+            Name = name,
             Description = description,
             Title = title,
             Priority = priority,

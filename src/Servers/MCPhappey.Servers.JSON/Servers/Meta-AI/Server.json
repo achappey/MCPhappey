@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "Meta-AI",
+    "title": "Meta AI",
+    "version": "1.0.0",
+    "description": ""
+  },
+  "plugins": [
+    "MCPhappey.Tools.AI.MetaAI, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

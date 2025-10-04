@@ -29,6 +29,8 @@ public static class GoogleImagen
         int numberOfImages = 1,
         [Description("New image file name, without extension")]
         string? filename = null,
+        [Description("Sample image size. 1K or 2K")]
+        string? sampleImageSize = "1K",
         CancellationToken cancellationToken = default) =>
         await requestContext.WithExceptionCheck(async () =>
     {
@@ -42,6 +44,7 @@ public static class GoogleImagen
                            Prompt = prompt,
                            Model = imageModel ?? Model.imagen40generate001,
                            NumberOfImages = numberOfImages,
+                           SampleImageSize = sampleImageSize,
                            AspectRatio = aspectRatio ?? Mscc.GenerativeAI.ImageAspectRatio.Ratio1x1,
                            Filename = filename?.ToOutputFileName()
                             ?? requestContext.ToOutputFileName()
@@ -61,6 +64,7 @@ public static class GoogleImagen
             {
                 SampleCount = typed.NumberOfImages,
                 AspectRatio = typed.AspectRatio,
+                SampleImageSize = typed.SampleImageSize,
                 PersonGeneration = Mscc.GenerativeAI.PersonGeneration.AllowAdult,
                 OutputOptions = new()
                 {
@@ -101,7 +105,7 @@ public static class GoogleImagen
         [JsonPropertyName("model")]
         [Required]
         [Description("The AI image model.")]
-        public Model Model { get; set; } = Model.imagen30generate002;
+        public Model Model { get; set; } = Model.imagen40generate001;
 
         [JsonPropertyName("aspectRatio")]
         [Required]
@@ -113,13 +117,15 @@ public static class GoogleImagen
         [Range(1, 4)]
         [Description("The number of images to create.")]
         public int NumberOfImages { get; set; } = 1;
+
+        [JsonPropertyName("sampleImageSize")]
+        [Description("Specifies the generated image's output resolution. 1K or 2K")]
+        public string? SampleImageSize { get; set; } = "1K";
     }
 
     //imagen-3.0-generate-002, imagen-4.0-generate-001, imagen-4.0-ultra-generate-001 or imagen-4.0-fast-generate-001
     public enum Model
     {
-        [EnumMember(Value = "imagen-3.0-generate-002")]
-        imagen30generate002,
         [EnumMember(Value = "imagen-4.0-generate-001")]
         imagen40generate001,
         [EnumMember(Value = "imagen-4.0-ultra-generate-001")]
@@ -127,5 +133,7 @@ public static class GoogleImagen
         [EnumMember(Value = "imagen-4.0-fast-generate-001")]
         imagen40fastgenerate001,
     }
+
+
 }
 

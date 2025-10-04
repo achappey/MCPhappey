@@ -1,10 +1,13 @@
 {
   "serverInfo": {
-    "name": "Google-Images",
+    "name": "Google-Imagen",
+    "title": "Google Imagen",
     "version": "1.0.0",
     "description": "Generate high‑quality images with Google Imagen. Create visuals from text prompts, iterate with variations, and prepare assets for documents and apps. Useful for concept art, illustrations and design explorations with controllable styles and safety filters."
   },
-  "plugins": ["MCPhappey.Tools.Google.Image.GoogleImagen, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Google.Image.GoogleImagen, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
   }

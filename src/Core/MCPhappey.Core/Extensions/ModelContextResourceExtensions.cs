@@ -1,6 +1,8 @@
+using System.Security.Claims;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
+using MCPhappey.Telemetry;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 
@@ -37,16 +39,36 @@ public static partial class ModelContextResourceExtensions
         Dictionary<string, string>? headers = null,
         CancellationToken cancellationToken = default)
     {
+
+        var telemtry = request.Services!.GetService<IMcpTelemetryService>();
+        var userId = request.User?.FindFirstValue("http://schemas.microsoft.com/identity/claims/objectidentifier");
+        var startTime = DateTime.UtcNow;
+
         var service = request.Services!.GetRequiredService<ResourceService>();
         request.Services!.WithHeaders(headers);
 
         try
         {
-            return await service.GetServerResource(
+            var finalResult = await service.GetServerResource(
                 request.Services!,
                 request.Server,
                 request.Params?.Uri!,
                 cancellationToken);
+
+            var endTime = DateTime.UtcNow;
+
+            if (telemtry != null)
+            {
+                await telemtry.TrackResourceRequestAsync(request.Server.ServerOptions.ServerInfo?.Name!,
+                    request.Server.SessionId!,
+                    request.Server.ClientInfo?.Name!,
+                    request.Server.ClientInfo?.Version!,
+                    request.Params?.Uri!,
+                    finalResult.GetJsonSizeInBytes(),
+                    startTime, endTime, userId, request.User?.Identity?.Name, cancellationToken);
+            }
+
+            return finalResult;
         }
         catch (Exception e)
         {

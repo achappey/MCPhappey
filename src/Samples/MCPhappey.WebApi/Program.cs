@@ -14,6 +14,8 @@ using MCPhappey.Agent2Agent.Extensions;
 using Microsoft.Net.Http.Headers;
 using MCPhappey.Tools.Deskbird;
 using MCPhappey.Tools.Perplexity;
+using MCPhappey.Tools.xAI;
+using MCPhappey.Tools.Mistral.DocumentAI;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -38,9 +40,9 @@ if (appConfig?.McpExtensions != null)
 }
 
 var deskbirdKey = appConfig?.DomainHeaders?
-            .FirstOrDefault(a => a.Key == "connect.deskbird.com")
-            .Value
-            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+    .FirstOrDefault(a => a.Key == "connect.deskbird.com")
+    .Value
+    .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
 
 if (deskbirdKey != null)
 {
@@ -50,6 +52,31 @@ if (deskbirdKey != null)
     });
 }
 
+var xAIApiKey = appConfig?.DomainHeaders?
+            .FirstOrDefault(a => a.Key == "api.x.ai")
+            .Value
+            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+
+if (xAIApiKey != null)
+{
+    builder.Services.AddSingleton(new XAISettings()
+    {
+        ApiKey = xAIApiKey
+    });
+}
+
+var mistralApiKey = appConfig?.DomainHeaders?
+            .FirstOrDefault(a => a.Key == "api.mistral.ai")
+            .Value
+            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+
+if (mistralApiKey != null)
+{
+    builder.Services.AddSingleton(new MistralSettings()
+    {
+        ApiKey = mistralApiKey
+    });
+}
 
 var perplexityKey = appConfig?.DomainHeaders?
             .FirstOrDefault(a => a.Key == "api.perplexity.ai")
@@ -143,8 +170,6 @@ if (appConfig?.OAuth != null)
     builder.Services.WithOboScrapers(servers, appConfig.OAuth);
 }
 
-
-
 if (openAiClient != null)
 {
     builder.Services.AddSingleton(openAiClient);
@@ -176,7 +201,7 @@ if (appConfig?.Agent2AgentStorage != null)
         appConfig.Agent2AgentStorage.Database);
 }
 
-builder.Services.AddMcpCoreServices(servers);
+builder.Services.AddMcpCoreServices(servers, appConfig?.TelemetryDatabase);
 
 var app = builder.Build();
 app.UseCors("AllowSpecificOrigin");
@@ -188,5 +213,4 @@ if (appConfig?.OAuth != null)
 }
 
 app.UseMcpWebApplication(servers);
-
 app.Run();

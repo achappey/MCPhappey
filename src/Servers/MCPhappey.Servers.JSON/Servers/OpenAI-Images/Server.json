@@ -2,7 +2,7 @@
   "serverInfo": {
     "name": "OpenAI-Images",
     "version": "1.0.0",
-    "description": "Generate and edit images using OpenAI models. Create variations, upscale outputs, and save results to connected storage when authorized. Ideal for design drafts, concept art, and assets in applications and documents. Supports prompt-based and image-to-image workflows."
+    "description": "Generate and edit images using OpenAI models. Create variations, upscale outputs, and save results to connected storage when authorized. Ideal for design drafts, concept art, and assets in applications and documents."
   },
   "plugins": ["MCPhappey.Tools.OpenAI.Image.OpenAIImages, MCPhappey.Tools"],
   "obo": {

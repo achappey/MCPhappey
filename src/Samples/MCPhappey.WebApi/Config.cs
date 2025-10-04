@@ -9,6 +9,8 @@ public class Config
 {
     public string? McpDatabase { get; set; }
 
+    public string? TelemetryDatabase { get; set; }
+
     public string? PrivateKey { get; set; }
 
     public SimplicateOptions? Simplicate { get; set; }

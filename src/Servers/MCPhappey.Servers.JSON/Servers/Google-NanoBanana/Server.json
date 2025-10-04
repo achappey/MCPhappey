@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "Google-NanoBanana",
+    "title": "Google Nano Banana",
+    "version": "1.0.0",
+    "description": "Nano Banana (Google Gemini 2.5 Flash Image) is Google’s advanced AI image-generation and editing model. It merges, edits, and transforms photos with natural language prompts, preserves character consistency, blends multiple images, and embeds invisible SynthID watermarks."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Google.Image.GoogleNanoBanana, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

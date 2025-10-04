@@ -1,0 +1,15 @@
+{
+  "serverInfo": {
+    "name": "Meta-WebSearch",
+    "title": "Meta Web Search",
+    "version": "1.0.0",
+    "description": "Lightweight meta web search server combining multiple  AI search engines like Perplexity, Brave, etc."
+  },
+  "plugins": [
+    "MCPhappey.Tools.AI.WebSearch, MCPhappey.Tools",
+    "MCPhappey.Tools.Perplexity.PerplexityPlugin, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

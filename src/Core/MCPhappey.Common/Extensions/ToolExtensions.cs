@@ -78,7 +78,9 @@ public static class ToolExtensions
         => $"{DateTime.Now:yyMMdd_HHmmss}_{filename}";
 
     public static HashSet<string> GetAllPlugins(this IReadOnlyList<ServerConfig> results) =>
-            [.. results.SelectMany(r => r.Server.Plugins ?? [])
+            [.. results
+             .Where(a => a.Server.Roles?.Any() != true)
+             .SelectMany(r => r.Server.Plugins ?? [])
              .OfType<string>()
              .Distinct()];
 
