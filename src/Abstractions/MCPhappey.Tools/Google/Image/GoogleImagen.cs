@@ -49,7 +49,6 @@ public static class GoogleImagen
                            Filename = filename?.ToOutputFileName()
                             ?? requestContext.ToOutputFileName()
                        },
-
                        cancellationToken);
 
         if (notAccepted != null) return notAccepted;
@@ -85,7 +84,6 @@ public static class GoogleImagen
         }
 
         return resourceLinks?.ToResourceLinkCallToolResponse();
-
     });
 
 
@@ -123,7 +121,7 @@ public static class GoogleImagen
         public string? SampleImageSize { get; set; } = "1K";
     }
 
-    //imagen-3.0-generate-002, imagen-4.0-generate-001, imagen-4.0-ultra-generate-001 or imagen-4.0-fast-generate-001
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum Model
     {
         [EnumMember(Value = "imagen-4.0-generate-001")]

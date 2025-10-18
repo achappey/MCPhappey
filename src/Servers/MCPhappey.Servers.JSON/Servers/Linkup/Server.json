@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "Linkup",
+    "version": "1.0.0",
+    "websiteUrl": "https://www.linkup.so",
+    "description": "Linkup is an AI web search engine optimized for LLMs and agents, offering seamless internet access with fast and accurate results."
+  },
+  "baseMcp": "mcp.linkup.so",
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

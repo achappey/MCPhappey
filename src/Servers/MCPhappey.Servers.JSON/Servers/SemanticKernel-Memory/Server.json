@@ -7,5 +7,13 @@
   "plugins": ["MCPhappey.Tools.KernelMemory.KernelMemory, MCPhappey.Tools"],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  },
+   "tools": {
+    "kernel_memory_search": {
+      "_meta": {
+        "openai/outputTemplate": "ui://widget/kernel-memory-search-results.html",
+        "openai/widgetAccessible": true
+      }
+    }
   }
 }

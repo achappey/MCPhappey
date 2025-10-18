@@ -71,9 +71,9 @@ public static class DatabaseExtensions
             {
                 Prompts = server.Prompts.Count != 0 ? new() : null,
                 Resources = server.ResourceTemplates.Count != 0 || server.Resources.Count != 0 ? new() : null,
-                Tools = server.Tools.Count != 0 ? new() : null
+                Tools = server.Plugins.Count != 0 ? new() : null
             },
-            Plugins = server.Tools.Select(a => a.Name),
+            Plugins = server.Plugins.Select(a => a.PluginName),
             Instructions = server.Instructions,
             ServerInfo = new()
             {
@@ -90,6 +90,16 @@ public static class DatabaseExtensions
                      ? server.Owners.Select(o => o.Id)
                      : null,
             OBO = obo,
+            ToolPrompts = server.ToolPrompts ?? false,
+            Tools = server.Tools
+                .Where(a => !string.IsNullOrEmpty(a.OutputTemplate))
+                .ToDictionary(a => a.ToolName, a => new Common.Models.Tool()
+                {
+                    Meta = new Dictionary<string, object>()
+                {
+                    { "openai/outputTemplate", a.OutputTemplate!}
+                }
+                }),
             Hidden = server.Hidden
         };
     }
@@ -109,6 +119,7 @@ public static class DatabaseExtensions
             Uri = resource.Uri,
             Name = resource.Name,
             Title = resource.Title,
+            MimeType = resource.MimeType,
             Description = resource.Description,
             Annotations = ToAnnotations(resource.Priority, resource.AssistantAudience,
                 resource.UserAudience)

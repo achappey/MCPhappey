@@ -1,0 +1,11 @@
+{
+  "serverInfo": {
+    "name": "GitHub-QuestPDF",
+    "title": "GitHub QuestPDF",
+    "version": "1.0.0",
+    "websiteUrl": "https://www.questpdf.com/"
+  },
+  "plugins": [
+    "MCPhappey.Tools.GitHub.QuestPDF.QuestPDFService, MCPhappey.Tools"
+  ]
+}

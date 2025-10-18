@@ -1,5 +1,9 @@
+using System.Text;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
+using MCPhappey.Core.Extensions;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -32,6 +36,46 @@ public class ResourceService(DownloadService downloadService, IServerDataProvide
         string uri,
         CancellationToken cancellationToken = default)
     {
+        var serverConfig = serviceProvider.GetServerConfig(mcpServer);
+        var resources = await GetServerResources(serverConfig!, cancellationToken);
+
+        var widgetResource = resources.Resources
+            .FirstOrDefault(a => a.MimeType?.Equals("text/html+skybridge", StringComparison.OrdinalIgnoreCase) == true
+                && a.Uri.Equals(uri, StringComparison.OrdinalIgnoreCase));
+
+        if (widgetResource != null)
+        {
+            var download = await downloadService.DownloadContentAsync(serviceProvider, mcpServer, uri,
+                           cancellationToken);
+
+            if (!download.Any())
+            {
+                throw new Exception($"Resource {uri} not found");
+            }
+
+            var item = download.First();
+
+            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+            var request = httpContextAccessor.HttpContext?.Request;
+
+            var baseUrl = request != null
+                ? $"{request.Scheme}://{request.Host.Value}"
+                : null;
+            var html = Encoding.UTF8.GetString(item.Contents.ToArray());
+
+            return new ReadResourceResult()
+            {
+                Contents = [new TextResourceContents() {
+                    Text = html.Replace("%HOST_URL%", baseUrl),
+                    MimeType = "text/html+skybridge",
+                    Uri = uri,
+                    Meta = new System.Text.Json.Nodes.JsonObject() {
+                        ["openai/widgetDescription"] = widgetResource.Description
+                    }
+                }]
+            };
+        }
+
         var fileItem = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, uri,
                        cancellationToken);
 

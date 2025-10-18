@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "GitHub-Humanizer",
+    "title": "GitHub Humanizer",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/Humanizr/Humanizer",
     "description": "Wraps the Humanizer .NET library, exposing tools that transform raw values into human-friendly text. It supports string humanization, pluralization, singularization, number-to-words, and natural time expressions."

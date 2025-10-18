@@ -209,9 +209,6 @@ public static partial class GraphWorkbooks
         var headers = csv.HeaderRecord!;
         int columnCount = headers.Length;
 
-
-
-
         // Data rows
         var dataRows = new List<object[]>();
         while (csv.Read())

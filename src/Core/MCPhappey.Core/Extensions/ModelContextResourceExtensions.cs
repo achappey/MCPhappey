@@ -45,6 +45,7 @@ public static partial class ModelContextResourceExtensions
         var startTime = DateTime.UtcNow;
 
         var service = request.Services!.GetRequiredService<ResourceService>();
+        
         request.Services!.WithHeaders(headers);
 
         try

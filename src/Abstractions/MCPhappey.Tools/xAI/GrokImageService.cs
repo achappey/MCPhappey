@@ -7,6 +7,7 @@ using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -15,8 +16,8 @@ namespace MCPhappey.Tools.xAI;
 public static class GrokImageService
 {
     [Description("Create an image with xAI Grok image generator")]
-    [McpServerTool(Title = "Generate image with xAI Grok", Name = "xai_create_image", Destructive = false)]
-    public static async Task<CallToolResult?> XAI_CreateImage(
+    [McpServerTool(Title = "Generate image with xAI Grok", Name = "xai_images_create", Destructive = false)]
+    public static async Task<CallToolResult?> XAIImages_Create(
        [Description("Image prompt (English only)")]
         string prompt,
        IServiceProvider serviceProvider,
@@ -67,7 +68,7 @@ public static class GrokImageService
 
        using var req = new HttpRequestMessage(HttpMethod.Post, "v1/images/generations")
        {
-           Content = new StringContent(json, Encoding.UTF8, "application/json")
+           Content = new StringContent(json, Encoding.UTF8, MimeTypes.Json)
        };
 
        // 3) Send request

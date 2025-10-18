@@ -1,0 +1,10 @@
+{
+  "serverInfo": {
+    "name": "Smithery",
+    "version": "1.0.0",
+    "description": "Smithery is your AI’s gateway to the open agent ecosystem. It connects your AI to thousands of ready-made tools, APIs, and MCP servers built by the community—so it can browse data, perform actions, and integrate with real-world systems instantly. Think of it as an app store for AI skills: discover, connect, and extend your agent’s capabilities with zero setup."
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

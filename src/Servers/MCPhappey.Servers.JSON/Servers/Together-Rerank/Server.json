@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "Together-Rerank",
+    "title": "Together Rerank",
+    "version": "1.0.0",
+    "description": "Together Rerank uses Together AI’s reranking models to reorder documents or files based on a given query. It retrieves folder content from SharePoint or OneDrive, extracts readable text, and ranks the items by relevance."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Together.Rerank.TogetherRerank, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

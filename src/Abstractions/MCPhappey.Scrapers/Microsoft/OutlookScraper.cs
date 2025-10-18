@@ -3,6 +3,7 @@ using MCPhappey.Common;
 using MCPhappey.Common.Models;
 using MCPhappey.Scrapers.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Graph.Beta;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Server;
 
@@ -26,6 +27,8 @@ public sealed class OutlookScraper(
          new Uri(url).Host.EndsWith("outlook.office365.com", StringComparison.OrdinalIgnoreCase)) &&
         serverConfig.Server.OBO?.ContainsKey(Common.Constants.Hosts.MicrosoftGraph) == true;
 
+
+
     public async Task<IEnumerable<FileItem>?> GetContentAsync(
         McpServer mcpServer,
         IServiceProvider serviceProvider,
@@ -47,12 +50,13 @@ public sealed class OutlookScraper(
             serverConfig.Server,
             oAuthSettings);
 
+        var graphId = await graph.ToGraphRestIdAsync(itemId, mailbox, cancellationToken);
         // Query Parameters – expand attachments in a single call
         Message? message;
         if (string.IsNullOrEmpty(mailbox))
         {
             // fall-back to /me/ when no mailbox is embedded
-            message = await graph.Me.Messages[itemId]
+            message = await graph.Me.Messages[graphId]
                 .GetAsync(config =>
                 {
                     config.QueryParameters.Expand = ["attachments"];
@@ -60,7 +64,7 @@ public sealed class OutlookScraper(
         }
         else
         {
-            message = await graph.Users[mailbox].Messages[itemId]
+            message = await graph.Users[mailbox].Messages[graphId]
                 .GetAsync(config =>
                 {
                     config.QueryParameters.Expand = ["attachments"];

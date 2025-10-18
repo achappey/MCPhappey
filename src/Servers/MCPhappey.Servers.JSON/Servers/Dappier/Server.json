@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "Dappier",
+    "version": "1.0.0",
+    "websiteUrl": "https://dappier.com",
+    "description": "Dappier helps creators, developers, and companies turn AI usage into real business value. It provides a full monetization layer for AI—letting you embed AI search, Q&A, and copilots directly into your websites or apps, and earn from every user interaction. Build once, deploy anywhere, and start generating revenue from your AI experiences instantly."
+  },
+  "baseMcp": "mcp.dappier.com",
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using System.IdentityModel.Tokens.Jwt;
 using System.Net.Http.Headers;
 using System.Text.Json;
@@ -38,7 +39,7 @@ public static class HttpExtensions
     return jwt.Claims.FirstOrDefault(c => c.Type == "obo")?.Value;
   }
 
-  public static async Task<string?> ExchangeOnBehalfOfTokenAsync(this IHttpClientFactory httpClientFactory,
+  public static async Task<(string accessToken, int expiresIn)> ExchangeOnBehalfOfTokenAsync(this IHttpClientFactory httpClientFactory,
      string incomingAccessToken,
      string clientId,
      string clientSecret,
@@ -74,7 +75,11 @@ public static class HttpExtensions
 
     var json = await response.Content.ReadFromJsonAsync<JsonElement>();
 
-    return json.GetProperty("access_token").GetString();
+    return (
+            json.GetProperty("access_token").GetString()!,
+            json.TryGetProperty("expires_in", out var exp) ? exp.GetInt32() : 3600
+        );
+    // return json.GetProperty("access_token").GetString();
   }
 
   public static string? GetUserId(this IServiceProvider serviceProvider)
@@ -117,43 +122,71 @@ public static class HttpExtensions
     if (oboKey == null || server.OBO == null || !server.OBO.TryGetValue(oboKey, out var rawScopeString))
       throw new UnauthorizedAccessException($"No OBO config for host: {host}");
 
-    // Replace [tenantName] placeholder if present
-    //var scopeString = rawScopeString.Replace("{tenantName}", host.Split('.')[0], StringComparison.OrdinalIgnoreCase);
-
     var scopes = rawScopeString
         .Split(' ', StringSplitOptions.RemoveEmptyEntries)
         .ToArray();
 
-    var delegated = await httpClientFactory.ExchangeOnBehalfOfTokenAsync(
-        token,
-        oAuthSettings.ClientId,
-        oAuthSettings.ClientSecret,
-        $"https://login.microsoftonline.com/{oAuthSettings.TenantId}/oauth2/v2.0/token",
-        scopes);
+    // Build cache key per (user/token + host + scope)
+    var cacheKey = BuildCacheKey(token, host, scopes);
 
-    return delegated ?? throw new UnauthorizedAccessException("Failed to get delegated token.");
-  }
-
-
-  public static async Task<string> GetOboToken2(this IHttpClientFactory httpClientFactory,
-    string token,
-    string host,
-    Server server,
-    OAuthSettings oAuthSettings)
-  {
-    if (server.OBO?.ContainsKey(host) == true)
+    // Check static cache
+    if (_cache.TryGetValue(cacheKey, out var entry))
     {
-      var delegated = await httpClientFactory.ExchangeOnBehalfOfTokenAsync(token,
-                  oAuthSettings.ClientId, oAuthSettings.ClientSecret,
-                  $"https://login.microsoftonline.com/{oAuthSettings.TenantId}/oauth2/v2.0/token",
-                  server.OBO.GetScopes(host)?.ToArray() ?? []);
-
-      return delegated ?? throw new UnauthorizedAccessException();
+      if (DateTime.UtcNow < entry.ExpiresAt)
+        return entry.Token; // still valid
+      else
+        _cache.TryRemove(cacheKey, out _); // expired → remove
     }
 
-    throw new UnauthorizedAccessException();
+    var (accessToken, expiresIn) = await httpClientFactory.ExchangeOnBehalfOfTokenAsync(
+         token,
+         oAuthSettings.ClientId,
+         oAuthSettings.ClientSecret,
+         $"https://login.microsoftonline.com/{oAuthSettings.TenantId}/oauth2/v2.0/token",
+         scopes);
+
+    var expiresAt = DateTime.UtcNow.AddSeconds(expiresIn - 60); // refresh 1 min early
+    _cache[cacheKey] = (accessToken, expiresAt);
+
+    return accessToken ?? throw new UnauthorizedAccessException("Failed to get delegated token.");
   }
 
+  private static string BuildCacheKey(string token, string host, string[] scopes)
+  {
+    var tokenHash = GetTokenHash(token);
+    return $"{host}::{string.Join('+', scopes)}::{tokenHash}";
+  }
+
+  private static string GetTokenHash(string token)
+  {
+    using var sha = System.Security.Cryptography.SHA256.Create();
+    var bytes = sha.ComputeHash(System.Text.Encoding.UTF8.GetBytes(token));
+    return Convert.ToBase64String(bytes)[..12]; // short hash
+  }
+
+  private static readonly ConcurrentDictionary<string, (string Token, DateTime ExpiresAt)> _cache
+          = new();
+
+  /*
+    public static async Task<string> GetOboToken2(this IHttpClientFactory httpClientFactory,
+      string token,
+      string host,
+      Server server,
+      OAuthSettings oAuthSettings)
+    {
+      if (server.OBO?.ContainsKey(host) == true)
+      {
+        var delegated = await httpClientFactory.ExchangeOnBehalfOfTokenAsync(token,
+                    oAuthSettings.ClientId, oAuthSettings.ClientSecret,
+                    $"https://login.microsoftonline.com/{oAuthSettings.TenantId}/oauth2/v2.0/token",
+                    server.OBO.GetScopes(host)?.ToArray() ?? []);
+
+        return delegated ?? throw new UnauthorizedAccessException();
+      }
+
+      throw new UnauthorizedAccessException();
+    }
+  */
   public static string? GetObjectId(this HttpContext context)
   {
     return context.User?.FindFirst("oid")?.Value;

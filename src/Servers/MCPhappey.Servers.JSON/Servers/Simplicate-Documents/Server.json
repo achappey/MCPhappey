@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Simplicate-Documents",
+    "title": "Simplicate Documenten",
     "version": "1.0.0",
     "description": "Documentbeheer-integratie voor Simplicate om bestanden en mappen te zoeken, uploaden en koppelen aan modules."
   },

@@ -17,13 +17,13 @@
 	<ItemGroup>
     <PackageReference Include="Microsoft.KernelMemory.AI.OpenAI" Version="0.98.250508.3" />
     <PackageReference Include="Microsoft.KernelMemory.MemoryDb.SQLServer" Version="0.98.250508.3" />
-    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.9" />
-    <PackageReference Include="Microsoft.Graph.Beta" Version="5.122.0-preview" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.10" />
+    <PackageReference Include="Microsoft.Graph.Beta" Version="5.123.0-preview" />
     <PackageReference Include="Microsoft.KernelMemory.Core" Version="0.98.250508.3" />
-    <PackageReference Include="Microsoft.SemanticKernel" Version="1.65.0" />
-    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.9" />
-    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.65.0-preview" />
-    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.65.0-alpha" />
+    <PackageReference Include="Microsoft.SemanticKernel" Version="1.66.0" />
+    <PackageReference Include="System.Diagnostics.DiagnosticSource" Version="9.0.10" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.66.0-preview" />
+    <PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.66.0-alpha" />
 	</ItemGroup>
 
 </Project>

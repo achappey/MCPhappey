@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -63,9 +64,9 @@ public static partial class HTMLPlugin
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Default values for the replacements. Format: key is argument name (without braces), value is replacement.")] Dictionary<string, string>? replacements = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithOboGraphClient(async client =>
     {
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var arguments = await GetArguments(sourceUrl, client, cancellationToken);
         var values = await requestContext.Server.ElicitAsync(
             new ElicitRequestParams
@@ -110,7 +111,7 @@ public static partial class HTMLPlugin
                                BinaryData.FromString(html), cancellationToken);
 
         return graphItem?.ToResourceLinkCallToolResponse();
-    }
+    });
 
 
     [Description("Please fill in the new HTML file details.")]

@@ -1,0 +1,15 @@
+{
+  "serverInfo": {
+    "name": "xAI-CodeExecution",
+    "title": "xAI Code Execution",
+    "version": "1.0.0",
+    "websiteUrl": "https://x.ai",
+    "description": "xAI Grok AI code execution"
+  },
+  "plugins": [
+    "MCPhappey.Tools.xAI.GrokCodeExecution, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

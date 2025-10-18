@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "StabilityAI-Audio",
+    "title": "StabilityAI Audio",
+    "version": "1.0.0",
+    "description": "Generates, transforms, and repairs sound using text-based instructions. Includes tools for text-to-audio generation, audio-to-audio transformation, and selective inpainting of existing recordings. Supports MP3 and WAV formats at full 44.1 kHz stereo quality."
+  },
+  "plugins": [
+    "MCPhappey.Tools.StabilityAI.StabilityAIAudioService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

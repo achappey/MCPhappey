@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -11,13 +12,14 @@ public static class GraphAudit
     [Description("Create a Purview audit log query. Please select a date range less than 6 months.")]
     [McpServerTool(Title = "Create audit log query", OpenWorld = false, Destructive = true)]
     public static async Task<CallToolResult?> GraphAudit_CreateLogQuery(
-      IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
       [Description("The audit query filter.")] string filter,
       [Description("The audit query display name.")] string? displayName = null,
       [Description("The audit query start date.")] DateTimeOffset? startTime = null,
       [Description("The audit query end date.")] DateTimeOffset? endTime = null,
-      CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+      CancellationToken cancellationToken = default) =>
+      await requestContext.WithExceptionCheck(async () =>
+      await requestContext.WithOboGraphClient(async client =>
     {
         var mcpServer = requestContext.Server;
 
@@ -33,8 +35,6 @@ public static class GraphAudit
         );
 
         if (notAccepted != null) return notAccepted;
-
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         // Defaults if not provided
         var now = DateTimeOffset.UtcNow;
@@ -60,6 +60,6 @@ public static class GraphAudit
         var newUser = await client.Security.AuditLog.Queries.PostAsync(user, cancellationToken: cancellationToken);
 
         return newUser.ToJsonContentBlock($"https://graph.microsoft.com/security/auditLog/queries/{newUser?.Id}").ToCallToolResult();
-    });
+    }));
 
 }

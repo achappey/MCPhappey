@@ -2,6 +2,11 @@ using System.Text.Json.Serialization;
 
 namespace MCPhappey.Common.Models;
 
+public class SearchResults
+{
+    [JsonPropertyName("results")]
+    public IEnumerable<SearchResult> Results { get; set; } = [];
+}
 
 public class SearchResult
 {

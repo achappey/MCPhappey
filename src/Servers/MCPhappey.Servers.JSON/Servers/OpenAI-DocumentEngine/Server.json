@@ -1,0 +1,15 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-DocumentEngine",
+    "title": "OpenAI Document Engine",
+    "version": "1.0.0",
+    "description": "Manage the full lifecycle of AI generated documents including creating structured JSON from source files binding data to templates applying JSON patches and validating against schemas. Designed for dynamic document workflows with OneDrive or SharePoint storage and integration into OpenAI based apps and widgets."
+  },
+  "instructions": "Do not use emdashes or ';' characters in your answers, unless explicitly otherwise requested.",
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.DocumentEngine.OpenAIDocumentEngine, MCPhappey.Tools"
+  ]
+}

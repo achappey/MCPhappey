@@ -1,7 +1,7 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
-using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
@@ -13,6 +13,140 @@ namespace MCPhappey.Simplicate.Projects;
 
 public static class SimplicateProjects
 {
+
+    [McpServerTool(OpenWorld = false, ReadOnly = true,
+    Destructive = false,
+    Name = "simplicate_projects_get_budget_totals_by_manager",
+    Title = "Get project budget totals by project manager")]
+    [Description("Returns, per project manager, the total budgeted, spent, and invoiced values aggregated across their projects.")]
+    public static async Task<CallToolResult?> SimplicateProjects_GetBudgetTotalsByManager(
+    IServiceProvider serviceProvider,
+    RequestContext<CallToolRequestParams> requestContext,
+    [Description("Optional project status label filter.")] ProjectStatusLabel? projectStatusLabel = null,
+    CancellationToken cancellationToken = default)
+    => await requestContext.WithStructuredContent(async () =>
+{
+    var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+    var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+    string baseUrl = simplicateOptions.GetApiUrl("/projects/project");
+    string select = "name,project_manager.,budget.";
+    var filters = new List<string>();
+
+    if (projectStatusLabel.HasValue)
+        filters.Add($"q[project_status.label]=*{Uri.EscapeDataString(projectStatusLabel.Value.ToString())}*");
+
+    var filterString = string.Join("&", filters) + $"&select={select}";
+    var projects = await downloadService.GetAllSimplicatePagesAsync<SimplicateProject>(
+        serviceProvider,
+        requestContext.Server,
+        baseUrl,
+        filterString,
+        pageNum => $"Downloading project budgets",
+        requestContext,
+        cancellationToken: cancellationToken
+    );
+
+    return new
+    {
+        project_managers = projects
+            .Where(p => p.ProjectManager?.Name != null)
+            .GroupBy(p => p.ProjectManager!.Name)
+            .Select(g => new
+            {
+                project_manager = g.Key,
+                total_value_budget = g.Sum(p => p.Budget?.Total.ValueBudget ?? 0),
+                total_value_spent = g.Sum(p => p.Budget?.Total.ValueSpent ?? 0),
+                total_value_invoiced = g.Sum(p => p.Budget?.Total.ValueInvoiced ?? 0)
+            })
+            .OrderByDescending(x => x.total_value_budget)
+    };
+});
+
+
+    [McpServerTool(OpenWorld = false, ReadOnly = true,
+        Destructive = false,
+        Name = "simplicate_projects_get_budget_totals_by_cost_type",
+        Title = "Get project budget totals by cost type")]
+    [Description("Returns aggregated totals for all projects, split into hours, costs, and total categories. Ideal for quick portfolio overviews.")]
+    public static async Task<CallToolResult?> SimplicateProjects_GetBudgetTotalsByCostType(
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
+        => await requestContext.WithStructuredContent(async () =>
+    {
+        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+        string baseUrl = simplicateOptions.GetApiUrl("/projects/project");
+        string select = "name,budget.";
+        var projects = await downloadService.GetAllSimplicatePagesAsync<SimplicateProject>(
+            serviceProvider,
+            requestContext.Server,
+            baseUrl,
+            $"select={select}",
+            pageNum => $"Downloading budgets",
+            requestContext,
+            cancellationToken: cancellationToken
+        );
+
+        return new
+        {
+            totals = new
+            {
+                hours_value_budget = projects.Sum(p => p.Budget?.Hours.ValueBudget ?? 0),
+                hours_value_spent = projects.Sum(p => p.Budget?.Hours.ValueSpent ?? 0),
+                costs_value_budget = projects.Sum(p => p.Budget?.Costs.ValueBudget ?? 0),
+                costs_value_spent = projects.Sum(p => p.Budget?.Costs.ValueSpent ?? 0),
+                total_value_budget = projects.Sum(p => p.Budget?.Total.ValueBudget ?? 0),
+                total_value_spent = projects.Sum(p => p.Budget?.Total.ValueSpent ?? 0),
+                total_value_invoiced = projects.Sum(p => p.Budget?.Total.ValueInvoiced ?? 0)
+            }
+        };
+    });
+
+    [McpServerTool(OpenWorld = false, ReadOnly = true,
+        Destructive = false,
+        Name = "simplicate_projects_get_budget_spent_vs_budget",
+        Title = "Get project spent vs. budget ratios")]
+    [Description("Returns, per project, how much of the budget has been spent (%). Useful for performance charts or burn-down visualizations.")]
+    public static async Task<CallToolResult?> SimplicateProjects_GetBudgetSpentVsBudget(
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
+        => await requestContext.WithStructuredContent(async () =>
+    {
+        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+        string baseUrl = simplicateOptions.GetApiUrl("/projects/project");
+        string select = "name,project_manager.,budget.total.";
+        var projects = await downloadService.GetAllSimplicatePagesAsync<SimplicateProject>(
+            serviceProvider,
+            requestContext.Server,
+            baseUrl,
+            $"select={select}",
+            pageNum => $"Downloading project budgets",
+            requestContext,
+            cancellationToken: cancellationToken
+        );
+
+        return new
+        {
+            projects = projects
+                .Where(p => (p.Budget?.Total.ValueBudget ?? 0) > 0)
+                .Select(p => new
+                {
+                    name = p.Name,
+                    project_manager = p.ProjectManager?.Name,
+                    value_budget = p.Budget!.Total.ValueBudget,
+                    value_spent = p.Budget!.Total.ValueSpent,
+                    spent_ratio = Math.Round(
+                        p.Budget!.Total.ValueSpent / p.Budget!.Total.ValueBudget * 100, 1)
+                })
+                .OrderByDescending(x => x.spent_ratio)
+        };
+    });
+
+
+
     [Description("Create a new project in Simplicate")]
     [McpServerTool(OpenWorld = false, Title = "Create new project in Simplicate")]
     public static async Task<CallToolResult?> SimplicateProjects_CreateProject(
@@ -205,6 +339,10 @@ public static class SimplicateProjects
         [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
         public SimplicateProjectManager? ProjectManager { get; set; }
 
+        [JsonPropertyName("budget")]
+        [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+        public SimplicateProjectBudget? Budget { get; set; }
+
     }
 
     public class SimplicateProjectManager
@@ -212,6 +350,55 @@ public static class SimplicateProjects
         [JsonPropertyName("name")]
         public string Name { get; set; } = string.Empty;
     }
+
+    public class SimplicateProjectBudget
+    {
+        [JsonPropertyName("hours")]
+        public BudgetHours Hours { get; set; } = new();
+
+        [JsonPropertyName("costs")]
+        public BudgetCosts Costs { get; set; } = new();
+
+        [JsonPropertyName("total")]
+        public BudgetTotal Total { get; set; } = new();
+    }
+
+    public class BudgetHours
+    {
+        [JsonPropertyName("amount_budget")]
+        public decimal AmountBudget { get; set; }
+
+        [JsonPropertyName("amount_spent")]
+        public decimal AmountSpent { get; set; }
+
+        [JsonPropertyName("value_budget")]
+        public decimal ValueBudget { get; set; }
+
+        [JsonPropertyName("value_spent")]
+        public decimal ValueSpent { get; set; }
+    }
+
+    public class BudgetCosts
+    {
+        [JsonPropertyName("value_budget")]
+        public decimal ValueBudget { get; set; }
+
+        [JsonPropertyName("value_spent")]
+        public decimal ValueSpent { get; set; }
+    }
+
+    public class BudgetTotal
+    {
+        [JsonPropertyName("value_budget")]
+        public decimal ValueBudget { get; set; }
+
+        [JsonPropertyName("value_spent")]
+        public decimal ValueSpent { get; set; }
+
+        [JsonPropertyName("value_invoiced")]
+        public decimal ValueInvoiced { get; set; }
+    }
+
 
 }
 

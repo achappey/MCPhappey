@@ -36,6 +36,10 @@ public class UpdateMcpResource
     [Description("New description of the resource.")]
     public string? Description { get; set; }
 
+    [JsonPropertyName("mimeType")]
+    [Description("Optional mimetype.")]
+    public string? MimeType { get; set; }
+
     [JsonPropertyName("priority")]
     [Range(0, 1)]
     [Description("Optional priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
@@ -72,6 +76,10 @@ public class AddMcpResource
     [JsonPropertyName("description")]
     [Description("Optional description of the resource.")]
     public string? Description { get; set; }
+
+    [JsonPropertyName("mimeType")]
+    [Description("Optional mimetype.")]
+    public string? MimeType { get; set; }
 
     [JsonPropertyName("priority")]
     [Range(0, 1)]

@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using DocumentFormat.OpenXml.Office2013.Word;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
@@ -18,7 +19,7 @@ public static class SharePointSearch
     /// <summary>
     /// Executes a Microsoft Graph search request for the supplied query and entity types.
     /// </summary>
-    private static async Task<string?> SearchContent(
+    private static async Task<IEnumerable<SearchHit>?> SearchContent(
         this GraphServiceClient graphServiceClient,
         string query,
         IReadOnlyList<EntityType?> entityTypes,
@@ -35,7 +36,7 @@ public static class SharePointSearch
                         EntityTypes = [.. entityTypes],
                         Query = new SearchQuery { QueryString = query },
                         From = from,
-                        Size = size,
+                        Size = size
                     }
             ],
         };
@@ -50,18 +51,13 @@ public static class SharePointSearch
 
         var hitContainer = result?.Value?.FirstOrDefault()?.HitsContainers?.FirstOrDefault();
 
-        return JsonSerializer.Serialize(new
-        {
-            hits = searchItems,
-            hitContainer?.MoreResultsAvailable,
-            hitContainer?.Total
-        }, ResourceExtensions.JsonSerializerOptions);
+        return searchItems;
     }
 
     /// <summary>
     /// Runs <see cref="SearchContent"/> across multiple entity combinations with throttling.
     /// </summary>
-    private static async Task<IReadOnlyList<string?>> ExecuteSearchAcrossEntities(
+    private static async Task<IEnumerable<SearchHit?>> ExecuteSearchAcrossEntities(
         this GraphServiceClient client,
         string query,
         IEnumerable<EntityType?[]> entityCombinations,
@@ -84,38 +80,100 @@ public static class SharePointSearch
             }
         });
 
-        return await Task.WhenAll(tasks);
+        var result = await Task.WhenAll(tasks);
+
+        return result.OfType<IEnumerable<SearchHit>>()
+            .SelectMany(a => a)
+            .OrderBy(a => a.Rank);
     }
 
     [Description("Search Microsoft 365 content and return raw Microsoft search results")]
-    [McpServerTool(Name = "sharepoint_search", Title = "Search Microsoft 365 content raw",
+    [McpServerTool(Name = "sharepoint_search",
+        Title = "Search Microsoft 365 content raw",
         OpenWorld = false, ReadOnly = true)]
-    public static async Task<CallToolResult> SharePoint_Search(
+    public static async Task<CallToolResult?> SharePoint_Search(
         [Description("Search query")] string query,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Page size")] int pageSize = 10,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) => await requestContext.WithStructuredContent(async () =>
     {
         var mcpServer = requestContext.Server;
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         var entityCombinations = new List<EntityType?[]>
-    {
-        new EntityType?[] { EntityType.Message, EntityType.ChatMessage },
-        new EntityType?[] { EntityType.DriveItem, EntityType.ListItem },
-        new EntityType?[] { EntityType.Site }
-    };
+            {
+                new EntityType?[] { EntityType.Message, EntityType.ChatMessage },
+                new EntityType?[] { EntityType.DriveItem, EntityType.ListItem },
+                new EntityType?[] { EntityType.Site },
+                new EntityType?[] { EntityType.Person }
+            };
 
         var results = await client.ExecuteSearchAcrossEntities(query, entityCombinations, 2, pageSize, cancellationToken);
 
-        return new CallToolResult
+        return new Common.Models.SearchResults
         {
-            Content = [.. results
-                .Where(r => !string.IsNullOrEmpty(r))
-                .Select(r => r!.ToTextContentBlock())]
+            Results = results
+                .OfType<SearchHit>()
+                .Select(a => a.MapHit())
+                .Where(a => !string.IsNullOrEmpty(a.Source))
+                .Take(pageSize)
+        };
+    });
+
+    private static Common.Models.SearchResult MapHit(this SearchHit hit)
+    {
+        static string? GetListItemTitle(ListItem? li)
+        {
+            if (li == null) return null;
+
+            // Try to get from Fields.AdditionalData
+            if (li.Fields?.AdditionalData != null &&
+                li.Fields.AdditionalData.TryGetValue("Title", out var fieldTitle) &&
+                fieldTitle is not null)
+                return fieldTitle.ToString();
+
+            // Try to get from AdditionalData (case-insensitive)
+            if (li.AdditionalData != null)
+            {
+                if (li.AdditionalData.TryGetValue("title", out var lower) && lower is not null)
+                    return lower.ToString();
+
+                if (li.AdditionalData.TryGetValue("Title", out var upper) && upper is not null)
+                    return upper.ToString();
+            }
+
+            return li.Id;
+        }
+
+        var (title, url, id) = hit.Resource switch
+        {
+            DriveItem d => (d.Name, d.WebUrl, d.Id),
+            Contact c => (c.DisplayName, c.EmailAddresses?.FirstOrDefault()?.Address, c.Id),
+            Message m => (m.Subject, m.WebLink, m.Id),
+            Event ev => (ev.Subject, ev.WebLink, ev.Id),
+            ListItem li => (GetListItemTitle(li), li?.WebUrl, li?.Id),
+            _ => (null, null, (hit.Resource as Entity)?.Id)
+        };
+
+        return new()
+        {
+            Title = title ?? string.Empty,
+            Source = url ?? string.Empty,
+            Content =
+            [
+                new Common.Models.SearchResultContentBlock
+            {
+                Text = hit.Summary ?? string.Empty
+            }
+            ],
+            Citations = new Common.Models.CitationConfiguration
+            {
+                Enabled = true
+            }
         };
     }
+
 
     [Description("Read a Microsoft 365 search result")]
     [McpServerTool(Name = "sharepoint_read_search_result", Title = "Read a Microsoft 365 search result",
@@ -195,10 +253,4 @@ public static class SharePointSearch
             Content = [result.Content]
         };
     }
-}
-
-public class QueryList
-{
-    [JsonPropertyName("queries")]
-    public IEnumerable<string> Queries { get; set; } = null!;
 }

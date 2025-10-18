@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "StabilityAI-ImageUpscale",
+    "title": "StabilityAI Image Upscale",
+    "version": "1.0.0",
+    "description": "Improves image resolution using AI upscaling models. Offers both conservative and fast upscaling options to enhance clarity and detail while maintaining natural appearance and accurate proportions."
+  },
+  "plugins": [
+    "MCPhappey.Tools.StabilityAI.StabilityAIImageUpscaleService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

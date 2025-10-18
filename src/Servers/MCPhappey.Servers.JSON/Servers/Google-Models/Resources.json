@@ -14,7 +14,7 @@
       }
     },
     {
-      "uri": "https://storage.googleapis.com/model-cards/documents/gemini-2.5-flash.pdf",
+      "uri": "https://storage.googleapis.com/deepmind-media/Model-Cards/Gemini-2-5-Flash-Model-Card.pdf",
       "name": "gemini-2-5-flash-model-card",
       "title": "Gemini 2.5 Flash Model Card",
       "description": "Official model card PDF for Gemini 2.5 Flash, covering the lighter, faster Gemini variant including model capabilities, use cases, and limitations.",

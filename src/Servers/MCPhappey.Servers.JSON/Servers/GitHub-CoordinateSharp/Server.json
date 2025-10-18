@@ -1,0 +1,12 @@
+{
+  "serverInfo": {
+    "name": "GitHub-CoordinateSharp",
+    "title": "GitHub CoordinateSharp",
+    "version": "1.0.0",
+    "websiteUrl": "https://github.com/Tronald/CoordinateSharp",
+    "description": "Calculates and converts geographic coordinates. Supports formats such as decimal, DMS, UTM, MGRS, and GEOREF. Provides distances, bearings, destination points, and sun and moon data based on location and time. Useful for mapping, analysis, and spatial calculations."
+  },
+  "plugins": [
+    "MCPhappey.Tools.GitHub.CoordinateSharp.CoordinateSharpService, MCPhappey.Tools"
+  ]
+}

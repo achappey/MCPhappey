@@ -135,6 +135,7 @@ public static class ChatApp
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Current date and time")] string? currentDateTime = null,
+        [Description("Current user")] string? currentUser = null,
         CancellationToken cancellationToken = default)
     {
         var mcpServer = requestContext.Server;
@@ -158,8 +159,12 @@ public static class ChatApp
         var args = new Dictionary<string, JsonElement>
         {
             { "language", JsonSerializer.SerializeToElement(language) },
+
             { "currentDateTime", JsonSerializer.SerializeToElement(currentDateTime ?? DateTime.UtcNow.ToString()) }
         };
+
+        if (currentUser != null)
+            args.Add("currentUser", currentUser.ToJsonElement());
 
         var meta = new Dictionary<string, object> { { "openai", options } };
 

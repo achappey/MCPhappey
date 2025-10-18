@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Runtime.Serialization;
 using System.Text.Json.Serialization;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
@@ -30,10 +31,24 @@ public class PaidInvoicePaymentTermDetail : SimplicateInvoice
 
 public class SimplicateOpenInvoiceWithDaysOpen : SimplicateInvoiceTotals
 {
+    [JsonPropertyName("debtorName")]
     public string DebtorName { get; set; } = default!;
-    public int InvoiceCount { get; set; }
+
+    // [JsonPropertyName("invoiceCount")]
+    // public int InvoiceCount { get; set; }
+
+    [JsonPropertyName("averageDaysOpen")]
     public int? AverageDaysOpen { get; set; }
 }
+
+
+public class SimplicateTotalInvoices : SimplicateInvoiceTotals
+{
+    [JsonPropertyName("month")]
+    public string Month { get; set; } = default!;
+
+}
+
 
 public class SimplicateInvoiceTotals
 {
@@ -174,8 +189,12 @@ public class SimplicatePaymentTerm
 
 public enum InvoiceStatusLabel
 {
+    [EnumMember(Value = "Payed")]
     Payed,
+    [EnumMember(Value = "Sended")]
     Sended,
+    [EnumMember(Value = "Expired")]
     Expired,
+    [EnumMember(Value = "Concept")]
     Concept
 }

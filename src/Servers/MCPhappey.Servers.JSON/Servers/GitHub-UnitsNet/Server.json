@@ -1,0 +1,11 @@
+{
+  "serverInfo": {
+    "name": "GitHub-UnitsNet",
+    "title": "GitHub UnitsNet",
+    "version": "1.0.0",
+    "websiteUrl": "https://github.com/angularsen/UnitsNet"
+  },
+  "plugins": [
+    "MCPhappey.Tools.GitHub.UnitsNet.UnitsNetService, MCPhappey.Tools"
+  ]
+}

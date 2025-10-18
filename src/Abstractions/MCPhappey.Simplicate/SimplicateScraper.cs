@@ -33,6 +33,8 @@ public class SimplicateScraper(
 
     private readonly ConcurrentDictionary<string, (string Key, string Secret)> _secretsCache = new();
 
+    private const string AuthenticationKey = "Authentication-Key";
+    private const string AuthenticationSecret = "Authentication-Secret";
 
     public bool SupportsHost(ServerConfig currentConfig, string host)
         => new Uri(host).Host == $"{simplicateOptions.Organization}.simplicate.app";
@@ -49,8 +51,8 @@ public class SimplicateScraper(
             return null;
 
         var client = _httpClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Add("Authentication-Key", key);
-        client.DefaultRequestHeaders.Add("Authentication-Secret", secret);
+        client.DefaultRequestHeaders.Add(AuthenticationKey, key);
+        client.DefaultRequestHeaders.Add(AuthenticationSecret, secret);
 
         using var response = await client.GetAsync(url, cancellationToken);
 
@@ -86,8 +88,8 @@ public class SimplicateScraper(
             return null;
 
         var client = _httpClientFactory.CreateClient();
-        client.DefaultRequestHeaders.Add("Authentication-Key", key);
-        client.DefaultRequestHeaders.Add("Authentication-Secret", secret);
+        client.DefaultRequestHeaders.Add(AuthenticationKey, key);
+        client.DefaultRequestHeaders.Add(AuthenticationSecret, secret);
 
         using var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, MediaTypeNames.Application.Json);
         using var response = await client.PostAsync(url, content, cancellationToken);
@@ -133,11 +135,11 @@ public class SimplicateScraper(
 
     private async Task<(string? Key, string? Secret)> TryGetKeySecretAsync(HeaderProvider? tokenProvider, CancellationToken cancellationToken)
     {
-        if (tokenProvider?.Headers?.ContainsKey("Authentication-Key") == true &&
-            tokenProvider.Headers.TryGetValue("Authentication-Secret", out string? value))
+        if (tokenProvider?.Headers?.ContainsKey(AuthenticationKey) == true &&
+            tokenProvider.Headers.TryGetValue(AuthenticationSecret, out string? value))
         {
             return (
-                tokenProvider.Headers["Authentication-Key"].ToString(), value.ToString()
+                tokenProvider.Headers[AuthenticationKey].ToString(), value.ToString()
             );
         }
 

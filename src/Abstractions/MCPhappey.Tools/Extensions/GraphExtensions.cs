@@ -2,6 +2,8 @@ using System.Text;
 using MCPhappey.Core.Extensions;
 using Microsoft.Graph.Beta;
 using Microsoft.Graph.Beta.Models;
+using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
 
 namespace MCPhappey.Tools.Extensions;
 
@@ -41,6 +43,17 @@ public static class GraphExtensions
             .PutAsync(stream, cancellationToken: cancellationToken);
 
         return uploaded;
+    }
+
+    internal static async Task<CallToolResult?> WithOboGraphClient(this RequestContext<CallToolRequestParams> requestContext,
+       Func<GraphServiceClient, Task<CallToolResult?>> func)
+    {
+        if (requestContext.Services == null)
+            throw new ArgumentNullException(nameof(requestContext.Services));
+
+        using var client = await requestContext.Services.GetOboGraphClient(requestContext.Server);
+
+        return await func(client);
     }
 
 

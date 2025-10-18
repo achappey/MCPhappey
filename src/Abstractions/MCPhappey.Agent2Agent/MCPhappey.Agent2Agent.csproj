@@ -18,17 +18,17 @@
     <PackageReference Include="a2a-net.Server" Version="0.10.0" />
     <PackageReference Include="a2a-net.Server.AspNetCore" Version="0.10.0" />
     <PackageReference Include="a2a-net.Server.Infrastructure.DistributedCache" Version="0.10.0" />
-    <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0-beta.1" />
+    <PackageReference Include="Azure.Storage.Blobs" Version="12.26.0" />
     <PackageReference Include="Microsoft.Extensions.Azure" Version="1.13.0" />
   </ItemGroup>
   
 	<ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.9" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.9">
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.10" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.10">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.9" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="9.0.10" />
 	</ItemGroup>
 
 </Project>

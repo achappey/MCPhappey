@@ -7,5 +7,19 @@
   },
   "plugins": [
     "MCPhappey.Tools.GitHub.RestCountries.CountryService, MCPhappey.Tools"
-  ]
+  ],
+  "tools": {
+    "github_rest_countries_get_by_region": {
+      "_meta": {
+        "openai/outputTemplate": "ui://widget/countries.html",
+        "openai/widgetAccessible": true
+      }
+    },
+    "github_rest_countries_get_detail": {
+      "_meta": {
+        "openai/outputTemplate": "ui://widget/country-detail.html",
+        "openai/widgetAccessible": true
+      }
+    }
+  }
 }

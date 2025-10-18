@@ -152,6 +152,9 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<string>("MimeType")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -262,6 +265,9 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.Property<string>("Title")
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<bool?>("ToolPrompts")
+                        .HasColumnType("bit");
+
                     b.Property<string>("WebsiteUrl")
                         .HasColumnType("nvarchar(max)");
 
@@ -342,17 +348,18 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.ToTable("ServerOwners");
                 });
 
-            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.ServerTool", b =>
+            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.ServerPlugin", b =>
                 {
-                    b.Property<string>("Name")
+                    b.Property<string>("PluginName")
                         .HasColumnType("nvarchar(450)")
+                        .HasColumnName("Name")
                         .HasColumnOrder(1);
 
                     b.Property<int>("ServerId")
                         .HasColumnType("int")
                         .HasColumnOrder(2);
 
-                    b.HasKey("Name", "ServerId");
+                    b.HasKey("PluginName", "ServerId");
 
                     b.HasIndex("ServerId");
 
@@ -374,6 +381,24 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.HasKey("Id");
 
                     b.ToTable("Sizes");
+                });
+
+            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.ToolMetadata", b =>
+                {
+                    b.Property<int>("ServerId")
+                        .HasColumnType("int")
+                        .HasColumnOrder(1);
+
+                    b.Property<string>("ToolName")
+                        .HasColumnType("nvarchar(450)")
+                        .HasColumnOrder(2);
+
+                    b.Property<string>("OutputTemplate")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("ServerId", "ToolName");
+
+                    b.ToTable("ToolMetadata");
                 });
 
             modelBuilder.Entity("MCPhappey.Servers.SQL.Models.IconSize", b =>
@@ -529,7 +554,18 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.Navigation("Server");
                 });
 
-            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.ServerTool", b =>
+            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.ServerPlugin", b =>
+                {
+                    b.HasOne("MCPhappey.Servers.SQL.Models.Server", "Server")
+                        .WithMany("Plugins")
+                        .HasForeignKey("ServerId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Server");
+                });
+
+            modelBuilder.Entity("MCPhappey.Servers.SQL.Models.ToolMetadata", b =>
                 {
                     b.HasOne("MCPhappey.Servers.SQL.Models.Server", "Server")
                         .WithMany("Tools")
@@ -572,6 +608,8 @@ namespace MCPhappey.Servers.SQL.Migrations
                     b.Navigation("Icons");
 
                     b.Navigation("Owners");
+
+                    b.Navigation("Plugins");
 
                     b.Navigation("Prompts");
 

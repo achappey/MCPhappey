@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "Together-Images",
+    "title": "Together Images",
+    "version": "1.0.0",
+    "description": "Together Images provides access to Together AI’s image generation models. Users can create images from text prompts in various styles and resolutions. The server supports listing available models, generating new images, and storing results on OneDrive for further processing, visualization, or integration with other MCP-based tools."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Together.Images.TogetherImages, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

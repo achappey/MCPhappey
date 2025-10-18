@@ -4,5 +4,15 @@
     "version": "1.0.0",
     "description": "AI-powered web search for finding, summarizing and citing online sources. Discover authoritative pages, extract key facts and generate concise answers with references for research, monitoring and knowledge tasks."
   },
-  "plugins": ["MCPhappey.Tools.AI.WebSearch, MCPhappey.Tools"]
+  "plugins": [
+    "MCPhappey.Tools.AI.WebSearch, MCPhappey.Tools"
+  ],
+  "tools": {
+    "web_search_execute": {
+      "_meta": {
+        "openai/outputTemplate": "ui://widget/websearch-results.html",
+        "openai/widgetAccessible": true
+      }
+    }
+  }
 }

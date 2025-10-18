@@ -3,6 +3,7 @@ using System.Globalization;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
 using MCPhappey.Simplicate.Options;
@@ -130,18 +131,17 @@ public static partial class SimplicateSales
         public decimal Amount { get; set; }
     }
 
-
-
     // === TOOLS ===
     [Description("Get total sales per month within a date range with optional filters and measure (count or amount).")]
-    [McpServerTool(Title = "Get Simplicate sales totals by month", OpenWorld = false, ReadOnly = true)]
-    public static async Task<CallToolResult> SimplicateSales_GetTotalsByMonth(
+    [McpServerTool(Title = "Get Simplicate sales totals by month",
+        Name = "simplicate_sales_get_totals_by_month",
+        OpenWorld = false, ReadOnly = true)]
+    public static async Task<CallToolResult?> SimplicateSales_GetTotalsByMonth(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Date field to aggregate on. Default: ExpectedClosingDate.")] SalesDateField dateField = SalesDateField.ExpectedClosingDate,
         [Description("Start date (inclusive), yyyy-MM-dd. Optional.")] string? fromDate = null,
         [Description("End date (inclusive), yyyy-MM-dd. Optional.")] string? toDate = null,
-        [Description("Measure: Count or Amount (Amount uses expected_revenue unless overridden).")] Measure measure = Measure.Count,
         [Description("Override amount field (optional). Default for sales is expected_revenue.")] string? amountField = null,
         [Description("Status label filter (e.g. open/scored/missed). Optional.")] string? statusLabel = null,
         [Description("Progress (stage) label filter. Optional.")] string? progressLabel = null,
@@ -154,8 +154,11 @@ public static partial class SimplicateSales
         [Description("Probability <= (0..100). Optional.")] decimal? probabilityLe = null,
         [Description("Expected revenue >=. Optional.")] decimal? amountGe = null,
         [Description("Expected revenue <=. Optional.")] decimal? amountLe = null,
+        [Description("Custom field (fieldname) filter. Optional.")] string? customFieldName = null,
+        [Description("Custom field (value) filter. Optional.")] string? customFieldValue = null,
         [Description("Include months without data. Default: true.")] bool includeZeroMonths = true,
         CancellationToken cancellationToken = default)
+        => await requestContext.WithStructuredContent(async () =>
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -181,6 +184,10 @@ public static partial class SimplicateSales
         if (!string.IsNullOrWhiteSpace(personName)) filters.Add($"q[person.full_name]={Uri.EscapeDataString(personName)}");
         if (!string.IsNullOrWhiteSpace(teamName)) filters.Add($"q[teams.name]=*{Uri.EscapeDataString(teamName)}*");
         if (!string.IsNullOrWhiteSpace(sourceName)) filters.Add($"q[source.name]={Uri.EscapeDataString(sourceName)}");
+
+        if (!string.IsNullOrWhiteSpace(customFieldName)
+            && !string.IsNullOrWhiteSpace(customFieldValue)) filters.Add($"q[custom_fields.{Uri.EscapeDataString(customFieldName)}]={Uri.EscapeDataString(customFieldValue)}");
+
         if (probabilityGe.HasValue) filters.Add($"q[chance_to_score][ge]={probabilityGe.Value}");
         if (probabilityLe.HasValue) filters.Add($"q[chance_to_score][le]={probabilityLe.Value}");
         if (amountGe.HasValue) filters.Add($"q[expected_revenue][ge]={amountGe.Value}");
@@ -224,8 +231,8 @@ public static partial class SimplicateSales
                 g => g.Key,
                 g => new MonthlyTotals
                 {
-                    Count = measure == Measure.Count ? g.Sum(r => r.Count) : 0,
-                    Amount = measure == Measure.Amount ? g.Sum(r => r.Amount) : 0m
+                    Count = g.Sum(r => r.Count),
+                    Amount = g.Sum(r => r.Amount)
                 }
             );
 
@@ -233,22 +240,32 @@ public static partial class SimplicateSales
             ? EnsureZeroMonths(grouped, fromDate, toDate)
             : grouped;
 
-        // Sort by month for predictable output
-        var ordered = completed.OrderBy(kv => kv.Key)
-            .ToDictionary(kv => kv.Key.ToString("yyyy-MM-01"), kv => kv.Value);
+        return new
+        {
+            Data = completed.OrderBy(kv => kv.Key)
+                  .Select(kv => new
+                  {
+                      Month = kv.Key.ToString("yyyy-MM-01"),
+                      Totals = kv.Value
+                  })
+        };
 
-        return ordered.ToJsonContentBlock($"{baseUrl}?{filterString}").ToCallToolResult();
-    }
+        // Sort by month for predictable output
+        /*  var ordered = completed.OrderBy(kv => kv.Key)
+              .ToDictionary(kv => kv.Key.ToString("yyyy-MM-01"), kv => kv.Value);
+
+          return ordered.ToJsonContentBlock($"{baseUrl}?{filterString}").ToCallToolResult();*/
+    });
 
     [Description("Get total quotes per month within a date range with optional filters and measure (count or amount).")]
-    [McpServerTool(Title = "Get Simplicate quote totals by month", OpenWorld = false, ReadOnly = true)]
-    public static async Task<CallToolResult> SimplicateQuotes_GetTotalsByMonth(
+    [McpServerTool(Title = "Get Simplicate quote totals by month", Name = "simplicate_sales_get_quote_totals_by_month",
+        OpenWorld = false, ReadOnly = true)]
+    public static async Task<CallToolResult?> SimplicateSales_GetQuoteTotalsByMonth(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Date field to aggregate on. Default: QuoteDate.")] QuotesDateField dateField = QuotesDateField.QuoteDate,
         [Description("Start date (inclusive), yyyy-MM-dd. Optional.")] string? fromDate = null,
         [Description("End date (inclusive), yyyy-MM-dd. Optional.")] string? toDate = null,
-        [Description("Measure: Count or Amount (Amount uses total_excl_vat unless overridden).")] Measure measure = Measure.Count,
         [Description("Override amount field (optional). Default for quotes is total_excl_vat.")] string? amountField = null,
         [Description("Quote status label filter. Optional.")] string? quotationStatusLabel = null,
         [Description("Responsible employee name (contains). Optional.")] string? responsibleEmployeeName = null,
@@ -259,6 +276,7 @@ public static partial class SimplicateSales
         [Description("Amount <= (excl. VAT). Optional.")] decimal? amountLe = null,
         [Description("Include months without data. Default: true.")] bool includeZeroMonths = true,
         CancellationToken cancellationToken = default)
+        => await requestContext.WithStructuredContent(async () =>
     {
         var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -270,7 +288,7 @@ public static partial class SimplicateSales
         {
             QuotesDateField.CreatedAt => "created_at",
             QuotesDateField.UpdatedAt => "updated_at",
-            _ => "date" // Simplicate uses 'date' for quotes; keep quote_date property mapped
+            _ => "quote_date" // Simplicate uses 'date' for quotes; keep quote_date property mapped
         };
 
         if (!string.IsNullOrWhiteSpace(fromDate)) filters.Add($"q[{dateFieldQuery}][ge]={Uri.EscapeDataString(fromDate)}");
@@ -321,8 +339,8 @@ public static partial class SimplicateSales
                 g => g.Key,
                 g => new MonthlyTotals
                 {
-                    Count = measure == Measure.Count ? g.Sum(r => r.Count) : 0,
-                    Amount = measure == Measure.Amount ? g.Sum(r => r.Amount) : 0m
+                    Count = g.Sum(r => r.Count),
+                    Amount = g.Sum(r => r.Amount)
                 }
             );
 
@@ -330,11 +348,16 @@ public static partial class SimplicateSales
             ? EnsureZeroMonths(grouped, fromDate, toDate)
             : grouped;
 
-        var ordered = completed.OrderBy(kv => kv.Key)
-            .ToDictionary(kv => kv.Key.ToString("yyyy-MM-01"), kv => kv.Value);
-
-        return ordered.ToJsonContentBlock($"{baseUrl}?{filterString}").ToCallToolResult();
-    }
+        return new
+        {
+            Data = completed.OrderBy(kv => kv.Key)
+                    .Select(kv => new
+                    {
+                        Month = kv.Key.ToString("yyyy-MM-01"),
+                        Totals = kv.Value
+                    })
+        };
+    });
 
     // === Helpers ===
     private static DateTime? TruncateToMonth(DateTime? dt)
@@ -357,7 +380,7 @@ public static partial class SimplicateSales
     {
         return field switch
         {
-            "total_excl_vat" => x.total_excl_vat ?? 0m,
+            "total_excl" => x.total_excl ?? 0m,
             _ => 0m
         };
     }
@@ -439,7 +462,7 @@ public sealed class SimplicateQuoteItem
     [JsonConverter(typeof(SimplicateDateTimeConverter))]
     public DateTime? updated_at { get; set; }
     public QuoteStatus? quotestatus { get; set; }
-    public decimal? total_excl_vat { get; set; }
+    public decimal? total_excl { get; set; }
     public QuoteTemplate? quotetemplate { get; set; }
     public Organization? organization { get; set; }
     public Employee? responsible_employee { get; set; }

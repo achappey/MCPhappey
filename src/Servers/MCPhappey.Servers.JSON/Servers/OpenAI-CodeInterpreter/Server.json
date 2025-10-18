@@ -1,7 +1,7 @@
 {
   "serverInfo": {
     "name": "OpenAI-CodeInterpreter",
-    "title": "OpenAI-CodeInterpreter",
+    "title": "OpenAI CodeInterpreter",
     "version": "1.0.0",
     "description": "Run code in a managed sandbox to analyze data, generate charts, transform files and validate results. Upload datasets, execute Python steps, and return artifacts to support reproducible, step‑by‑step analyses in workflows."
   },

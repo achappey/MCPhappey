@@ -39,15 +39,15 @@ public class SqlServerDataProvider(Repositories.ServerRepository serverRepositor
 
     public async Task<ListResourcesResult> GetResourcesAsync(string serverName, CancellationToken ct = default)
     {
-        var server = await serverRepository.GetServer(serverName, ct);
+        var server = await serverRepository.GetResources(serverName, ct);
 
-        return server?.Resources.ToListResourcesResult() ?? new ListResourcesResult();
+        return server?.ToListResourcesResult() ?? new ListResourcesResult();
     }
 
     public async Task<ListResourceTemplatesResult> GetResourceTemplatesAsync(string serverName, CancellationToken ct = default)
     {
-        var server = await serverRepository.GetServer(serverName, ct);
+        var server = await serverRepository.GetResourceTemplates(serverName, ct);
 
-        return server?.ResourceTemplates.ToListResourceTemplatesResult() ?? new ListResourceTemplatesResult();
+        return server?.ToListResourceTemplatesResult() ?? new ListResourceTemplatesResult();
     }
 }

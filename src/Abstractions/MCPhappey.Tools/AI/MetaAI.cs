@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -10,19 +12,20 @@ namespace MCPhappey.Tools.AI;
 
 public static class MetaAI
 {
-    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash",
-            "claude-3-5-haiku-latest", "mistral-medium-latest"];
+    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "grok-4-fast-non-reasoning",
+            "claude-haiku-4-5-20251001", "mistral-medium-latest"];
 
     [Description("Ask once, answer from many. Sends the same prompt to multiple AI providers in parallel and returns their answers.")]
     [McpServerTool(
        Title = "Ask (multi-model)",
+       Name = "ask_execute",
        ReadOnly = true
    )]
-    public static async Task<IEnumerable<ContentBlock>> Ask_Execute(
+    public static async Task<CallToolResult?> Ask_Execute(
        [Description("User prompt or question")] string prompt,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
-       CancellationToken cancellationToken = default)
+       CancellationToken cancellationToken = default) => await requestContext.WithStructuredContent(async () =>
     {
         var mcpServer = requestContext.Server;
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
@@ -42,14 +45,17 @@ public static class MetaAI
             {
                 reasoning = new
                 {
-                    effort = "low"
+                    effort = "high"
                 }
+            },
+            ["xai"] = new
+            {
             },
             ["anthropic"] = new
             {
                 thinking = new
                 {
-                    budget_tokens = 4096
+                    budget_tokens = 1024
                 }
             },
             ["google"] = new
@@ -74,6 +80,7 @@ public static class MetaAI
         {
             try
             {
+                var startTime = DateTime.UtcNow;
                 // Use your general (non-search) prompt id
                 var result = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
                 {
@@ -90,6 +97,9 @@ public static class MetaAI
                      } ]
                 });
 
+                var endTime = DateTime.UtcNow;
+                result.Meta?.Add("duration", (endTime - startTime).ToString());
+
                 // Progress tick
                 progressToken = await mcpServer.SendProgressNotificationAsync(
                     requestContext,
@@ -99,16 +109,7 @@ public static class MetaAI
                     cancellationToken
                 );
 
-                // Prepend a small header so de UI het model kan onderscheiden
-                var blocks = new List<ContentBlock>
-                {
-                    new TextContentBlock { Text = $"### {modelName}" }
-                };
-
-                if (result.Content is { } contentBlocks)
-                    blocks.AddRange(contentBlocks);
-
-                return blocks.AsEnumerable();
+                return result;
             }
             catch (Exception ex)
             {
@@ -122,10 +123,11 @@ public static class MetaAI
 
         var results = await Task.WhenAll(tasks);
 
-        // Flatten only successful results
-        return [.. results
-            .Where(r => r != null)
-            .SelectMany(r => r!)];
-    }
+        return new MessageResults()
+        {
+            Results = results?.OfType<CreateMessageResult>() ?? []
+        };
+
+    });
 }
 

@@ -3,8 +3,6 @@ using MCPhappey.Common.Models;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using MCPhappey.Auth.Extensions;
-using Microsoft.Extensions.DependencyInjection;
-using MCPhappey.Core.Services;
 
 namespace MCPhappey.Core.Extensions;
 

@@ -1,10 +1,7 @@
 using System.ComponentModel;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
-using MCPhappey.Common.Extensions;
-using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
-using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -25,6 +22,7 @@ public static class PerplexityPlugin
       [Description("Controls the maximum number of tokens retrieved from each webpage during search processing. Higher values provide more comprehensive content extraction but may increase processing time.")] int maxTokensPerPage = 1024,
       [Description("Country code to filter search results by geographic location (e.g., 'US', 'GB', 'DE').")] string? country = null,
       CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithStructuredContent(async () =>
     {
         var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>()
             ?? throw new InvalidOperationException("No IHttpClientFactory found in service provider");
@@ -53,14 +51,10 @@ public static class PerplexityPlugin
         using var response = await httpClient.SendAsync(request,
             HttpCompletionOption.ResponseHeadersRead, cancellationToken);
 
-        var error = await response.ToCallToolResponseOrErrorAsync(cancellationToken);
-        if (error != null)
-            return error;
+        response.EnsureSuccessStatusCode();
 
-        var fileBytes = await response.Content.ReadFromJsonAsync<PerplexitySearchResults>(cancellationToken);
-
-        return fileBytes?.ToJsonContentBlock(query)?.ToCallToolResult();
-    });
+        return await response.Content.ReadFromJsonAsync<PerplexitySearchResults>(cancellationToken);
+    }));
 
     public class PerplexitySearchResults
     {

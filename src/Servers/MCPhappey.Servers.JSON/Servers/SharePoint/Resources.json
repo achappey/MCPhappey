@@ -7,7 +7,20 @@
       "description": "Get a list of all followed SharePoint sites",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uri": "ui://widget/sharepoint-search-results.html",
+      "name": "sharepoint-search-results-widget",
+      "description": "Search results widget that displays SharePoint search results.",
+      "mimeType": "text/html+skybridge",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
       }
     }
   ]

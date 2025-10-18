@@ -34,6 +34,7 @@ public static class AspNetCoreExtensions
                 .Include(a => a.ResourceTemplates)
                 .Include(a => a.Prompts)
                 .ThenInclude(a => a.Arguments)
+                .Include(a => a.Plugins)
                 .Include(a => a.Tools)
                 .Include(a => a.Owners)
                 .Include(a => a.Groups)

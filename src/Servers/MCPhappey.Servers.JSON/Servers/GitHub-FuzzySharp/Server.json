@@ -1,6 +1,7 @@
 {
   "serverInfo": {
-    "name": "FuzzySharp",
+    "name": "GitHub-FuzzySharp",
+    "title": "GitHub FuzzySharp",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/Raffinert/FuzzySharp",
     "description": "Wrapper for Raffinert.FuzzySharp. Fast fuzzy matching: ratios, token-based scorers, and powerful Process.* extraction (top, all, sorted) with selectable scorers and preprocessing. Ideal for search, dedupe, routing, and intent matching."

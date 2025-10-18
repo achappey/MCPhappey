@@ -41,7 +41,8 @@ public static class AspNetCoreWebAppExtensions
         {
             var path = context.Request.Path.Value ?? "";
 
-            if (path.Contains(".well-known", StringComparison.OrdinalIgnoreCase))
+            if (path.Contains(".well-known", StringComparison.OrdinalIgnoreCase)
+                || path.StartsWith("/widget-"))
             {
                 await next();
                 return;

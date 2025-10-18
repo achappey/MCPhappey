@@ -9,7 +9,10 @@
     "MCPhappey.Tools.Google.Image.GoogleNanoBanana, MCPhappey.Tools",
     "MCPhappey.Tools.Google.Image.GoogleImagen, MCPhappey.Tools",
     "MCPhappey.Tools.OpenAI.Image.OpenAIImages, MCPhappey.Tools",
-    "MCPhappey.Tools.xAI.GrokImageService, MCPhappey.Tools"
+    "MCPhappey.Tools.xAI.GrokImageService, MCPhappey.Tools",
+    "MCPhappey.Tools.StabilityAI.StabilityAIImageService, MCPhappey.Tools",
+    "MCPhappey.Tools.StabilityAI.StabilityAIImageEditService, MCPhappey.Tools",
+    "MCPhappey.Tools.Together.Images.TogetherImages, MCPhappey.Tools"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

@@ -10,5 +10,13 @@
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  },
+  "tools": {
+    "ask_execute": {
+      "_meta": {
+        "openai/outputTemplate": "ui://widget/ai-answers.html",
+        "openai/widgetAccessible": true
+      }
+    }
   }
 }

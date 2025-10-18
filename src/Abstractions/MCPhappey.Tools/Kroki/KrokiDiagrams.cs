@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using MCPhappey.Common.Extensions;
-using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -56,12 +55,18 @@ public static class KrokiDiagrams
         var fileBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
         var base64 = Convert.ToBase64String(fileBytes);
 
-        var result = await requestContext.Server.Upload(serviceProvider,
-            requestContext.ToOutputFileName(fileType),
-            BinaryData.FromBytes(fileBytes),
-            cancellationToken);
-
-        return result?.ToCallToolResult();
+        return new CallToolResult()
+        {
+            Content = [new EmbeddedResourceBlock()
+            {
+                Resource = new BlobResourceContents()
+                {
+                    Uri = url,
+                    Blob = base64,
+                    MimeType = "image/" + fileType + (fileType == "svg" ? "+xml" : string.Empty)
+                }
+            }]
+        };
     }
 
     public static readonly HashSet<string> AllowedTypes = new(StringComparer.OrdinalIgnoreCase)

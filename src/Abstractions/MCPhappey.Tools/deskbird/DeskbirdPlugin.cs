@@ -8,6 +8,7 @@ using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -42,7 +43,7 @@ public static class DeskbirdPlugin
                         var http = httpClientFactory.CreateClient();
                         http.BaseAddress = new Uri(BASE_URL.TrimEnd('/') + "/");
                         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings?.ApiKey);
-                        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
 
                         var req = new HttpRequestMessage(HttpMethod.Patch, $"bookings/{bookingId}/cancel");
                         using var res = await http.SendAsync(req, cancellationToken);
@@ -122,7 +123,7 @@ public static class DeskbirdPlugin
         var http = httpClientFactory.CreateClient();
         http.BaseAddress = new Uri(BASE_URL.TrimEnd('/') + "/");
         http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
 
         var payload = new
         {

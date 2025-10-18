@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "StabilityAI-ImageEdit",
+    "title": "StabilityAI Image Edit",
+    "version": "1.0.0",
+    "description": "Handles direct image editing tasks such as inpainting, outpainting, object replacement, recoloring, and background removal. Enables content modification while preserving the quality and composition of the original image."
+  },
+  "plugins": [
+    "MCPhappey.Tools.StabilityAI.StabilityAIImageEditService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

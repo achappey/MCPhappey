@@ -16,6 +16,8 @@ public class Resource
 
     public string? Description { get; set; }
 
+    public string? MimeType { get; set; }
+
     public float? Priority { get; set; }
 
     public bool? UserAudience { get; set; }

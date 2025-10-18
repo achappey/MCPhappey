@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -55,20 +56,12 @@ public static class GraphDevices
 
     [Description("Delete an Intune managed device (removes it from Intune).")]
     [McpServerTool(Title = "Delete Intune device", OpenWorld = false, Destructive = true)]
-    public static async Task<CallToolResult> GraphDevices_DeleteIntune(
+    public static async Task<CallToolResult?> GraphDevices_DeleteIntune(
           [Description("The Intune managedDevice ID to delete.")] string deviceId,
-          IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
-          CancellationToken cancellationToken = default)
+          CancellationToken cancellationToken = default) =>
+              await requestContext.WithOboGraphClient(async client =>
     {
-        var mcpServer = requestContext.Server;
-
-        // Validate input early
-        if (string.IsNullOrWhiteSpace(deviceId))
-            throw new ArgumentException("DeviceId is required.", nameof(deviceId));
-
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
         // Fetch a minimal projection to confirm with a human-friendly name
         var device = await client.DeviceManagement.ManagedDevices[deviceId]
             .GetAsync(static rq =>
@@ -94,7 +87,7 @@ public static class GraphDevices
             },
             successText: $"Device '{displayName}' ({device.Id}) has been deleted from Intune.",
             ct: cancellationToken);
-    }
+    });
 
 
     [Description("Delete an Entra ID device object. Accepts either the Entra deviceId (GUID) or an Intune managedDeviceId (will resolve to azureADDeviceId).")]

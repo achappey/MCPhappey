@@ -1,7 +1,6 @@
 using System.ComponentModel;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
-using MCPhappey.Core.Services;
 using MCPhappey.Servers.SQL.Extensions;
 using MCPhappey.Servers.SQL.Repositories;
 using MCPhappey.Servers.SQL.Tools.Models;
@@ -30,6 +29,8 @@ public static partial class ModelContextEditor
         string? title = null,
         [Description("Optional description of the resource.")]
         string? description = null,
+        [Description("Optional mimeType. Use 'text/html+skybridge' when adding an app widget resource.")]
+        string? mimeType = null,
         [Description("Optional priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
         float? priority = null,
         [Description("Optional assistant audience target.")]
@@ -38,7 +39,6 @@ public static partial class ModelContextEditor
         bool? userAudience = null,
         CancellationToken cancellationToken = default)
     {
-        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new AddMcpResource()
@@ -46,6 +46,7 @@ public static partial class ModelContextEditor
             Uri = uri,
             Name = name.Slugify().ToLowerInvariant(),
             Title = title,
+            MimeType = mimeType,
             Priority = priority.GetPriority(1),
             AssistantAudience = assistantAudience,
             UserAudience = userAudience,
@@ -59,6 +60,7 @@ public static partial class ModelContextEditor
             typed.Name.Slugify().ToLowerInvariant(),
             typed.Description,
             typed.Title,
+            typed.MimeType,
             (float?)typed.Priority,
             typed.AssistantAudience,
             typed.UserAudience);
@@ -80,6 +82,8 @@ public static partial class ModelContextEditor
         [Description("New value for the uri property")] string? newUri = null,
         [Description("New value for the title property")] string? newTitle = null,
         [Description("New value for the description property")] string? newDescription = null,
+        [Description("Optional mimeType.")]
+        string? mimeType = null,
         [Description("New value for the priority of the resource. Between 0 and 1, where 1 is most important and 0 is least important.")]
         float? priority = null,
         [Description("New value for the assistant audience target.")]
@@ -96,6 +100,7 @@ public static partial class ModelContextEditor
             Description = newDescription ?? resource.Description,
             Title = newTitle ?? resource.Title,
             Name = resource.Name,
+            MimeType = mimeType,
             Uri = newUri ?? resource.Uri,
             AssistantAudience = assistantAudience ?? resource.AssistantAudience,
             UserAudience = userAudience ?? resource.UserAudience,
@@ -115,6 +120,7 @@ public static partial class ModelContextEditor
 
         resource.Description = typed?.Description;
         resource.Title = typed?.Title;
+        resource.MimeType = typed?.MimeType;
         resource.AssistantAudience = typed?.AssistantAudience;
         resource.UserAudience = typed?.UserAudience;
         resource.Priority = (float?)typed?.Priority;

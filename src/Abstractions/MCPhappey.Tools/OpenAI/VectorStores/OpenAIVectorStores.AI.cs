@@ -22,7 +22,7 @@ public static partial class OpenAIVectorStores
           [Description("Maximum number of results.")] int? maxNumOfResults = 10,
           CancellationToken cancellationToken = default) =>
           await requestContext.WithExceptionCheck(async () =>
-            await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
+          await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
             {
                 var payload = new Dictionary<string, object?>
                 {
@@ -53,9 +53,10 @@ public static partial class OpenAIVectorStores
            [Description("Max number of retrieved chunks.")] int? maxNumResults = 10,
            CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
-            await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
+           await serviceProvider.WithVectorStoreOwnerClient<CallToolResult?>(vectorStoreId, async (client, current) =>
+           await requestContext.WithStructuredContent(async () =>
             {
-                var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
+                var response = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
                 {
                     Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
                     {
@@ -78,7 +79,7 @@ public static partial class OpenAIVectorStores
                 }, cancellationToken);
 
                 // Return the model’s final content blocks
-                return respone.Content.ToCallToolResult();
-            }));
+                return response;
+            })));
 }
 

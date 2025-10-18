@@ -1,5 +1,9 @@
 using System.ComponentModel;
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using RESTCountries.NET.Services;
@@ -31,12 +35,11 @@ public static class CountryService
     [McpServerTool(Title = "Get all country details by the alpha-2 code",
         Name = "github_rest_countries_get_detail",
         ReadOnly = true,
-        OpenWorld = false,
-        UseStructuredContent = true)]
-    public static async Task<RESTCountries.NET.Models.Country?> GitHubRestCountries_GetDetail(
-        [Description("The alpha-2 code of the country")] string cca2) =>
-            await Task.FromResult(RestCountriesService
-                .GetCountryByCode(cca2.ToString()!));
+        OpenWorld = false)]
+    public static async Task<CallToolResult?> GitHubRestCountries_GetDetail(
+        [Description("The alpha-2 code of the country")] string cca2,
+        RequestContext<CallToolRequestParams> requestContext) => await requestContext.WithStructuredContent(async () =>
+            await Task.FromResult(RestCountriesService.GetCountryByCode(cca2.ToString())));
 
     [Description("Get countries by region")]
     [McpServerTool(Title = "Get countries by region",
@@ -44,10 +47,16 @@ public static class CountryService
         ReadOnly = true,
         UseStructuredContent = true,
         OpenWorld = false)]
-    public static async Task<IEnumerable<RESTCountries.NET.Models.Country>> GitHubRestCountries_GetByRegion(
-        [Description("The region to filter on (e.g. Europe, Asia, Africa).")] string region) =>
-            await Task.FromResult(RestCountriesService
-                .GetAllCountries()
-                .Where(a => a.Region.Equals(region, StringComparison.OrdinalIgnoreCase)));
+    public static async Task<CallToolResult?> GitHubRestCountries_GetByRegion(
+        [Description("The region to filter on (e.g. Europe, Asia, Africa).")] string region,
+        RequestContext<CallToolRequestParams> requestContext) =>
+            await requestContext.WithStructuredContent(async () => await Task.FromResult(
+            new
+            {
+                countries = RestCountriesService
+                            .GetAllCountries()
+                            .Where(a => a.Region.Equals(region, StringComparison.OrdinalIgnoreCase))
+            }
+    ));
 }
 

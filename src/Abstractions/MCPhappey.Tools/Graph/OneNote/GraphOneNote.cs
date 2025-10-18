@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -21,7 +22,8 @@ public static class GraphOneNote
         [Description("Title of the new page.")] string title,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+         await requestContext.WithOboGraphClient(async client =>
     {
         var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
             new GraphNewOneNotePage()
@@ -31,8 +33,6 @@ public static class GraphOneNote
         if (notAccepted != null) return notAccepted;
 
         // Graph API: POST /me/onenote/sections/{sectionId}/pages
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
         var onenotePage = new OnenotePage()
         {
             Title = typed?.Title
@@ -52,7 +52,7 @@ public static class GraphOneNote
         return newPage
             .ToJsonContentBlock($"https://graph.microsoft.com/beta/me/onenote/sections/{sectionId}/pages/{newPage?.Id}")
             .ToCallToolResult();
-    }
+    });
 
     [Description("Create a new OneNote section in a specified notebook.")]
     [McpServerTool(Title = "Create OneNote section",
@@ -63,7 +63,8 @@ public static class GraphOneNote
         [Description("Displayname of the new section.")] string displayName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+         await requestContext.WithOboGraphClient(async client =>
     {
         var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
             new GraphNewOneNoteSection()
@@ -73,7 +74,6 @@ public static class GraphOneNote
         if (notAccepted != null) return notAccepted;
 
         // POST /me/onenote/notebooks/{notebookId}/sections
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var section = new OnenoteSection
         {
             DisplayName = typed!.DisplayName
@@ -88,7 +88,7 @@ public static class GraphOneNote
         return (newSection ?? section)
             .ToJsonContentBlock($"https://graph.microsoft.com/beta/me/onenote/notebooks/{notebookId}/sections")
             .ToCallToolResult();
-    }
+    });
 
     [Description("Create a new OneNote notebook for the current user.")]
     [McpServerTool(Title = "Create OneNote notebook",
@@ -97,14 +97,14 @@ public static class GraphOneNote
     public static async Task<CallToolResult?> GraphOneNote_CreateNotebook(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithOboGraphClient(async client =>
     {
         var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
             new GraphNewOneNoteNotebook(), cancellationToken);
         if (notAccepted != null) return notAccepted;
 
         // POST /me/onenote/notebooks
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var notebook = new Notebook
         {
             DisplayName = typed!.DisplayName
@@ -118,7 +118,7 @@ public static class GraphOneNote
         return (newNotebook ?? notebook)
             .ToJsonContentBlock($"https://graph.microsoft.com/beta/me/onenote/notebooks")
             .ToCallToolResult();
-    }
+    });
 
     // ----- Elicited payloads -----
     [Description("Please provide details for the new OneNote page.")]

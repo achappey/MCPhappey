@@ -1,12 +1,11 @@
 {
   "serverInfo": {
     "name": "Simplicate-ProjectSettings",
+    "title": "Simplicate Projectinstellingen",
     "version": "1.0.0",
     "description": "Projectinstellingen- en referentiegegevensintegratie voor Simplicate (diensten, tarieven, eenheden en defaults) voor project- en urenconfiguratie."
   },
   "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries.",
-  "plugins": [
-  ],
   "headers": {
     "Authentication-Key": "Simplicate Api Key",
     "Authentication-Secret": "Simplicate Api Secret"

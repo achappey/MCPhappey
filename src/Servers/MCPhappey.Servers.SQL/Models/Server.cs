@@ -29,11 +29,16 @@ public class Server
 
     public ICollection<ServerGroup> Groups { get; set; } = [];
 
-    public ICollection<ServerTool> Tools { get; set; } = [];
+    public ICollection<ServerPlugin> Plugins { get; set; } = [];
 
     public ICollection<ServerApiKey> ApiKeys { get; set; } = [];
 
     public string? Instructions { get; set; }
 
     public ICollection<ServerIcon> Icons { get; set; } = [];
+
+    public ICollection<ToolMetadata> Tools { get; set; } = [];
+
+    public bool? ToolPrompts { get; set; }
+
 }

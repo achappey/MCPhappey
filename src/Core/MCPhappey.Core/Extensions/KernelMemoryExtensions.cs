@@ -28,13 +28,14 @@ public static class KernelMemoryExtensions
         return services;
     }
 
-    public static FileItem GetFileItemFromFileContent(this Microsoft.KernelMemory.DataFormats.FileContent file, string uri)
+    public static FileItem GetFileItemFromFileContent(this Microsoft.KernelMemory.DataFormats.FileContent file, string uri, string? filename = null)
         => new()
         {
             Contents = BinaryData.FromString(string.Join("\\n\\n",
                 file.Sections.Select(a => a.Content))),
             MimeType = file.MimeType,
             Uri = uri,
+            Filename = filename
         };
 
     public static FileItem ToFileItem(this WebScraperResult webScraperResult, string uri) => new()

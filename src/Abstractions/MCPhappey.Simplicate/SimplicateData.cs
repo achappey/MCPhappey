@@ -15,6 +15,13 @@ public class SimplicateMetadata
 {
     [JsonPropertyName("count")]
     public int Count { get; set; }
+
+    [JsonPropertyName("offset")]
+    public int? Offset { get; set; }
+
+    [JsonPropertyName("limit")]
+    public int? Limit { get; set; }
+
 }
 
 public class SimplicateItemData<T>

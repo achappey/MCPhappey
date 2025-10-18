@@ -21,8 +21,8 @@ public static class GoogleNanoBanana
         string prompt,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Optional image url for image edits. Supports protected links like SHarePoint and OneDrive links")]
-        string fileUrl,
+        [Description("Optional image url for image edits. Supports protected links like SharePoint and OneDrive links")]
+        string? fileUrl = null,
         CancellationToken cancellationToken = default) =>
         await requestContext.WithExceptionCheck(async () =>
     {

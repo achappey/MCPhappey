@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "GitHub-GEmojiSharp",
+    "title": "GitHub GEmojiSharp",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/hlaueriksson/GEmojiSharp",
     "description": "GitHub-GEmojiSharp turns emoji codes like :tada: into real emoji and back. It can replace all codes or emoji in text, find an emoji by description or keyword, and list available skin-tone variants."

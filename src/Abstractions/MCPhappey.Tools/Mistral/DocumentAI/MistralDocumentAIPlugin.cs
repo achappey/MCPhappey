@@ -8,6 +8,7 @@ using MCPhappey.Core.Services;
 using System.Text.Json;
 using System.Text;
 using System.Net.Http.Headers;
+using Microsoft.KernelMemory.Pipeline;
 
 namespace MCPhappey.Tools.Mistral.DocumentAI;
 
@@ -74,7 +75,7 @@ public static partial class MistralDocumentAIPlugin
             }
 
             var json = Encoding.UTF8.GetString(ms.ToArray());
-            var jsonContent = new StringContent(json, Encoding.UTF8, "application/json");
+            var jsonContent = new StringContent(json, Encoding.UTF8, MimeTypes.Json);
             var response = await httpClient.PostAsync($"{BaseUrl}/ocr", jsonContent, cancellationToken);
             response.EnsureSuccessStatusCode();
 
@@ -200,7 +201,7 @@ public static partial class MistralDocumentAIPlugin
         }
 
         var payload = Encoding.UTF8.GetString(ms.ToArray());
-        var content = new StringContent(payload, Encoding.UTF8, "application/json");
+        var content = new StringContent(payload, Encoding.UTF8, MimeTypes.Json);
 
         using var response = await httpClient.PostAsync($"{BaseUrl}/ocr", content, cancellationToken);
         var responseText = await response.Content.ReadAsStringAsync(cancellationToken);

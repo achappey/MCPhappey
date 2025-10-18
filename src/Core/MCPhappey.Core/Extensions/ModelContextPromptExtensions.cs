@@ -39,6 +39,7 @@ public static partial class ModelContextPromptExtensions
         var prompt = await service.GetServerPrompt(request.Services!, request.Server,
             request.Params?.Name!,
             request.Params?.Arguments ?? new Dictionary<string, JsonElement>(),
+            request,
             cancellationToken);
 
         var endTime = DateTime.UtcNow;

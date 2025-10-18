@@ -53,6 +53,21 @@ public class McpServerPlugin
 }
 
 
+[Description("Please fill in the MCP Server tool template details.")]
+public class McpServerToolTemplate
+{
+    [JsonPropertyName("toolName")]
+    [Required]
+    [Description("The name of the tool.")]
+    public string ToolName { get; set; } = default!;
+
+    [JsonPropertyName("outputTemplate")]
+    [Required]
+    [Description("Uri of the output template.")]
+    public string OutputTemplate { get; set; } = default!;
+
+}
+
 [Description("Please fill in the MCP Server details.")]
 public class CloneMcpServer
 {

@@ -21,7 +21,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             .Include(r => r.Resources)
             .Include(r => r.ResourceTemplates)
             .Include(r => r.Owners)
-            .Include(r => r.Tools)
+            .Include(r => r.Plugins)
             .Include(r => r.Groups)
             .FirstOrDefaultAsync(r => r.Name == name, cancellationToken);
 
@@ -31,9 +31,21 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             .ThenInclude(r => r.Arguments)
             .Include(r => r.Resources)
             .Include(r => r.Owners)
-            .Include(r => r.Tools)
+            .Include(r => r.Plugins)
             .Include(r => r.Groups)
             .Include(r => r.ResourceTemplates)
+            .AsSplitQuery()
+            .ToListAsync(cancellationToken);
+
+    public async Task<List<Resource>> GetResources(string serverName, CancellationToken cancellationToken = default) =>
+        await databaseContext.Resources.AsNoTracking()
+            .Where(a => a.Server.Name == serverName)
+            .AsSplitQuery()
+            .ToListAsync(cancellationToken);
+
+    public async Task<List<ResourceTemplate>> GetResourceTemplates(string serverName, CancellationToken cancellationToken = default) =>
+        await databaseContext.ResourceTemplates.AsNoTracking()
+            .Where(a => a.Server.Name == serverName)
             .AsSplitQuery()
             .ToListAsync(cancellationToken);
 
@@ -101,11 +113,11 @@ public class ServerRepository(McpDatabaseContext databaseContext)
 
     public async Task DeleteServerPlugin(int serverId, string ownerId)
     {
-        var item = await databaseContext.Tools.FirstOrDefaultAsync(a => a.Name == ownerId && a.ServerId == serverId);
+        var item = await databaseContext.Plugins.FirstOrDefaultAsync(a => a.PluginName == ownerId && a.ServerId == serverId);
 
         if (item != null)
         {
-            databaseContext.Tools.Remove(item);
+            databaseContext.Plugins.Remove(item);
             await databaseContext.SaveChangesAsync();
         }
     }
@@ -191,11 +203,11 @@ public class ServerRepository(McpDatabaseContext databaseContext)
 
     public async Task DeleteTool(int serverId, string name)
     {
-        var item = await databaseContext.Tools.FirstOrDefaultAsync(a => a.ServerId == serverId && a.Name == name);
+        var item = await databaseContext.Plugins.FirstOrDefaultAsync(a => a.ServerId == serverId && a.PluginName == name);
 
         if (item != null)
         {
-            databaseContext.Tools.Remove(item);
+            databaseContext.Plugins.Remove(item);
             await databaseContext.SaveChangesAsync();
         }
     }
@@ -226,9 +238,9 @@ public class ServerRepository(McpDatabaseContext databaseContext)
 
     public async Task AddServerTool(int serverId, string toolName)
     {
-        await databaseContext.Tools.AddAsync(new ServerTool()
+        await databaseContext.Plugins.AddAsync(new ServerPlugin()
         {
-            Name = toolName,
+            PluginName = toolName,
             ServerId = serverId
         });
 
@@ -239,6 +251,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         string name,
         string? description = null,
         string? title = null,
+        string? mimeType = null,
         float? priority = null,
         bool? assistantAudience = null,
         bool? userAudience = null)
@@ -249,6 +262,7 @@ public class ServerRepository(McpDatabaseContext databaseContext)
             Name = name,
             Description = description,
             Title = title,
+            MimeType = mimeType,
             Priority = priority,
             AssistantAudience = assistantAudience,
             UserAudience = userAudience,
@@ -260,6 +274,32 @@ public class ServerRepository(McpDatabaseContext databaseContext)
         return item.Entity;
     }
 
+    public async Task<ToolMetadata> AddToolMetadata(int serverId, string toolName,
+            string? outputTemplate = null)
+    {
+        var item = await databaseContext.ToolMetadata.AddAsync(new()
+        {
+            ServerId = serverId,
+            ToolName = toolName,
+            OutputTemplate = outputTemplate
+        });
+
+        await databaseContext.SaveChangesAsync();
+
+        return item.Entity;
+    }
+
+
+    public async Task RemoveToolMetadata(int serverId, string toolName)
+    {
+        var item = await databaseContext.ToolMetadata.FirstOrDefaultAsync(a => a.ServerId == serverId && a.ToolName == toolName);
+
+        if (item != null)
+        {
+            databaseContext.ToolMetadata.Remove(item);
+            await databaseContext.SaveChangesAsync();
+        }
+    }
 
     public async Task<ResourceTemplate> AddServerResourceTemplate(int serverId,
         string uri,

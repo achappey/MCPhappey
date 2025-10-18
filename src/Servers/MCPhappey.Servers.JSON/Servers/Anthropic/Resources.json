@@ -50,6 +50,19 @@
           "user"
         ]
       }
+    },
+    {
+      "uri": "https://assets.anthropic.com/m/99128ddd009bdcb/Claude-Haiku-4-5-System-Card.pdf",
+      "name": "anthropic-claude-haiku-4-5-system-card",
+      "title": "Anthropic Claude Haiku 4.5 System Card (Oct 2025)",
+      "description": "Official system card PDF for Claude Haiku 4.5, covering model architecture, safety evaluations, alignment research, Responsible Scaling Policy compliance, AI Safety Level considerations, and updates compared to earlier Claude Haiku versions.",
+      "mimeType": "text/plain",
+      "annotations": {
+        "audience": [
+          "assistant",
+          "user"
+        ]
+      }
     }
   ]
 }

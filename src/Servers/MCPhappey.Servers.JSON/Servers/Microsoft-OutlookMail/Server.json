@@ -10,5 +10,13 @@
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Mail.Send https://graph.microsoft.com/Mail.ReadWrite https://graph.microsoft.com/Mail.Send.Shared"
+  },
+  "tools": {
+    "graph_outlook_mail_search": {
+      "_meta": {
+        "openai/outputTemplate": "ui://widget/search-outlook.html",
+        "openai/widgetAccessible": true
+      }
+    }
   }
 }

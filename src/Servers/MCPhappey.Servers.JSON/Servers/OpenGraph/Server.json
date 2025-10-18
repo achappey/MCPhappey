@@ -1,0 +1,11 @@
+{
+  "serverInfo": {
+    "name": "OpenGraph",
+    "title": "OpenGraph.io",
+    "version": "1.0.0",
+    "description": "OpenGraph.io lets you turn any link into rich, structured data. It automatically fetches and analyzes webpages, extracting titles, descriptions, images, and metadata—just like social platforms do when they 'unfurl' a link. Ideal for previews, scraping, SEO insights, or feeding clean content into AI pipelines. Simple API, fast responses, no complex setup required."
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "GitHub-JSONPlaceholder",
+    "title": "GitHub {JSON} Placeholder",
+    "version": "1.0.0",
+    "description": "JSONPlaceholder is a public REST API that provides realistic fake data for testing and prototyping. It includes resources like posts, comments, albums, photos, todos, and users. Developers use it to simulate backend behavior, test REST clients, and build demos without needing a real database or authentication.",
+    "websiteUrl": "https://github.com/typicode/jsonplaceholder"
+  }
+}

@@ -5,11 +5,18 @@ using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Microsoft.Extensions.DependencyInjection;
 using MCPhappey.Common.Extensions;
+using Microsoft.SemanticKernel;
+using System.Text.Json.Serialization;
 
 namespace MCPhappey.Core.Services;
 
-public class PromptService(IServerDataProvider dynamicDataService)
+public class PromptService(IServerDataProvider dynamicDataService, Kernel kernel)
 {
+
+    public async Task<IEnumerable<McpServerPrompt>> GetServerToolPromptTemplates(ServerConfig serverConfig)
+        => await Task.FromResult(serverConfig.Server.ToolPrompts == true ?
+                serverConfig.Server.Plugins?.SelectMany(a => kernel.GetPromptsFromType(a) ?? []) : []) ?? [];
+
     public async Task<IEnumerable<PromptTemplate>> GetServerPromptTemplates(ServerConfig serverConfig,
              CancellationToken cancellationToken = default) => serverConfig.SourceType switch
              {
@@ -21,10 +28,13 @@ public class PromptService(IServerDataProvider dynamicDataService)
     public async Task<ListPromptsResult> GetServerPrompts(ServerConfig serverConfig,
           CancellationToken cancellationToken = default) => new ListPromptsResult()
           {
-              Prompts = (await GetServerPromptTemplates(serverConfig, cancellationToken))
+              Prompts = [..(await GetServerPromptTemplates(serverConfig, cancellationToken))
                 .Select(a => a.Template)
                 .OrderBy(a => a.Name)
-                .ToList() ?? []
+                .ToList() ?? [], ..(await GetServerToolPromptTemplates(serverConfig))
+                .Select(a => a.ProtocolPrompt)
+                .OrderBy(a => a.Name)
+                .ToList() ?? []]
           };
 
     public async Task<GetPromptResult> GetServerPrompt(
@@ -32,11 +42,35 @@ public class PromptService(IServerDataProvider dynamicDataService)
         McpServer mcpServer,
         string name,
         IReadOnlyDictionary<string, JsonElement>? arguments = null,
+        RequestContext<GetPromptRequestParams>? requestContext = null,
         CancellationToken cancellationToken = default)
     {
         var serverConfig = serviceProvider.GetServerConfig(mcpServer) ?? throw new Exception();
-        var prompts = await GetServerPromptTemplates(serverConfig);
-        var prompt = prompts?.FirstOrDefault(a => a.Template.Name == name);
+        var allServers = serviceProvider.GetService<IReadOnlyList<ServerConfig>>() ?? throw new Exception();
+        var prompts = await GetServerPromptTemplates(serverConfig, cancellationToken);
+        var prompt = prompts?.FirstOrDefault(a => a.Template.Name == name)
+            ?? allServers.Where(a => a.SourceType == ServerSourceType.Static)
+                .SelectMany(z => z.PromptList?.Prompts?.Where(a => a.Template?.Name == name) ?? []).FirstOrDefault();
+
+        if (prompt == null && requestContext != null)
+        {
+            var toolPrompts = await GetServerToolPromptTemplates(serverConfig);
+            var toolPrompt = toolPrompts.FirstOrDefault(a => a.ProtocolPrompt.Name == name);
+
+            if (toolPrompt != null)
+            {
+                return await Task.FromResult(new GetPromptResult
+                {
+                    Description = prompt?.Template.Description,
+                    Messages = [new PromptMessage() {
+                        Content = new TextContentBlock() {
+                            Text = toolPrompt.ProtocolPrompt.Name + $"<br>{toolPrompt.ProtocolPrompt.Description}\n\n```json\n"
+                                + JsonSerializer.Serialize(requestContext.Params?.Arguments, WriteIndented) + "\n```",
+                        }
+                    }]
+                });
+            }
+        }
 
         ArgumentNullException.ThrowIfNull(prompt);
         prompt.Template.ValidatePrompt(arguments);
@@ -56,4 +90,10 @@ public class PromptService(IServerDataProvider dynamicDataService)
             Messages = [promptMessage]
         });
     }
+    private static readonly JsonSerializerOptions WriteIndented = new()
+    {
+        WriteIndented = true,
+        DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull
+    };
+
 }

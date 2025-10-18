@@ -45,6 +45,12 @@ public class SimplicateHourItem
     [JsonPropertyName("hours")]
     public double Hours { get; set; }
 
+    [JsonPropertyName("start_date")]
+    public string? StartDate { get; set; }
+
+    [JsonPropertyName("end_date")]
+    public string? EndDate { get; set; }
+
     [JsonIgnore] // Don't serialize calculated property by default
     public decimal Amount
     {

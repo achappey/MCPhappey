@@ -15,7 +15,9 @@ public class McpDatabaseContext(DbContextOptions<McpDatabaseContext> options) : 
 
   public DbSet<ResourceTemplate> ResourceTemplates { get; set; } = null!;
 
-  public DbSet<ServerTool> Tools { get; set; } = null!;
+  public DbSet<ServerPlugin> Plugins { get; set; } = null!;
+  
+  public DbSet<ToolMetadata> ToolMetadata { get; set; } = null!;
 
   public DbSet<ServerOwner> ServerOwners { get; set; } = null!;
 

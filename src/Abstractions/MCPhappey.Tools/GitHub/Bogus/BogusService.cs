@@ -1,7 +1,8 @@
 using System.ComponentModel;
 using System.Text.Json;
 using Bogus;
-using GEmojiSharp;
+using MCPhappey.Core.Extensions;
+using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
 namespace MCPhappey.Tools.GitHub.Bogus;
@@ -14,39 +15,46 @@ public static class BogusService
         if (seed.HasValue)
         {
             f.Random = new Randomizer(seed.Value);
-            f.DateTimeReference = new DateTime(2000, 1, 1);
+            //    f.DateTimeReference = new DateTime(2000, 1, 1);
         }
         return f;
     }
 
     [Description("Generate a realistic person profile (name, username, email, phone, address).")]
     [McpServerTool(
-        Title = "Generate person",
-        Name = "github_bogus_generate_person",
-        ReadOnly = true,
-        OpenWorld = false,
-        UseStructuredContent = true)]
-    public static async Task<string?> GitHubBogus_GeneratePerson(
-        [Description("Locale code (e.g. 'en', 'nl', 'de_CH')")] string? locale = "en",
-        [Description("Optional deterministic seed")] int? seed = null) =>
-        await Task.FromResult(JsonSerializer.Serialize(new
+     Title = "Generate person",
+     Name = "github_bogus_generate_person",
+     ReadOnly = true,
+     OpenWorld = false)]
+    public static async Task<CallToolResult?> GitHubBogus_GeneratePerson(
+     RequestContext<CallToolRequestParams> requestContext,
+     [Description("Locale code (e.g. 'en', 'nl', 'de_CH')")] string? locale = "en",
+     [Description("Optional deterministic seed")] int? seed = null)
+        => await requestContext.WithStructuredContent(async () =>
+    {
+        var f = CreateFaker(locale, seed);
+        var json = new
         {
             Person = new
             {
-                FirstName = CreateFaker(locale, seed).Name.FirstName(),
-                LastName = CreateFaker(locale, seed).Name.LastName(),
-                UserName = CreateFaker(locale, seed).Internet.UserName(),
-                Email = CreateFaker(locale, seed).Internet.Email(),
-                Phone = CreateFaker(locale, seed).Phone.PhoneNumber(),
+                FirstName = f.Name.FirstName(),
+                LastName = f.Name.LastName(),
+                UserName = f.Internet.UserName(),
+                Email = f.Internet.Email(),
+                Phone = f.Phone.PhoneNumber(),
                 Address = new
                 {
-                    Street = CreateFaker(locale, seed).Address.StreetAddress(),
-                    City = CreateFaker(locale, seed).Address.City(),
-                    ZipCode = CreateFaker(locale, seed).Address.ZipCode(),
-                    Country = CreateFaker(locale, seed).Address.Country()
+                    Street = f.Address.StreetAddress(),
+                    City = f.Address.City(),
+                    ZipCode = f.Address.ZipCode(),
+                    Country = f.Address.Country()
                 }
             }
-        }));
+        }
+        ;
+        return await Task.FromResult(json);
+    });
+
 
     [Description("Generate lorem text (sentences).")]
     [McpServerTool(
@@ -80,6 +88,38 @@ public static class BogusService
                 Bs = CreateFaker(locale, seed).Company.Bs()
             }
         }));
+
+    [Description("Generate a list of simple companies.")]
+    [McpServerTool(
+           Title = "Generate company list",
+           Name = "github_bogus_generate_company_list",
+           ReadOnly = true,
+           OpenWorld = false)]
+    public static async Task<CallToolResult?> GitHubBogus_GenerateCompanyList(
+           RequestContext<CallToolRequestParams> requestContext,
+           [Description("How many people")] int count = 10,
+           [Description("Locale code")] string? locale = "en",
+           [Description("Optional deterministic seed")] int? seed = null)
+           => await requestContext.WithStructuredContent(async () =>
+        {
+            var f = CreateFaker(locale, seed);
+            var data = Enumerable.Range(0, Math.Max(0, count))
+                .Select(i =>
+                {
+                    // Minor per-item variation by nudging seed via IndexGlobal if provided
+                    return new
+                    {
+                        Name = f.Company.CompanyName(),
+                        Suffix = f.Company.CompanySuffix(),
+                        Logo = f.Image.PicsumUrl(128, 128),
+                        Address = f.Address.FullAddress(),
+                        CatchPhrase = f.Company.CatchPhrase(),
+                        Bs = f.Company.Bs()
+                    };
+                });
+
+            return await Task.FromResult(data);
+        });
 
     [Description("Generate a random integer within [min, max].")]
     [McpServerTool(
@@ -379,12 +419,13 @@ public static class BogusService
         Title = "Generate people list",
         Name = "github_bogus_generate_people_list",
         ReadOnly = true,
-        OpenWorld = false,
-        UseStructuredContent = true)]
-    public static async Task<string?> GitHubBogus_GeneratePeopleList(
+        OpenWorld = false)]
+    public static async Task<CallToolResult?> GitHubBogus_GeneratePeopleList(
+        RequestContext<CallToolRequestParams> requestContext,
         [Description("How many people")] int count = 10,
         [Description("Locale code")] string? locale = "en",
         [Description("Optional deterministic seed")] int? seed = null)
+        => await requestContext.WithStructuredContent(async () =>
     {
         var f = CreateFaker(locale, seed);
         var data = Enumerable.Range(0, Math.Max(0, count))
@@ -400,8 +441,9 @@ public static class BogusService
                     Email = f.Internet.Email(first, last)
                 };
             });
-        return await Task.FromResult(JsonSerializer.Serialize(data));
-    }
+
+        return await Task.FromResult(data);
+    });
 
     // 12) Bulk: simple orders list
     [Description("Generate a list of simple orders (id, item, quantity, price).")]
@@ -411,10 +453,12 @@ public static class BogusService
         ReadOnly = true,
         OpenWorld = false,
         UseStructuredContent = true)]
-    public static async Task<string?> GitHubBogus_GenerateOrdersList(
+    public static async Task<CallToolResult?> GitHubBogus_GenerateOrdersList(
+        RequestContext<CallToolRequestParams> requestContext,
         [Description("How many orders")] int count = 10,
         [Description("Locale code")] string? locale = "en",
         [Description("Optional deterministic seed")] int? seed = null)
+        => await requestContext.WithStructuredContent(async () =>
     {
         var f = CreateFaker(locale, seed);
         var orderId = 0;
@@ -428,7 +472,7 @@ public static class BogusService
             });
 
         return await Task.FromResult(JsonSerializer.Serialize(data));
-    }
+    });
 
     // 1) Hacker phrase (great for demo data / placeholders)
     [Description("Generate a hacker phrase (adjective+noun/verb-ing phrase).")]
@@ -534,7 +578,7 @@ public static class BogusService
         await Task.FromResult(CreateFaker(locale, seed).Parse(template));
 
     // 6) Name + job profile (with gender input)
-  
+
     // 7) Recent/soon date window (useful for timelines)
     [Description("Generate a window of dates: recent/past and soon/future.")]
     [McpServerTool(

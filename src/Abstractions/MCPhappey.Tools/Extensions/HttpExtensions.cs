@@ -1,11 +1,18 @@
+using System.Text.Json;
+using System.Text.Json.Nodes;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
+using MCPhappey.Core.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
+using ModelContextProtocol.Server;
 
 namespace MCPhappey.Tools.Extensions;
 
 public static class HttpExtensions
 {
+   
+
     public static async Task<CallToolResult?> ToCallToolResponseOrErrorAsync(
         this HttpResponseMessage response,
         CancellationToken cancellationToken = default)

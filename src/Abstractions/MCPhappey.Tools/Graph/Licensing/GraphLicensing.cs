@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -11,16 +12,15 @@ public static class GraphLicensing
     [Description("Get user SKUs grouped by department. If departmentName is set, only include that department. Users without department are grouped under empty string.")]
     [McpServerTool(Title = "User SKUs per department", ReadOnly = true,
         Idempotent = true, Destructive = false,
-        UseStructuredContent = true, OpenWorld = false)]
-    public static async Task<Dictionary<string, Dictionary<string, List<string>>>> GraphUsers_GetUserSkusPerDepartment(
-            string? departmentName,
-            IServiceProvider serviceProvider,
+        Name = "graph_users_get_user_skus_per_department",
+        OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphUsers_GetUserSkusPerDepartment(
             RequestContext<CallToolRequestParams> requestContext,
-            CancellationToken cancellationToken = default)
+            string? departmentName = null,
+            CancellationToken cancellationToken = default) =>
+            await requestContext.WithOboGraphClient(async client =>
+            await requestContext.WithStructuredContent(async () =>
     {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
         var skuMap = await BuildSkuMap(client, cancellationToken);
         var result = new Dictionary<string, Dictionary<string, List<string>>>();
 
@@ -43,11 +43,12 @@ public static class GraphLicensing
             var mail = user.UserPrincipalName;
             if (string.IsNullOrWhiteSpace(mail)) continue;
 
-            var dept = user.Department ?? "";
+            if (string.IsNullOrEmpty(departmentName) && !string.IsNullOrEmpty(user.Department))
+                continue;
+
+            var dept = user.Department ?? "(Blank)";
 
             // Only needed when departmentName is null/empty, otherwise Graph already filtered
-            if (string.IsNullOrEmpty(departmentName) && !string.Equals(dept, departmentName, StringComparison.OrdinalIgnoreCase))
-                continue;
 
             if (!result.TryGetValue(dept, out var dict))
             {
@@ -65,8 +66,19 @@ public static class GraphLicensing
                 dict[mail] = userLicenses;
         }
 
-        return result;
-    }
+        return new
+        {
+            departments = result.Select(a => new
+            {
+                name = a.Key,
+                users = a.Value.Select(z => new
+                {
+                    userId = z.Key,
+                    skus = z.Value
+                })
+            })
+        };
+    }));
 
 
     private static async Task<Dictionary<string, string>> BuildSkuMap(GraphServiceClient client, CancellationToken cancellationToken)

@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "Together-CodeInterpreter",
+    "title": "Together Code Interpreter",
+    "version": "1.0.0",
+    "description": "Executes code snippets through Together AI’s Code Interpreter API. Supports Python execution, persistent sessions, and file uploads. Returns structured output including stdout, stderr, and session details. Useful for running dynamic scripts, testing logic, or performing lightweight computations directly within the MCP environment."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Together.CodeInterpreter.TogetherCodeInterpreter, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

@@ -3,17 +3,79 @@ using Microsoft.Graph.Beta;
 using MCPhappey.Auth.Models;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Constants;
-using Microsoft.Graph.Beta.Models;
+using MGraph = Microsoft.Graph.Beta;
 using System.Net.Mime;
 using System.Text.Json;
 using ModelContextProtocol.Protocol;
 using MCPhappey.Common.Extensions;
 using System.Web;
+using Microsoft.Graph.Beta.Models;
 
 namespace MCPhappey.Scrapers.Extensions;
 
 public static class GraphClientExtensions
 {
+
+    public static async Task<string> ToGraphRestIdAsync(
+         this GraphServiceClient graph,
+         string owaItemId,
+         string? mailbox,
+         CancellationToken ct)
+    {
+        // Ensure not still URL-encoded (e.g. %3D)
+        var clean = Uri.UnescapeDataString(owaItemId);
+
+        object? response;
+
+        if (!string.IsNullOrEmpty(mailbox))
+        {
+            var builder = new MGraph.Users.Item.TranslateExchangeIds.TranslateExchangeIdsRequestBuilder(
+                $"https://graph.microsoft.com/beta/users/{Uri.EscapeDataString(mailbox)}/translateExchangeIds",
+                graph.RequestAdapter);
+
+            response = await builder.PostAsTranslateExchangeIdsPostResponseAsync(
+                new MGraph.Users.Item.TranslateExchangeIds.TranslateExchangeIdsPostRequestBody
+                {
+                    InputIds = [clean],
+                    SourceIdType = MGraph.Models.ExchangeIdFormat.EwsId,
+                    TargetIdType = MGraph.Models.ExchangeIdFormat.RestId
+                },
+                cancellationToken: ct);
+        }
+        else
+        {
+            var builder = new MGraph.Me.TranslateExchangeIds.TranslateExchangeIdsRequestBuilder(
+                $"https://graph.microsoft.com/beta/me/translateExchangeIds",
+                graph.RequestAdapter);
+
+            response = await builder.PostAsTranslateExchangeIdsPostResponseAsync(
+                new MGraph.Me.TranslateExchangeIds.TranslateExchangeIdsPostRequestBody
+                {
+                    InputIds = new List<string> { clean },
+                    SourceIdType = MGraph.Models.ExchangeIdFormat.EwsId,
+                    TargetIdType = MGraph.Models.ExchangeIdFormat.RestId
+                },
+                cancellationToken: ct);
+        }
+
+        // Extract Value[0].Id via reflection (types differ between /me and /users)
+        string? restId = null;
+        if (response?.GetType().GetProperty("Value")?.GetValue(response) is System.Collections.IEnumerable valueObj)
+        {
+            var enumerator = valueObj.GetEnumerator();
+            if (enumerator.MoveNext())
+            {
+                var first = enumerator.Current;
+                restId = first?.GetType().GetProperty("TargetId")?.GetValue(first)?.ToString();
+            }
+        }
+
+        if (string.IsNullOrEmpty(restId))
+            throw new InvalidOperationException("Could not translate OWA ItemID to Graph REST id.");
+
+        return restId;
+    }
+
     public static async Task<GraphServiceClient> GetOboGraphClient(this IHttpClientFactory httpClientFactory,
         string token,
         Server server,

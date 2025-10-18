@@ -1,0 +1,15 @@
+{
+  "resources": [
+    {
+      "uri": "ui://widget/websearch-results.html",
+      "name": "websearch-results-widget",
+      "description": "AI Web Search results widget that displays search results from different AI models.",
+      "mimeType": "text/html+skybridge",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
+    }
+  ]
+}

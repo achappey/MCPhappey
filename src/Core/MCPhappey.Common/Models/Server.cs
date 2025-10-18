@@ -136,11 +136,23 @@ public class Server
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public string? BaseMcp { get; set; }
 
+    [JsonPropertyName("tools")]
+    public Dictionary<string, Tool>? Tools { get; set; }
+
     [JsonPropertyName("hidden")]
     public bool? Hidden { get; set; }
 
+    [JsonPropertyName("toolPrompts")]
+    public bool ToolPrompts { get; set; } = true;
+
     [JsonIgnore]
     public McpExtension? McpExtension { get; set; }
+}
+
+public class Tool
+{
+    [JsonPropertyName("_meta")]
+    public Dictionary<string, object>? Meta { get; set; }
 }
 
 public class McpExtension

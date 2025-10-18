@@ -1,4 +1,5 @@
 
+using System.Text.Json;
 using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Common.Extensions;
@@ -7,6 +8,9 @@ public static class SamplingExtensions
 {
     public static string? ToText(this CreateMessageResult result) =>
          result.Content is TextContentBlock textContentBlock ? textContentBlock.Text : null;
+
+    public static JsonElement ToJsonElement(this string result) =>
+        JsonSerializer.SerializeToElement(result);
 
     public static ModelPreferences? ToModelPreferences(this string? result) => result != null ? new()
     {

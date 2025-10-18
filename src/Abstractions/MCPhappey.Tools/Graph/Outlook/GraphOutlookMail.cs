@@ -12,6 +12,29 @@ namespace MCPhappey.Tools.Graph.Outlook;
 
 public static class GraphOutlookMail
 {
+    [Description("Search for e-mails in Outlook using Microsoft Graph. Supports subject, body, sender, and date filters.")]
+    [McpServerTool(Title = "Search e-mails in Outlook",
+        Name = "graph_outlook_mail_search",
+        OpenWorld = true, Destructive = false, ReadOnly = true)]
+    public static async Task<CallToolResult?> GraphOutlookMail_Search(
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       [Description("Search query, e.g. 'subject:AI from:sender@company.com hasAttachment:true'")] string query,
+       [Description("Maximum number of results to return. Defaults to 10.")] int? top = 10,
+       CancellationToken cancellationToken = default) =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
+        {
+            // Graph supports $search syntax (requires mailbox indexing)
+            return await client.Me.Messages
+                .GetAsync(opt =>
+                {
+                    opt.QueryParameters.Search = $"\"{query}\"";
+                    opt.QueryParameters.Top = top ?? 10;
+                    opt.QueryParameters.Select = ["id", "subject", "from", "bodyPreview", "receivedDateTime", "isRead", "webLink"];
+                }, cancellationToken);
+        }));
+
     [Description("Set or update the follow-up flag for a mail message in Outlook.")]
     [McpServerTool(Title = "Flag mail for follow-up in Outlook",
         Idempotent = true,

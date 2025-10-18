@@ -7,7 +7,9 @@
       "description": "Retrieves the 15 most recent emails from the user's Inbox, including subject, sender, received time, and read status.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -17,7 +19,9 @@
       "description": "Shows the first 10 personal contacts with name, email addresses, and mobile number.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -27,7 +31,9 @@
       "description": "Retrieves the 10 most recent unread emails from the user's mailbox with subject, sender, and time.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -37,7 +43,20 @@
       "description": "Lists the mail folders in the user's mailbox (like Inbox, Sent, Drafts, Archive, etc).",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
+      }
+    },
+    {
+      "uri": "ui://widget/search-outlook.html",
+      "name": "search-outlook-widget",
+      "description": "Renders an interactive UI showcasing the emails returned by graph_outlook_mail_search.",
+      "mimeType": "text/html+skybridge",
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
       }
     }
   ]

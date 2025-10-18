@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "StabilityAI-ImageGeneration",
+    "title": "StabilityAI Image Generation",
+    "version": "1.0.0",
+    "description": "Creates high-quality images directly from text prompts. Supports style presets, aspect ratios, and advanced prompt control for generating scenes, characters, and visuals from natural language descriptions."
+  },
+  "plugins": [
+    "MCPhappey.Tools.StabilityAI.StabilityAIImageService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

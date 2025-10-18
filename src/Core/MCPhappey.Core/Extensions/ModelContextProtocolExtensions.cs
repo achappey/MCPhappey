@@ -1,9 +1,9 @@
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
+using Microsoft.Extensions.AI;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.SemanticKernel;
 using ModelContextProtocol.Protocol;
-using ModelContextProtocol.Server;
 
 namespace MCPhappey.Core.Extensions;
 
@@ -70,15 +70,8 @@ public static class ModelContextProtocolExtensions
 
                  opts.ServerInfo = server.Server.ToServerInfo();
                  opts.ServerInstructions = server.Server.Instructions;
-                 /*  opts.Capabilities = new()
-                   {
-                       //   Resources = server.ToResourcesCapability(),
-                       //   Prompts = server.ToPromptsCapability(),
-                       // Completions = server.ToCompletionsCapability(completionService, headers),
-                       // Tools = await server.Server.ToToolsCapability(kernel, headers)
-                   };*/
 
-                 await Task.CompletedTask;
+                 //  await Task.CompletedTask;
              };
         });
 }

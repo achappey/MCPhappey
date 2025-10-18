@@ -18,13 +18,10 @@ public static class GraphLists
     public static async Task<CallToolResult?> GraphLists_CreateListItem(
           string siteId,            // ID of the SharePoint site
           string listId,            // ID of the Microsoft List
-          IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
-          CancellationToken cancellationToken = default)
+          CancellationToken cancellationToken = default) =>
+        await requestContext.WithOboGraphClient(async client =>
     {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
         var list = await client
               .Sites[siteId]
               .Lists[listId].GetAsync(cancellationToken: cancellationToken);
@@ -54,7 +51,7 @@ public static class GraphLists
             }
         }
 
-        var elicitResult = await mcpServer.ElicitAsync(new ElicitRequestParams()
+        var elicitResult = await requestContext.Server.ElicitAsync(new ElicitRequestParams()
         {
             RequestedSchema = request,
             Message = list?.DisplayName ?? list?.Name ?? "New SharePoint list item"
@@ -87,7 +84,7 @@ public static class GraphLists
         // 6. Return success/result (customize as needed):
         return JsonSerializer.Serialize(createdItem)
             .ToJsonContentBlock($"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/items/{createdItem.Id}").ToCallToolResult();
-    }
+    });
 
     [Description("Create a new Microsoft List")]
     [McpServerTool(Title = "Create a new Microsoft List", Destructive = false, OpenWorld = false)]
@@ -102,12 +99,10 @@ public static class GraphLists
         SharePointListTemplate template = SharePointListTemplate.genericList,
             [Description("Description of the new list")]
         string? description = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default) =>
+            await requestContext.WithOboGraphClient(async client =>
     {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
-        var (typed, notAccepted, result) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphNewSharePointList
             {
                 Title = listTitle,
@@ -134,7 +129,7 @@ public static class GraphLists
 
         return createdList.ToJsonContentBlock(
             $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{createdList.Id}").ToCallToolResult();
-    }
+    });
 
     [Description("Add a column to a Microsoft List")]
     [McpServerTool(Title = "Add a column to a Microsoft List", Destructive = false, OpenWorld = false)]
@@ -147,16 +142,14 @@ public static class GraphLists
         string columnName,
             [Description("Column display name")]
         string? columnDisplayName,
-            IServiceProvider serviceProvider,
             RequestContext<CallToolRequestParams> requestContext,
             [Description("Column type (e.g. text, number, boolean, dateTime, choice)")]
         SharePointColumnType columnType = SharePointColumnType.Text,
             [Description("Choices values. Comma seperated list.")]
         string? choices = null,
-            CancellationToken cancellationToken = default)
+            CancellationToken cancellationToken = default) =>
+            await requestContext.WithOboGraphClient(async client =>
     {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var site = await client
                       .Sites[siteId]
                       .GetAsync(cancellationToken: cancellationToken);
@@ -166,7 +159,7 @@ public static class GraphLists
             .Lists[listId]
             .GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted, result) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                 new GraphNewSharePointColumn
                 {
                     DisplayName = columnDisplayName,
@@ -191,7 +184,7 @@ public static class GraphLists
         return createdColumn
             .ToJsonContentBlock(
             $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/columns/{createdColumn.Id}").ToCallToolResult();
-    }
+    });
 
     [Description("Please fill in the details for the new Microsoft List.")]
     public class GraphNewSharePointList

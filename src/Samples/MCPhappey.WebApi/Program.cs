@@ -16,6 +16,10 @@ using MCPhappey.Tools.Deskbird;
 using MCPhappey.Tools.Perplexity;
 using MCPhappey.Tools.xAI;
 using MCPhappey.Tools.Mistral.DocumentAI;
+using MCPhappey.Servers.JSON.Extensions;
+using MCPhappey.Tools.AzureMaps;
+using MCPhappey.Tools.StabilityAI.Models;
+using MCPhappey.Tools.Together.Images;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -39,6 +43,32 @@ if (appConfig?.McpExtensions != null)
     }
 }
 
+static string? GetBearer(Config? cfg, string domain) =>
+    cfg?.DomainHeaders?
+       .FirstOrDefault(h => h.Key == domain)
+       .Value?
+       .FirstOrDefault(h => h.Key == HeaderNames.Authorization)
+       .Value?
+       .GetBearerToken();
+
+static void AddApi<T>(IServiceCollection services, Config? cfg, string domain, Func<string, T> factory)
+    where T : class
+{
+    var key = GetBearer(cfg, domain);
+    if (!string.IsNullOrEmpty(key))
+        services.AddSingleton(factory(key!));
+}
+
+AddApi(builder.Services, appConfig, "connect.deskbird.com", k => new DeskbirdSettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.stability.ai", k => new StabilityAISettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.x.ai", k => new XAISettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.mistral.ai", k => new MistralSettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.perplexity.ai", k => new PerplexitySettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.together.xyz", k => new TogetherSettings { ApiKey = k });
+
+
+
+/*
 var deskbirdKey = appConfig?.DomainHeaders?
     .FirstOrDefault(a => a.Key == "connect.deskbird.com")
     .Value
@@ -51,6 +81,20 @@ if (deskbirdKey != null)
         ApiKey = deskbirdKey
     });
 }
+
+var stabilityAi = appConfig?.DomainHeaders?
+    .FirstOrDefault(a => a.Key == "api.stability.ai")
+    .Value
+    .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+
+if (stabilityAi != null)
+{
+    builder.Services.AddSingleton(new StabilityAISettings()
+    {
+        ApiKey = stabilityAi
+    });
+}
+
 
 var xAIApiKey = appConfig?.DomainHeaders?
             .FirstOrDefault(a => a.Key == "api.x.ai")
@@ -90,6 +134,20 @@ if (perplexityKey != null)
         ApiKey = perplexityKey
     });
 }
+*/
+var azureMapsApiKey = appConfig?.DomainHeaders?
+    .FirstOrDefault(a => a.Key == "atlas.microsoft.com")
+    .Value
+    .FirstOrDefault(a => a.Key == "Subscription-Key").Value;
+
+if (azureMapsApiKey != null)
+{
+    builder.Services.AddSingleton(new AzureMapsSettings()
+    {
+        ApiKey = azureMapsApiKey
+    });
+}
+
 
 var apiKey = appConfig?.DomainHeaders?
             .FirstOrDefault(a => a.Key == Hosts.OpenAI)
@@ -151,7 +209,9 @@ builder.Services.AddCors(options =>
     });
 });
 
-builder.WithCompletion();
+builder
+.WithCompletion()
+.AddWidgetScraper();
 
 if (!string.IsNullOrEmpty(appConfig?.PrivateKey))
 {
@@ -211,6 +271,6 @@ if (appConfig?.OAuth != null)
 {
     app.MapOAuth([.. servers.Where(a => a.Server.HasAuth())], appConfig.OAuth);
 }
-
+app.UseWidgets(Path.Combine(AppContext.BaseDirectory, "Widgets"));
 app.UseMcpWebApplication(servers);
 app.Run();

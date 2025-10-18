@@ -9,6 +9,7 @@ using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -42,7 +43,7 @@ public static class JSONBlobService
             $"<details><summary>POST <a href=\"{url}\" target=\"_blank\">jsonblob.com</a></summary>\n\n```json\n{data}\n```\n</details>");
 
         using var res = await http.PostAsync(url,
-            new StringContent(data, Encoding.UTF8, "application/json"),
+            new StringContent(data, Encoding.UTF8, MimeTypes.Json),
             cancellationToken);
 
         var error = await res.ToCallToolResponseOrErrorAsync(cancellationToken);
@@ -80,7 +81,7 @@ public static class JSONBlobService
             $"<details><summary>PUT <a href=\"{url}\" target=\"_blank\">jsonblob.com</a></summary>\n\n```json\n{JsonSerializer.Serialize(data, WriteIndented)}\n```\n</details>");
 
         using var res = await http.PutAsync(url,
-            new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, "application/json"),
+            new StringContent(JsonSerializer.Serialize(data), Encoding.UTF8, MimeTypes.Json),
             cancellationToken);
 
         var error = await res.ToCallToolResponseOrErrorAsync(cancellationToken);
@@ -133,7 +134,7 @@ public static class JSONBlobService
     {
         var factory = sp.GetRequiredService<IHttpClientFactory>();
         var http = factory.CreateClient();
-        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
         return http;
     }
 

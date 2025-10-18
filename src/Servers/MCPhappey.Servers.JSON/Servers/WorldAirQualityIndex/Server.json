@@ -1,0 +1,9 @@
+{
+  "serverInfo": {
+    "name": "WorldAirQualityIndex",
+    "title": "World Air Quality Index",
+    "version": "1.0.0",
+    "description": "Provides real-time and forecasted air quality data for cities, coordinates, or IP-based locations. Also supports searching stations and querying air quality within map bounds.",
+    "websiteUrl": "https://aqicn.org"
+  }
+}

@@ -54,7 +54,7 @@ public partial class DownloadService(WebScraper webScraper,
 
                 var decodeTasks = fileContent.Select(a => transformService.DecodeAsync(url,
                     a.Contents,
-                    a.MimeType, cancellationToken));
+                    a.MimeType, a.Filename, cancellationToken: cancellationToken));
 
                 var decoded = await Task.WhenAll(decodeTasks);
 
@@ -87,7 +87,7 @@ public partial class DownloadService(WebScraper webScraper,
 
         return [await transformService.DecodeAsync(url,
                           defaultScraper.Content,
-                          defaultScraper.ContentType, cancellationToken)];
+                          defaultScraper.ContentType, cancellationToken: cancellationToken)];
     }
 
     public async Task<IEnumerable<FileItem>> DownloadContentAsync(IServiceProvider serviceProvider,
