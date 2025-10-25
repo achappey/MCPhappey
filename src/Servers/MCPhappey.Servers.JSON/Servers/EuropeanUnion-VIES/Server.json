@@ -1,0 +1,17 @@
+{
+  "serverInfo": {
+    "name": "EuropeanUnion-VIES",
+    "title": "European Union VIES (Check a VAT number)",
+    "version": "1.0.0",
+    "websiteUrl": "https://ec.europa.eu/taxation_customs/vies",
+    "description": "European Union VIES provides access to official VAT registration information from EU Member States. It checks whether a VAT number is currently registered for intra-EU transactions and returns basic status details. Results depend on the availability of national services. It does not confirm business identity or guarantee correctness beyond VAT validity.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/en/2/27/EU_flag_square.PNG"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.EuropeanUnion.EuropeanUnionVIESService, MCPhappey.Tools"
+  ]
+}

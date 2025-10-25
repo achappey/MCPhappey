@@ -1,0 +1,13 @@
+{
+  "serverInfo": {
+    "name": "DocumentQnA",
+    "version": "1.0.0",
+    "description": "DocumentQnA answers questions strictly based on the content of a document. The file is retrieved, read and analyzed by multiple AI models in parallel. This multiple-eyes approach highlights agreement and differences between independent models, improving trust and validation. No external knowledge is used: answers only reflect what is written in the document."
+  },
+  "plugins": [
+    "MCPhappey.Tools.AI.DocumentQnA, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.Read.All"
+  }
+}

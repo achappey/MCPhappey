@@ -1,0 +1,17 @@
+{
+  "serverInfo": {
+    "name": "Rijkswaterstaat-WaterData",
+    "title": "WaterData Rijkswaterstaat (WADAR)",
+    "version": "1.0.0",
+    "websiteUrl": "https://rijkswaterstaatdata.nl/projecten/beta-waterwebservices/",
+    "description": "WaterData Rijkswaterstaat (WADAR) geeft toegang tot officiële watermetingen in Nederland. Gebruikers kunnen actuele en historische gegevens opvragen, zoals waterstanden, temperatuur en chemische waarden. Locaties en meetmethoden zijn gestandaardiseerd volgens AQUO. Deze dienst helpt inzicht te krijgen in waterveiligheid, kwaliteit en trends, zonder zelf data te verzamelen of te verwerken.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/e/e9/Logo_Rijksoverheid_%28kleur%29.jpg"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Rijkswaterstaat.WaterDataService, MCPhappey.Tools"
+  ]
+}

@@ -1,0 +1,17 @@
+{
+  "serverInfo": {
+    "name": "Meta-RAG",
+    "title": "Meta Retrieval Augmented Generation (RAG)",
+    "version": "1.0.0",
+    "description": "Meta-RAG brings different retrieval options together in one place. It can search vector indexes, file libraries, and knowledge graphs at the same time. The AI then combines the results into a single response. Users do not need to choose a method. Meta-RAG selects and mixes the most useful information for each question."
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.VectorStores.OpenAIVectorStores, MCPhappey.Tools",
+    "MCPhappey.Tools.Mistral.Libraries.LibrariesPlugin, MCPhappey.Tools",
+    "MCPhappey.Tools.KernelMemory.KernelMemory, MCPhappey.Tools",
+    "MCPhappey.Tools.AI.KnowledgeGraph, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.Read.All"
+  }
+}
