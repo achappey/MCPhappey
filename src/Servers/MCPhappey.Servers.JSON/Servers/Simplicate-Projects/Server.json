@@ -3,7 +3,12 @@
     "name": "Simplicate-Projects",
     "title": "Simplicate Projecten",
     "version": "1.0.0",
-    "description": "Project module van Simplicate voor projecten, fases/diensten en budgetten."
+    "description": "Project module van Simplicate voor projecten, fases/diensten en budgetten.",
+    "icons": [
+      {
+        "src": "https://developer.simplicate.com/images/simplicate_icon.png"
+      }
+    ]
   },
   "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries. Total item count is returned in list responses. Use limit=1 with filters to count totals of large datasets. There is NO need to include unused filter properties in resources. Resource templates are only supplied with all options to show all working options compact. NULL values may be searched with null : q[name]=null. Non NULL values may be searched with *: q[name]=*",
   "plugins": [

@@ -118,9 +118,7 @@ public static class ChatApp
     [McpServerTool(Title = "Get prompt completions",
         ReadOnly = true)]
     public static async Task<CallToolResult> ChatApp_GetCompletions(
-       IServiceProvider serviceProvider,
-       RequestContext<CallToolRequestParams> requestContext,
-       CancellationToken cancellationToken = default)
+       IServiceProvider serviceProvider)
     {
         var config = serviceProvider.GetServices<IAutoCompletion>();
 
@@ -142,8 +140,7 @@ public static class ChatApp
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
 
         // Pick the model you want
-        var modelName = "gpt-5-nano"; // or set to your preferred model
-
+        var modelName = "gpt-5-nano";
         // Optional: Logging/notification
         var markdown = $"Generating welcome message";
 
@@ -159,14 +156,17 @@ public static class ChatApp
         var args = new Dictionary<string, JsonElement>
         {
             { "language", JsonSerializer.SerializeToElement(language) },
-
             { "currentDateTime", JsonSerializer.SerializeToElement(currentDateTime ?? DateTime.UtcNow.ToString()) }
         };
 
         if (currentUser != null)
             args.Add("currentUser", currentUser.ToJsonElement());
 
-        var meta = new Dictionary<string, object> { { "openai", options } };
+        var meta = new Dictionary<string, object> {
+            { "openai", options },
+            { "xai", new { } },
+            { "google", new { } },
+            { "anthropic", new { } }  };
 
         async Task<ContentBlock?> SampleAsync() =>
             (await samplingService.GetPromptSample(

@@ -1,8 +1,19 @@
 {
   "serverInfo": {
     "name": "ModelContext-Statistics",
+    "title": "ModelContext Statistics",
     "version": "1.0.0",
-    "description": "Generate and explore usage statistics for the MCP environment. Aggregate events, server and tool activity, and prompt performance to monitor quality and adoption. Produce summaries for dashboards and reviews using authenticated access."
+    "description": "Generate and explore usage statistics for the MCP environment. Aggregate events, server and tool activity, and prompt performance to monitor quality and adoption. Produce summaries for dashboards and reviews using authenticated access.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/mcp.png",
+        "theme": "light"
+      }
+    ]
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

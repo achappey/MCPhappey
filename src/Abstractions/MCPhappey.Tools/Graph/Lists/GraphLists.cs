@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
 using ModelContextProtocol.Protocol;
@@ -20,7 +21,9 @@ public static class GraphLists
           string listId,            // ID of the Microsoft List
           RequestContext<CallToolRequestParams> requestContext,
           CancellationToken cancellationToken = default) =>
-        await requestContext.WithOboGraphClient(async client =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
+            await requestContext.WithStructuredContent(async () =>
     {
         var list = await client
               .Sites[siteId]
@@ -58,18 +61,139 @@ public static class GraphLists
         }, cancellationToken: cancellationToken);
 
         var notAccepted = elicitResult?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         var values = elicitResult?.Content;
+
+        var defsByName = (columns?.Value ?? [])
+            .Where(c => !string.IsNullOrWhiteSpace(c.Name))
+            .ToDictionary(c => c.Name!, c => c);
+
         var fieldsPayload = new Dictionary<string, object>();
 
-        foreach (var field in request.Properties)
+        foreach (var prop in request.Properties.Keys)
         {
-            if (values!.TryGetValue(field.Key, out var val) && val.ToString() != null)
-                fieldsPayload[field.Key] = val;
+            if (!values!.TryGetValue(prop, out var raw)) continue;
+
+            object? val = raw;
+
+            // ---- unwrap JsonElement safely
+            if (raw is JsonElement je)
+            {
+                switch (je.ValueKind)
+                {
+                    case JsonValueKind.Null:
+                    case JsonValueKind.Undefined:
+                        continue;
+                    case JsonValueKind.String:
+                        var s = je.GetString();
+                        if (string.IsNullOrWhiteSpace(s)) continue;
+                        val = s;
+                        break;
+                    case JsonValueKind.Array:
+                        var seq = je.EnumerateArray()
+                                    .Select(x => x.ValueKind == JsonValueKind.String ? x.GetString() : x.ToString())
+                                    .Where(x => !string.IsNullOrWhiteSpace(x))
+                                    .ToList();
+                        if (seq.Count == 0) continue;
+                        val = seq;
+                        break;
+                    case JsonValueKind.Number:
+                        if (je.TryGetInt64(out var i)) val = i;
+                        else if (je.TryGetDouble(out var d)) val = d;
+                        break;
+                    case JsonValueKind.True:
+                    case JsonValueKind.False:
+                        val = je.GetBoolean();
+                        break;
+                }
+            }
+
+            if (!defsByName.TryGetValue(prop, out var def))
+            {
+                if (val is string s2 && string.IsNullOrWhiteSpace(s2)) continue;
+                fieldsPayload[prop] = val!;
+                continue;
+            }
+
+            // ---- Date/DateTime
+            if (def.DateTime != null)
+            {
+                var fmtStr = def.DateTime.Format?.ToString(); // SDK may expose enum or string
+                var isDateOnly = string.Equals(fmtStr, "dateOnly", StringComparison.OrdinalIgnoreCase);
+
+                string? isoOut = null;
+
+                if (val is string ds)
+                {
+                    if (isDateOnly)
+                    {
+                        if (DateOnly.TryParse(ds, out var d))
+                            isoOut = d.ToString("yyyy-MM-dd");
+                        else if (DateTimeOffset.TryParse(ds, out var dto))
+                            isoOut = dto.Date.ToString("yyyy-MM-dd");
+                    }
+                    else
+                    {
+                        if (DateTimeOffset.TryParse(ds, out var dto))
+                            isoOut = dto.ToUniversalTime().ToString("o");
+                        else if (DateTime.TryParse(ds, out var dt))
+                            isoOut = DateTime.SpecifyKind(dt, DateTimeKind.Utc).ToString("o");
+                    }
+                }
+                else if (val is DateTime dt)
+                {
+                    isoOut = isDateOnly
+                        ? dt.Date.ToString("yyyy-MM-dd")
+                        : DateTime.SpecifyKind(dt, DateTimeKind.Utc).ToString("o");
+                }
+                else if (val is DateTimeOffset dto)
+                {
+                    isoOut = isDateOnly
+                        ? dto.Date.ToString("yyyy-MM-dd")
+                        : dto.ToUniversalTime().ToString("o");
+                }
+
+                if (!string.IsNullOrWhiteSpace(isoOut))
+                    fieldsPayload[prop] = isoOut;
+
+                continue;
+            }
+
+            // ---- Choice (single / multi)
+            if (def.Choice != null || (def.AdditionalData?.ContainsKey("multiChoice") == true))
+            {
+                var isMulti = def.AdditionalData?.ContainsKey("multiChoice") == true;
+
+                if (isMulti)
+                {
+                    if (val is IEnumerable<object> many)
+                    {
+                        var arr = many.Select(x => x?.ToString())
+                                      .Where(x => !string.IsNullOrWhiteSpace(x))
+                                      .ToArray();
+                        if (arr.Length > 0) fieldsPayload[prop] = arr;
+                    }
+                    else if (val is string one && !string.IsNullOrWhiteSpace(one))
+                    {
+                        fieldsPayload[prop] = new[] { one };
+                    }
+                }
+                else
+                {
+                    if (val is string one && !string.IsNullOrWhiteSpace(one))
+                        fieldsPayload[prop] = one;
+                }
+
+                continue;
+            }
+
+            // ---- Default: keep non-empty
+            if (val is string s3 && string.IsNullOrWhiteSpace(s3)) continue;
+            fieldsPayload[prop] = val!;
         }
 
-        var createdItem = await client
+        return await client
             .Sites[siteId]
             .Lists[listId]
             .Items
@@ -80,11 +204,7 @@ public static class GraphLists
                     AdditionalData = fieldsPayload
                 }
             }, cancellationToken: cancellationToken);
-
-        // 6. Return success/result (customize as needed):
-        return JsonSerializer.Serialize(createdItem)
-            .ToJsonContentBlock($"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/items/{createdItem.Id}").ToCallToolResult();
-    });
+    })));
 
     [Description("Create a new Microsoft List")]
     [McpServerTool(Title = "Create a new Microsoft List", Destructive = false, OpenWorld = false)]
@@ -93,43 +213,41 @@ public static class GraphLists
         string siteId,
             [Description("Title of the new list")]
         string listTitle,
-            IServiceProvider serviceProvider,
             RequestContext<CallToolRequestParams> requestContext,
             [Description("Title of the new list")]
         SharePointListTemplate template = SharePointListTemplate.genericList,
             [Description("Description of the new list")]
         string? description = null,
             CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
             await requestContext.WithOboGraphClient(async client =>
-    {
-        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
-            new GraphNewSharePointList
-            {
-                Title = listTitle,
-                Description = description,
-                Template = template
-            },
-            cancellationToken
-        );
-
-        if (notAccepted != null) return notAccepted;
-
-        var createdList = await client.Sites[siteId].Lists.PostAsync(
-            new Microsoft.Graph.Beta.Models.List
-            {
-                DisplayName = typed?.Title,
-                Description = typed?.Description,
-                ListProp = new Microsoft.Graph.Beta.Models.ListInfo
+            await requestContext.WithStructuredContent<Microsoft.Graph.Beta.Models.List?>(async () =>
+        {
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
+                new GraphNewSharePointList
                 {
-                    Template = typed?.Template.ToString()
-                }
-            },
-            cancellationToken: cancellationToken
-        );
+                    Title = listTitle,
+                    Description = description,
+                    Template = template
+                },
+                cancellationToken
+            );
 
-        return createdList.ToJsonContentBlock(
-            $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{createdList.Id}").ToCallToolResult();
-    });
+            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
+
+            return await client.Sites[siteId].Lists.PostAsync(
+                new Microsoft.Graph.Beta.Models.List
+                {
+                    DisplayName = typed?.Title,
+                    Description = typed?.Description,
+                    ListProp = new Microsoft.Graph.Beta.Models.ListInfo
+                    {
+                        Template = typed?.Template.ToString()
+                    }
+                },
+                cancellationToken: cancellationToken
+            );
+        })));
 
     [Description("Add a column to a Microsoft List")]
     [McpServerTool(Title = "Add a column to a Microsoft List", Destructive = false, OpenWorld = false)]
@@ -148,43 +266,81 @@ public static class GraphLists
             [Description("Choices values. Comma seperated list.")]
         string? choices = null,
             CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
             await requestContext.WithOboGraphClient(async client =>
-    {
-        var site = await client
-                      .Sites[siteId]
-                      .GetAsync(cancellationToken: cancellationToken);
+            await requestContext.WithStructuredContent(async () =>
+        {
+            var site = await client
+                        .Sites[siteId]
+                        .GetAsync(cancellationToken: cancellationToken);
 
-        var list = await client
-            .Sites[siteId]
-            .Lists[listId]
-            .GetAsync(cancellationToken: cancellationToken);
+            var list = await client
+                .Sites[siteId]
+                .Lists[listId]
+                .GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
-                new GraphNewSharePointColumn
-                {
-                    DisplayName = columnDisplayName,
-                    Name = columnName,
-                    ColumnType = columnType,
-                    Choices = choices
-                },
-                cancellationToken
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
+                    new GraphNewSharePointColumn
+                    {
+                        DisplayName = columnDisplayName,
+                        Name = columnName,
+                        ColumnType = columnType,
+                        Choices = choices
+                    },
+                    cancellationToken
+                );
+
+            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
+            if (typed == null) throw new Exception("Invalid result");
+
+            // Build column based on type (jouw bestaande logic)
+            var columnDef = GetColumnDefinition(typed.Name, typed.DisplayName ?? typed.Name, typed.ColumnType, typed.Choices);
+
+            return await client.Sites[siteId].Lists[listId].Columns.PostAsync(
+                columnDef,
+                cancellationToken: cancellationToken
             );
+        })));
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Invalid result".ToErrorCallToolResponse();
+    [Description("Delete a Microsoft List item")]
+    [McpServerTool(Title = "Delete a Microsoft List item", Destructive = true, OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphLists_DeleteListItem(
+        [Description("ID of the SharePoint site (e.g. 'contoso.sharepoint.com,GUID,GUID')")]
+            string siteId,
+        [Description("ID of the Microsoft List")]
+            string listId,
+        [Description("ID of the list item to delete")]
+            string itemId,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.ConfirmAndDeleteAsync<DeleteSharePointListItem>(
+            itemId,
+            async _ =>
+            {
+                // Perform actual deletion
+                await client
+                    .Sites[siteId]
+                    .Lists[listId]
+                    .Items[itemId]
+                    .DeleteAsync(cancellationToken: cancellationToken);
+            },
+            "List item deleted successfully.",
+            cancellationToken
+        )));
 
-        // Build column based on type (jouw bestaande logic)
-        var columnDef = GetColumnDefinition(typed.Name, typed.DisplayName ?? typed.Name, typed.ColumnType, typed.Choices);
-
-        var createdColumn = await client.Sites[siteId].Lists[listId].Columns.PostAsync(
-            columnDef,
-            cancellationToken: cancellationToken
-        );
-
-        return createdColumn
-            .ToJsonContentBlock(
-            $"https://graph.microsoft.com/beta/sites/{siteId}/lists/{listId}/columns/{createdColumn.Id}").ToCallToolResult();
-    });
+    /// <summary>
+    /// Used to confirm deletion of a SharePoint List item.
+    /// </summary>
+    [Description("Please fill in the list item ID to confirm deletion: {0}")]
+    public class DeleteSharePointListItem : IHasName
+    {
+        [JsonPropertyName("name")]
+        [Required]
+        [Description("The ID of the list item to delete.")]
+        public string Name { get; set; } = default!;
+    }
 
     [Description("Please fill in the details for the new Microsoft List.")]
     public class GraphNewSharePointList
@@ -203,7 +359,6 @@ public static class GraphLists
         [Required]
         public SharePointListTemplate Template { get; set; } = SharePointListTemplate.genericList;
     }
-
 
     [Description("Please fill in the details for the new column.")]
     public class GraphNewSharePointColumn
@@ -300,8 +455,6 @@ public static class GraphLists
         [Description("Calendar (events)")]
         [JsonPropertyName("events")]
         events
-
-        // Add more if needed
     }
 
 }

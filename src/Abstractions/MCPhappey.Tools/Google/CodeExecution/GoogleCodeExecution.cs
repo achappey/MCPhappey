@@ -2,7 +2,9 @@ using System.ComponentModel;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
+using MCPhappey.Tools.OpenAI.Containers;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -14,7 +16,7 @@ public static class GoogleCodeExecution
     [Description("Run a prompt with Google code execution. Optionally attach files by URL first.")]
     [McpServerTool(Title = "Google Code Execution",
         ReadOnly = true)]
-    public static async Task<ContentBlock> GoogleCodeExecution_Run(
+    public static async Task<IEnumerable<ContentBlock>> GoogleCodeExecution_Run(
           [Description("Prompt to execute (code is allowed).")]
             string prompt,
           IServiceProvider serviceProvider,
@@ -53,7 +55,10 @@ public static class GoogleCodeExecution
             Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
                 {
                     {"google", new {
-                        code_execution = new { }
+                        code_execution = new { },
+                        thinkingConfig = new {
+                            thinkingBudget = -1
+                        }
                      } },
                 }),
             Temperature = 0,
@@ -62,7 +67,29 @@ public static class GoogleCodeExecution
             Messages = [.. attachedLinks.Select(t => t.Contents.ToString().ToUserSamplingMessage()), prompt.ToUserSamplingMessage()]
         }, cancellationToken);
 
-        return respone.Content;
+        var metadata = new EmbeddedResourceBlock()
+        {
+            Resource = new TextResourceContents()
+            {
+                Text = JsonSerializer.Serialize(respone.Meta),
+                Uri = "https://generativelanguage.googleapis.com",
+                MimeType = "application/json"
+            }
+        };
+
+        if (respone.Content is EmbeddedResourceBlock embeddedResourceBlock
+            && embeddedResourceBlock.Resource is BlobResourceContents blobResourceContents)
+        {
+            var FileExtensionContentTypeProvider = await requestContext.Server.Upload(
+                serviceProvider,
+                requestContext.ToOutputFileName(blobResourceContents.MimeType!.ResolveExtensionFromMime()),
+                BinaryData.FromBytes(Convert.FromBase64String(blobResourceContents.Blob)),
+                cancellationToken);
+
+            return [FileExtensionContentTypeProvider!, metadata];
+        }
+
+        return [respone.Content, metadata];
     }
 }
 

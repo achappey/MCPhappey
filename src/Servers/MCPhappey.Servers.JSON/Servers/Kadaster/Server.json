@@ -1,9 +1,15 @@
 {
     "serverInfo": {
         "name": "Kadaster",
+        "title": "Het Kadaster",
         "version": "1.0.0",
         "websiteUrl": "https://www.Kadaster.nl",
-        "description": "kadaster.nl met kernbronnen: woningmarkt-kwartaalberichten, agrarisch, vastgoeddashboard, nieuws, RSS, sitemap, publicatieplanning en themapagina’s. Templates dekken artikelen (/-/slug), woningmarkt- en vastgoedinformatie-subpages, algemene zakelijk-subpages, site search en media."
+        "description": "kadaster.nl met kernbronnen: woningmarkt-kwartaalberichten, agrarisch, vastgoeddashboard, nieuws, RSS, sitemap, publicatieplanning en themapagina’s. Templates dekken artikelen (/-/slug), woningmarkt- en vastgoedinformatie-subpages, algemene zakelijk-subpages, site search en media.",
+        "icons": [
+            {
+                "src": "https://images.seeklogo.com/logo-png/44/2/kadaster-logo-png_seeklogo-448755.png"
+            }
+        ]
     },
     "plugins": [
         "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"

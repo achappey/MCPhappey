@@ -3,7 +3,12 @@
     "name": "Simplicate-Invoices",
     "title": "Simplicate Facturen",
     "version": "1.0.0",
-    "description": "Facturatie-integratie voor Simplicate voor verkoopfacturen, factuurregels, creditfacturen en betalingen."
+    "description": "Facturatie-integratie voor Simplicate voor verkoopfacturen, factuurregels, creditfacturen en betalingen.",
+    "icons": [
+      {
+        "src": "https://developer.simplicate.com/images/simplicate_icon.png"
+      }
+    ]
   },
   "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries.\nBeware of the difference between invoice_id and invoice_number. Total item count is returned in list responses. Use limit=1 with filters to count totals of large datasets. There is NO need to include unused filter properties in resources. Resource templates are only supplied with all options to show all working options compact.",
   "headers": {

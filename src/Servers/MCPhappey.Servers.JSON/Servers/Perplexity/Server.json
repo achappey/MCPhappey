@@ -3,7 +3,12 @@
     "name": "Perplexity",
     "version": "1.0.0",
     "websiteUrl": "https://www.perplexity.ai",
-    "description": "A Perplexity plugin that delivers ranked, continuously updated web search results with advanced filtering and customization. Supports multi-query search, token limits per page, and optional country-based filtering to provide fast, tailored information retrieval directly within your environment."
+    "description": "A Perplexity plugin that delivers ranked, continuously updated web search results with advanced filtering and customization. Supports multi-query search, token limits per page, and optional country-based filtering to provide fast, tailored information retrieval directly within your environment.",
+    "icons": [
+      {
+        "src": "https://brandlogos.net/wp-content/uploads/2025/05/perplexity_icon-logo_brandlogos.net_a9d3e-512x591.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Perplexity.PerplexityPlugin, MCPhappey.Tools"
@@ -11,7 +16,7 @@
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
   },
-   "tools": {
+  "tools": {
     "perplexity_search": {
       "_meta": {
         "openai/outputTemplate": "ui://widget/perplexity-search-results.html",

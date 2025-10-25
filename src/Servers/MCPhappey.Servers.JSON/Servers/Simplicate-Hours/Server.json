@@ -3,7 +3,12 @@
     "name": "Simplicate-Hours",
     "title": "Simplicate Uren",
     "version": "1.0.0",
-    "description": "Simplicate Uren module voor urenregistraties en rapportages."
+    "description": "Simplicate Uren module voor urenregistraties en rapportages.",
+    "icons": [
+      {
+        "src": "https://developer.simplicate.com/images/simplicate_icon.png"
+      }
+    ]
   },
   "instructions": "Use the select parameter as a comma separated string to only include fields in the response you're interested in. If it's a nested property in the response, you may end the property name with a . (period) to include all its children.",
   "headers": {

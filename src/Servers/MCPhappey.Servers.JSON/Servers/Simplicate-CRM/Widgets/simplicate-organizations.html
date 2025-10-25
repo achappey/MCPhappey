@@ -123,8 +123,8 @@
                     </button>
 
                     <button slot="actions" x-show="org.relation_manager?.name"
-                        @click.prevent="window.askFollowup('Toon meer bedrijven met relatiebeheerder ' + org.relation_manager.name)">
-                        Meer van <span x-text="org.relation_manager.name"></span>
+                        @click.prevent="window.askFollowup('Toon meer bedrijven met relatiebeheerder ' + org.relation_manager?.name)">
+                        Meer van <span x-text="org.relation_manager?.name"></span>
                     </button>
 
                 </chatapp-card>

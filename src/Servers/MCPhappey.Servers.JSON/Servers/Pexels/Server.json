@@ -3,7 +3,12 @@
     "name": "Pexels",
     "version": "1.0.0",
     "websiteUrl": "https://www.pexels.com",
-    "description": "Search and retrieve high-quality free photos and videos from Pexels. Curate inspiration boards, find trending content, and download assets for documents, presentations and apps with clear licensing."
+    "description": "Search and retrieve high-quality free photos and videos from Pexels. Curate inspiration boards, find trending content, and download assets for documents, presentations and apps with clear licensing.",
+    "icons": [
+      {
+        "src": "https://img.utdstc.com/icon/101/937/101937caaf5d051d0a72eae4d98f2abb9ef51e6f4fcfb43a74006d54590c79cd:200"
+      }
+    ]
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

@@ -26,7 +26,7 @@ public class WidgetScraper() : IContentScraper
             throw new FileNotFoundException($"Widget file not found: {filename}");
 
         var html = await File.ReadAllTextAsync(htmlFile, cancellationToken);
-        
+
         return [ new FileItem() {
            Uri = url,
            Contents = BinaryData.FromString(html),

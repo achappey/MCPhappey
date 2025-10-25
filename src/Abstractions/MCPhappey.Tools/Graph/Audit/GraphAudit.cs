@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
@@ -20,6 +21,7 @@ public static class GraphAudit
       CancellationToken cancellationToken = default) =>
       await requestContext.WithExceptionCheck(async () =>
       await requestContext.WithOboGraphClient(async client =>
+      await requestContext.WithStructuredContent(async () =>
     {
         var mcpServer = requestContext.Server;
 
@@ -34,7 +36,7 @@ public static class GraphAudit
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         // Defaults if not provided
         var now = DateTimeOffset.UtcNow;
@@ -57,9 +59,8 @@ public static class GraphAudit
             AdministrativeUnitIdFilters = typed?.AdministrativeUnitIdFilters?.ToList()
         };
 
-        var newUser = await client.Security.AuditLog.Queries.PostAsync(user, cancellationToken: cancellationToken);
-
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/security/auditLog/queries/{newUser?.Id}").ToCallToolResult();
-    }));
+        return await client.Security.AuditLog.Queries.PostAsync(user, cancellationToken: cancellationToken)
+            .ConfigureAwait(false);
+    })));
 
 }

@@ -3,6 +3,7 @@ using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.Extensions;
@@ -16,6 +17,72 @@ namespace MCPhappey.Tools.Together.Rerank;
 
 public static class TogetherRerank
 {
+    [Description("Rerank MCP server registry entries using a Together AI rerank model.")]
+    [McpServerTool(Title = "Rerank MCP Server Registry", Name = "together_rerank_server_registry", ReadOnly = true)]
+    public static async Task<CallToolResult?> TogetherRerank_ServerRegistry(
+        IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("Rerank model")] string rerankModel,
+        [Description("Input query or prompt to rank the servers on")] string query,
+        [Description("Public MCP registry JSON URL (must contain a 'servers' array)")] string registryUrl,
+        [Description("The number of top results to return.")] int topN,
+        CancellationToken cancellationToken = default)
+        => await requestContext.WithExceptionCheck(async () =>
+           await requestContext.WithStructuredContent(async () =>
+           {
+               var settings = serviceProvider.GetRequiredService<TogetherSettings>();
+               var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+               var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+
+               // --- Download registry ---
+               var files = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, registryUrl, cancellationToken);
+               var registryJson = files.FirstOrDefault()?.Contents.ToString() ?? throw new Exception("Registry missing");
+
+               using var doc = JsonDocument.Parse(registryJson);
+               var root = doc.RootElement;
+
+               if (root.ValueKind != JsonValueKind.Object || !root.TryGetProperty("servers", out var serversArray))
+                   throw new Exception("Invalid registry format: expected { \"servers\": [...] }");
+
+               var serverObjects = serversArray
+                   .EnumerateArray()
+                   .Select(s => s.GetProperty("server").GetRawText())
+                   .Select(raw => JsonNode.Parse(raw)!)
+                   .ToArray();
+
+               if (serverObjects.Length == 0)
+                   throw new Exception("No servers found in registry.");
+
+               // --- Prepare rerank request body ---
+               var rerankRequest = new
+               {
+                   query,
+                   model = rerankModel,
+                   return_documents = true,
+                   documents = serverObjects,
+                   top_n = topN
+               };
+
+               var jsonBody = JsonSerializer.Serialize(rerankRequest);
+
+               using var rerankRequestMsg = new HttpRequestMessage(HttpMethod.Post, "https://api.together.xyz/v1/rerank")
+               {
+                   Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json)
+               };
+
+               rerankRequestMsg.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
+               rerankRequestMsg.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+
+               using var client = clientFactory.CreateClient();
+
+               using var resp = await client.SendAsync(rerankRequestMsg, cancellationToken);
+               var jsonResponse = await resp.Content.ReadAsStringAsync(cancellationToken);
+               if (!resp.IsSuccessStatusCode)
+                   throw new Exception($"{resp.StatusCode}: {jsonResponse}");
+
+               return JsonNode.Parse(jsonResponse);
+           }));
+
     [Description("List all Together AI rerank models.")]
     [McpServerTool(Title = "List Together AI rerank models", Name = "together_rerank_list_models", ReadOnly = true)]
     public static async Task<CallToolResult?> TogetherRerank_ListModels(
@@ -63,7 +130,7 @@ public static class TogetherRerank
     public static async Task<CallToolResult?> TogetherRerank_SharePointFolder(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Rerank model, for example Salesforce/Llama-Rank-V1")] string rerankModel,
+        [Description("Rerank model")] string rerankModel,
         [Description("Input query to rank on")] string query,
         [Description("SharePoint or OneDrive folder with files that should be ranked")] string sharepointFolderUrl,
         [Description("The number of top results to return.")] int topN,
@@ -95,7 +162,7 @@ public static class TogetherRerank
     public static async Task<CallToolResult?> TogetherRerank_Files(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Rerank model, for example Salesforce/Llama-Rank-V1")] string rerankModel,
+        [Description("Rerank model")] string rerankModel,
         [Description("Input query to rank on")] string query,
         [Description("List of file URLs to rerank")] List<string> fileUrls,
         [Description("The number of top results to return.")] int topN,
@@ -120,22 +187,58 @@ public static class TogetherRerank
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
         var documents = new List<object>();
+        var semaphore = new SemaphoreSlim(3); // limit to 3 concurrent downloads
 
-        foreach (var url in fileUrls.Where(a => !string.IsNullOrWhiteSpace(a)))
-        {
-            var fileContents = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
-
-            documents.AddRange(fileContents
-                .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json))
-                .Select(z => new
+        var tasks = fileUrls
+            .Where(a => !string.IsNullOrWhiteSpace(a))
+            .Select(async url =>
+            {
+                await semaphore.WaitAsync(cancellationToken);
+                try
                 {
-                    uri = z.Uri,
-                    mimeType = z.MimeType,
-                    filename = z.Filename,
-                    contents = z.Contents.ToString(),
-                }));
-        }
+                    var fileContents = await downloadService.ScrapeContentAsync(
+                        serviceProvider,
+                        requestContext.Server,
+                        url,
+                        cancellationToken
+                    );
 
+                    foreach (var z in fileContents
+                        .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)))
+                    {
+                        documents.Add(new
+                        {
+                            uri = z.Uri,
+                            mimeType = z.MimeType,
+                            filename = z.Filename,
+                            contents = z.Contents.ToString(),
+                        });
+                    }
+                }
+                finally
+                {
+                    semaphore.Release();
+                }
+            })
+            .ToList();
+
+        await Task.WhenAll(tasks);
+        /*
+            foreach (var url in fileUrls.Where(a => !string.IsNullOrWhiteSpace(a)))
+            {
+                var fileContents = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
+
+                documents.AddRange(fileContents
+                    .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json))
+                    .Select(z => new
+                    {
+                        uri = z.Uri,
+                        mimeType = z.MimeType,
+                        filename = z.Filename,
+                        contents = z.Contents.ToString(),
+                    }));
+            }
+    */
         if (documents.Count == 0)
             throw new Exception("No content found in provided files.");
 

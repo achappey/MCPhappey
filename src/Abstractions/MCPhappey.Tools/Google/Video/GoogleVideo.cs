@@ -6,6 +6,7 @@ using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using Mscc.GenerativeAI;
 
 namespace MCPhappey.Tools.Google.Video;
 
@@ -32,7 +33,7 @@ public static class GoogleVideo
             var googleClient = googleAI.GenerativeModel("gemini-2.5-flash");
 
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
-                        new GoogleVideoPromptYoutTube
+                        new GoogleVideoPromptYouTube
                         {
                             Prompt = prompt,
                             YouTubeUrl = url
@@ -47,10 +48,10 @@ public static class GoogleVideo
             {
                 Contents =
                 [
-                    new Mscc.GenerativeAI.Content(typed.Prompt)
+                    new Content(typed.Prompt)
                         {
                             Parts = [
-                                new Mscc.GenerativeAI.FileData() {
+                                new FileData() {
                                     FileUri = typed.YouTubeUrl
                                 }
                             ]
@@ -59,7 +60,6 @@ public static class GoogleVideo
             }, cancellationToken: cancellationToken);
 
             return graphItem?.Text?.ToTextCallToolResponse();
-
         });
 
     /*[Description("Create a video with Google Veo video generator")]
@@ -136,7 +136,7 @@ public static class GoogleVideo
     }
 */
     [Description("Please fill in the YouTube prompt details.")]
-    public class GoogleVideoPromptYoutTube
+    public class GoogleVideoPromptYouTube
     {
         [JsonPropertyName("prompt")]
         [Required]

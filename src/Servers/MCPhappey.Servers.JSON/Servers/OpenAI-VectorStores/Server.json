@@ -1,9 +1,19 @@
 {
   "serverInfo": {
     "name": "OpenAI-VectorStores",
-    "title": "OpenAI-VectorStores",
+    "title": "OpenAI Vector Stores",
     "version": "1.0.0",
-    "description": "Manage OpenAI vector stores for retrieval-augmented generation. Create stores, upload and chunk files, build embeddings, and query relevant passages. Attach stores to assistants and runs to ground responses in your documents with reproducible, scalable indexing."
+    "description": "Manage OpenAI vector stores for retrieval-augmented generation. Create stores, upload and chunk files, build embeddings, and query relevant passages. Attach stores to assistants and runs to ground responses in your documents with reproducible, scalable indexing.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/light/openai.png",
+        "theme": "light"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.VectorStores.OpenAIVectorStores, MCPhappey.Tools"

@@ -1,8 +1,19 @@
 {
   "serverInfo": {
     "name": "OpenAI-Microsoft",
+    "title": "OpenAI Microsoft",
     "version": "1.0.0",
-    "description": "Use OpenAI with Microsoft 365 data. Read Outlook mail and calendars, search SharePoint, and analyze Teams messages via Graph; then summarize, classify and draft content while respecting user permissions and tenant boundaries."
+    "description": "Use OpenAI with Microsoft 365 data. Read Outlook mail and calendars, search SharePoint, and analyze Teams messages via Graph; then summarize, classify and draft content while respecting user permissions and tenant boundaries.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/light/openai.png",
+        "theme": "light"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.OutlookMail.OpenAIOutlookMail, MCPhappey.Tools",

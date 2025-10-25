@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -15,7 +16,6 @@ public static class GraphOutlookCalendar
     [Description("Create a new calendar event in the user's Outlook calendar.")]
     [McpServerTool(Title = "Create Outlook calendar event", Destructive = true)]
     public static async Task<CallToolResult?> GraphOutlookCalendar_CreateCalendarEvent(
-        IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Title or subject of the event.")] string? subject = null,
         [Description("Description or body of the event.")] string? body = null,
@@ -25,9 +25,12 @@ public static class GraphOutlookCalendar
         [Description("Time zone for the event.")] string? timeZone = null,
         [Description("Location or meeting room.")] string? location = null,
         [Description("E-mail addresses of attendees (comma separated).")] string? attendees = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
     {
-        var (typed, notAccepted, result) = await requestContext.Server.TryElicit<GraphCreateCalendarEvent>(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphCreateCalendarEvent
             {
                 Subject = subject ?? string.Empty,
@@ -41,10 +44,8 @@ public static class GraphOutlookCalendar
             },
             cancellationToken
         );
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
-
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
+        if (typed == null) throw new Exception("Something went wrong");
 
         var newEvent = new Event
         {
@@ -77,10 +78,8 @@ public static class GraphOutlookCalendar
                     })]
         };
 
-        var graphItem = await client.Me.Events.PostAsync(newEvent, cancellationToken: cancellationToken);
-
-        return graphItem.ToJsonContentBlock("https://graph.microsoft.com/beta/me/events").ToCallToolResult();
-    }
+        return await client.Me.Events.PostAsync(newEvent, cancellationToken: cancellationToken);
+    })));
 
     /// <summary>
     /// Data for creating a calendar event.

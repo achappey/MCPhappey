@@ -22,10 +22,7 @@ public class ServerConfig
 
     [JsonPropertyName("sourceType")]
     public ServerSourceType SourceType { get; init; }
-
-
 }
-
 
 public class MCPServerRegistryItem
 {
@@ -43,7 +40,6 @@ public class MCPServerRegistry
     public IEnumerable<MCPServerRegistryItem> Servers { get; set; } = [];
 }
 
-
 public class MCPServerList
 {
     [JsonPropertyName("servers")]
@@ -55,7 +51,6 @@ public class MCPServerSettingsList
     [JsonPropertyName("mcpServers")]
     public Dictionary<string, MCPServerSettings> McpServers { get; set; } = [];
 }
-
 
 public class MCPServer
 {
@@ -180,6 +175,10 @@ public class ServerInfo
 
     [JsonPropertyName("version")]
     public string Version { get; set; } = null!;
+
+    [JsonPropertyName("icons")]
+    public IEnumerable<Icon>? Icons { get; set; }
+
 }
 
 public enum ServerSourceType { Static, Dynamic }

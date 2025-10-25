@@ -329,7 +329,7 @@ public static class OpenAIDocumentEngine
 
         var reportArgs = new Dictionary<string, JsonElement>
         {
-            {"templateHtmlJs", file.Contents.ToString().ToJsonElement()},
+            {"templateHtmlJs", file.Contents.ToString()!.ToJsonElement()},
         };
 
         var reportSampling = await samplingService.GetPromptSample(

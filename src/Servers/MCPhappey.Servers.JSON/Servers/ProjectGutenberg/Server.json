@@ -4,6 +4,11 @@
     "title": "Project Gutenberg",
     "version": "1.0.0",
     "websiteUrl": "https://www.gutenberg.org",
-    "description": "Search and retrieve free ebooks from Project Gutenberg. Find titles by author, language, topic and format, and download EPUB, HTML or plain text for reading, research and analysis."
+    "description": "Search and retrieve free ebooks from Project Gutenberg. Find titles by author, language, topic and format, and download EPUB, HTML or plain text for reading, research and analysis.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/5/59/Project_Gutenberg_logo.svg/2048px-Project_Gutenberg_logo.svg.png"
+      }
+    ]
   }
 }

@@ -135,7 +135,12 @@ public static class SimplicateExtensions
         if (string.IsNullOrWhiteSpace(stringContent))
             return null;
 
-        return JsonSerializer.Deserialize<SimplicateData<T>>(stringContent);
+        var opts = new JsonSerializerOptions
+        {
+            PropertyNameCaseInsensitive = true
+        };
+
+        return JsonSerializer.Deserialize<SimplicateData<T>>(stringContent, opts);
     }
 
     public static async Task<SimplicateItemData<T>?> GetSimplicateItemAsync<T>(
@@ -277,6 +282,61 @@ public static class SimplicateExtensions
         return content?.ToCallToolResult();
     }
 
+    public static async Task<CallToolResult?> PutSimplicateResourceMergedAsync<TDto>(
+        this IServiceProvider serviceProvider,
+        RequestContext<CallToolRequestParams> requestContext,
+        string relativePath,       // e.g. "/crm/organization/{id}"
+        TDto incomingDto,          // partial update data
+        Func<TDto, object> mapper, // maps final dto → PUT body
+        CancellationToken cancellationToken = default)
+        where TDto : class, new()
+    {
+        var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
+        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+        var url = simplicateOptions.GetApiUrl(relativePath);
+
+        // 1️⃣ Fetch existing item first
+        var existing = await downloadService.GetSimplicateItemAsync<TDto>(
+            serviceProvider, requestContext.Server, url, cancellationToken);
+
+        var baseDto = existing?.Data ?? new TDto();
+
+        // 2️⃣ Pre-fill incomingDto with defaults from existing
+        foreach (var prop in typeof(TDto).GetProperties())
+        {
+            var incomingVal = prop.GetValue(incomingDto);
+            if (incomingVal == null)
+            {
+                var existingVal = prop.GetValue(baseDto);
+                if (existingVal != null)
+                    prop.SetValue(incomingDto, existingVal);
+            }
+        }
+
+        // 3️⃣ Let user/AI elicit interactively (with defaults prefilled)
+        var (dto, notAccepted, _) = await requestContext.Server.TryElicit(incomingDto, cancellationToken);
+        if (notAccepted != null) return notAccepted;
+
+        // 4️⃣ Merge: prefer elicited non-nulls over existing
+        foreach (var prop in typeof(TDto).GetProperties())
+        {
+            var newVal = prop.GetValue(dto);
+            if (newVal != null)
+                prop.SetValue(baseDto, newVal);
+        }
+
+        // 5️⃣ Map and PUT
+        var mappedObject = mapper(baseDto);
+        var scraper = serviceProvider.GetServices<IContentScraper>()
+                                     .OfType<SimplicateScraper>()
+                                     .First();
+
+        var content = await scraper.PutSimplicateItemAsync(
+            serviceProvider, url, mappedObject,
+            requestContext: requestContext, cancellationToken: cancellationToken);
+
+        return content?.ToCallToolResult();
+    }
 
     public static async Task<ContentBlock?> PostSimplicateItemAsync<T>(
           this IServiceProvider serviceProvider,
@@ -317,6 +377,41 @@ public static class SimplicateExtensions
 
         // Use your DownloadService to POST (assumes similar signature to ScrapeContentAsync)
         var response = await downloadService.PostContentAsync<T>(
+            serviceProvider, baseUrl, json, cancellationToken);
+
+        if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
+        {
+            await requestContext.Server.SendMessageNotificationAsync(
+                $"<details><summary>RESPONSE</summary>\n\n```\n{JsonSerializer.Serialize(response,
+                    ResourceExtensions.JsonSerializerOptions)}\n```\n</details>",
+                LoggingLevel.Debug
+            );
+        }
+
+        return response.ToJsonContentBlock($"{baseUrl}/{response?.Data.Id}");
+    }
+
+
+    public static async Task<ContentBlock?> PutSimplicateItemAsync<T>(
+        this SimplicateScraper downloadService,
+        IServiceProvider serviceProvider,
+        string baseUrl, // e.g. "https://{subdomain}.simplicate.nl/api/v2/project/project"
+        T item,
+        RequestContext<CallToolRequestParams> requestContext,
+        CancellationToken cancellationToken = default)
+    {
+        var json = JsonSerializer.Serialize(item, JsonSerializerOptions.Web);
+
+        if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))
+        {
+            await requestContext.Server.SendMessageNotificationAsync(
+                $"<details><summary>PUT <code>{baseUrl}</code></summary>\n\n```\n{json}\n```\n</details>",
+                LoggingLevel.Debug
+            );
+        }
+
+        // Use your DownloadService to POST (assumes similar signature to ScrapeContentAsync)
+        var response = await downloadService.PutContentAsync<T>(
             serviceProvider, baseUrl, json, cancellationToken);
 
         if (LoggingLevel.Debug.ShouldLog(requestContext.Server.LoggingLevel))

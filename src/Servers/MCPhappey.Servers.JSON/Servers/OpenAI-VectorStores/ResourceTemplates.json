@@ -7,7 +7,9 @@
       "description": "List all files in a OpenAI vector store",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     }
   ]

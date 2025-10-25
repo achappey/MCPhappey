@@ -72,6 +72,16 @@ public static class AspNetCoreExtensions
                         });
                     }
                 }
+
+                if (server.Server.OBO?.ContainsKey("service.flow.microsoft.com") == true)
+                {
+                    services.AddSingleton<IContentScraper>(sp =>
+                       {
+                           var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+
+                           return new PowerAutomateScraper(httpClientFactory, server, oAuthSettings);
+                       });
+                }
             }
 
         }
@@ -110,6 +120,7 @@ public static class AspNetCoreExtensions
     {
         services.AddSingleton<IContentScraper, DynamicHeaderScraper>();
         services.AddSingleton<IContentScraper, McpStatisticsScraper>();
+        services.AddSingleton<IContentScraper, NominatimScraper>();
 
         return services;
     }

@@ -1,8 +1,14 @@
 {
   "serverInfo": {
     "name": "ApplicationInsights",
+    "title": "Application Insights",
     "version": "1.0.0",
-    "description": "Query Azure Application Insights metrics and logs using an API key. Retrieve traces, requests and performance data for diagnostics, monitoring and reporting."
+    "description": "Query Azure Application Insights metrics and logs using an API key. Retrieve traces, requests and performance data for diagnostics, monitoring and reporting.",
+    "icons": [
+      {
+        "src": "https://symbols.getvecta.com/stencil_28/8_application-insights.e5d256458d.png"
+      }
+    ]
   },
   "headers": {
     "x-api-key": "Application Insights API key"

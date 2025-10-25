@@ -145,23 +145,64 @@ public static class SimplicateProjects
         };
     });
 
-
-
     [Description("Create a new project in Simplicate")]
     [McpServerTool(OpenWorld = false, Title = "Create new project in Simplicate")]
     public static async Task<CallToolResult?> SimplicateProjects_CreateProject(
         [Description("Name of the new project")] string name,
+        [Description("Id of the projectmanager")] string projectManagerId,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
+        [Description("Note")] string? note = null,
+        [Description("Invoice reference")] string? invoiceReference = null,
         CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
         requestContext,
         "/projects/project",
         new SimplicateNewProject
         {
-            Name = name
+            Name = name,
+            ProjectManagerId = projectManagerId,
+            Note = note,
+            InvoiceReference = invoiceReference
+        },
+        dto => new
+        {
+            name = dto.Name,
+            project_manager_id = dto.ProjectManagerId,
+            invoice_reference = dto.InvoiceReference,
+            note = dto.Note,
         },
         cancellationToken
     );
+
+    [Description("Update a project in Simplicate")]
+    [McpServerTool(OpenWorld = false, Title = "Update project in Simplicate", Destructive = true)]
+    public static async Task<CallToolResult?> SimplicateProjects_UpdateProject(
+       [Description("Id of the project to update")] string projectId,
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       [Description("Name of the new project")] string name,
+       [Description("Id of the projectmanager")] string projectManagerId,
+       [Description("Note")] string? note = null,
+       [Description("Invoice reference")] string? invoiceReference = null,
+       CancellationToken cancellationToken = default) => await serviceProvider.PutSimplicateResourceMergedAsync(
+       requestContext,
+       "/projects/project/" + projectId,
+       new SimplicateNewProject
+       {
+           Name = name,
+           ProjectManagerId = projectManagerId,
+           Note = note,
+           InvoiceReference = invoiceReference
+       },
+       dto => new
+       {
+           name = dto.Name,
+           project_manager_id = dto.ProjectManagerId,
+           invoice_reference = dto.InvoiceReference,
+           note = dto.Note,
+       },
+       cancellationToken
+   );
 
     [Description("Create a new project service in Simplicate")]
     [McpServerTool(OpenWorld = false, Title = "Create new project service in Simplicate")]
@@ -321,6 +362,19 @@ public static class SimplicateProjects
         [Required]
         [Description("The name of the project.")]
         public string? Name { get; set; }
+
+        [JsonPropertyName("project_manager_id")]
+        [Required]
+        [Description("The id of the project manager.")]
+        public string? ProjectManagerId { get; set; }
+
+        [JsonPropertyName("note")]
+        [Description("Note.")]
+        public string? Note { get; set; }
+
+        [JsonPropertyName("invoice_reference")]
+        [Description("Invoice reference.")]
+        public string? InvoiceReference { get; set; }
     }
 
 

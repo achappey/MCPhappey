@@ -107,6 +107,37 @@ public class SimplicateScraper(
         return JsonSerializer.Deserialize<SimplicateNewItemData>(respContent);
     }
 
+    public async Task<SimplicateNewItemData?> PutContentAsync<T>(
+        IServiceProvider serviceProvider,
+        string url,
+        string jsonPayload,
+        CancellationToken cancellationToken = default)
+    {
+        var tokenProvider = serviceProvider.GetService<HeaderProvider>();
+        var (key, secret) = await TryGetKeySecretAsync(tokenProvider, cancellationToken);
+        if (key is null || secret is null)
+            return null;
+
+        var client = _httpClientFactory.CreateClient();
+        client.DefaultRequestHeaders.Add(AuthenticationKey, key);
+        client.DefaultRequestHeaders.Add(AuthenticationSecret, secret);
+
+        using var content = new StringContent(jsonPayload, System.Text.Encoding.UTF8, MediaTypeNames.Application.Json);
+        using var response = await client.PutAsync(url, content, cancellationToken);
+
+        if (!response.IsSuccessStatusCode)
+        {
+            // Optional: log or throw error
+            var error = await response.Content.ReadAsStringAsync(cancellationToken);
+            throw new InvalidOperationException($"PUT failed: {response.StatusCode} - {error}");
+        }
+
+        // Usually returns JSON, not a file
+        var respContent = await response.Content.ReadAsStringAsync(cancellationToken);
+
+        return JsonSerializer.Deserialize<SimplicateNewItemData>(respContent);
+    }
+
     private async Task<(string Key, string Secret)?> GetCredentialsAsync(
         string oid,
         CancellationToken cancellationToken)

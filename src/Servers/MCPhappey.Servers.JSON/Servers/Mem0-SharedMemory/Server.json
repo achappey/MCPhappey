@@ -1,0 +1,21 @@
+{
+  "serverInfo": {
+    "name": "Mem0-SharedMemory",
+    "title": "Mem0 Shared Memory",
+    "version": "1.0.0",
+    "websiteUrl": "https://mem0.ai",
+    "description": "This MCP manages knowledge meant to be shared with others using the same app. It keeps common facts, decisions, and reminders organized so the whole team benefits from what has already been learned. Everyone can contribute and keep information up to date together.",
+    "icons": [
+      {
+        "src": "https://avatars.githubusercontent.com/u/137054526?v=4"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Mem0.Mem0SharedService, MCPhappey.Tools",
+    "MCPhappey.Tools.Mem0.Mem0FeedbackService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

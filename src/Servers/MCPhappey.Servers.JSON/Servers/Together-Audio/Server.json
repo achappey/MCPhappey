@@ -3,7 +3,12 @@
     "name": "Together-Audio",
     "title": "Together Audio",
     "version": "1.0.0",
-    "description": "Together Audio provides high-quality speech and transcription capabilities powered by Together AI. It supports realistic text-to-speech generation with multiple voices, and accurate speech-to-text transcription using Whisper v3. Designed for seamless integration with Fakton’s MCP servers, enabling audio generation, playback, and analysis directly within AI-native workflows."
+    "description": "Together Audio provides high-quality speech and transcription capabilities powered by Together AI. It supports realistic text-to-speech generation with multiple voices, and accurate speech-to-text transcription using Whisper v3. Designed for seamless integration with Fakton’s MCP servers, enabling audio generation, playback, and analysis directly within AI-native workflows.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Together.Audio.TogetherAudio, MCPhappey.Tools"

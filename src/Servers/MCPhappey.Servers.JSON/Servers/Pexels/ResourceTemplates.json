@@ -7,7 +7,9 @@
       "description": "Fetches a collection of photos from Pexels based on the specified search query, pagination, orientation, and size parameters.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -17,7 +19,9 @@
       "description": "Retrieves a collection of videos from Pexels using the given search query, pagination, orientation, and size parameters.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     }
   ]

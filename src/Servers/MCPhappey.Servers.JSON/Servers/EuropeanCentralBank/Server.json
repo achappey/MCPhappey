@@ -1,8 +1,14 @@
 {
   "serverInfo": {
     "name": "EuropeanCentralBank",
+    "title": "European Central Bank",
     "version": "1.0.0",
     "websiteUrl": "https://www.ecb.europa.eu",
-    "description": "Access official ECB data and resources for euro area monetary statistics, interest rates, exchange rates and publications. Use this server to retrieve datasets and metadata for analysis, dashboards and economic research workflows."
+    "description": "Access official ECB data and resources for euro area monetary statistics, interest rates, exchange rates and publications. Use this server to retrieve datasets and metadata for analysis, dashboards and economic research workflows.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cb/Logo_European_Central_Bank.svg/1200px-Logo_European_Central_Bank.svg.png"
+      }
+    ]
   }
 }

@@ -1,8 +1,19 @@
 {
   "serverInfo": {
     "name": "ModelContext-Utils",
+    "title": "ModelContext Utils",
     "version": "1.0.0",
-    "description": "Utilities to test MCP servers and resources. Inspect tools, resolve parameters, validate resource templates and run end-to-end checks. Prefer reading existing context before asking, enabling efficient and reliable server testing workflows."
+    "description": "Utilities to test MCP servers and resources. Inspect tools, resolve parameters, validate resource templates and run end-to-end checks. Prefer reading existing context before asking, enabling efficient and reliable server testing workflows.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/mcp.png",
+        "theme": "light"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.ModelContext.ModelContextUtils, MCPhappey.Tools"

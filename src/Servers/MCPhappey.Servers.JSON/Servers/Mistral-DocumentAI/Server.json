@@ -1,9 +1,15 @@
 {
   "serverInfo": {
     "name": "Mistral-DocumentAI",
+    "title": "Mistral DocumentAI",
     "version": "1.0.0",
     "websiteUrl": "https://docs.mistral.ai/capabilities/document_ai/document_ai_overview",
-    "description": "Mistral Document AI helps you quickly turn documents into useful data. It reads, understands, and organizes information with high accuracy, supports many languages, and adapts to all document types, making document handling faster, smarter, and easier."
+    "description": "Mistral Document AI helps you quickly turn documents into useful data. It reads, understands, and organizes information with high accuracy, supports many languages, and adapts to all document types, making document handling faster, smarter, and easier.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Mistral_AI_logo_%282025%E2%80%93%29.svg/1200px-Mistral_AI_logo_%282025%E2%80%93%29.svg.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Mistral.DocumentAI.MistralDocumentAIPlugin, MCPhappey.Tools"

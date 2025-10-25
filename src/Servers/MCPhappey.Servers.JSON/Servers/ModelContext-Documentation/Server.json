@@ -1,8 +1,19 @@
 {
   "serverInfo": {
     "name": "ModelContext-Documentation",
+    "title": "ModelContext Documentation",
     "version": "1.0.0",
     "websiteUrl": "https://modelcontextprotocol.io",
-    "description": "Documentation server for the MCP stack. Browse guides, references and examples to understand servers, tools and resources. Retrieve templates and samples to accelerate onboarding, implementation, and correct usage across workflows."
+    "description": "Documentation server for the MCP stack. Browse guides, references and examples to understand servers, tools and resources. Retrieve templates and samples to accelerate onboarding, implementation, and correct usage across workflows.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/mcp.png",
+        "theme": "light"
+      }
+    ]
   }
 }

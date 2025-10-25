@@ -1,0 +1,20 @@
+{
+  "serverInfo": {
+    "name": "Azure-Vision",
+    "title": "Azure Vision",
+    "version": "1.0.0",
+    "websiteUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-vision",
+    "description": "Azure Vision analyzes images to identify objects, scenes, and text (OCR). It detects tags, descriptions, faces, and brands, and extracts printed text through OCR. The service helps interpret visual content from photos or scanned documents in a structured JSON format, enabling search, classification, and content understanding at scale.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Microsoft_Azure.svg/2048px-Microsoft_Azure.svg.png"
+      }
+    ]
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  },
+  "plugins": [
+    "MCPhappey.Tools.Azure.Vision.AzureVision, MCPhappey.Tools"
+  ]
+}

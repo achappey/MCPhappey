@@ -4,7 +4,12 @@
     "title": "Stedin eKlok",
     "version": "1.0.0",
     "websiteUrl": "https://eklok.nl",
-    "description": "Toegang tot de openbare eKlok-feed als tijdreeks met 'range'- en kleurindicatoren en NL-geformatteerde timestamps. Nuttig voor monitoring, visualisatie en planning op basis van de aangeleverde indices."
+    "description": "Toegang tot de openbare eKlok-feed als tijdreeks met 'range'- en kleurindicatoren en NL-geformatteerde timestamps. Nuttig voor monitoring, visualisatie en planning op basis van de aangeleverde indices.",
+    "icons": [
+      {
+        "src": "https://eklok.nl/images/klokkie.png"
+      }
+    ]
   },
   "instructions": "Respecteer de gebruiksvoorwaarden van eKlok. Bij het presenteren of visualiseren van resultaten op basis van deze feed, vermeld de bron als: Data: eKlok (eklok.nl) en link waar passend."
 }

@@ -3,7 +3,12 @@
     "name": "Together-CodeInterpreter",
     "title": "Together Code Interpreter",
     "version": "1.0.0",
-    "description": "Executes code snippets through Together AI’s Code Interpreter API. Supports Python execution, persistent sessions, and file uploads. Returns structured output including stdout, stderr, and session details. Useful for running dynamic scripts, testing logic, or performing lightweight computations directly within the MCP environment."
+    "description": "Executes code snippets through Together AI’s Code Interpreter API. Supports Python execution, persistent sessions, and file uploads. Returns structured output including stdout, stderr, and session details. Useful for running dynamic scripts, testing logic, or performing lightweight computations directly within the MCP environment.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Together.CodeInterpreter.TogetherCodeInterpreter, MCPhappey.Tools"

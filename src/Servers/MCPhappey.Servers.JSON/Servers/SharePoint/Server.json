@@ -2,7 +2,12 @@
   "serverInfo": {
     "name": "SharePoint",
     "version": "1.0.0",
-    "description": "Search and read SharePoint links, news pages, Teams messages and Graph API resources as unified resources. Discover and retrieve sites, lists and files; use write operations only when creating, updating or deleting items in workflows."
+    "description": "Search and read SharePoint links, news pages, Teams messages and Graph API resources as unified resources. Discover and retrieve sites, lists and files; use write operations only when creating, updating or deleting items in workflows.",
+    "icons": [
+      {
+        "src": "https://cdn.worldvectorlogo.com/logos/microsoft-office-sharepoint-2018-present--1.svg"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.SharePoint.SharePointSearch, MCPhappey.Tools"

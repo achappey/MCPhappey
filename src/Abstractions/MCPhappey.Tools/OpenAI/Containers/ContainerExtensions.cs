@@ -131,7 +131,7 @@ public static class ContainerExtensions
     /// <summary>
     /// Reverse lookup (MIME -> extension) using built-in provider. Fallback .bin if unknown.
     /// </summary>
-    private static string ResolveExtensionFromMime(string mimeType)
+    public static string ResolveExtensionFromMime(this string mimeType)
     {
         var provider = new FileExtensionContentTypeProvider(); // extension -> mime
         foreach (var kvp in provider.Mappings)

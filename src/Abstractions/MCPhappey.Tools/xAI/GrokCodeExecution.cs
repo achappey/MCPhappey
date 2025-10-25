@@ -58,7 +58,7 @@ public static class GrokCodeExecution
             Temperature = 0,
             MaxTokens = 8192,
             ModelPreferences = "grok-4-fast-reasoning".ToModelPreferences(),
-            Messages = [.. attachedLinks.Select(t => t.Contents.ToString().ToUserSamplingMessage()), prompt.ToUserSamplingMessage()]
+            Messages = [.. attachedLinks.Select(t => t.Contents.ToString()?.ToUserSamplingMessage()!), prompt.ToUserSamplingMessage()]
         }, cancellationToken);
 
         return respone.Content;

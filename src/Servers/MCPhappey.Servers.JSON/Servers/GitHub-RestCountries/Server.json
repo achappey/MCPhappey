@@ -1,9 +1,15 @@
 {
   "serverInfo": {
-    "name": "GitHub-RestCountries",
+    "name": "GitHub-RESTCountries",
+    "title": "GitHub RESTCountries.NET",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/apilayer/restcountries",
-    "description": "Query comprehensive country data: names, ISO codes, regions, capitals, population, currencies, languages and flags. Useful for lookups, validation and enrichment in apps, dashboards and workflows using the Rest Countries dataset."
+    "description": "Query comprehensive country data: names, ISO codes, regions, capitals, population, currencies, languages and flags. Useful for lookups, validation and enrichment in apps, dashboards and workflows using the Rest Countries dataset.",
+    "icons": [
+      {
+        "src": "https://api.nuget.org/v3-flatcontainer/restcountries.net/3.5.0/icon"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.GitHub.RestCountries.CountryService, MCPhappey.Tools"

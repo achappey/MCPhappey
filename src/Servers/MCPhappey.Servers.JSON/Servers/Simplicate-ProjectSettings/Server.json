@@ -3,7 +3,12 @@
     "name": "Simplicate-ProjectSettings",
     "title": "Simplicate Projectinstellingen",
     "version": "1.0.0",
-    "description": "Projectinstellingen- en referentiegegevensintegratie voor Simplicate (diensten, tarieven, eenheden en defaults) voor project- en urenconfiguratie."
+    "description": "Projectinstellingen- en referentiegegevensintegratie voor Simplicate (diensten, tarieven, eenheden en defaults) voor project- en urenconfiguratie.",
+    "icons": [
+      {
+        "src": "https://developer.simplicate.com/images/simplicate_icon.png"
+      }
+    ]
   },
   "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries.",
   "headers": {

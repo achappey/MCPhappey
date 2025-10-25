@@ -1,6 +1,8 @@
 using System.ComponentModel;
+using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -12,16 +14,15 @@ public static class GraphUserManagement
     [Description("Add a user to a group")]
     [McpServerTool(Title = "Add user to group", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_AddUserToGroup(
-        IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("The user id.")] string userId,
         [Description("The group id.")] string groupId,
-        CancellationToken cancellationToken = default
-    ) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
     {
-        var mcpServer = requestContext.Server;
-
-        var (typed, notAccepted, _) = await mcpServer.TryElicit(
+        var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
             new GraphAddUserToGroup()
             {
                 UserId = userId ?? string.Empty,
@@ -30,13 +31,8 @@ public static class GraphUserManagement
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
-        if (string.IsNullOrWhiteSpace(typed?.UserId))
-            throw new ArgumentException("User id is required.");
-        if (string.IsNullOrWhiteSpace(typed?.GroupId))
-            throw new ArgumentException("Group id is required.");
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var refUser = new ReferenceCreate
         {
             OdataId = $"https://graph.microsoft.com/beta/users/{typed.UserId}"
@@ -49,14 +45,12 @@ public static class GraphUserManagement
             Message = $"User {typed.UserId} added to group {typed.GroupId}.",
             typed.UserId,
             typed.GroupId
-        }.ToJsonContentBlock($"https://graph.microsoft.com/beta/groups/{typed.GroupId}/members")
-        .ToCallToolResult();
-    });
+        };
+    })));
 
     [Description("Create a new user")]
     [McpServerTool(Title = "Create new user", OpenWorld = false)]
     public static async Task<CallToolResult?> GraphUsers_CreateUser(
-      IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
       [Description("The users's given name.")] string? givenName = null,
       [Description("The users's display name.")] string? displayName = null,
@@ -70,11 +64,12 @@ public static class GraphUserManagement
       [Description("The users's compay name.")] string? companyName = null,
       [Description("Force password change.")] bool? forceChangePasswordNextSignIn = null,
       [Description("The users's password.")] string? password = null,
-      CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+      CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
     {
-        var mcpServer = requestContext.Server;
-
-        var (typed, notAccepted, result) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphNewUser
             {
                 GivenName = givenName ?? string.Empty,
@@ -93,9 +88,7 @@ public static class GraphUserManagement
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
-
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
         var user = new User()
         {
             DisplayName = typed?.DisplayName,
@@ -115,10 +108,8 @@ public static class GraphUserManagement
             UserPrincipalName = typed?.UserPrincipalName
         };
 
-        var newUser = await client.Users.PostAsync(user, cancellationToken: cancellationToken);
-
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{newUser?.Id}").ToCallToolResult();
-    });
+        return await client.Users.PostAsync(user, cancellationToken: cancellationToken);
+    })));
 
     [Description("Update a Microsoft 365 user")]
     [McpServerTool(Title = "Update a user",
@@ -135,13 +126,14 @@ public static class GraphUserManagement
         [Description("The users's mobile phone.")] string? mobilePhone = null,
         [Description("The users's business phone.")] string? businessPhone = null,
         [Description("Account enabled.")] bool? accountEnabled = null,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
     {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var newUser = await client.Users[userId].GetAsync(cancellationToken: cancellationToken);
 
-        var (typed, notAccepted, result) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphUpdateUser
             {
                 GivenName = givenName ?? newUser?.GivenName ?? string.Empty,
@@ -156,7 +148,7 @@ public static class GraphUserManagement
             },
             cancellationToken
         );
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         var user = new User()
         {
@@ -170,26 +162,24 @@ public static class GraphUserManagement
             AccountEnabled = typed?.AccountEnabled,
         };
 
-        var patchedUser = await client.Users[userId].PatchAsync(user, cancellationToken: cancellationToken);
-
-        return newUser.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{patchedUser?.Id}")
-             .ToCallToolResult();
-    });
+        return await client.Users[userId].PatchAsync(user, cancellationToken: cancellationToken);
+    })));
 
     [Description("Delete an user.")]
-    [McpServerTool(Title = "Delete user", OpenWorld = false, Destructive = true, ReadOnly = false)]
+    [McpServerTool(Title = "Delete user",
+        OpenWorld = false,
+        Destructive = true,
+        ReadOnly = false)]
     public static async Task<CallToolResult?> GraphUsers_DeleteUser(
     [Description("User id.")]
         string? userId,
-    IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,
-    CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+    CancellationToken cancellationToken = default) =>
+    await requestContext.WithExceptionCheck(async () =>
+    await requestContext.WithOboGraphClient(async client =>
     {
         if (string.IsNullOrWhiteSpace(userId))
             throw new ArgumentException("Provide either entraDeviceId or managedDeviceId.");
-
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
         // Fetch Entra device display name for human confirmation
         var device = await client.Users[userId!]
@@ -212,6 +202,6 @@ public static class GraphUserManagement
             },
             successText: $"User '{display}' ({device.Id}) deleted.",
             ct: cancellationToken);
-    });
+    }));
 
 }

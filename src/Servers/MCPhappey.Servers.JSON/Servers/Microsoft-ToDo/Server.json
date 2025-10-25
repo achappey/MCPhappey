@@ -1,10 +1,18 @@
 {
   "serverInfo": {
     "name": "Microsoft-ToDo",
+    "title": "Microsoft ToDo",
     "version": "1.0.0",
-    "description": "Manage tasks with Microsoft To Do via Microsoft Graph: create lists and tasks, set due dates, reminders and categories, read progress, and update status. Automate personal productivity and team task workflows with delegated permissions."
+    "description": "Manage tasks with Microsoft To Do via Microsoft Graph: create lists and tasks, set due dates, reminders and categories, read progress, and update status. Automate personal productivity and team task workflows with delegated permissions.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/6/67/Microsoft_To-Do_icon.png"
+      }
+    ]
   },
-  "plugins": ["MCPhappey.Tools.Graph.ToDo.GraphToDo, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Graph.ToDo.GraphToDo, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/Tasks.ReadWrite https://graph.microsoft.com/Tasks.ReadWrite.Shared"
   }

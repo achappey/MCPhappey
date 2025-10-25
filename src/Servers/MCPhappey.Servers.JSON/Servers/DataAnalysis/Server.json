@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "DataAnalysis",
+    "title": "Data Analysis",
     "version": "1.0.0",
     "description": "Analyze CSV and tabular data with a robust Dynamic‑LINQ pipeline: compute, filter, group/aggregate, select, sort and limit. Safely cast values, handle errors, and produce summaries and insights suitable for dashboards and reports."
   },

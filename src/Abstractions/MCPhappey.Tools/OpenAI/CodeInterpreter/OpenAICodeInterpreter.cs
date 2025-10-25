@@ -1,6 +1,8 @@
 using System.ComponentModel;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.OpenAI.Containers;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -9,15 +11,16 @@ namespace MCPhappey.Tools.OpenAI.CodeInterpreter;
 public static class OpenAICodeInterpreter
 {
     [Description("Run a prompt with OpenAI Code interpreter tool.")]
-    [McpServerTool(Title = "OpenAI Code interpreter", Name = "openai_codeinterpreter_run",
+    [McpServerTool(Title = "OpenAI Code Interpreter", Name = "openai_codeinterpreter_run",
         Destructive = false,
         ReadOnly = true)]
-    public static async Task<ContentBlock> OpenAICodeInterpreter_Run(
+    public static async Task<IEnumerable<ContentBlock>> OpenAICodeInterpreter_Run(
+            IServiceProvider serviceProvider,
           [Description("Prompt to execute (code is allowed).")]
             string prompt,
           RequestContext<CallToolRequestParams> requestContext,
           [Description("Target model (e.g. gpt-5 or gpt-5-mini).")]
-            string model = "gpt-5",
+            string model = "gpt-5-mini",
           CancellationToken cancellationToken = default)
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
@@ -36,7 +39,30 @@ public static class OpenAICodeInterpreter
             Messages = [prompt.ToUserSamplingMessage()]
         }, cancellationToken);
 
-        return respone.Content;
+
+        var metadata = new EmbeddedResourceBlock()
+        {
+            Resource = new TextResourceContents()
+            {
+                Text = JsonSerializer.Serialize(respone.Meta),
+                Uri = "https://api.openai.com",
+                MimeType = "application/json"
+            }
+        };
+
+        if (respone.Content is EmbeddedResourceBlock embeddedResourceBlock
+            && embeddedResourceBlock.Resource is BlobResourceContents blobResourceContents)
+        {
+            var FileExtensionContentTypeProvider = await requestContext.Server.Upload(
+                serviceProvider,
+                requestContext.ToOutputFileName(blobResourceContents.MimeType!.ResolveExtensionFromMime()),
+                BinaryData.FromBytes(Convert.FromBase64String(blobResourceContents.Blob)),
+                cancellationToken);
+
+            return [FileExtensionContentTypeProvider!, metadata];
+        }
+
+        return [respone.Content, metadata];
     }
 }
 

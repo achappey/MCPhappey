@@ -1,0 +1,20 @@
+{
+  "serverInfo": {
+    "name": "Anthropic-CodeExecution",
+    "title": "Anthropic Code Execution",
+    "version": "1.0.0",
+    "websiteUrl": "https://www.anthropic.com",
+    "description": "Anthropic Code Execution provides a secure environment for running, testing, and analyzing code directly through AI. It supports automated scripting, data analysis, and file processing within controlled containers.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/1/14/Anthropic.png"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Anthropic.CodeExecution.AnthropicCodeExecution, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

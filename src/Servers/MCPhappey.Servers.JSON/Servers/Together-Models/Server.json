@@ -1,7 +1,13 @@
 {
   "serverInfo": {
     "name": "Together-Models",
+    "title": "Together Models",
     "version": "1.0.0",
-    "description": "List and inspect available Together AI models, capabilities, limits and pricing. Choose appropriate models for chat, reasoning, vision and generation. Helps select context windows, tools and endpoints for tasks, ensuring optimal cost, speed and quality trade-offs."
+    "description": "List and inspect available Together AI models, capabilities, limits and pricing. Choose appropriate models for chat, reasoning, vision and generation. Helps select context windows, tools and endpoints for tasks, ensuring optimal cost, speed and quality trade-offs.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"
+      }
+    ]
   }
 }

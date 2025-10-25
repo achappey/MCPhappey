@@ -6,7 +6,11 @@
       "title": "Alle bronnen",
       "description": "Lijst van alle beschikbare bronnen in OpenSpending.",
       "mimeType": "application/json",
-      "annotations": { "audience": ["assistant"] }
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
     },
     {
       "uri": "https://data.openspending.nl/bronnen/alles",
@@ -14,7 +18,11 @@
       "title": "Alle data uit alle bronnen",
       "description": "Aggregatie van alle beschikbare data uit alle bronnen.",
       "mimeType": "application/json",
-      "annotations": { "audience": ["assistant"] }
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
     },
     {
       "uri": "https://data.openspending.nl/datasets",
@@ -22,7 +30,11 @@
       "title": "Datasets overzicht",
       "description": "Overzicht van alle datasets binnen OpenSpending.",
       "mimeType": "application/json",
-      "annotations": { "audience": ["assistant"] }
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
     },
     {
       "uri": "https://data.openspending.nl/utils",
@@ -30,7 +42,11 @@
       "title": "Utilities",
       "description": "Algemene utilities en metadata van OpenSpending.",
       "mimeType": "application/json",
-      "annotations": { "audience": ["assistant"] }
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
     },
     {
       "uri": "https://data.openspending.nl/utils/bronnen",
@@ -38,7 +54,11 @@
       "title": "Lijst van bronnen en entiteiten",
       "description": "Geeft een volledige lijst van alle beschikbare gemeenten, waterschappen en regelingen die als bron in OpenSpending geregistreerd staan.",
       "mimeType": "application/json",
-      "annotations": { "audience": ["assistant"] }
+      "annotations": {
+        "audience": [
+          "assistant"
+        ]
+      }
     }
   ]
 }

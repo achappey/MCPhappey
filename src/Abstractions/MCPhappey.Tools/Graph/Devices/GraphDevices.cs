@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
@@ -12,14 +13,14 @@ public static class GraphDevices
     [Description("Retire (remove company data from) an Intune managed device by ID.")]
     [McpServerTool(Title = "Retire Intune device", OpenWorld = false, Destructive = true)]
     public static async Task<CallToolResult?> GraphDevices_Retire(
-          IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
           [Description("The device id to retire.")] string deviceId,
-          CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+          CancellationToken cancellationToken = default) =>
+          await requestContext.WithExceptionCheck(async () =>
+          await requestContext.WithOboGraphClient(async client =>
+          await requestContext.WithStructuredContent(async () =>
         {
-            var mcpServer = requestContext.Server;
-
-            var (typed, notAccepted, result) = await mcpServer.TryElicit(
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                 new GraphRetireDevice
                 {
                     DeviceId = deviceId,
@@ -27,15 +28,14 @@ public static class GraphDevices
                 cancellationToken
             );
 
-            if (notAccepted != null) return notAccepted;
-
-            using var client = await serviceProvider.GetOboGraphClient(mcpServer);
+            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
             await client
                 .DeviceManagement
                 .ManagedDevices[typed?.DeviceId]
                 .Retire
-                .PostAsync(cancellationToken: cancellationToken);
+                .PostAsync(cancellationToken: cancellationToken)
+                .ConfigureAwait(false);
 
             var now = DateTimeOffset.UtcNow;
 
@@ -49,10 +49,8 @@ public static class GraphDevices
                 graphPath = $"/deviceManagement/managedDevices/{typed?.DeviceId}/retire"
             };
 
-            return graphResult
-                .ToJsonContentBlock($"https://graph.microsoft.com/beta/deviceManagement/managedDevices/{typed?.DeviceId}/retire")
-                .ToCallToolResult();
-        });
+            return graphResult;
+        })));
 
     [Description("Delete an Intune managed device (removes it from Intune).")]
     [McpServerTool(Title = "Delete Intune device", OpenWorld = false, Destructive = true)]
@@ -60,7 +58,8 @@ public static class GraphDevices
           [Description("The Intune managedDevice ID to delete.")] string deviceId,
           RequestContext<CallToolRequestParams> requestContext,
           CancellationToken cancellationToken = default) =>
-              await requestContext.WithOboGraphClient(async client =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
     {
         // Fetch a minimal projection to confirm with a human-friendly name
         var device = await client.DeviceManagement.ManagedDevices[deviceId]
@@ -87,7 +86,7 @@ public static class GraphDevices
             },
             successText: $"Device '{displayName}' ({device.Id}) has been deleted from Intune.",
             ct: cancellationToken);
-    });
+    }));
 
 
     [Description("Delete an Entra ID device object. Accepts either the Entra deviceId (GUID) or an Intune managedDeviceId (will resolve to azureADDeviceId).")]

@@ -10,6 +10,7 @@ using CsvHelper.Configuration;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -31,8 +32,9 @@ public static partial class GraphWorkbooks
             string? worksheetName = null,
         CancellationToken cancellationToken = default)
          => await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
+            await requestContext.WithStructuredContent(async () =>
     {
-        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphAddWorksheet
             {
@@ -41,10 +43,10 @@ public static partial class GraphWorkbooks
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         // Resolve the DriveItem from the sharing/ODSP URL
-        var driveItem = await graphClient.GetDriveItem(excelFileUrl, cancellationToken);
+        var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
 
         var addBody =
             new Microsoft.Graph.Beta.Drives.Item.Items.Item.Workbook.Worksheets.Add.AddPostRequestBody();
@@ -53,7 +55,7 @@ public static partial class GraphWorkbooks
             addBody.Name = typed?.Name;
 
         // Add worksheet (Excel plaatst het aan het einde van de bestaande tabs)
-        var newSheet = await graphClient
+        var newSheet = await client
             .Drives[driveItem!.ParentReference!.DriveId]
             .Items[driveItem.Id]
             .Workbook
@@ -64,17 +66,14 @@ public static partial class GraphWorkbooks
         var workbookGraphUrl =
             $"https://graph.microsoft.com/beta/drives/{driveItem.ParentReference.DriveId}/items/{driveItem.Id}/workbook";
 
-        var payload = new
+        return new
         {
             worksheetId = newSheet?.Id,
             name = newSheet?.Name,
             position = newSheet?.Position,
             workbookGraphUrl
         };
-
-        return payload.ToJsonContentBlock(workbookGraphUrl).ToCallToolResult();
-
-    });
+    })));
 
     [Description("Please fill in the details to add a worksheet to an Excel workbook.")]
     public class GraphAddWorksheet
@@ -164,12 +163,12 @@ public static partial class GraphWorkbooks
         string csvUrl,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
-          => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
     {
         var graphClient = await serviceProvider.GetGraphHttpClient(requestContext.Server);
-        using var oboGraphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
-        var driveItem = await oboGraphClient.GetDriveItem(excelFileUrl, cancellationToken);
+        var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var csvRawFiles = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server,
            csvUrl, cancellationToken);
@@ -281,7 +280,7 @@ public static partial class GraphWorkbooks
         return new { TableName = tableName, Address = address }
             .ToJsonContentBlock(workbookGraphUrl).ToCallToolResult();
 
-    });
+    }));
 
     // Utility function as before
     private static string GetExcelColumnName(int columnNumber)

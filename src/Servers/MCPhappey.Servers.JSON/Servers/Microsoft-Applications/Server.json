@@ -3,7 +3,12 @@
     "name": "Microsoft-Applications",
     "title": "Microsoft Applications",
     "version": "1.0.0",
-    "description": ""
+    "description": "Provides structured access to Microsoft Entra app registrations. Enables browsing all applications, viewing details, owners, app roles, and federated identity credentials. Useful for managing enterprise app configurations, permissions, and identity integrations through Microsoft Graph. Designed for administrators and developers maintaining secure, well-governed Azure AD environments.",
+    "icons": [
+      {
+        "src": "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1722952497"
+      }
+    ]
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Application.ReadWrite.All"

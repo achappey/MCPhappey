@@ -3,7 +3,7 @@
     "name": "Meta-AI",
     "title": "Meta AI",
     "version": "1.0.0",
-    "description": ""
+    "description": "The Meta-AI MCP sends one question to many AI models at once — OpenAI, Anthropic, Google, xAI, Perplexity, Mistral, and more — and compares their answers side by side. It reveals how different systems reason, write, and decide, offering a transparent, multi-perspective view of AI thinking in real time."
   },
   "plugins": [
     "MCPhappey.Tools.AI.MetaAI, MCPhappey.Tools"

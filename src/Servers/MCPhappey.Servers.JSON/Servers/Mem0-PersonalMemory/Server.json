@@ -1,0 +1,21 @@
+{
+  "serverInfo": {
+    "name": "Mem0-PersonalMemory",
+    "title": "Mem0 Personal Memory",
+    "version": "1.0.0",
+    "websiteUrl": "https://mem0.ai",
+    "description": "This MCP keeps track of details that matter only to you. It remembers useful information from your past conversations so you don’t need to repeat yourself. Everything stored here is private and visible only to you, helping the assistant give faster and more relevant support over time.",
+    "icons": [
+      {
+        "src": "https://avatars.githubusercontent.com/u/137054526?v=4"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Mem0.Mem0PersonalService, MCPhappey.Tools",
+    "MCPhappey.Tools.Mem0.Mem0FeedbackService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  }
+}

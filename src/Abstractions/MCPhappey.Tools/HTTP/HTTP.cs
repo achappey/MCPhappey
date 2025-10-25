@@ -14,6 +14,7 @@ public static class HTTPService
     [Description("Fetches a public accessible url.")]
     [McpServerTool(Title = "Fetch public URL",
         Idempotent = true,
+        OpenWorld = true,
         ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> Http_FetchUrl(
         [Description("The url to fetch.")]
@@ -35,6 +36,7 @@ public static class HTTPService
     [Description("Fetches raw HTML from a public accessible url.")]
     [McpServerTool(Title = "Fetch raw HTML from public URL",
         Idempotent = true,
+        OpenWorld = true,
         ReadOnly = true)]
     public static async Task<IEnumerable<ContentBlock>> Http_FetchHtml(
         [Description("The url to fetch.")]

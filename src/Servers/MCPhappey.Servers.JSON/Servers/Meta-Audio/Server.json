@@ -1,0 +1,21 @@
+{
+  "serverInfo": {
+    "name": "Meta-Audio",
+    "title": "Meta Audio",
+    "version": "1.0.0",
+    "description": "Provides unified access to multiple AI audio engines, including Meta, Google, OpenAI, Stability, Together, Azure, and AsyncAI. Supports text-to-speech, speech-to-text, and audio analysis through one consistent MCP interface. Ideal for experimenting, comparing, or composing audio tasks directly across different AI-native providers."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Google.Audio.GoogleAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.Together.Audio.TogetherAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.OpenAI.Audio.OpenAIAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.StabilityAI.StabilityAIAudioService, MCPhappey.Tools",
+    "MCPhappey.Tools.AsyncAI.AsyncAIService, MCPhappey.Tools",
+    "MCPhappey.Tools.Azure.Speech.AzureSpeechService, MCPhappey.Tools",
+    "MCPhappey.Tools.AI.AudioPlugin, MCPhappey.Tools",
+    "MCPhappey.Tools.Mistral.Audio.AudioPlugin, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

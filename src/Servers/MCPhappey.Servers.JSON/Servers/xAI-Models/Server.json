@@ -1,8 +1,19 @@
 {
   "serverInfo": {
     "name": "xAI-Models",
+    "title": "xAI Models",
     "version": "1.0.0",
     "websiteUrl": "https://x.ai",
-    "description": "xAI Grok AI-models, system-cards and other xAI related resources."
+    "description": "Provides access to xAI Grok models and related documentation. Includes listings of language, image, and general-purpose models, as well as the official Grok 4 system card detailing architecture, safety evaluations, and alignment principles. Useful for exploring available xAI model capabilities and understanding their design and responsible deployment context.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/dark/xai.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/light/xai.png",
+        "theme": "light"
+      }
+    ]
   }
 }

@@ -19,6 +19,20 @@ public static class ModelContextProtocolExtensions
                  var serverName = ctx.Request.Path.Value!.GetServerNameFromUrl();
                  var server = servers.First(a => a.Server.ServerInfo?.Name.Equals(serverName, StringComparison.OrdinalIgnoreCase) == true);
 
+                 if (server.SourceType == ServerSourceType.Dynamic)
+                 {
+                     var dataService = ctx.RequestServices.GetService<IServerDataProvider>();
+                     if (dataService != null)
+                     {
+                         var dbItem = await dataService.GetServer(serverName, cancellationToken);
+
+                         if (dbItem != null)
+                         {
+                             server = dbItem;
+                         }
+                     }
+                 }
+
                  var headers = ctx.Request.Headers.Where(a => server.Server.Headers?.ContainsKey(a.Key) == true ||
                     (server.Server.OBO?.Count > 0 && a.Key == "Authorization"))
                         .ToDictionary(h => h.Key, h => h.Value.ToString());
@@ -35,43 +49,41 @@ public static class ModelContextProtocolExtensions
                  {
                      opts.Handlers.ListToolsHandler = async (request, cancellationToken)
                            => await server.Server.ToToolsList(kernel, headers)
-                            ?? new ListToolsResult();
+                            ?? new();
 
                      opts.Handlers.CallToolHandler = async (request, cancellationToken)
                                 => await request.ToCallToolResult(server.Server, kernel, headers, cancellationToken: cancellationToken)
-                                    ?? new CallToolResult();
+                                    ?? new();
                  }
 
                  if (server.Server.Capabilities.Prompts != null)
                  {
                      opts.Handlers.ListPromptsHandler = async (request, cancellationToken)
                             => await server.ToListPromptsResult(request, cancellationToken)
-                                ?? new ListPromptsResult();
+                                ?? new();
 
                      opts.Handlers.GetPromptHandler = async (request, cancellationToken)
                              => await request.ToGetPromptResult(headers, cancellationToken)!
-                                 ?? new GetPromptResult();
+                                 ?? new();
                  }
 
                  if (server.Server.Capabilities.Resources != null)
                  {
                      opts.Handlers.ListResourcesHandler = async (request, cancellationToken) =>
                          await server.ToListResourcesResult(request, headers, cancellationToken)
-                             ?? new ListResourcesResult();
+                             ?? new();
 
                      opts.Handlers.ListResourceTemplatesHandler = async (request, cancellationToken) =>
                          await server.ToListResourceTemplatesResult(request, headers, cancellationToken)
-                             ?? new ListResourceTemplatesResult();
+                             ?? new();
 
                      opts.Handlers.ReadResourceHandler = async (request, cancellationToken) =>
                          await request.ToReadResourceResult(headers, cancellationToken)
-                             ?? new ReadResourceResult();
+                             ?? new();
                  }
 
                  opts.ServerInfo = server.Server.ToServerInfo();
                  opts.ServerInstructions = server.Server.Instructions;
-
-                 //  await Task.CompletedTask;
              };
         });
 }

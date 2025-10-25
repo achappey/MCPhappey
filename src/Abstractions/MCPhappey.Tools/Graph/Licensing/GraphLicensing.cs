@@ -18,6 +18,7 @@ public static class GraphLicensing
             RequestContext<CallToolRequestParams> requestContext,
             string? departmentName = null,
             CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
             await requestContext.WithOboGraphClient(async client =>
             await requestContext.WithStructuredContent(async () =>
     {
@@ -36,7 +37,8 @@ public static class GraphLicensing
                 config.QueryParameters.Filter = filter;
                 config.QueryParameters.Select = ["userPrincipalName", "assignedLicenses", "department"];
                 config.QueryParameters.Top = 999;
-            }, cancellationToken);
+            }, cancellationToken)
+              .ConfigureAwait(false);
 
         foreach (var user in users?.Value ?? [])
         {
@@ -78,7 +80,7 @@ public static class GraphLicensing
                 })
             })
         };
-    }));
+    })));
 
 
     private static async Task<Dictionary<string, string>> BuildSkuMap(GraphServiceClient client, CancellationToken cancellationToken)

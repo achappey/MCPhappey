@@ -1,8 +1,14 @@
 {
   "serverInfo": {
     "name": "Microsoft-UserManagement",
+    "title": "Microsoft User Management",
     "version": "1.0.0",
-    "description": "Administer Microsoft Entra ID users via Microsoft Graph: create and update accounts, manage memberships and properties, assign roles, and enforce lifecycle policies. Automate provisioning, access changes and audits with delegated permissions across tenants."
+    "description": "Administer Microsoft Entra ID users via Microsoft Graph: create and update accounts, manage memberships and properties, assign roles, and enforce lifecycle policies. Automate provisioning, access changes and audits with delegated permissions across tenants.",
+    "icons": [
+      {
+        "src": "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1722952497"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Graph.Users.GraphUserManagement, MCPhappey.Tools"

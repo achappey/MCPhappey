@@ -2,9 +2,16 @@
   "serverInfo": {
     "name": "Microsoft-Lists",
     "version": "1.0.0",
-    "description": "Create and manage Microsoft Lists via Microsoft Graph. Read and update items, columns and views; track work with filters and sorting; and automate list-backed workflows across SharePoint sites with delegated permissions."
+    "description": "Create and manage Microsoft Lists via Microsoft Graph. Read and update items, columns and views; track work with filters and sorting; and automate list-backed workflows across SharePoint sites with delegated permissions.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/a/ad/Microsoft_Lists_%282020-present%29.svg/2048px-Microsoft_Lists_%282020-present%29.svg.png"
+      }
+    ]
   },
-  "plugins": ["MCPhappey.Tools.Graph.Lists.GraphLists, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Graph.Lists.GraphLists, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Sites.Manage.All"
   }

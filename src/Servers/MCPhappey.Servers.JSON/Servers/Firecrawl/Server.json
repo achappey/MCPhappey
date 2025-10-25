@@ -3,7 +3,12 @@
     "name": "Firecrawl",
     "version": "1.0.0",
     "websiteUrl": "https://www.firecrawl.dev",
-    "description": "Firecrawl makes the entire web usable for AI. It crawls any website, extracts clean text, structure, and metadata, and turns it into LLM-ready JSON. Perfect for powering search, summaries, chatbots, or data pipelines — without building your own crawler or scraper. Just connect, query, and get structured content back instantly."
+    "description": "Firecrawl makes the entire web usable for AI. It crawls any website, extracts clean text, structure, and metadata, and turns it into LLM-ready JSON. Perfect for powering search, summaries, chatbots, or data pipelines — without building your own crawler or scraper. Just connect, query, and get structured content back instantly.",
+    "icons": [
+      {
+        "src": "https://raw.githubusercontent.com/firecrawl/firecrawl/main/img/firecrawl_logo.png"
+      }
+    ]
   },
   "baseMcp": "mcp.firecrawl.dev",
   "obo": {

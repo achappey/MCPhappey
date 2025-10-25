@@ -4,7 +4,12 @@
     "title": "GitHub GEmojiSharp",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/hlaueriksson/GEmojiSharp",
-    "description": "GitHub-GEmojiSharp turns emoji codes like :tada: into real emoji and back. It can replace all codes or emoji in text, find an emoji by description or keyword, and list available skin-tone variants."
+    "description": "GitHub-GEmojiSharp turns emoji codes like :tada: into real emoji and back. It can replace all codes or emoji in text, find an emoji by description or keyword, and list available skin-tone variants.",
+    "icons": [
+      {
+        "src": "https://api.nuget.org/v3-flatcontainer/gemojisharp/4.0.0/icon"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.GitHub.GEmojiSharp.GEmojiSharpService, MCPhappey.Tools"

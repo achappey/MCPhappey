@@ -1,8 +1,15 @@
 {
   "serverInfo": {
     "name": "SemanticKernel-Plugins",
+    "title": "Semantic Kernel Plugins",
+    "websiteUrl": "https://github.com/microsoft/semantic-kernel/tree/main/dotnet/src/Plugins",
     "version": "1.0.0",
-    "description": "Exposing Microsoft Semantic Kernel built-in plugins, including Core TimePlugin and TextPlugin, to provide time utilities and text processing capabilities through structured, pluggable tools."
+    "description": "Exposing Microsoft Semantic Kernel built-in plugins, including Core TimePlugin and TextPlugin, to provide time utilities and text processing capabilities through structured, pluggable tools.",
+    "icons": [
+      {
+        "src": "https://devblogs.microsoft.com/semantic-kernel/wp-content/uploads/sites/78/2024/03/Large_SK_Logo.png"
+      }
+    ]
   },
   "plugins": [
     "Microsoft.SemanticKernel.Plugins.Core.TimePlugin, Microsoft.SemanticKernel.Plugins.Core",

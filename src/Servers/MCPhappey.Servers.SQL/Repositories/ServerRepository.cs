@@ -40,12 +40,14 @@ public class ServerRepository(McpDatabaseContext databaseContext)
     public async Task<List<Resource>> GetResources(string serverName, CancellationToken cancellationToken = default) =>
         await databaseContext.Resources.AsNoTracking()
             .Where(a => a.Server.Name == serverName)
+            .OrderByDescending(a => a.Priority)
             .AsSplitQuery()
             .ToListAsync(cancellationToken);
 
     public async Task<List<ResourceTemplate>> GetResourceTemplates(string serverName, CancellationToken cancellationToken = default) =>
         await databaseContext.ResourceTemplates.AsNoTracking()
             .Where(a => a.Server.Name == serverName)
+            .OrderByDescending(a => a.Priority)
             .AsSplitQuery()
             .ToListAsync(cancellationToken);
 

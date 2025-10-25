@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -12,28 +13,93 @@ namespace MCPhappey.Tools.Graph.Outlook;
 
 public static class GraphOutlookMail
 {
+    [Description("Add a single category to an existing email message in Outlook (without removing existing ones).")]
+    [McpServerTool(
+        Title = "Add Category to Email",
+        Destructive = false,
+        OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphMail_AddCategory(
+        [Description("The unique message ID of the email.")] string messageId,
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("The category name to add. Must match an existing Outlook category name.")] string? category = null,
+        CancellationToken cancellationToken = default)
+        => await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
+        {
+            // Let AI or user confirm the category name
+            var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
+                new GraphMailSingleCategoryInput { Category = category ?? string.Empty },
+                cancellationToken
+            );
+
+            if (notAccepted != null)
+                throw new Exception(JsonSerializer.Serialize(notAccepted));
+
+            if (string.IsNullOrWhiteSpace(typed?.Category))
+                throw new ArgumentException("Category name cannot be empty.", nameof(category));
+
+            // Step 1: Get current categories for the message
+            var message = await client.Me.Messages[messageId]
+                .GetAsync(requestConfiguration =>
+                {
+                    requestConfiguration.QueryParameters.Select = new[] { "categories" };
+                }, cancellationToken);
+
+            var current = message?.Categories?.ToList() ?? [];
+
+            // Step 2: Append new category if not already present
+            if (!current.Contains(typed.Category, StringComparer.OrdinalIgnoreCase))
+            {
+                current.Add(typed.Category);
+
+                await client.Me.Messages[messageId]
+                    .PatchAsync(new Message
+                    {
+                        Categories = current
+                    }, cancellationToken: cancellationToken);
+            }
+
+            return new
+            {
+                MessageId = messageId,
+                Added = typed.Category,
+                CurrentCategories = current,
+                Status = current.Contains(typed.Category, StringComparer.OrdinalIgnoreCase)
+                    ? "Category added successfully."
+                    : "Category already existed."
+            };
+        })));
+
+    [Description("Please provide the category name to add to the email.")]
+    public class GraphMailSingleCategoryInput
+    {
+        [JsonPropertyName("category")]
+        [Required]
+        [Description("The single category name to add.")]
+        public string Category { get; set; } = default!;
+    }
+
+
     [Description("Search for e-mails in Outlook using Microsoft Graph. Supports subject, body, sender, and date filters.")]
     [McpServerTool(Title = "Search e-mails in Outlook",
         Name = "graph_outlook_mail_search",
         OpenWorld = true, Destructive = false, ReadOnly = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_Search(
-       IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
        [Description("Search query, e.g. 'subject:AI from:sender@company.com hasAttachment:true'")] string query,
        [Description("Maximum number of results to return. Defaults to 10.")] int? top = 10,
        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithOboGraphClient(async client =>
         await requestContext.WithStructuredContent(async () =>
-        {
-            // Graph supports $search syntax (requires mailbox indexing)
-            return await client.Me.Messages
+        await client.Me.Messages
                 .GetAsync(opt =>
                 {
                     opt.QueryParameters.Search = $"\"{query}\"";
                     opt.QueryParameters.Top = top ?? 10;
                     opt.QueryParameters.Select = ["id", "subject", "from", "bodyPreview", "receivedDateTime", "isRead", "webLink"];
-                }, cancellationToken);
-        }));
+                }, cancellationToken))));
 
     [Description("Set or update the follow-up flag for a mail message in Outlook.")]
     [McpServerTool(Title = "Flag mail for follow-up in Outlook",
@@ -41,14 +107,16 @@ public static class GraphOutlookMail
         Destructive = false,
         OpenWorld = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_FlagMail(
-        IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("ID of the message to flag.")][Required] string messageId,
         [Description("Flag status. Use Flagged, Complete, or NotFlagged. Defaults to Flagged.")]
             FlagStatusEnum? flagStatus = FlagStatusEnum.Flagged,
         [Description("Start date/time for the flag in ISO format (optional).")] string? startDateTime = null,
         [Description("Due date/time for the flag in ISO format (optional).")] string? dueDateTime = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
     {
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphFlagMail
@@ -60,7 +128,7 @@ public static class GraphOutlookMail
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         var flag = new FollowupFlag
         {
@@ -95,11 +163,10 @@ public static class GraphOutlookMail
             Flag = flag
         };
 
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         await client.Me.Messages[messageId].PatchAsync(updatedMessage, cancellationToken: cancellationToken);
 
-        return typed.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{messageId}").ToCallToolResult();
-    }
+        return typed;
+    })));
 
     public enum FlagStatusEnum
     {
@@ -134,12 +201,13 @@ public static class GraphOutlookMail
     [Description("Reply to an e-mail message in Outlook.")]
     [McpServerTool(Title = "Reply to e-mail via Outlook")]
     public static async Task<CallToolResult?> GraphOutlookMail_Reply(
-       IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
        [Description("ID of the message to reply to.")][Required] string messageId,
        [Description("Reply type: Reply or ReplyAll. Defaults to Reply.")] ReplyTypeEnum? replyType = ReplyTypeEnum.Reply,
        [Description("Content of the reply message.")] string? content = null,
-       CancellationToken cancellationToken = default)
+       CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
     {
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphReplyMail
@@ -151,8 +219,6 @@ public static class GraphOutlookMail
         );
 
         if (notAccepted != null) return notAccepted;
-
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
 
         if (typed?.ReplyType == ReplyTypeEnum.ReplyAll)
         {
@@ -169,7 +235,7 @@ public static class GraphOutlookMail
 
         return typed.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{messageId}/reply")
              .ToCallToolResult();
-    }
+    }));
 
     public enum ReplyTypeEnum
     {
@@ -195,14 +261,16 @@ public static class GraphOutlookMail
     [Description("Send an e-mail message through Outlook from the current users' mailbox.")]
     [McpServerTool(Title = "Send e-mail via Outlook", Destructive = true)]
     public static async Task<CallToolResult?> GraphOutlookMail_SendMail(
-     IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
      [Description("E-mail addresses of the recipients. Use a comma separated list for multiple recipients.")] string? toRecipients = null,
      [Description("E-mail addresses for CC (carbon copy). Use a comma separated list for multiple recipients.")] string? ccRecipients = null,
      [Description("Subject of the e-mail message.")] string? subject = null,
      [Description("Body of the e-mail message.")] string? body = null,
      [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
-     CancellationToken cancellationToken = default)
+     CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
     {
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphSendMail
@@ -216,7 +284,7 @@ public static class GraphOutlookMail
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         Message newMessage = new()
         {
@@ -239,11 +307,10 @@ public static class GraphOutlookMail
                 SaveToSentItems = true
             };
 
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         await client.Me.SendMail.PostAsync(sendMailPostRequestBody, cancellationToken: cancellationToken);
 
-        return sendMailPostRequestBody.ToJsonContentBlock("https://graph.microsoft.com/beta/me/sendmail").ToCallToolResult();
-    }
+        return sendMailPostRequestBody;
+    })));
 
     [Description("Create a draft e-mail message in the current user's Outlook mailbox.")]
     [McpServerTool(Title = "Create draft e-mail in Outlook",

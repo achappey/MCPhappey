@@ -87,18 +87,6 @@ public static partial class ModelContextToolExtensions
         }
 
         return await Task.FromResult(result);
-        //return await Task.FromResult(toolMeta?.ToJsonObject() ?? []);
-
-
-        /*
-                var locale = requestContext.Params?.Meta?.FirstOrDefault(a => a.Key.EndsWith("/locale"));
-
-                if (locale.HasValue && !locale.Value.Key.StartsWith("openai/") && locale.Value.Value != null)
-                {
-                    toolMeta?.Add("openai/locale", locale.Value.Value);
-                }
-
-                return await Task.FromResult(toolMeta?.ToJsonObject() ?? []);*/
     }
 
     public static async Task<CallToolResult?> WithExceptionCheck(this RequestContext<CallToolRequestParams> requestContext, Func<Task<CallToolResult?>> func)
@@ -145,8 +133,6 @@ public static partial class ModelContextToolExtensions
         foreach (var pluginTypeName in server.Plugins ?? [])
         {
             tools.AddRange(kernel.GetToolsFromType(pluginTypeName) ?? []);
-            //var dsad = kernel.GetPromptsFromType(pluginTypeName);
-            //var dsdss = "";
         }
 
         return await tools.GetListToolsResult(server, headers);

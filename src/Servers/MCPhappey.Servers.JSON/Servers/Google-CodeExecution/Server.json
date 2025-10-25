@@ -1,8 +1,14 @@
 {
   "serverInfo": {
     "name": "Google-CodeExecution",
+    "title": "Google Code Execution",
     "version": "1.0.0",
-    "description": "Execute code with Google’s code execution capabilities to test snippets, run tools and produce artifacts. Useful for lightweight computations, validations and transforming data within controlled environments."
+    "description": "Execute code with Google’s code execution capabilities to test snippets, run tools and produce artifacts. Useful for lightweight computations, validations and transforming data within controlled environments.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Google-gemini-icon.svg/2048px-Google-gemini-icon.svg.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Google.CodeExecution.GoogleCodeExecution, MCPhappey.Tools"

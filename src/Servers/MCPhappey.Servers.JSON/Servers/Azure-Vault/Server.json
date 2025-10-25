@@ -1,8 +1,14 @@
 {
   "serverInfo": {
     "name": "Azure-Vault",
+    "title": "Azure Vault",
     "version": "1.0.0",
-    "description": "Access Azure Key Vault secrets, keys and certificates with app permissions. Retrieve and manage secrets securely for automations, apps and workflows."
+    "description": "Access Azure Key Vault secrets, keys and certificates with app permissions. Retrieve and manage secrets securely for automations, apps and workflows.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Microsoft_Azure.svg/2048px-Microsoft_Azure.svg.png"
+      }
+    ]
   },
   "obo": {
     ".vault.azure.net": "https://vault.azure.net/.default"

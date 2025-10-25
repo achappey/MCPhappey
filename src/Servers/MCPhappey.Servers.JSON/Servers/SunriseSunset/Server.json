@@ -4,7 +4,12 @@
     "title": "Sunrise Sunset",
     "websiteUrl": "https://sunrise-sunset.org",
     "version": "1.0.0",
-    "instructions": "You must always credit sunrise-sunset.org when using this data in your app or outputs. Add a visible reference or link to sunrise-sunset.org wherever you show results from this API.",
-    "description": "Retrieve sunrise, sunset and twilight times for coordinates and dates. Ideal for scheduling, photography and reporting. Always credit sunrise-sunset.org visibly when showing results."
-  }
+    "description": "Retrieve sunrise, sunset and twilight times for coordinates and dates. Ideal for scheduling, photography and reporting. Always credit sunrise-sunset.org visibly when showing results.",
+    "icons": [
+      {
+        "src": "https://c1.tablecdn.com/pa/sunrisesunset.png"
+      }
+    ]
+  },
+  "instructions": "You must always credit sunrise-sunset.org when using this data in your app or outputs. Add a visible reference or link to sunrise-sunset.org wherever you show results from this API."
 }

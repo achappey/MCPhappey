@@ -15,6 +15,70 @@ public static class WebSearch
     private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "claude-haiku-4-5-20251001", "grok-4-fast-reasoning"];
     private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro", "claude-opus-4-1-20250805", "grok-4-fast-reasoning"];
 
+    [Description("Perform a quick web search using Google AI with Google Search grounding.")]
+    [McpServerTool(
+        Title = "Google web search",
+        Name = "web_search_google",
+        ReadOnly = true)]
+    public static async Task<CallToolResult?> WebSearch_Google(
+       [Description("Search query")] string query,
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       [Description("Start date of the date range")] string? startDate = null,
+       [Description("End date of the date range")] string? endDate = null,
+       [Description("Search context size. low, medium or high")] string? searchContextSize = "medium",
+       CancellationToken cancellationToken = default)
+       => await requestContext.WithExceptionCheck(async ()
+       => await requestContext.WithStructuredContent(async () =>
+    {
+        var mcpServer = requestContext.Server;
+        var samplingService = serviceProvider.GetRequiredService<SamplingService>();
+        var modelName = "gemini-2.5-flash";
+
+        var promptArgs = new Dictionary<string, JsonElement>
+        {
+            ["query"] = JsonSerializer.SerializeToElement(query)
+        };
+
+        await requestContext.Server.SendMessageNotificationAsync(
+            $"Google AI search: {query}",
+            LoggingLevel.Debug,
+            cancellationToken: CancellationToken.None);
+
+        var startTime = DateTime.UtcNow;
+
+        var result = await samplingService.GetPromptSample(
+            serviceProvider,
+            mcpServer,
+            "ai-websearch-answer",
+            promptArgs,
+            modelName,
+            metadata: new Dictionary<string, object>
+            {
+                { "google", new {
+                    google_search = new {
+                        timeRangeFilter = new {
+                            startTime = startDate,
+                            endTime = endDate
+                        },
+                        search_context_size = searchContextSize
+                    },
+                    googleMaps = new { },
+                    thinkingConfig = new {
+                        thinkingBudget = -1
+                    }
+                }}
+            },
+            cancellationToken: cancellationToken
+        );
+
+        var endTime = DateTime.UtcNow;
+        result.Meta?.Add("duration", (endTime - startTime).ToString());
+
+        return result;
+    }));
+
+
     [Description("Parallel web search across multiple AI models, optionally filtered by date range. If a date range is used, include it in the prompt, as some providers don’t support date filters.")]
     [McpServerTool(Title = "Web search (multi-model)",
         Name = "web_search_execute",
@@ -26,7 +90,9 @@ public static class WebSearch
        [Description("Start date of the date range")] string? startDate = null,
        [Description("End date of the date range")] string? endDate = null,
        [Description("Search context size. low, medium or high")] string? searchContextSize = "medium",
-       CancellationToken cancellationToken = default) => await requestContext.WithStructuredContent(async () =>
+       CancellationToken cancellationToken = default) =>
+       await requestContext.WithExceptionCheck(async () =>
+       await requestContext.WithStructuredContent(async () =>
     {
         var mcpServer = requestContext.Server;
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
@@ -77,7 +143,7 @@ public static class WebSearch
                                     search_context_size = searchContextSize
                                 },
                                 reasoning = new {
-                                    effort = "medium"
+                                    effort = "low"
                                 }
                             } },
                             { "xai", new {
@@ -130,7 +196,7 @@ public static class WebSearch
         {
             Results = results.OfType<CreateMessageResult>()
         };
-    });
+    }));
 
 
     [Description("Academic web search using multiple AI models in parallel")]

@@ -1,6 +1,7 @@
 {
     "serverInfo": {
         "name": "Monitor-Koopwoningmarkt",
+        "title": "Monitor Koopwoningmarkt",
         "version": "1.0.0",
         "websiteUrl": "https://monitor-koopwoningmarkt.nl",
         "description": "Ontsluit de kwartaalrapportages van Monitor Koopwoningmarkt. Hij biedt één indexresource met alle rapportages en aparte PDF-resources per kwartaal, plus prompts voor samenvatten en vergelijken."

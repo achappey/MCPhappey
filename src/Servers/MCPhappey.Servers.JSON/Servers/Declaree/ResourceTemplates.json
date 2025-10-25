@@ -7,7 +7,9 @@
       "description": "List all users within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -17,7 +19,9 @@
       "description": "Retrieve all user groups defined within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -27,7 +31,9 @@
       "description": "Get all expense reports belonging to the specified organization.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -37,7 +43,9 @@
       "description": "List all custom resources within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -47,7 +55,9 @@
       "description": "Retrieve all tags defined for expenses within the specified organization.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     }
   ]

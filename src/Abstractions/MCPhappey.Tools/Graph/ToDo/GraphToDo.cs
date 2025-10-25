@@ -1,8 +1,10 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -11,22 +13,63 @@ namespace MCPhappey.Tools.Graph.ToDo;
 
 public static class GraphToDo
 {
+    [Description("Add a linked resource to an existing Microsoft To Do task")]
+    [McpServerTool(
+    Title = "Add Linked Resource to To Do task",
+    Destructive = false,
+    OpenWorld = false)]
+    public static async Task<CallToolResult?> GraphTodo_AddLinkedResource(
+    [Description("To Do list id")] string listId,
+    [Description("Task id")] string taskId,
+    [Description("The external URL to link to the task. Must be HTTPS.")] string webUrl,
+    RequestContext<CallToolRequestParams> requestContext,
+    [Description("Optional display name for the link.")] string? displayName = null,
+    CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
+        await requestContext.WithStructuredContent(async () =>
+        {
+            if (string.IsNullOrWhiteSpace(webUrl) || !webUrl.StartsWith("https://", StringComparison.OrdinalIgnoreCase))
+                throw new ArgumentException("webUrl must be a valid HTTPS URL.", nameof(webUrl));
+
+            var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
+                    new GraphNewLinkedResource
+                    {
+                        Url = webUrl
+                    },
+                    cancellationToken
+                );
+
+            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
+
+            var linkedResource = new LinkedResource
+            {
+                WebUrl = typed?.Url,
+                DisplayName = typed?.DisplayName,
+                ExternalId = Guid.NewGuid().ToString()
+            };
+
+            return await client.Me.Todo.Lists[listId].Tasks[taskId]
+                .LinkedResources
+                .PostAsync(linkedResource, cancellationToken: cancellationToken);
+        })));
+
     [Description("Create a new Microsoft To Do task")]
     [McpServerTool(Title = "Create Microsoft To Do task", Destructive = false,
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTodo_CreateTask(
      [Description("ToDo list id")] string listId,
-     IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
      [Description("The task title.")] string? title = null,
      [Description("The due date (YYYY-MM-DD).")] DateTime? dueDateTime = null,
      [Description("Importance (low, normal, high).")] Importance? importance = null,
-     CancellationToken cancellationToken = default)
+     [Description("Linked resource URLs.")] IEnumerable<string>? linkedResources = null,
+     CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
+            await requestContext.WithStructuredContent(async () =>
     {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
-        var (typed, notAccepted, result) = await mcpServer.TryElicit(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphNewTodoTask
             {
                 Title = title ?? string.Empty,
@@ -36,9 +79,9 @@ public static class GraphToDo
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
-        var graphItem = await client.Me.Todo.Lists[listId].Tasks
+        var newTask = await client.Me.Todo.Lists[listId].Tasks
             .PostAsync(new TodoTask
             {
                 Title = typed?.Title,
@@ -47,12 +90,26 @@ public static class GraphToDo
                 {
                     DateTime = typed.DueDateTime?.ToString("yyyy-MM-ddTHH:mm:ss"),
                     TimeZone = "UTC"
-                } : null
+                } : null,
             }, cancellationToken: cancellationToken);
 
-        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{listId}/tasks")
-            .ToCallToolResult();
-    }
+
+        // Step 2: Add linked resources AFTER task creation
+        if (linkedResources != null)
+        {
+            foreach (var url in linkedResources)
+            {
+                await client.Me.Todo.Lists[listId].Tasks[newTask!.Id!]
+                    .LinkedResources
+                    .PostAsync(new LinkedResource
+                    {
+                        WebUrl = url,
+                    }, cancellationToken: cancellationToken);
+            }
+        }
+
+        return newTask;
+    })));
 
     [Description("Create a new Microsoft To Do task list")]
     [McpServerTool(Title = "Create Microsoft To Do task list",
@@ -60,14 +117,13 @@ public static class GraphToDo
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphTodo_CreateTaskList(
      [Description("The task display name.")] string displayName,
-     IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
-     CancellationToken cancellationToken = default)
+     CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
+            await requestContext.WithStructuredContent(async () =>
     {
-        var mcpServer = requestContext.Server;
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
-        var (typed, notAccepted, result) = await mcpServer.TryElicit<GraphNewTodoTaskList>(
+        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphNewTodoTaskList
             {
                 DisplayName = displayName ?? string.Empty,
@@ -75,18 +131,16 @@ public static class GraphToDo
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
+        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
-        var graphItem = await client.Me.Todo.Lists
+        return await client.Me.Todo.Lists
             .PostAsync(new TodoTaskList
             {
                 DisplayName = typed?.DisplayName,
             }, cancellationToken: cancellationToken);
+    })));
 
-        return graphItem.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/todo/lists/{graphItem?.Id}")
-            .ToCallToolResult();
-    }
-
+   
     [Description("Please fill in the To Do task details")]
     public class GraphNewTodoTask
     {
@@ -103,6 +157,21 @@ public static class GraphToDo
         [JsonConverter(typeof(JsonStringEnumConverter))]
         [Description("Importance (low, normal, high).")]
         public Importance? Importance { get; set; }
+
+    }
+
+
+    [Description("Please fill in the linked resource details")]
+    public class GraphNewLinkedResource
+    {
+        [JsonPropertyName("url")]
+        [Required]
+        [Description("The linked resource url.")]
+        public string Url { get; set; } = default!;
+
+        [JsonPropertyName("displayName")]
+        [Description("The linked resource display name.")]
+        public string? DisplayName { get; set; }
 
     }
 

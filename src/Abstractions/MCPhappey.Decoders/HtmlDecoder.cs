@@ -13,16 +13,16 @@ public class HtmlDecoder : IContentDecoder
                 mimeType.Equals("text/html", StringComparison.OrdinalIgnoreCase));
     }
 
-    public Task<FileContent> DecodeAsync(string filename, CancellationToken cancellationToken = default)
+    public async Task<FileContent> DecodeAsync(string filename, CancellationToken cancellationToken = default)
     {
-        using var stream = File.OpenRead(filename);
-        return DecodeAsync(stream, cancellationToken);
+        await using var stream = File.OpenRead(filename);
+        return await DecodeAsync(stream, cancellationToken);
     }
 
-    public Task<FileContent> DecodeAsync(BinaryData data, CancellationToken cancellationToken = default)
+    public async Task<FileContent> DecodeAsync(BinaryData data, CancellationToken cancellationToken = default)
     {
-        using var stream = data.ToStream();
-        return DecodeAsync(stream, cancellationToken);
+        await using var stream = data.ToStream();
+        return await DecodeAsync(stream, cancellationToken);
     }
 
     public async Task<FileContent> DecodeAsync(Stream data, CancellationToken cancellationToken = default)

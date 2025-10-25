@@ -7,7 +7,9 @@
       "description": "Get a list of all documents (including subfolders) on a SharePoint Teams site",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     },
     {
@@ -17,7 +19,9 @@
       "description": "Get all content types (including Document Set content type IDs) from a SharePoint document library using Microsoft Graph.",
       "mimeType": "application/json",
       "annotations": {
-        "audience": ["assistant"]
+        "audience": [
+          "assistant"
+        ]
       }
     }
   ]

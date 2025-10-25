@@ -57,11 +57,11 @@ public class ResourceService(DownloadService downloadService, IServerDataProvide
 
             var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
             var request = httpContextAccessor.HttpContext?.Request;
-
             var baseUrl = request != null
                 ? $"{request.Scheme}://{request.Host.Value}"
                 : null;
-            var html = Encoding.UTF8.GetString(item.Contents.ToArray());
+
+            var html = Encoding.UTF8.GetString((item.Contents));
 
             return new ReadResourceResult()
             {

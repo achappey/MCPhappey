@@ -1,0 +1,20 @@
+{
+  "serverInfo": {
+    "name": "Azure-Speech",
+    "title": "Azure Speech",
+    "version": "1.0.0",
+    "websiteUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-speech",
+    "description": "Azure Speech provides tools for speech recognition, synthesis, and translation. It can transcribe spoken audio to text, generate natural voices from text, and support multiple languages and dialects. The service enables applications to process and understand speech input or produce audio output dynamically through AI-based voice models.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Microsoft_Azure.svg/2048px-Microsoft_Azure.svg.png"
+      }
+    ]
+  },
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read"
+  },
+  "plugins": [
+    "MCPhappey.Tools.Azure.Speech.AzureSpeechService, MCPhappey.Tools"
+  ]
+}

@@ -1,7 +1,18 @@
 {
   "serverInfo": {
     "name": "OpenAI-Models",
+    "title": "OpenAI Models",
     "version": "1.0.0",
-    "description": "List and inspect available OpenAI models, capabilities and limits. Choose appropriate models for chat, reasoning, vision and generation. Helps select context windows, tools and endpoints for tasks, ensuring optimal cost, speed and quality trade-offs."
+    "description": "List and inspect available OpenAI models, capabilities and limits. Choose appropriate models for chat, reasoning, vision and generation. Helps select context windows, tools and endpoints for tasks, ensuring optimal cost, speed and quality trade-offs.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/light/openai.png",
+        "theme": "light"
+      }
+    ]
   }
 }

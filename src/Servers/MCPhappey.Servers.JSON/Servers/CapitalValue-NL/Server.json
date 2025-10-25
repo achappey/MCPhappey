@@ -1,9 +1,15 @@
 {
     "serverInfo": {
         "name": "CapitalValue-NL",
+        "title": "Capital Value",
         "version": "1.0.0",
         "websiteUrl": "https://www.capitalvalue.nl",
-        "description": ""
+        "description": "Ontsluit de website van Capital Value als gestructureerde informatiebron over woning- en zorgvastgoed in Nederland. Het omvat pagina's, nieuws, research, consultancyproducten en teamprofielen. De data biedt inzicht in transacties, marktontwikkelingen en adviesdiensten voor beleggers, corporaties en zorginstellingen, bruikbaar voor analyse, monitoring en AI-ondersteunde documentatie.",
+        "icons": [
+            {
+                "src": "https://media.licdn.com/dms/image/v2/D4E0BAQH5DgNT3NJoxw/company-logo_200_200/company-logo_200_200/0/1719257402788/capital_value_b_v__logo?e=2147483647&v=beta&t=6RwkZ2q8UI1KDk6YnXPPXpgKhAah_s1uZbFGRM7zGRI"
+            }
+        ]
     },
     "plugins": [
         "MCPhappey.Tools.HTTP.HTTPService, MCPhappey.Tools"

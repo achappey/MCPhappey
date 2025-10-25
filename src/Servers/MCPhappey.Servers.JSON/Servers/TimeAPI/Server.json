@@ -1,7 +1,0 @@
-{
-  "serverInfo": {
-    "name": "TimeAPI",
-    "version": "1.0.0",
-    "description": "Query current time, time zones and date utilities. Retrieve zone info, convert times, and compute day/week details for scheduling, logging and temporal analytics across regions."
-  }
-}

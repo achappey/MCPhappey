@@ -1,0 +1,16 @@
+{
+  "serverInfo": {
+    "name": "Google-Maps",
+    "title": "Google Maps",
+    "version": "1.0.0",
+    "description": "Connects AI agents to Google Maps data for AI grounding — enabling location-aware reasoning, distance understanding, and geographic context in conversations or workflows.",
+    "icons": [
+      {
+        "src": "https://thumbs.dreamstime.com/b/google-maps-apk-icon-vector-design-mobile-app-brand-trademark-logo-118453129.jpg"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Google.Maps.GoogleMapsService, MCPhappey.Tools"
+  ]
+}

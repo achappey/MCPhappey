@@ -3,7 +3,13 @@
     "name": "AzureMaps",
     "title": "Azure Maps",
     "version": "1.0.0",
-    "description": "Use Azure Maps for geocoding, routing, search and map tiles. Query locations, calculate routes and retrieve spatial data for applications and workflows using your subscription key."
+    "websiteUrl": "https://azure.microsoft.com/en-us/products/azure-maps",
+    "description": "Use Azure Maps for geocoding, routing, search and map tiles. Query locations, calculate routes and retrieve spatial data for applications and workflows using your subscription key.",
+    "icons": [
+      {
+        "src": "https://images.seeklogo.com/logo-png/49/2/azure-maps-logo-png_seeklogo-492711.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.AzureMaps.AzureMapsService, MCPhappey.Tools"

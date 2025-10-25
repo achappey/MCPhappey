@@ -116,7 +116,8 @@ public static partial class ModelContextServerExtensions
         {
             Name = server.ServerInfo.Name,
             Title = server.ServerInfo.Title,
-            Version = server.ServerInfo.Version
+            Version = server.ServerInfo.Version,
+            Icons = server.ServerInfo.Icons?.ToList()
         };
 
     public static string GetServerRelativeUrl(this Server server)

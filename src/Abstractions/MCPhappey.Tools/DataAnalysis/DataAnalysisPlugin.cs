@@ -127,7 +127,7 @@ public static partial class DataAnalysisPlugin
                 .FirstOrDefault(a => a.MimeType?.Equals("text/csv", StringComparison.OrdinalIgnoreCase) == true)
                 ?.Contents;
 
-            if (csvRaw == null || csvRaw.IsEmpty)
+            if (csvRaw == null || csvRaw.Length == 0)
                 return "No content found".ToErrorCallToolResponse();
 
             var data = await csvRaw.ToStream().CsvToDynamicRecordsAsync(cancellationToken);

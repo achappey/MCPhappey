@@ -4,7 +4,12 @@
     "title": "GitHub CoordinateSharp",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/Tronald/CoordinateSharp",
-    "description": "Calculates and converts geographic coordinates. Supports formats such as decimal, DMS, UTM, MGRS, and GEOREF. Provides distances, bearings, destination points, and sun and moon data based on location and time. Useful for mapping, analysis, and spatial calculations."
+    "description": "Calculates and converts geographic coordinates. Supports formats such as decimal, DMS, UTM, MGRS, and GEOREF. Provides distances, bearings, destination points, and sun and moon data based on location and time. Useful for mapping, analysis, and spatial calculations.",
+    "icons": [
+      {
+        "src": "https://api.nuget.org/v3-flatcontainer/coordinatesharp/3.3.1.1/icon"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.GitHub.CoordinateSharp.CoordinateSharpService, MCPhappey.Tools"

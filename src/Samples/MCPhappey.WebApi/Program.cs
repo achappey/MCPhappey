@@ -20,6 +20,11 @@ using MCPhappey.Servers.JSON.Extensions;
 using MCPhappey.Tools.AzureMaps;
 using MCPhappey.Tools.StabilityAI.Models;
 using MCPhappey.Tools.Together.Images;
+using MCPhappey.Tools.Azure.DocumentIntelligence;
+using MCPhappey.Tools.Imagga;
+using MCPhappey.Tools.AsyncAI;
+using MCPhappey.Tools.Mem0;
+using MCPhappey.Tools.Anthropic.Skills;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -66,75 +71,61 @@ AddApi(builder.Services, appConfig, "api.mistral.ai", k => new MistralSettings {
 AddApi(builder.Services, appConfig, "api.perplexity.ai", k => new PerplexitySettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.together.xyz", k => new TogetherSettings { ApiKey = k });
 
+if (appConfig?.DomainHeaders is { } headers)
+{
+    var match = headers.FirstOrDefault(h =>
+        h.Key.EndsWith(".cognitiveservices.azure.com", StringComparison.OrdinalIgnoreCase));
 
+    if (match.Value?.TryGetValue("Ocp-Apim-Subscription-Key", out var diApiKey) == true &&
+        !string.IsNullOrWhiteSpace(diApiKey))
+    {
+        builder.Services.AddSingleton(new AzureAISettings
+        {
+            Endpoint = match.Key,
+            ApiKey = diApiKey
+        });
+    }
+}
 
-/*
-var deskbirdKey = appConfig?.DomainHeaders?
-    .FirstOrDefault(a => a.Key == "connect.deskbird.com")
+var imaggaApiKey = appConfig?.DomainHeaders?
+    .FirstOrDefault(a => a.Key == "api.imagga.com")
     .Value
-    .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+    .FirstOrDefault(a => a.Key == "Authorization").Value.Split(" ").LastOrDefault();
 
-if (deskbirdKey != null)
+if (imaggaApiKey != null)
 {
-    builder.Services.AddSingleton(new DeskbirdSettings()
+    builder.Services.AddSingleton(new ImaggaSettings()
     {
-        ApiKey = deskbirdKey
+        ApiKey = imaggaApiKey
     });
 }
 
-var stabilityAi = appConfig?.DomainHeaders?
-    .FirstOrDefault(a => a.Key == "api.stability.ai")
+var mem0Key = appConfig?.DomainHeaders?
+    .FirstOrDefault(a => a.Key == "api.mem0.ai")
     .Value
-    .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
+    .FirstOrDefault(a => a.Key == "Authorization").Value.Split(" ").LastOrDefault();
 
-if (stabilityAi != null)
+if (mem0Key != null)
 {
-    builder.Services.AddSingleton(new StabilityAISettings()
+    builder.Services.AddSingleton(new Mem0Settings()
     {
-        ApiKey = stabilityAi
+        ApiKey = mem0Key
     });
 }
 
+var asyncAIKey = appConfig?.DomainHeaders?
+    .FirstOrDefault(a => a.Key == "api.async.ai")
+    .Value
+    .FirstOrDefault(a => a.Key == "x-api-key").Value;
 
-var xAIApiKey = appConfig?.DomainHeaders?
-            .FirstOrDefault(a => a.Key == "api.x.ai")
-            .Value
-            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
-
-if (xAIApiKey != null)
+if (asyncAIKey != null)
 {
-    builder.Services.AddSingleton(new XAISettings()
+    builder.Services.AddSingleton(new AsyncAISettings()
     {
-        ApiKey = xAIApiKey
+        ApiKey = asyncAIKey
     });
 }
 
-var mistralApiKey = appConfig?.DomainHeaders?
-            .FirstOrDefault(a => a.Key == "api.mistral.ai")
-            .Value
-            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
-
-if (mistralApiKey != null)
-{
-    builder.Services.AddSingleton(new MistralSettings()
-    {
-        ApiKey = mistralApiKey
-    });
-}
-
-var perplexityKey = appConfig?.DomainHeaders?
-            .FirstOrDefault(a => a.Key == "api.perplexity.ai")
-            .Value
-            .FirstOrDefault(a => a.Key == HeaderNames.Authorization).Value.GetBearerToken();
-
-if (perplexityKey != null)
-{
-    builder.Services.AddSingleton(new PerplexitySettings()
-    {
-        ApiKey = perplexityKey
-    });
-}
-*/
 var azureMapsApiKey = appConfig?.DomainHeaders?
     .FirstOrDefault(a => a.Key == "atlas.microsoft.com")
     .Value
@@ -148,6 +139,18 @@ if (azureMapsApiKey != null)
     });
 }
 
+var antApiKey = appConfig?.DomainHeaders?
+            .FirstOrDefault(a => a.Key == "api.anthropic.com")
+            .Value
+            .FirstOrDefault(a => a.Key == "x-api-key").Value;
+
+if (antApiKey != null)
+{
+    builder.Services.AddSingleton(new AnthropicSettings()
+    {
+        ApiKey = antApiKey
+    });
+}
 
 var apiKey = appConfig?.DomainHeaders?
             .FirstOrDefault(a => a.Key == Hosts.OpenAI)

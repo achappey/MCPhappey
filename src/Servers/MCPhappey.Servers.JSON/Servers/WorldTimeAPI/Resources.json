@@ -7,7 +7,7 @@
       "mimeType": "application/json"
     },
     {
-      "uri": "https://worldtimeapi.org/api/utc/now",
+      "uri": "https://worldtimeapi.org/api/ip",
       "name": "Current UTC time",
       "description": "Returns the current UTC date and time.",
       "mimeType": "application/json"

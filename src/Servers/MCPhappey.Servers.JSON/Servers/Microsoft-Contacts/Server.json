@@ -4,7 +4,12 @@
     "title": "Microsoft Contacts",
     "version": "1.0.0",
     "description": "Contacts plugin providing read-only access to a user’s contacts and contact folders in Outlook. Supports parameterised templates for specific folders, individual contacts and delta queries to track changes.",
-    "websiteUrl": "https://outlook.office.com/people"
+    "websiteUrl": "https://outlook.office.com/people",
+    "icons": [
+      {
+        "src": "https://www.ek.co/wp-content/uploads/2025/04/outlooklogo.png"
+      }
+    ]
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Contacts.ReadWrite.Shared"

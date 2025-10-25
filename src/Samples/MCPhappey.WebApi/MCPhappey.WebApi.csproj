@@ -31,8 +31,8 @@
 		<PackageReference Include="Microsoft.SemanticKernel" Version="1.66.0" />
 		<PackageReference Include="Microsoft.SemanticKernel.Plugins.Core" Version="1.66.0-preview" />
     <PackageReference Include="Microsoft.SemanticKernel.Plugins.Web" Version="1.66.0-alpha" />
-		<PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.4.0-preview.2" />		
-		<PackageReference Include="ModelContextProtocol" Version="0.4.0-preview.2" />		
+		<PackageReference Include="ModelContextProtocol.AspNetCore" Version="0.4.0-preview.3" />		
+		<PackageReference Include="ModelContextProtocol" Version="0.4.0-preview.3" />		
 
 	</ItemGroup>
 </Project>

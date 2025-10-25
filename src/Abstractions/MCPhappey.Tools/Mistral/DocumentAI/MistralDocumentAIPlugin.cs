@@ -31,7 +31,6 @@ public static partial class MistralDocumentAIPlugin
             var downloadService = serviceProvider.GetRequiredService<DownloadService>();
             var files = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
             var file = files.FirstOrDefault() ?? throw new Exception("File not found or empty.");
-
             var isImage = file.MimeType.StartsWith("image/");
             var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>()
                 ?? throw new InvalidOperationException("No IHttpClientFactory found in service provider");
@@ -46,7 +45,6 @@ public static partial class MistralDocumentAIPlugin
             // Convert file to base64 and wrap as data URI
             var base64 = Convert.ToBase64String(file.Contents.ToArray());
             var dataUri = $"data:{file.MimeType};base64,{base64}";
-
 
             using var ms = new MemoryStream();
             using (var w = new Utf8JsonWriter(ms, new JsonWriterOptions { Indented = false }))
@@ -93,8 +91,26 @@ public static partial class MistralDocumentAIPlugin
                 string fileUrl,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("JSON string: the **json_schema** object for Document annotations. Must include a top-level 'schema' object.")]
-                string documentJsonSchema,
+          [Description(@"
+            JSON for Mistral document_annotation_format.json_schema.
+
+            Required: 
+            - ""name"" (string)
+            - ""schema"" (object)
+            Optional:
+            - ""strict"" (boolean)
+
+            Rules:
+            - Set ""additionalProperties"": false on the root object AND on every nested object.
+            - Allowed keywords: type, properties, required, enum, const, additionalProperties
+            - Disallowed keywords: format, nullable, $schema, $id, hints/instructions, patternProperties, anyOf, allOf, oneOf
+            - Dates are plain ""string"" (no ""format"").
+            - Optional fields = omit from ""required"".
+
+            Example:
+            { ""name"": ""InvoiceSummary"", ""strict"": true, ""schema"": { ""type"": ""object"", ""additionalProperties"": false, ""properties"": { ""company"": { ""type"": ""object"", ""additionalProperties"": false, ""properties"": { ""legal_name"": { ""type"": ""string"" }, ""vat_number"": { ""type"": ""string"" }, ""address"": { ""type"": ""string"" } }, ""required"": [ ""legal_name"" ] }, ""invoice"": { ""type"": ""object"", ""additionalProperties"": false, ""properties"": { ""number"": { ""type"": ""string"" }, ""date"": { ""type"": ""string"" } }, ""required"": [ ""number"" ] }, ""amounts"": { ""type"": ""object"", ""additionalProperties"": false, ""properties"": { ""currency"": { ""type"": ""string"" }, ""subtotal_excl_vat"": { ""type"": ""number"" }, ""vat_amount"": { ""type"": ""number"" }, ""total_incl_vat"": { ""type"": ""number"" } }, ""required"": [ ""subtotal_excl_vat"", ""total_incl_vat"" ] } }, ""required"": [ ""company"", ""invoice"", ""amounts"" ] } }
+            ")]
+            string documentJsonSchema,
         [Description("Comma-separated zero-based page indices (e.g. '0,1,2'). Optional.")]
                 string? pagesCsv = null,
         [Description("Include base64 images in response (default: true).")]

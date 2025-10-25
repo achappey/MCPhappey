@@ -3,7 +3,6 @@ using MCPhappey.Common;
 using MCPhappey.Common.Models;
 using MCPhappey.Scrapers.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Graph.Beta;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Server;
 

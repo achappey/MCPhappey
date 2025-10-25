@@ -2,6 +2,11 @@
   "serverInfo": {
     "name": "Wikidata",
     "version": "1.0.0",
-    "description": "Query and extract structured knowledge from Wikidata. Use SPARQL and entity lookups to retrieve facts, relationships and identifiers for integration, enrichment and research across domains."
+    "description": "Query and extract structured knowledge from Wikidata. Use SPARQL and entity lookups to retrieve facts, relationships and identifiers for integration, enrichment and research across domains.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/8/8b/Wikidata-logo-en_with_square_background_%28needed_for_interfaces%29.svg"
+      }
+    ]
   }
 }

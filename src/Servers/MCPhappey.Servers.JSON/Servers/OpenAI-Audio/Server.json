@@ -1,10 +1,23 @@
 {
   "serverInfo": {
     "name": "OpenAI-Audio",
+    "title": "OpenAI Audio",
     "version": "1.0.0",
-    "description": "Use OpenAI for speech-to-text, text-to-speech and audio transformations. Transcribe recordings, generate high‑quality voices, and process audio files for captions, summaries and voice assistants with seamless storage integration."
+    "description": "Use OpenAI for speech-to-text, text-to-speech and audio transformations. Transcribe recordings, generate high‑quality voices, and process audio files for captions, summaries and voice assistants with seamless storage integration.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/light/openai.png",
+        "theme": "light"
+      }
+    ]
   },
-  "plugins": ["MCPhappey.Tools.OpenAI.Audio.OpenAIAudio, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.Audio.OpenAIAudio, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
   }

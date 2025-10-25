@@ -37,8 +37,8 @@ public static class GraphClientExtensions
                 new MGraph.Users.Item.TranslateExchangeIds.TranslateExchangeIdsPostRequestBody
                 {
                     InputIds = [clean],
-                    SourceIdType = MGraph.Models.ExchangeIdFormat.EwsId,
-                    TargetIdType = MGraph.Models.ExchangeIdFormat.RestId
+                    SourceIdType = ExchangeIdFormat.EwsId,
+                    TargetIdType = ExchangeIdFormat.RestId
                 },
                 cancellationToken: ct);
         }
@@ -51,9 +51,9 @@ public static class GraphClientExtensions
             response = await builder.PostAsTranslateExchangeIdsPostResponseAsync(
                 new MGraph.Me.TranslateExchangeIds.TranslateExchangeIdsPostRequestBody
                 {
-                    InputIds = new List<string> { clean },
-                    SourceIdType = MGraph.Models.ExchangeIdFormat.EwsId,
-                    TargetIdType = MGraph.Models.ExchangeIdFormat.RestId
+                    InputIds = [clean],
+                    SourceIdType = ExchangeIdFormat.EwsId,
+                    TargetIdType = ExchangeIdFormat.RestId
                 },
                 cancellationToken: ct);
         }
@@ -246,7 +246,7 @@ public static class GraphClientExtensions
 
         return new()
         {
-            Contents = BinaryData.FromStream(stream),
+            Contents = await BinaryData.FromStreamAsync(stream),
             Uri = item?.WebUrl!,
             Filename = item?.Name,
             MimeType = finalContentType,

@@ -1,10 +1,18 @@
 {
   "serverInfo": {
     "name": "Google-Video",
+    "title": "Google Video",
     "version": "1.0.0",
-    "description": "Search and analyze online videos using Google capabilities. Find relevant clips, retrieve metadata and thumbnails, and prepare links for embedding or transcription workflows. Useful for research, content curation and summarization across channels."
+    "description": "Search and analyze online videos using Google capabilities. Find relevant clips, retrieve metadata and thumbnails, and prepare links for embedding or transcription workflows. Useful for research, content curation and summarization across channels.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fc/YouTube_play_button_square_%282013-2017%29.svg/2048px-YouTube_play_button_square_%282013-2017%29.svg.png"
+      }
+    ]
   },
-  "plugins": ["MCPhappey.Tools.Google.Video.GoogleVideo, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Google.Video.GoogleVideo, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
   }

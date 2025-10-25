@@ -1,8 +1,14 @@
 {
   "serverInfo": {
     "name": "Simplicate-Sales",
+    "title": "Simplicate Sales",
     "version": "1.0.0",
-    "description": "Salespijplijn-integratie voor Simplicate met sales, offertes en fases."
+    "description": "Salespijplijn-integratie voor Simplicate met sales, offertes en fases.",
+    "icons": [
+      {
+        "src": "https://developer.simplicate.com/images/simplicate_icon.png"
+      }
+    ]
   },
   "instructions": "Payloads without select query string parameters are very large.\nRelated entities use a '.' behind the field name in select queries. If you need to search on custom fields, always read the custom field list first to make sure you pick the correct filter value.",
   "headers": {

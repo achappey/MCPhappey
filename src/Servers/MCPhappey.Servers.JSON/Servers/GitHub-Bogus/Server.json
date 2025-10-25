@@ -4,7 +4,12 @@
         "title": "GitHub Bogus",
         "version": "1.0.0",
         "websiteUrl": "https://github.com/bchavez/Bogus",
-        "description": "Wrapper for Bogus. Generate deterministic fake data: people, companies, lorem text, numbers, and dates. Supports locales and optional seeds for repeatable outputs—perfect for seeding, demos, and tests."
+        "description": "Wrapper for Bogus. Generate deterministic fake data: people, companies, lorem text, numbers, and dates. Supports locales and optional seeds for repeatable outputs—perfect for seeding, demos, and tests.",
+        "icons": [
+            {
+                "src": "https://api.nuget.org/v3-flatcontainer/bogus/35.6.4/icon"
+            }
+        ]
     },
     "plugins": [
         "MCPhappey.Tools.GitHub.Bogus.BogusService, MCPhappey.Tools"

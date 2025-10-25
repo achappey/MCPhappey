@@ -1,8 +1,19 @@
 {
   "serverInfo": {
     "name": "OpenAI-OutlookMail",
+    "title": "OpenAI Outlook Mail",
     "version": "1.0.0",
-    "description": "Enhance Outlook email workflows with OpenAI. Read and search mail, summarize threads, classify messages, and draft responses with tone and structure controls. Operates through Microsoft Graph with delegated scopes for secure, context-aware assistance."
+    "description": "Enhance Outlook email workflows with OpenAI. Read and search mail, summarize threads, classify messages, and draft responses with tone and structure controls. Operates through Microsoft Graph with delegated scopes for secure, context-aware assistance.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/light/openai.png",
+        "theme": "light"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.OpenAI.OutlookMail.OpenAIOutlookMail, MCPhappey.Tools"

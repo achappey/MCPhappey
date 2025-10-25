@@ -104,7 +104,7 @@ public static class OpenAIAudio
             url!, cancellationToken);
         var download = downloads.FirstOrDefault();
 
-        if (download?.Contents.IsEmpty != false || string.IsNullOrEmpty(download?.Filename))
+        if (download?.Contents.Length > 0 || string.IsNullOrEmpty(download?.Filename))
         {
             throw new ArgumentException(url);
         }

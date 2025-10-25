@@ -3,7 +3,12 @@
     "name": "deskbird",
     "version": "1.0.0",
     "websiteUrl": "https://www.deskbird.com",
-    "description": "Workplace management with deskbird: read bookings, desks and schedules. Filter by date range and paginate efficiently. Automate occupancy insights, reservations and attendance reporting using the deskbird plugin."
+    "description": "Workplace management with deskbird: read bookings, desks and schedules. Filter by date range and paginate efficiently. Automate occupancy insights, reservations and attendance reporting using the deskbird plugin.",
+    "icons": [
+      {
+        "src": "https://play-lh.googleusercontent.com/sm-3HAM8_E7a1e0OaaxGAqsi9p5iocX0r3pDmjVXBSWouh0CF95gn09lpvBa8W9MJw"
+      }
+    ]
   },
   "roles": [
     "deskbird.ReadAll"

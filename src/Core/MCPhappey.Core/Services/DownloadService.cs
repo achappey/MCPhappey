@@ -46,7 +46,7 @@ public partial class DownloadService(WebScraper webScraper,
                     foreach (var file in fileContent)
                     {
                         var fileMarkdown =
-                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">GET ScrapeContentAsync {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
+                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">GET ScrapeContentAsync {new Uri(file.Uri).Host}</a></summary>\n\n```\n{(file.Contents).ToString()}\n```\n</details>";
 
                         await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug, CancellationToken.None);
                     }
@@ -63,7 +63,7 @@ public partial class DownloadService(WebScraper webScraper,
                     foreach (var file in decoded)
                     {
                         var fileMarkdown =
-                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">DECODE ScrapeContentAsync {new Uri(file.Uri).Host}</a></summary>\n\n```\n{file.Contents}\n```\n</details>";
+                        $"<details><summary><a href=\"{file.Uri}\" target=\"blank\">DECODE ScrapeContentAsync {new Uri(file.Uri).Host}</a></summary>\n\n```\n{((file.Contents)).ToString()}\n```\n</details>";
 
                         await mcpServer.SendMessageNotificationAsync(fileMarkdown, LoggingLevel.Debug, CancellationToken.None);
                     }
@@ -128,6 +128,7 @@ public partial class DownloadService(WebScraper webScraper,
 
         return [new FileItem() {
             MimeType = defaultScraper?.ContentType!,
+           // Stream = defaultScraper?.Content.ToStream(),
             Contents = defaultScraper?.Content!,
             Uri = url,
         }];

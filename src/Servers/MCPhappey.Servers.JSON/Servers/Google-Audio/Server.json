@@ -1,11 +1,19 @@
 {
   "serverInfo": {
     "name": "Google-Audio",
+    "title": "Google Audio",
     "version": "1.0.0",
-    "description": "Text-to-speech and audio processing with Google. Generate natural voices, support multi‑speaker TTS (keep ≤4 turns), and handle audio for narration, prompts and apps. Note: multi‑speaker synthesis can be slow; batch thoughtfully."
+    "description": "Text-to-speech and audio processing with Google. Generate natural voices, support multi‑speaker TTS (keep ≤4 turns), and handle audio for narration, prompts and apps. Note: multi‑speaker synthesis can be slow; batch thoughtfully.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Google-gemini-icon.svg/2048px-Google-gemini-icon.svg.png"
+      }
+    ]
   },
   "instructions": "Do not include more than 4 speaker turns in a single TTS tool call. Creating Audio Speech, especially multi speaker TTS, can be slow. ",
-  "plugins": ["MCPhappey.Tools.Google.Audio.GoogleAudio, MCPhappey.Tools"],
+  "plugins": [
+    "MCPhappey.Tools.Google.Audio.GoogleAudio, MCPhappey.Tools"
+  ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
   }

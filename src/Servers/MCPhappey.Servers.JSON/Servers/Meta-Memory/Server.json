@@ -1,0 +1,19 @@
+{
+  "serverInfo": {
+    "name": "Meta-Memory",
+    "title": "Meta Memory",
+    "version": "1.0.0",
+    "description": "Meta Memory bundles multiple memory systems into one MCP server. It provides unified access to application memories stored in different services, including OneDrive, Mem0 and OpenMemory. People can browse, create and modify memory files without worrying about where they live. This simplifies knowledge management across tools and projects."
+  },
+  "plugins": [
+    "MCPhappey.Tools.Memory.OneDrive.OneDriveMemory, MCPhappey.Tools",
+    "MCPhappey.Tools.OpenMemory.OpenMemory, MCPhappey.Tools",
+    "MCPhappey.Tools.KernelMemory.KernelMemory, MCPhappey.Tools",
+    "MCPhappey.Tools.Mem0.Mem0SharedService, MCPhappey.Tools",
+    "MCPhappey.Tools.Mem0.Mem0PersonalService, MCPhappey.Tools",
+    "MCPhappey.Tools.Mem0.Mem0FeedbackService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

@@ -54,7 +54,7 @@ public static class FuzzySharpService
             var file = files.FirstOrDefault() ?? throw new Exception("File not found or empty.");
             var document = file.Contents.ToString();
 
-            if (maxChars > 0 && document.Length > maxChars)
+            if (maxChars > 0 && document?.Length > maxChars)
                 document = document[..maxChars];
 
             var impl = ResolveScorer(scorer);
@@ -90,7 +90,7 @@ public static class FuzzySharpService
                 var file = files.FirstOrDefault() ?? throw new Exception("File not found or empty.");
                 var document = file.Contents.ToString();
 
-                if (maxChars > 0 && document.Length > maxChars)
+                if (maxChars > 0 && document?.Length > maxChars)
                     document = document[..maxChars];
 
                 var impl = ResolveScorer(scorer);
@@ -124,7 +124,7 @@ public static class FuzzySharpService
             var file = files.FirstOrDefault() ?? throw new Exception("File not found or empty.");
             var document = file.Contents.ToString();
 
-            if (maxChars > 0 && document.Length > maxChars)
+            if (maxChars > 0 && document?.Length > maxChars)
                 document = document[..maxChars];
 
             var impl = ResolveScorer(scorer);
@@ -164,7 +164,7 @@ public static class FuzzySharpService
             var file = files.FirstOrDefault() ?? throw new Exception("File not found or empty.");
             var document = file.Contents.ToString();
 
-            if (maxChars > 0 && document.Length > maxChars)
+            if (maxChars > 0 && document?.Length > maxChars)
                 document = document[..maxChars]; // no chunking, just a soft cap if you want it
 
             var impl = ResolveScorer(scorer);

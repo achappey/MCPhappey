@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Simplicate.Extensions;
@@ -11,7 +9,7 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Simplicate.CRM;
 
-public static class SimplicateCRM
+public static partial class SimplicateCRM
 {
     [McpServerTool(OpenWorld = false,
         ReadOnly = true,
@@ -35,7 +33,20 @@ public static class SimplicateCRM
          var simplicateOptions = serviceProvider.GetRequiredService<SimplicateOptions>();
          var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
-         string select = "industry.,name,email,note,id,url,phone,relation_type.,relation_manager.";
+         string select =
+                "id," +
+                "name," +
+                "phone," +
+                "url," +
+                "email," +
+                "linkedin_url," +
+                "coc_code," +
+                "vat_number," +
+                "note," +
+                "industry.," +
+                "relation_type.," +
+                "relation_manager.";
+
          var filters = new List<string>();
 
          if (!string.IsNullOrWhiteSpace(industryName))
@@ -56,7 +67,7 @@ public static class SimplicateCRM
          if (offset.HasValue)
              filters.Add($"offset={offset.Value}");
 
-         var filterString = string.Join("&", filters) + $"&select={select}&metadata=count,limit,offset&limit=100&sort=name";
+         var filterString = string.Join("&", filters) + $"&select={select}&metadata=count,limit,offset&limit=100&sort=-created_at";
 
          return await downloadService.GetSimplicatePageAsync<SimplicateOrganization>(
              serviceProvider, requestContext.Server,
@@ -204,12 +215,13 @@ public static class SimplicateCRM
     [McpServerTool(Title = "Create new organization in Simplicate", Destructive = true, OpenWorld = false)]
     public static async Task<CallToolResult?> SimplicateCRM_CreateOrganization(
         [Description("The full name of the organization.")] string name,
+        [Description("Industry id.")] string industryId,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("A note or description about the organization.")] string? note = null,
         [Description("The primary email address for the organization.")] string? email = null,
         [Description("The main website URL of the organization.")] Uri? url = null,
-        [Description("Industry id.")] string? industryId = null,
+        [Description("LinkedIn url.")] Uri? linkedInUrl = null,
         CancellationToken cancellationToken = default) => await serviceProvider.PostSimplicateResourceAsync(
                 requestContext,
                 "/crm/organization",
@@ -217,6 +229,7 @@ public static class SimplicateCRM
                {
                    Name = name,
                    Note = note,
+                   LinkedInUrl = linkedInUrl,
                    Email = email,
                    Url = url,
                    IndustryId = industryId
@@ -226,6 +239,10 @@ public static class SimplicateCRM
                     name = dto.Name,
                     note = dto.Note,
                     email = dto.Email,
+                    coc_code = dto.CocCode,
+                    phone = dto.Phone,
+                    linkedin_url = dto.LinkedInUrl,
+                    vat_number = dto.VatNumber,
                     url = dto.Url,
                     industry = !string.IsNullOrEmpty(dto.IndustryId) ? new
                     {
@@ -234,6 +251,60 @@ public static class SimplicateCRM
                 },
                 cancellationToken
             );
+
+
+    [Description("Update an organization in Simplicate CRM")]
+    [McpServerTool(Title = "Update organization in Simplicate", Destructive = true, OpenWorld = false)]
+    public static async Task<CallToolResult?> SimplicateCRM_UpdateOrganization(
+            string organizationId,
+            IServiceProvider serviceProvider,
+            RequestContext<CallToolRequestParams> requestContext,
+            string? name = null,
+            string? note = null,
+            string? email = null,
+            string? phone = null,
+            Uri? url = null,
+            string? industryId = null,
+            string? cocCode = null,
+            string? vatNumber = null,
+            Uri? linkedinUrl = null,
+            CancellationToken cancellationToken = default)
+    {
+        var dto = new SimplicateNewOrganization
+        {
+            Name = name,
+            Note = note,
+            Email = email,
+            Phone = phone,
+            CocCode = cocCode,
+            LinkedInUrl = linkedinUrl,
+            VatNumber = vatNumber,
+            Url = url,
+            IndustryId = industryId
+        };
+
+        return await serviceProvider.PutSimplicateResourceMergedAsync(
+            requestContext,
+            "/crm/organization/" + organizationId,
+            dto,
+            d => new
+            {
+                name = d.Name,
+                note = d.Note,
+                email = d.Email,
+                coc_code = d.CocCode,
+                phone = d.Phone,
+                linkedin_url = d.LinkedInUrl,
+                vat_number = d.VatNumber,
+                url = d.Url,
+                industry = !string.IsNullOrEmpty(d.IndustryId)
+                    ? new { id = d.IndustryId }
+                    : null
+            },
+            cancellationToken);
+    }
+
+
 
 
     [Description("Create a new person in Simplicate CRM")]
@@ -261,166 +332,5 @@ public static class SimplicateCRM
         },
         cancellationToken
     );
-
-    [Description("Please fill in the person details")]
-    public class SimplicateNewPerson
-    {
-        [JsonPropertyName("first_name")]
-        [Required]
-        [Description("The person's first name.")]
-        public string? FirstName { get; set; }
-
-        [JsonPropertyName("family_name")]
-        [Required]
-        [Description("The person's family name or surname.")]
-        public string? FamilyName { get; set; }
-
-        [JsonPropertyName("note")]
-        [Description("A note or comment about the person.")]
-        public string? Note { get; set; }
-
-        [JsonPropertyName("email")]
-        [EmailAddress]
-        [Description("The person's primary email address.")]
-        public string? Email { get; set; }
-
-        [JsonPropertyName("phone")]
-        [Description("The person's phone number.")]
-        public string? Phone { get; set; }
-
-        [JsonPropertyName("website_url")]
-        [Description("The person's website URL, if available.")]
-        public Uri? WebsiteUrl { get; set; }
-    }
-
-
-    [Description("Please fill in the organization details")]
-    public class SimplicateNewOrganization
-    {
-        [JsonPropertyName("name")]
-        [Required]
-        [Description("The full name of the organization.")]
-        public string? Name { get; set; }
-
-        [JsonPropertyName("note")]
-        [Description("A note or description about the organization.")]
-        public string? Note { get; set; }
-
-        [JsonPropertyName("email")]
-        [EmailAddress]
-        [Description("The primary email address for the organization.")]
-        public string? Email { get; set; }
-
-        [JsonPropertyName("url")]
-        [Description("The main website URL of the organization.")]
-        public Uri? Url { get; set; }
-
-        [JsonPropertyName("industry.id")]
-        [Description("Industry id")]
-        public string? IndustryId { get; set; }
-    }
-
-
-    public class SimplicateMyOrganizationProfile
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = null!;
-
-        [JsonPropertyName("organization_id")]
-        public string OrganizationId { get; set; } = null!;
-
-        [JsonPropertyName("name")]
-        public string Name { get; set; } = null!;
-
-        [JsonPropertyName("coc_code")]
-        public string? CocCode { get; set; }
-
-        [JsonPropertyName("vat_number")]
-        public string? VatNumber { get; set; }
-
-        [JsonPropertyName("bank_account")]
-        public string? BankAccount { get; set; }
-
-        [JsonPropertyName("blocked")]
-        public bool? Blocked { get; set; }
-
-        [JsonPropertyName("main_profile")]
-        public bool? MainProfile { get; set; }
-    }
-
-    public class SimplicateOrganization
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = null!;
-
-        [JsonPropertyName("name")]
-        public string? Name { get; set; }
-
-        [JsonPropertyName("phone")]
-        public string? Phone { get; set; }
-
-        [JsonPropertyName("url")]
-        public string? Url { get; set; }
-
-        [JsonPropertyName("email")]
-        public string? Email { get; set; }
-
-        [JsonPropertyName("linkedin_url")]
-        public string? LinkedinUrl { get; set; }
-
-        [JsonPropertyName("coc_code")]
-        public string? CocCode { get; set; }
-
-        [JsonPropertyName("vat_number")]
-        public string? VatNumber { get; set; }
-
-        [JsonPropertyName("note")]
-        public string? Note { get; set; }
-
-        [JsonPropertyName("industry")]
-        public SimplicateIndustry? Industry { get; set; }
-
-        [JsonPropertyName("relation_type")]
-        public SimplicateRelationType? RelationType { get; set; }
-
-        [JsonPropertyName("relation_manager")]
-        public SimplicateRelationManager? RelationManager { get; set; }
-    }
-
-    public class SimplicateRelationManager
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = null!;
-
-        [JsonPropertyName("name")]
-        public string? Name { get; set; } = null!;
-
-    }
-
-    public class SimplicateIndustry
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = null!;
-
-        [JsonPropertyName("name")]
-        public string? Name { get; set; } = null!;
-
-    }
-
-    public class SimplicateRelationType
-    {
-        [JsonPropertyName("id")]
-        public string Id { get; set; } = null!;
-
-        [JsonPropertyName("label")]
-        public string? Label { get; set; } = null!;
-
-        [JsonPropertyName("color")]
-        public string Color { get; set; } = null!;
-
-    }
-
-
-
 }
 

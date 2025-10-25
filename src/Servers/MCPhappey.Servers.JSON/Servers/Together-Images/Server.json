@@ -3,7 +3,12 @@
     "name": "Together-Images",
     "title": "Together Images",
     "version": "1.0.0",
-    "description": "Together Images provides access to Together AI’s image generation models. Users can create images from text prompts in various styles and resolutions. The server supports listing available models, generating new images, and storing results on OneDrive for further processing, visualization, or integration with other MCP-based tools."
+    "description": "Together Images provides access to Together AI’s image generation models. Users can create images from text prompts in various styles and resolutions. The server supports listing available models, generating new images, and storing results on OneDrive for further processing, visualization, or integration with other MCP-based tools.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Together.Images.TogetherImages, MCPhappey.Tools"

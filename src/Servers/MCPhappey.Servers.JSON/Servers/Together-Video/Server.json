@@ -1,0 +1,19 @@
+{
+  "serverInfo": {
+    "name": "Together-Video",
+    "title": "Together Video",
+    "version": "1.0.0",
+    "description": "Create and edit short videos and images from text prompts. Choose from multiple leading models, set duration and aspect ratio, and submit jobs. Track progress and retrieve downloadable results. Works reliably at scale, with notifications or in-app updates.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Together.Video.TogetherVideo, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

@@ -3,7 +3,12 @@
     "name": "Microsoft-OutlookCalendar",
     "version": "1.0.0",
     "websiteUrl": "https://outlook.office.com/calendar",
-    "description": "Read and manage Outlook calendars via Microsoft Graph. List events, check availability, create meetings, and send invites. Generate summaries and agendas, detect conflicts, and automate scheduling with delegated user permissions."
+    "description": "Read and manage Outlook calendars via Microsoft Graph. List events, check availability, create meetings, and send invites. Generate summaries and agendas, detect conflicts, and automate scheduling with delegated user permissions.",
+    "icons": [
+      {
+        "src": "https://www.ek.co/wp-content/uploads/2025/04/outlooklogo.png"
+      }
+    ]
   },
   "plugins": [
     "MCPhappey.Tools.Graph.Outlook.GraphOutlookCalendar, MCPhappey.Tools"

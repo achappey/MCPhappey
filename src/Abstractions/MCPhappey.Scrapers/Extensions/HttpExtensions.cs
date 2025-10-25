@@ -10,6 +10,7 @@ public static class HttpExtensions
      CancellationToken cancellationToken = default) => new()
      {
          Contents = BinaryData.FromBytes(await httpResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken)),
+         // Stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken),
          MimeType = httpResponseMessage.Content.Headers.ContentType?.MediaType!,
          Uri = uri,
      };

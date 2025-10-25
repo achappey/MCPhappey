@@ -3,7 +3,12 @@
     "name": "Brave",
     "version": "1.0.0",
     "websiteUrl": "https://brave.com",
-    "description": "Provides access to Brave Search APIs (web, news and related endpoints) enabling assistants to retrieve fresh, privacy-focused search results directly from Brave."
+    "description": "Provides access to Brave Search APIs (web, news and related endpoints) enabling assistants to retrieve fresh, privacy-focused search results directly from Brave.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/5/51/Brave_icon_lionface.png"
+      }
+    ]
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read"

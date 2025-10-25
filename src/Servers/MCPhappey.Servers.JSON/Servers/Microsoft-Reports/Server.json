@@ -3,7 +3,12 @@
     "name": "Microsoft-Reports",
     "title": "Microsoft Reports",
     "version": "1.0.0",
-    "description": "Mirosoft Reports provides read-only access to usage and activity reports across Microsoft 365. Includes parameterised templates for Teams, Mailbox, OneDrive, SharePoint, Azure AD sign-ins and more, letting assistants fetch detailed analytics or per-user data without full re-fetches."
+    "description": "Mirosoft Reports provides read-only access to usage and activity reports across Microsoft 365. Includes parameterised templates for Teams, Mailbox, OneDrive, SharePoint, Azure AD sign-ins and more, letting assistants fetch detailed analytics or per-user data without full re-fetches.",
+    "icons": [
+      {
+        "src": "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1722952497"
+      }
+    ]
   },
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Reports.Read.All https://graph.microsoft.com/ReportSettings.ReadWrite.All"

@@ -96,7 +96,8 @@ public static class SharePointSearch
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Page size")] int pageSize = 10,
-        CancellationToken cancellationToken = default) => await requestContext.WithStructuredContent(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithStructuredContent(async () =>
     {
         var mcpServer = requestContext.Server;
         using var client = await serviceProvider.GetOboGraphClient(mcpServer);
