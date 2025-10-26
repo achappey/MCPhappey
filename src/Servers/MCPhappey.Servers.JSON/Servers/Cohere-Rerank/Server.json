@@ -1,0 +1,25 @@
+{
+  "serverInfo": {
+    "name": "Cohere-Rerank",
+    "title": "Cohere Rerank",
+    "version": "1.0.0",
+    "websiteUrl": "https://cohere.com",
+    "description": "Use Cohere’s rerank models to evaluate which documents best match a given query. It retrieves text from SharePoint or provided URLs, extracts readable content, and ranks results by relevance.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/cohere-color.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/cohere-color.png",
+        "theme": "light"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Cohere.CohereService, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

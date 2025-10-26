@@ -1,0 +1,19 @@
+{
+  "serverInfo": {
+    "name": "Runway",
+    "version": "1.0.0",
+    "websiteUrl": "https://runwayml.com",
+    "description": "Runway enables AI-generated video creation using either text prompts or image inputs. It supports different model variants, aspect ratios and durations to match creative needs. Users can start a generation task and check its status until the final video becomes available.",
+    "icons": [
+      {
+        "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQE01cLcJx7cJONWLVmk5tRBhGB0LIJ8SqSQ&s"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Runway.RunwayVideo, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

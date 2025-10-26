@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol;
@@ -10,12 +11,12 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Tools.OpenAI.Research;
 
-public static class OpenAIResearch
+public static class OpenAIMicrosoftResearch
 {
-    [Description("Perform web research on a topic. Before you use this tool, always ask the user first for more details so you can craft a detailed research topic for maximum accuracy")]
-    [McpServerTool(Title = "Perform web research",
+    [Description("Perform Microsoft research (SharePoint, Teams and Outlook) on a topic. Before you use this tool, always ask the user first for more details so you can craft a detailed research topic for maximum accuracy")]
+    [McpServerTool(Title = "Perform Microsoft research",
         ReadOnly = true)]
-    public static async Task<CallToolResult> OpenAIResearch_PerformResearch(
+    public static async Task<CallToolResult> OpenAIResearch_PerformMicrosoftResearch(
         [Description("Topic for the research")]
         string researchTopic,
         IServiceProvider serviceProvider,
@@ -38,7 +39,7 @@ public static class OpenAIResearch
         };
 
         var querySampling = await samplingService.GetPromptSample<WebSearchPlan>(serviceProvider,
-            requestContext.Server, "web-search-planner", queryArgs,
+            requestContext.Server, "microsoft-search-planner", queryArgs,
                 "gpt-5",
                 metadata: new Dictionary<string, object>() { { "openai", new {
                                 reasoning = new {
@@ -65,9 +66,10 @@ public static class OpenAIResearch
         var queries = querySampling?.Searches.Select(a => $"- {a.Query}: {a.Reason}") ?? [];
 
         var total = querySampling?.Searches.Count + 2;
+        var oboToken = await serviceProvider.GetOboGraphToken(requestContext.Server);
 
-        var researchTasks = querySampling?.Searches.Select(a => GetWebResearch(requestContext.Server,
-             samplingService, requestContext, counter++, total, serviceProvider,
+        var researchTasks = querySampling?.Searches.Select(a => GetMicrosoftResearch(requestContext.Server,
+             samplingService, requestContext, oboToken, counter++, total, serviceProvider,
              a.Query, a.Reason,
             cancellationToken));
 
@@ -117,15 +119,17 @@ public static class OpenAIResearch
         return result.ToTextCallToolResponse();
     }
 
-    private static async Task<string?> GetWebResearch(McpServer mcpServer,
+    private static async Task<string?> GetMicrosoftResearch(McpServer mcpServer,
         SamplingService samplingService,
         RequestContext<CallToolRequestParams> requestContext,
+        string token,
         int? counter,
         int? total,
         IServiceProvider serviceProvider,
         string topic, string reason,
         CancellationToken cancellationToken = default)
     {
+
         if (requestContext.Params?.ProgressToken is not null)
         {
             await mcpServer.SendNotificationAsync("notifications/progress", new ProgressNotificationParams()
@@ -147,15 +151,35 @@ public static class OpenAIResearch
                        };
 
         var querySampling = await samplingService.GetPromptSample(serviceProvider,
-                 mcpServer, "web-research", values,
+                 mcpServer, "microsoft-research", values,
                      "gpt-5-mini",
                      metadata: new Dictionary<string, object>() { { "openai", new {
                                 reasoning = new {
                                     effort = "low"
                                 },
-                                web_search = new {
-                                    search_context_size = "medium"
-                                }
+                                mcp_list_tools = new[] {
+                                        new {
+                                            type = "mcp",
+                                            server_label = "microsoft_teams",
+                                            authorization = token,
+                                            connector_id = "connector_microsoftteams",
+                                            require_approval = "never"
+                                        },
+                                        new {
+                                            type = "mcp",
+                                            server_label = "outlook_email",
+                                            authorization = token,
+                                            connector_id = "connector_outlookemail",
+                                            require_approval = "never"
+                                        },
+                                        new {
+                                            type = "mcp",
+                                            server_label = "sharepoint",
+                                            authorization = token,
+                                            connector_id = "connector_sharepoint",
+                                            require_approval = "never"
+                                        }
+                                    }
                             }  } },
                             cancellationToken: cancellationToken);
 

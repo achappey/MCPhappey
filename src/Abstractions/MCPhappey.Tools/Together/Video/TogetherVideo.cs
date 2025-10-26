@@ -7,6 +7,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Core.Services;
 using MCPhappey.Tools.Together.Images;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
@@ -60,12 +61,15 @@ public static class TogetherVideo
         [Description("Video model to use, e.g. black-forest-labs/FLUX.1-schnell-video")] string model,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Video duration in seconds.")] int seconds = 6,
-        [Description("Frames per second (default 24).")] int fps = 24,
-        [Description("Width of the video.")] int width = 1024,
-        [Description("Height of the video.")] int height = 1024,
+        [Description("Height of the video.")] int? height = null,
+        [Description("Video duration in seconds.")] int? seconds = null,
+        [Description("Frames per second.")] int? fps = null,
+        [Description("Width of the video.")] int? width = null,
         [Description("Optional negative prompt.")] string? negativePrompt = null,
         [Description("Optional seed for deterministic generation.")] int? seed = null,
+        [Description("Optional list of images to guide video generation, similar to keyframes. Protected links like SharePoint and/or OneDrive are supported.")] IEnumerable<string>? frameImages = null,
+        [Description("Optional list of reference images. Unlike frame_images which constrain specific timeline positions, reference images guide the general appearance that should appear consistently across the video. For reference images only public accessible URLs are supported.")]
+        IEnumerable<string>? referenceImages = null,
         [Description("Filename (without extension).")] string? filename = null,
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
@@ -76,6 +80,22 @@ public static class TogetherVideo
 
             var settings = serviceProvider.GetRequiredService<TogetherSettings>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+
+            /*    if (frameImages?.Any() == true && frameImages.Count() > 2)
+                {
+                    throw new Exception("Max 2 frame images supported");
+                }*/
+
+            List<string> items = [];
+
+            foreach (var item in frameImages ?? [])
+            {
+                var files = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, item, cancellationToken);
+
+                items.Add(Convert.ToBase64String(files.FirstOrDefault()?.Contents));
+            }
+
             filename ??= requestContext.ToOutputFileName("mp4");
 
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new TogetherNewVideo
@@ -104,6 +124,8 @@ public static class TogetherVideo
                 fps = typed.Fps,
                 seed = typed.Seed,
                 output_format = "MP4",
+                frame_images = items.Select(a => new { input_image = a }),
+                reference_images = referenceImages,
                 negative_prompt = typed.NegativePrompt
             });
 
@@ -162,20 +184,20 @@ public static class TogetherVideo
         public string Model { get; set; } = default!;
 
         [JsonPropertyName("seconds")]
-        [Description("Video duration in seconds (default 6).")]
-        public int Seconds { get; set; } = 6;
+        [Description("Video duration in seconds.")]
+        public int? Seconds { get; set; }
 
         [JsonPropertyName("fps")]
-        [Description("Frames per second (default 24).")]
-        public int Fps { get; set; } = 24;
+        [Description("Frames per second.")]
+        public int? Fps { get; set; }
 
         [JsonPropertyName("width")]
-        [Description("Width of the video in pixels (default 1024).")]
-        public int Width { get; set; } = 1024;
+        [Description("Width of the video in pixels.")]
+        public int? Width { get; set; }
 
         [JsonPropertyName("height")]
-        [Description("Height of the video in pixels (default 1024).")]
-        public int Height { get; set; } = 1024;
+        [Description("Height of the video in pixels.")]
+        public int? Height { get; set; }
 
         [JsonPropertyName("negative_prompt")]
         [Description("Optional negative prompt to exclude elements from generation.")]

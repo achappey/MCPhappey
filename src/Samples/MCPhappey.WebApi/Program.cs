@@ -25,6 +25,8 @@ using MCPhappey.Tools.Imagga;
 using MCPhappey.Tools.AsyncAI;
 using MCPhappey.Tools.Mem0;
 using MCPhappey.Tools.Anthropic.Skills;
+using MCPhappey.Tools.ElevenLabs;
+using MCPhappey.Tools.Runway;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -70,6 +72,7 @@ AddApi(builder.Services, appConfig, "api.x.ai", k => new XAISettings { ApiKey = 
 AddApi(builder.Services, appConfig, "api.mistral.ai", k => new MistralSettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.perplexity.ai", k => new PerplexitySettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.together.xyz", k => new TogetherSettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.dev.runwayml.com", k => new RunwaySettings { ApiKey = k });
 
 if (appConfig?.DomainHeaders is { } headers)
 {
@@ -97,6 +100,19 @@ if (imaggaApiKey != null)
     builder.Services.AddSingleton(new ImaggaSettings()
     {
         ApiKey = imaggaApiKey
+    });
+}
+
+var elevenLabsKey = appConfig?.DomainHeaders?
+    .FirstOrDefault(a => a.Key == "api.elevenlabs.io")
+    .Value
+    .FirstOrDefault(a => a.Key == "xi-api-key").Value;
+
+if (elevenLabsKey != null)
+{
+    builder.Services.AddSingleton(new ElevenLabsSettings()
+    {
+        ApiKey = elevenLabsKey
     });
 }
 

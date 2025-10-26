@@ -13,5 +13,17 @@ public static class AgentService
         [Description("A thought to think about.")] string thought) =>
             await Task.FromResult(thought.ToTextCallToolResponse());
 
+    [Description("Pause execution for the specified duration and log the pause event.")]
+    [McpServerTool(Title = "Pause", ReadOnly = true, OpenWorld = false)]
+    public static async Task<CallToolResult> Agent_Pause(
+           [Description("Duration in seconds to pause. Must be >= 0.")] int duration_seconds)
+    {
+        if (duration_seconds < 0)
+            duration_seconds = 0;
+
+        await Task.Delay(TimeSpan.FromSeconds(duration_seconds));
+
+        return $"Paused for {duration_seconds} seconds".ToTextCallToolResponse();
+    }
 }
 

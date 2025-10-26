@@ -1,0 +1,21 @@
+{
+  "serverInfo": {
+    "name": "OpenAI-FinancialResearch",
+    "title": "OpenAI Financial Research",
+    "version": "1.0.0",
+    "description": "This service performs structured financial research on a given topic by planning web searches, gathering evidence, analyzing fundamentals and risks, writing a report, and verifying the results. It helps users quickly understand key financial insights with clear summaries and follow-up questions.",
+    "icons": [
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",
+        "theme": "dark"
+      },
+      {
+        "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/light/openai.png",
+        "theme": "light"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.OpenAI.Research.OpenAIFinancialResearch, MCPhappey.Tools"
+  ]
+}

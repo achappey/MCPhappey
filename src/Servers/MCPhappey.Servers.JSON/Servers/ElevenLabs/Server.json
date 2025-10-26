@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "ElevenLabs",
+    "version": "1.0.0",
+    "websiteUrl": "https://elevenlabs.io",
+    "description": "ElevenLabs provides speech generation and transcription capabilities. Users can convert text into spoken audio using different voices and transcribe audio files into text. This server offers simple access to core functionality without advanced tuning options. Audio results are stored for reuse and sharing. Suitable for basic voice features in applications."
+  },
+  "plugins": [
+    "MCPhappey.Tools.ElevenLabs.ElevenLabsAudio, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
+  }
+}

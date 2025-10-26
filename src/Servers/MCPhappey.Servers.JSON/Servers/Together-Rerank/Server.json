@@ -3,6 +3,7 @@
     "name": "Together-Rerank",
     "title": "Together Rerank",
     "version": "1.0.0",
+    "websiteUrl": "https://www.together.ai",
     "description": "Together Rerank uses Together AI's reranking models to reorder documents or files based on a given query. It retrieves folder content from SharePoint or OneDrive, extracts readable text, and ranks the items by relevance.",
     "icons": [
       {
