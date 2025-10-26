@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "DocumentSummarizer",
+    "title": "Document Summarizer",
+    "version": "1.0.0",
+    "description": "DocumentSummarizer extracts readable summaries from long documents. Upload a public or protected SharePoint or OneDrive file and choose length, format, and extractiveness. Multiple AI models work in parallel to provide independent perspectives on the same content. This helps you quickly understand key points without reading everything yourself."
+  },
+  "plugins": [
+    "MCPhappey.Tools.AI.DocumentSummarizer, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.Read.All"
+  }
+}

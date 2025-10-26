@@ -27,8 +27,8 @@ public static class OpenAIFinancialResearch
     private const string WriterModel = "gpt-5";
     private const string VerifierModel = "gpt-5-mini";
 
-    [Description("End-to-end financial research: plan → search → analyze (fundamentals & risk) → write → verify. Use this for structured financial desk research with end report.")]
-    [McpServerTool(Title = "Financial Research", ReadOnly = true, OpenWorld = false)]
+    [Description("Perform financial research on a topic. Before you use this tool, always ask the user first for more details so you can craft a detailed research topic for maximum accuracy.")]
+    [McpServerTool(Title = "Perform financial research", ReadOnly = true, OpenWorld = false)]
     public static async Task<CallToolResult> FinancialResearch_Run(
        [Description("Research subject or question (e.g. 'Is ASML undervalued after Q3 2025?')")]
         string topic,
@@ -56,6 +56,7 @@ public static class OpenAIFinancialResearch
 
         var plan = await sampling.GetPromptSample<WebSearchPlan>(
             services, ctx.Server, PlannerPrompt, planArgs, PlannerModel,
+            maxTokens: 4096 * 4,
             metadata: new Dictionary<string, object> {
                 { "openai", new { reasoning = new { effort = "medium" } } }
             },

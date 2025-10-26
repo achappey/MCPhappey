@@ -21,7 +21,7 @@ public static class DocumentQnA
         Name = "document_qna_ask",
         ReadOnly = true)]
     public static async Task<CallToolResult?> DocumentQnA_Ask(
-       [Description("Url of the document you would like to ask")] string fileUrl,
+       [Description("Url of the document you would like to ask. Protected SharePoint and OneDive links are supported.")] string fileUrl,
        [Description("Question prompt about the document")] string question,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
@@ -71,7 +71,7 @@ public static class DocumentQnA
                                 }
                             } },
                             { "xai", new {
-                                reasoning = new {
+                                 reasoning = new {
                                 }
                             } },
                             { "anthropic", new {

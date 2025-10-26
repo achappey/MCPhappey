@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "DocumentTools",
+    "title": "Document Tools",
+    "version": "1.0.0",
+    "description": "Document Tools extract structured insights from documents without reading everything manually. It identifies stakeholders, key terms and actionable tasks directly from the content. Works with public and protected SharePoint or OneDrive files. Results are delivered in clear formats so people can quickly understand who is involved, what matters and what needs to happen next."
+  },
+  "plugins": [
+    "MCPhappey.Tools.AI.DocumentTools, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.Read.All"
+  }
+}

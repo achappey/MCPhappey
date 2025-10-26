@@ -41,6 +41,7 @@ public static class OpenAIMicrosoftResearch
         var querySampling = await samplingService.GetPromptSample<WebSearchPlan>(serviceProvider,
             requestContext.Server, "microsoft-search-planner", queryArgs,
                 "gpt-5",
+                maxTokens: 4096 * 4,
                 metadata: new Dictionary<string, object>() { { "openai", new {
                                 reasoning = new {
                                     effort = "medium"

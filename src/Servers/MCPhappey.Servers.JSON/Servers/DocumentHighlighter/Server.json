@@ -1,0 +1,14 @@
+{
+  "serverInfo": {
+    "name": "DocumentHighlighter",
+    "title": "Document Highlighter",
+    "version": "1.0.0",
+    "description": "Document Highlighter extracts the most important information from long documents. It selects key sentences and essential points so people can quickly understand what matters without reading everything. It works with public and protected SharePoint or OneDrive files and is useful when you need fast insight rather than a full summary or detailed analysis."
+  },
+  "plugins": [
+    "MCPhappey.Tools.AI.DocumentHighlighter, MCPhappey.Tools"
+  ],
+  "obo": {
+    "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.Read.All"
+  }
+}
