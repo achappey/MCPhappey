@@ -12,8 +12,8 @@ namespace MCPhappey.Tools.AI;
 
 public static class WebSearch
 {
-    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "claude-haiku-4-5-20251001", "grok-4-fast-reasoning"];
-    private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro", "claude-opus-4-1-20250805", "grok-4-fast-reasoning"];
+    private static readonly string[] ModelNames = ["sonar-pro", "gpt-5-mini", "gemini-2.5-flash", "claude-haiku-4-5-20251001", "grok-4-fast-reasoning", "mistral-medium-latest"];
+    private static readonly string[] AcademicModelNames = ["sonar-reasoning-pro", "gpt-5", "gemini-2.5-pro", "claude-opus-4-1-20250805", "grok-4-fast-reasoning", "mistral-large-latest"];
 
     [Description("Perform a quick web search using Google AI with Google Search grounding.")]
     [McpServerTool(
@@ -146,6 +146,11 @@ public static class WebSearch
                                     effort = "low"
                                 }
                             } },
+                            { "mistral", new {
+                                web_search_premium = new {
+                                    type = "web_search_premium"
+                                }
+                            } },
                             { "xai", new {
                                 web_search = new {
                                 },
@@ -260,6 +265,11 @@ public static class WebSearch
                         },
                         reasoning = new {
                          }
+                    } },
+                    { "mistral", new {
+                                web_search_premium = new {
+                                    type = "web_search_premium"
+                                }
                     } },
                     { "openai", new {
                         web_search = new {

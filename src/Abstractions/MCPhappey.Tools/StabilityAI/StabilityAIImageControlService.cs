@@ -26,7 +26,7 @@ public static class StabilityAIImageControlService
            IServiceProvider serviceProvider,
            RequestContext<CallToolRequestParams> requestContext,
            [Description("URL of the sketch or image to refine. Supports SharePoint and OneDrive.")] string imageUrl,
-           [Description("Describe what the final refined image should look like.")] string prompt,
+           [Description("Describe what the final refined image should look like. English prompts only.")] string prompt,
            [Description("Output filename without extension.")] string? filename = null,
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
@@ -130,7 +130,7 @@ public static class StabilityAIImageControlService
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
           [Description("URL of the image whose structure will guide generation. Supports SharePoint and OneDrive.")] string imageUrl,
-          [Description("Describe what the final image should depict while keeping the same structure.")] string prompt,
+          [Description("Describe what the final image should depict while keeping the same structure. English prompts only.")] string prompt,
           [Description("Output filename without extension.")] string? filename = null,
           CancellationToken cancellationToken = default) =>
           await requestContext.WithExceptionCheck(async () =>
@@ -234,7 +234,7 @@ public static class StabilityAIImageControlService
            IServiceProvider serviceProvider,
            RequestContext<CallToolRequestParams> requestContext,
            [Description("URL of the reference image whose style should guide the output.")] string imageUrl,
-           [Description("Describe what the output should depict, in the same style as the reference image.")] string prompt,
+           [Description("Describe what the output should depict, in the same style as the reference image. English prompts only.")] string prompt,
            [Description("Output filename without extension.")] string? filename = null,
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
@@ -341,7 +341,7 @@ public static class StabilityAIImageControlService
            RequestContext<CallToolRequestParams> requestContext,
            [Description("URL of the image whose content should be preserved.")] string initImageUrl,
            [Description("URL of the image whose style should be applied.")] string styleImageUrl,
-           [Description("Optional description of the desired final look.")] string? prompt = null,
+           [Description("Optional description of the desired final look. English prompts only.")] string? prompt = null,
            [Description("Output filename without extension.")] string? filename = null,
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>

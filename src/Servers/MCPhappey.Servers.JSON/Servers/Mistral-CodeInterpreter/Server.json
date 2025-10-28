@@ -1,0 +1,16 @@
+{
+  "serverInfo": {
+    "name": "Mistral-CodeInterpreter",
+    "title": "Mistral Code Interpreter",
+    "version": "1.0.0",
+    "description": "Run code in a managed sandbox to analyze data, generate charts, transform files and validate results. Upload datasets, execute Python steps, and return artifacts to support reproducible, step‑by‑step analyses in workflows.",
+    "icons": [
+      {
+        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Mistral_AI_logo_%282025%E2%80%93%29.svg/1200px-Mistral_AI_logo_%282025%E2%80%93%29.svg.png"
+      }
+    ]
+  },
+  "plugins": [
+    "MCPhappey.Tools.Mistral.CodeInterpreter.MistralCodeInterpreter, MCPhappey.Tools"
+  ]
+}

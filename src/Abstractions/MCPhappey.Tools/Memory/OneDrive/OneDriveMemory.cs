@@ -38,7 +38,7 @@ public static class OneDriveMemory
      OpenWorld = false,
      Destructive = false)]
     public static async Task<CallToolResult?> OneDriveMemory_View(
-     [Description("Path inside /memories")] string path,
+     [Description("Path inside /memories. Path should always start with '/memories'")] string path,
      RequestContext<CallToolRequestParams> context,
      [Description("Optional: [startLine, endLine]")] int[]? view_range = null,
      CancellationToken cancellationToken = default) =>

@@ -37,35 +37,38 @@ public class ResourceService(DownloadService downloadService, IServerDataProvide
         CancellationToken cancellationToken = default)
     {
         var serverConfig = serviceProvider.GetServerConfig(mcpServer);
-        var resources = await GetServerResources(serverConfig!, cancellationToken);
 
-        var widgetResource = resources.Resources
-            .FirstOrDefault(a => a.MimeType?.Equals("text/html+skybridge", StringComparison.OrdinalIgnoreCase) == true
-                && a.Uri.Equals(uri, StringComparison.OrdinalIgnoreCase));
-
-        if (widgetResource != null)
+        if (uri.EndsWith(".html", StringComparison.OrdinalIgnoreCase))
         {
-            var download = await downloadService.DownloadContentAsync(serviceProvider, mcpServer, uri,
-                           cancellationToken);
+            var resources = await GetServerResources(serverConfig!, cancellationToken);
 
-            if (!download.Any())
+            var widgetResource = resources.Resources
+                .FirstOrDefault(a => a.MimeType?.Equals("text/html+skybridge", StringComparison.OrdinalIgnoreCase) == true
+                    && a.Uri.Equals(uri, StringComparison.OrdinalIgnoreCase));
+
+            if (widgetResource != null)
             {
-                throw new Exception($"Resource {uri} not found");
-            }
+                var download = await downloadService.DownloadContentAsync(serviceProvider, mcpServer, uri,
+                               cancellationToken);
 
-            var item = download.First();
+                if (!download.Any())
+                {
+                    throw new Exception($"Resource {uri} not found");
+                }
 
-            var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
-            var request = httpContextAccessor.HttpContext?.Request;
-            var baseUrl = request != null
-                ? $"{request.Scheme}://{request.Host.Value}"
-                : null;
+                var item = download.First();
 
-            var html = Encoding.UTF8.GetString((item.Contents));
+                var httpContextAccessor = serviceProvider.GetRequiredService<IHttpContextAccessor>();
+                var request = httpContextAccessor.HttpContext?.Request;
+                var baseUrl = request != null
+                    ? $"{request.Scheme}://{request.Host.Value}"
+                    : null;
 
-            return new ReadResourceResult()
-            {
-                Contents = [new TextResourceContents() {
+                var html = Encoding.UTF8.GetString((item.Contents));
+
+                return new ReadResourceResult()
+                {
+                    Contents = [new TextResourceContents() {
                     Text = html.Replace("%HOST_URL%", baseUrl),
                     MimeType = "text/html+skybridge",
                     Uri = uri,
@@ -73,9 +76,10 @@ public class ResourceService(DownloadService downloadService, IServerDataProvide
                         ["openai/widgetDescription"] = widgetResource.Description
                     }
                 }]
-            };
+                };
+            }
         }
-
+        
         var fileItem = await downloadService.ScrapeContentAsync(serviceProvider, mcpServer, uri,
                        cancellationToken);
 

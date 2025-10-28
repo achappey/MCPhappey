@@ -130,14 +130,14 @@ internal static class OneDriveMemoryHelpers
         => error.ToErrorCallToolResponse();
 
 
-    public static async Task WriteTextFileAsync(
+    public static async Task<DriveItem?> WriteTextFileAsync(
    this GraphServiceClient client,
    string driveId,
    string path,
    string content,
    CancellationToken ct)
     {
-        await client.Drives[driveId]
+        return await client.Drives[driveId]
             .Root
             .ItemWithPath(path.Trim('/'))
             .Content

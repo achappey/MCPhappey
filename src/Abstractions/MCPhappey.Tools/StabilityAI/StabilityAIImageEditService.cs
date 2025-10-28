@@ -247,7 +247,7 @@ public static class StabilityAIImageEditService
            IServiceProvider serviceProvider,
            RequestContext<CallToolRequestParams> requestContext,
            [Description("URL of the image to expand (SharePoint, OneDrive, or public).")] string imageUrl,
-           [Description("Optional description for what should appear in expanded areas.")] string? prompt = null,
+           [Description("Optional description for what should appear in expanded areas. English prompts only.")] string? prompt = null,
            [Description("Output filename without extension.")] string? filename = null,
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
@@ -359,7 +359,7 @@ public static class StabilityAIImageEditService
            RequestContext<CallToolRequestParams> requestContext,
            [Description("URL of the image to edit (SharePoint, OneDrive, or public).")] string imageUrl,
            [Description("Object or area to find (e.g., 'a red car', 'a person', etc.).")] string searchPrompt,
-           [Description("Description of what should replace it.")] string prompt,
+           [Description("Description of what should replace it. English prompts only.")] string prompt,
            [Description("Output filename without extension.")] string? filename = null,
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
@@ -467,7 +467,7 @@ public static class StabilityAIImageEditService
            RequestContext<CallToolRequestParams> requestContext,
            [Description("URL of the image to recolor (SharePoint, OneDrive, or public).")] string imageUrl,
            [Description("Object to find and recolor (e.g., 'the blue shirt').")] string selectPrompt,
-           [Description("Describe the new colors or visual changes.")] string prompt,
+           [Description("Describe the new colors or visual changes. English prompts only.")] string prompt,
            [Description("Output filename without extension.")] string? filename = null,
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>

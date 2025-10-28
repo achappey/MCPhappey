@@ -12,7 +12,8 @@
     "MCPhappey.Tools.xAI.GrokImageService, MCPhappey.Tools",
     "MCPhappey.Tools.StabilityAI.StabilityAIImageService, MCPhappey.Tools",
     "MCPhappey.Tools.StabilityAI.StabilityAIImageEditService, MCPhappey.Tools",
-    "MCPhappey.Tools.Together.Images.TogetherImages, MCPhappey.Tools"
+    "MCPhappey.Tools.Together.Images.TogetherImages, MCPhappey.Tools",
+    "MCPhappey.Tools.Mistral.Images.MistralImages, MCPhappey.Tools"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

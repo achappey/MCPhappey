@@ -9,7 +9,8 @@
     "MCPhappey.Tools.Google.CodeExecution.GoogleCodeExecution, MCPhappey.Tools",
     "MCPhappey.Tools.xAI.GrokCodeExecution, MCPhappey.Tools",
     "MCPhappey.Tools.Anthropic.CodeExecution.AnthropicCodeExecution, MCPhappey.Tools",
-    "MCPhappey.Tools.OpenAI.CodeInterpreter.OpenAICodeInterpreter, MCPhappey.Tools"
+    "MCPhappey.Tools.OpenAI.CodeInterpreter.OpenAICodeInterpreter, MCPhappey.Tools",
+    "MCPhappey.Tools.Mistral.CodeInterpreter.MistralCodeInterpreter, MCPhappey.Tools"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"
