@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Audio",
+    "title": "Audio",
     "version": "1.0.0",
     "description": "Concatenate multiple base64-encoded MP3 audio files into one single MP3 file."
   },

@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "WebSearch",
+    "title": "WebSearch",
     "version": "1.0.0",
     "description": "AI-powered web search for finding, summarizing and citing online sources. Discover authoritative pages, extract key facts and generate concise answers with references for research, monitoring and knowledge tasks."
   },

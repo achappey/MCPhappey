@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "AssemblyAI",
+    "title": "AssemblyAI",
     "version": "1.0.0",
     "websiteUrl": "https://www.assemblyai.com",
     "description": "AssemblyAI offers advanced speech recognition and audio intelligence APIs. It converts audio and video into accurate text, detects speakers, summarizes content, and identifies topics, emotions, or sensitive data. Designed for developers, it powers transcription, analytics, and content moderation pipelines through scalable, asynchronous REST and WebSocket integrations.",

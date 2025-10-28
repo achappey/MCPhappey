@@ -47,7 +47,7 @@ public static class AspNetCoreWebAppExtensions
                   return Results.Json(registry);
               });*/
 
-        webApp.MapGet("/v0/servers", (HttpContext context)
+        webApp.MapGet("/v0.1/servers", (HttpContext context)
                    => Results.Json(servers.ToMcpServerRegistry($"{context.Request.Scheme}://{context.Request.Host}")));
 
         webApp.MapGet("/mcp.json", (HttpContext context)

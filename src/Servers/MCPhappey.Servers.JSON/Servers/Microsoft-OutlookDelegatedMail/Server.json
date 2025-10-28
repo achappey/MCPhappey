@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Microsoft-OutlookDelegatedMail",
+    "title": "Microsoft Outlook Delegated Mail",
     "version": "1.0.0",
     "websiteUrl": "https://outlook.office.com/mail",
     "description": "Send and manage delegated email via Microsoft Graph: read, search, draft, and send messages, handle attachments and folders, and automate notifications and triage. Uses delegated permissions to access specific user mailboxes securely and context-aware.",

@@ -10,6 +10,10 @@ public class RegistryServer
     [JsonPropertyName("name")]
     public string Name { get; set; } = null!;
 
+    [JsonPropertyName("title")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Title { get; set; }
+
     [JsonPropertyName("description")]
     public string? Description { get; set; }
 
@@ -28,6 +32,9 @@ public class RegistryServer
     [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
     public Repository? Repository { get; set; }
 
+    [JsonPropertyName("icons")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IEnumerable<ServerIcon>? Icons { get; set; }
 }
 
 public class Repository
@@ -75,4 +82,23 @@ public class ServerHeader
 
     [JsonPropertyName("format")]
     public string? Format { get; set; }
+}
+
+
+public class ServerIcon
+{
+    [JsonPropertyName("src")]
+    public string Source { get; set; } = default!;
+
+    [JsonPropertyName("mimeType")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? MimeType { get; set; }
+
+    [JsonPropertyName("theme")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public string? Theme { get; set; }
+
+    [JsonPropertyName("sizes")]
+    [JsonIgnore(Condition = JsonIgnoreCondition.WhenWritingNull)]
+    public IEnumerable<string>? Sizes { get; set; }
 }

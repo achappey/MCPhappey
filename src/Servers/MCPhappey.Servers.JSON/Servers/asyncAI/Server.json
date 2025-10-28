@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "asyncAI",
+    "title": "asyncAI",
     "version": "1.0.0",
     "websiteUrl": "https://async.ai",
     "description": "Generates lifelike speech from any text in multiple languages and voices. Ideal for narrations, presentations, or accessibility. Converts written content into clear audio that sounds natural and expressive, supporting different tones and playback formats.",

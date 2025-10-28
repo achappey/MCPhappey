@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Pexels",
+    "title": "Pexels",
     "version": "1.0.0",
     "websiteUrl": "https://www.pexels.com",
     "description": "Search and retrieve high-quality free photos and videos from Pexels. Curate inspiration boards, find trending content, and download assets for documents, presentations and apps with clear licensing.",

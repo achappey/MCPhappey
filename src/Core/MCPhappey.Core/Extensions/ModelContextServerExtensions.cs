@@ -74,6 +74,14 @@ public static partial class ModelContextServerExtensions
                 Description = server.Server.ServerInfo.Description,
                 Version = server.Server.ServerInfo.Version,
                 WebsiteUrl = server.Server.ServerInfo.WebsiteUrl,
+                Title = server.Server.ServerInfo.Title,
+                Icons = server.Server.ServerInfo.Icons?.Select(a => new ServerIcon()
+                {
+                    Source = a.Source,
+                    MimeType = a.MimeType,
+                    Sizes = a.Sizes,
+                    Theme = a.Theme
+                }),
                 Name = $"{baseUrl.WithoutScheme()}/{server.Server.ServerInfo.Name}",
                 Repository = new()
                 {

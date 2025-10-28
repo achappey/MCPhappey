@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Runway",
+    "title": "Runway",
     "version": "1.0.0",
     "websiteUrl": "https://runwayml.com",
     "description": "Runway enables AI-generated video creation using either text prompts or image inputs. It supports different model variants, aspect ratios and durations to match creative needs. Users can start a generation task and check its status until the final video becomes available.",

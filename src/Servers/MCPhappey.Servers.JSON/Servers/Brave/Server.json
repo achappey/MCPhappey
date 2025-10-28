@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Brave",
+    "title": "Brave",
     "version": "1.0.0",
     "websiteUrl": "https://brave.com",
     "description": "Provides access to Brave Search APIs (web, news and related endpoints) enabling assistants to retrieve fresh, privacy-focused search results directly from Brave.",

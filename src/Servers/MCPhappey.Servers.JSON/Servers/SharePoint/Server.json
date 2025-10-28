@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "SharePoint",
+    "title": "SharePoint",
     "version": "1.0.0",
     "description": "Search and read SharePoint links, news pages, Teams messages and Graph API resources as unified resources. Discover and retrieve sites, lists and files; use write operations only when creating, updating or deleting items in workflows.",
     "icons": [

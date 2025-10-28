@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Unsplash",
+    "title": "Unsplash",
     "version": "1.0.0",
     "websiteUrl": "https://unsplash.com",
     "description": "Gives assistants access to a vast open library of high-quality photos and global image data. It enables searching, browsing, and analyzing topics, collections, and user activity across the platform, helping AI systems connect visual content with context, aesthetics, and creative exploration in meaningful ways.",

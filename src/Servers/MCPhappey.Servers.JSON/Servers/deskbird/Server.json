@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "deskbird",
+    "title": "deskbird",
     "version": "1.0.0",
     "websiteUrl": "https://www.deskbird.com",
     "description": "Workplace management with deskbird: read bookings, desks and schedules. Filter by date range and paginate efficiently. Automate occupancy insights, reservations and attendance reporting using the deskbird plugin.",

@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Calendar",
+    "title": "Calendar",
     "version": "1.0.0",
     "description": "MCP server that provides current date/time information and calculates week numbers with start and end dates for any month using configurable rules."
   },

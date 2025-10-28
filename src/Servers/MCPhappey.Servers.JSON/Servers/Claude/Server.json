@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Claude",
+    "title": "Claude",
     "version": "1.0.0",
     "websiteUrl": "https://claude.ai",
     "description": "A structured behavior profile for Claude Sonnet 4.5, defining tone, safety, refusal, and formatting rules. It models Anthropic’s conversational, ethical, and wellbeing standards, ensuring responsible, factual, and empathetic AI behavior consistent with official Claude guidance and Anthropic product documentation.",

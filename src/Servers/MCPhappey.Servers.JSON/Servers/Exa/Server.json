@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Exa",
+    "title": "Exa",
     "version": "1.0.0",
     "websiteUrl": "https://exa.ai",
     "description": "Exa is a smart web search platform that goes beyond simple keyword results. It understands meaning, finds the most relevant and recent information, and delivers clean, structured answers instead of messy links. It’s built for AI tools, researchers, and teams that need deeper, more accurate web insights.",
