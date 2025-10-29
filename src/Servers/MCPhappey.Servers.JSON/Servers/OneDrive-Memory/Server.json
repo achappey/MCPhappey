@@ -3,7 +3,7 @@
     "name": "OneDrive-Memory",
     "title": "OneDrive Memory",
     "version": "1.0.0",
-    "description": "OneDrive Memory keeps helpful notes and progress for you across conversations. It stores this information safely in your own OneDrive, so it stays private and available on any device. This helps your AI continue tasks, remember decisions, and pick up where you left off next time.",
+    "description": "Store private notes and progress in your OneDrive so tasks can continue later.",
     "icons": [
       {
         "src": "https://www.aaudxp-cms.aau.dk/media/3sglfyu0/onedrive.png?width=960"

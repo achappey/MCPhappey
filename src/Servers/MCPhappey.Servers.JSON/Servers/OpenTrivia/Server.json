@@ -4,7 +4,7 @@
     "title": "Open Trivia",
     "version": "1.0.0",
     "websiteUrl": "https://opentdb.com",
-    "description": "The Open Trivia Database offers tools for retrieving trivia questions across categories, difficulties, and formats. Session tokens help prevent duplicates. Results support multiple encoding options, making it simple to integrate trivia games or quizzes into apps and projects.",
+    "description": "Retrieve trivia questions by category and difficulty to build games and quizzes.",
     "icons": [
       {
         "src": "https://opentdb.com/images/logo.png"

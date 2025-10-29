@@ -3,7 +3,7 @@
     "name": "Simplicate-ProjectSettings",
     "title": "Simplicate Projectinstellingen",
     "version": "1.0.0",
-    "description": "Projectinstellingen- en referentiegegevensintegratie voor Simplicate (diensten, tarieven, eenheden en defaults) voor project- en urenconfiguratie.",
+    "description": "Simplicate projectinstellingen: diensten, tarieven en eenheden voor configuratie.",
     "icons": [
       {
         "src": "https://developer.simplicate.com/images/simplicate_icon.png"

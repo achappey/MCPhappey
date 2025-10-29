@@ -3,7 +3,7 @@
     "name": "ModelContext-Utils",
     "title": "ModelContext Utils",
     "version": "1.0.0",
-    "description": "Utilities to test MCP servers and resources. Inspect tools, resolve parameters, validate resource templates and run end-to-end checks. Prefer reading existing context before asking, enabling efficient and reliable server testing workflows.",
+    "description": "Test MCP servers: inspect tools, validate resource templates and run checks efficiently.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",

@@ -3,7 +3,7 @@
     "name": "ModelContext-Statistics",
     "title": "ModelContext Statistics",
     "version": "1.0.0",
-    "description": "Generate and explore usage statistics for the MCP environment. Aggregate events, server and tool activity, and prompt performance to monitor quality and adoption. Produce summaries for dashboards and reviews using authenticated access.",
+    "description": "Summarize usage of servers, tools, and prompts for oversight.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",

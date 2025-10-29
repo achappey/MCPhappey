@@ -4,7 +4,7 @@
     "title": "Together Images",
     "version": "1.0.0",
     "websiteUrl": "https://www.together.ai",
-    "description": "Together Images provides access to Together AI’s image generation models. Users can create images from text prompts in various styles and resolutions. The server supports listing available models, generating new images, and storing results on OneDrive for further processing, visualization, or integration with other MCP-based tools.",
+    "description": "Create images from text prompts using Together AI models in different styles and sizes.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"

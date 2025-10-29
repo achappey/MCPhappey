@@ -4,7 +4,7 @@
     "title": "Together Video",
     "version": "1.0.0",
     "websiteUrl": "https://www.together.ai",
-    "description": "Create and edit short videos and images from text prompts. Choose from multiple leading models, set duration and aspect ratio, and submit jobs. Track progress and retrieve downloadable results. Works reliably at scale, with notifications or in-app updates.",
+    "description": "Make short videos from text prompts and download the results when ready.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"

@@ -4,7 +4,7 @@
         "title": "Knowledge Graph",
         "version": "1.0.0",
         "websiteUrl": "https://en.wikipedia.org/wiki/Knowledge_graph",
-        "description": "Generates structured knowledge graphs from unstructured text by extracting entities, detecting relationships, verifying consistency, and composing a clean node–edge representation. Useful for analyzing long reports, policies, or research documents. Results can be visualized or queried to reveal key concepts, actors, and their interconnections within complex information."
+        "description": "Extract entities and relationships to show how they connect in text."
     },
     "plugins": [
         "MCPhappey.Tools.AI.KnowledgeGraph, MCPhappey.Tools"

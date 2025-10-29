@@ -1,8 +1,9 @@
 {
   "serverInfo": {
     "name": "WorldTimeAPI",
+    "title": "WorldTimeAPI",
     "version": "1.0.0",
     "websiteUrl": "https://worldtimeapi.org",
-    "description": "Lightweight time zone service for current time and offsets worldwide. Retrieve zone details and timestamps to support scheduling, logging and time-aware workflows across regions."
+    "description": "Get current time and timezone details worldwide for scheduling and logs."
   }
 }

@@ -3,7 +3,8 @@
     "name": "OpenAI-SharePoint",
     "title": "OpenAI SharePoint",
     "version": "1.0.0",
-    "description": "Use OpenAI to search, summarize and extract insights from SharePoint content. Read sites, lists and files via Microsoft Graph and generate answers, briefs and classifications while respecting user permissions.",
+    "websiteUrl": "https://www.openai.com",
+    "description": "Search and summarize SharePoint content with OpenAI while respecting permissions.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",

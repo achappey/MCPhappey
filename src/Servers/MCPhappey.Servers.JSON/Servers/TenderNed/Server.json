@@ -1,9 +1,10 @@
 {
   "serverInfo": {
     "name": "TenderNed",
+    "title": "TenderNed",
     "version": "1.0.0",
     "websiteUrl": "https://www.tenderned.nl",
-    "description": "Officieel aanbestedingsplatform van de Nederlandse overheid. Zoek, filter en analyseer aankondigingen, publicaties en gunningen. Handig voor marktverkenning, inschrijvingen en rapportages over lopende en toekomstige opdrachten binnen diverse sectoren.",
+    "description": "Zoek en analyseer NL-aanbestedingen, publicaties en gunningen voor marktverkenning en inschrijvingen.",
     "icons": [
       {
         "src": "https://www.detirrel.nl/wp-content/uploads/2019/01/logo-tenderned.png"

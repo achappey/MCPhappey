@@ -3,9 +3,9 @@
     "name": "ModelContext-ToolCreator",
     "title": "ModelContext ToolCreator",
     "version": "1.0.0",
-    "description": "Help create new MCP tools and scrapers from user intent. Analyze examples and generate consistent C# implementations. Prefer ReadResource for GET; produce complete, ready-to-run code for create, update and delete operations.",
+    "description": "Turn your intent and examples into ready-to-use tools for reading or updating data.",
     "icons": [
-        {
+      {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",
         "theme": "dark"
       },

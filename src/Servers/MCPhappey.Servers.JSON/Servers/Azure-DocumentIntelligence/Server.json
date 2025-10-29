@@ -4,7 +4,7 @@
     "title": "Azure Document Intelligence",
     "version": "1.0.0",
     "websiteUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-document-intelligence",
-    "description": "Azure Document Intelligence extracts (OCR) text, structure, and key information from digital and scanned documents. It can read pages, detect tables, and interpret layouts to make documents searchable and usable in workflows. It works with invoices, reports, forms, and contracts in many formats, including PDF and images.",
+    "description": "Extract text, tables and structure from PDFs and images to make documents searchable and usable.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Microsoft_Azure.svg/2048px-Microsoft_Azure.svg.png"

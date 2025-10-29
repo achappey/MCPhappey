@@ -4,7 +4,7 @@
     "title": "Anthropic Skills",
     "version": "1.0.0",
     "websiteUrl": "https://www.anthropic.com/news/skills",
-    "description": "Anthropic Skills let you turn instructions and example files into powerful, reusable AI automations. Once a Skill is created, you can run it anytime to process information, handle tasks, or transform content. It’s a simple way to package your expertise so AI can perform it on demand.",
+    "description": "Create reusable AI automations from instructions and examples to run tasks on demand.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/1/14/Anthropic.png"

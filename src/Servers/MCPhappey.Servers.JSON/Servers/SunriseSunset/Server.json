@@ -4,7 +4,7 @@
     "title": "Sunrise Sunset",
     "websiteUrl": "https://sunrise-sunset.org",
     "version": "1.0.0",
-    "description": "Retrieve sunrise, sunset and twilight times for coordinates and dates. Ideal for scheduling, photography and reporting. Always credit sunrise-sunset.org visibly when showing results.",
+    "description": "Get sunrise, sunset and twilight times for any location and date.",
     "icons": [
       {
         "src": "https://c1.tablecdn.com/pa/sunrisesunset.png"

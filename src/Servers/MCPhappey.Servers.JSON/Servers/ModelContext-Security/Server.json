@@ -3,7 +3,7 @@
     "name": "ModelContext-Security",
     "title": "ModelContext Security",
     "version": "1.0.0",
-    "description": "Provides resources and tools around custom MCP server security settings, like owners and access groups.",
+    "description": "Manage MCP server security: owners, access groups and protected resource settings.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",

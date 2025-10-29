@@ -4,7 +4,7 @@
     "title": "Mem0 Shared Memory",
     "version": "1.0.0",
     "websiteUrl": "https://mem0.ai",
-    "description": "This MCP manages knowledge meant to be shared with others using the same app. It keeps common facts, decisions, and reminders organized so the whole team benefits from what has already been learned. Everyone can contribute and keep information up to date together.",
+    "description": "Shares useful knowledge across users so teams stay aligned without repeating information.",
     "icons": [
       {
         "src": "https://avatars.githubusercontent.com/u/137054526?v=4"

@@ -4,7 +4,7 @@
     "title": "Azure Speech",
     "version": "1.0.0",
     "websiteUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-speech",
-    "description": "Azure Speech provides tools for speech recognition, synthesis, and translation. It can transcribe spoken audio to text, generate natural voices from text, and support multiple languages and dialects. The service enables applications to process and understand speech input or produce audio output dynamically through AI-based voice models.",
+    "description": "Convert speech to text, text to speech and translate audio with Azure Speech.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Microsoft_Azure.svg/2048px-Microsoft_Azure.svg.png"

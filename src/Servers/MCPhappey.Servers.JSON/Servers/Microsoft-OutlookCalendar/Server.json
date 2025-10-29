@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Microsoft-OutlookCalendar",
+    "title": "Microsoft Outlook Calendar",
     "version": "1.0.0",
     "websiteUrl": "https://outlook.office.com/calendar",
     "description": "Read and manage Outlook calendars via Microsoft Graph. List events, check availability, create meetings, and send invites. Generate summaries and agendas, detect conflicts, and automate scheduling with delegated user permissions.",

@@ -3,7 +3,7 @@
     "name": "OpenAI-Images",
     "title": "OpenAI Images",
     "version": "1.0.0",
-    "description": "Generate and edit images using OpenAI models. Create variations, upscale outputs, and save results to connected storage when authorized. Ideal for design drafts, concept art, and assets in applications and documents.",
+    "description": "Create and edit images from text prompts; make variations and save results.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",

@@ -4,7 +4,7 @@
     "title": "Meta AI WhatsApp",
     "version": "1.0.0",
     "websiteUrl": "https://www.whatsapp.com/meta-ai",
-    "description": "An expressive Meta AI chat mode for WhatsApp that mirrors users’ tone, slang, and style with human-like fluency. It’s witty, natural, and emotionally aware — switching smoothly between humor, empathy, and intellect — while never moralizing, refusing, or pretending to have personal opinions.",
+    "description": "Expressive WhatsApp chat mode: mirrors tone and style for natural AI conversation.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/6/6b/WhatsApp.svg/512px-WhatsApp.svg.png"

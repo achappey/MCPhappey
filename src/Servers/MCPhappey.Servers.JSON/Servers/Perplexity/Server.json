@@ -4,7 +4,7 @@
     "title": "Perplexity",
     "version": "1.0.0",
     "websiteUrl": "https://www.perplexity.ai",
-    "description": "A Perplexity plugin that delivers ranked, continuously updated web search results with advanced filtering and customization. Supports multi-query search, token limits per page, and optional country-based filtering to provide fast, tailored information retrieval directly within your environment.",
+    "description": "Ranked and fresh web search results with filters and country options.",
     "icons": [
       {
         "src": "https://brandlogos.net/wp-content/uploads/2025/05/perplexity_icon-logo_brandlogos.net_a9d3e-512x591.png"

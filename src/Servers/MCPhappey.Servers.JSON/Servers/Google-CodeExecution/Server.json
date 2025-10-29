@@ -3,7 +3,7 @@
     "name": "Google-CodeExecution",
     "title": "Google Code Execution",
     "version": "1.0.0",
-    "description": "Execute code with Google’s code execution capabilities to test snippets, run tools and produce artifacts. Useful for lightweight computations, validations and transforming data within controlled environments.",
+    "description": "Run small code snippets to test ideas and transform data safely.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Google-gemini-icon.svg/2048px-Google-gemini-icon.svg.png"

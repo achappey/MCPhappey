@@ -4,7 +4,7 @@
     "title": "Together Models",
     "version": "1.0.0",
     "websiteUrl": "https://www.together.ai",
-    "description": "List and inspect available Together AI models, capabilities, limits and pricing. Choose appropriate models for chat, reasoning, vision and generation. Helps select context windows, tools and endpoints for tasks, ensuring optimal cost, speed and quality trade-offs.",
+    "description": "Browse Together AI models to see capabilities, limits and pick the right one for your task.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"

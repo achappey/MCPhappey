@@ -3,7 +3,7 @@
     "name": "Agent2Agent-Editor",
     "title": "Agent2Agent Editor",
     "version": "1.0.0",
-    "description": "Editor for Agent2Agent configurations and tasks. Manage agent cards, capabilities and extensions; prepare minimal policies and validate task flows before orchestration."
+    "description": "Configure agents and tasks: manage capabilities, policies and validate flows before running.."
   },
   "instructions": "Agents will not be available on the A2A endpoint until app registration details are complete. App registration details can be requested at IT support.",
   "plugins": [

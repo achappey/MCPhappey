@@ -3,7 +3,7 @@
     "name": "Simplicate-Hours",
     "title": "Simplicate Uren",
     "version": "1.0.0",
-    "description": "Simplicate Uren module voor urenregistraties en rapportages.",
+    "description": "Simplicate uren: registraties en rapportages per maand, project of medewerker.",
     "icons": [
       {
         "src": "https://developer.simplicate.com/images/simplicate_icon.png"

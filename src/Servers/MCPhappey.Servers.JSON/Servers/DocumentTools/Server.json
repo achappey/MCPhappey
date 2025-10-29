@@ -3,7 +3,7 @@
     "name": "DocumentTools",
     "title": "Document Tools",
     "version": "1.0.0",
-    "description": "Document Tools extract structured insights from documents without reading everything manually. It identifies stakeholders, key terms and actionable tasks directly from the content. Works with public and protected SharePoint or OneDrive files. Results are delivered in clear formats so people can quickly understand who is involved, what matters and what needs to happen next."
+    "description": "Extracts key people, terms and tasks from documents so you quickly see who is involved and what matters."
   },
   "plugins": [
     "MCPhappey.Tools.AI.DocumentTools, MCPhappey.Tools"

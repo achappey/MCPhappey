@@ -3,6 +3,7 @@
     "name": "GitHub-UnitsNet",
     "title": "GitHub UnitsNet",
     "version": "1.0.0",
+    "description": "Convert and calculate units like length, weight, speed and temperature safely and precisely.",
     "websiteUrl": "https://github.com/angularsen/UnitsNet"
   },
   "plugins": [

@@ -1,4 +1,5 @@
 using System.ComponentModel;
+using System.ComponentModel.DataAnnotations;
 using System.Text.Json;
 using DocumentFormat.OpenXml.Wordprocessing;
 using MCPhappey.Auth.Extensions;
@@ -241,17 +242,17 @@ public static partial class ModelContextEditor
     [McpServerTool(Title = "Create a new MCP-server",
         OpenWorld = false)]
     public static async Task<CallToolResult?> ModelContextEditor_CreateServer(
-        [Description("Name of the new server")]
+        [Description("Server name"), MaxLength(150), MinLength(3), RegularExpression("^[a-zA-Z0-9._-]+$")]
         string serverName,
-        [Description("Publicly visible description for the server. Used for discovery in the registry")]
+        [Description("Clear human-readable explanation of server functionality."), MaxLength(100), MinLength(1)]
         string serverDescription,
+        [Description("Human-readable title or display name for the MCP server."), MaxLength(100), MinLength(1)]
+        string serverTitle,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        [Description("Optional title for the server")]
-        string? serverTitle = null,
-        [Description("Instructions of the new server")]
+        [Description("Server instructions.")]
         string? instructions = null,
-        [Description("Website url")]
+        [Description("Optional URL to the server's homepage, documentation, or project website.")]
         string? websiteUrl = null,
         CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
     {
@@ -308,11 +309,11 @@ public static partial class ModelContextEditor
       [Description("Name of the server")] string serverName,
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
-        [Description("New server title")]
+        [Description("New server title"), MaxLength(100), MinLength(1)]
         string? serverTitle = null,
-        [Description("Optional description for the server")]
+        [Description("New description for the server"), MaxLength(100), MinLength(1)]
         string? serverDescription = null,
-        [Description("Website url")]
+        [Description("New website url")]
         string? websiteUrl = null,
         [Description("Updated instructions for the server")]
         string? instructions = null,

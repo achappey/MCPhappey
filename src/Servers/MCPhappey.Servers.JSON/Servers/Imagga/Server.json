@@ -4,7 +4,7 @@
         "title": "Imagga",
         "version": "1.0.0",
         "websiteUrl": "https://imagga.com",
-        "description": "Provides AI-powered image analysis including automatic tagging, categorization, color extraction, and smart cropping. Enables structured visual understanding and metadata enrichment of images through standardized REST endpoints for integration in MCP or other data-driven workflows.",
+        "description": "Analyze images: auto tags, categories, colors and smart crops for metadata enrichment.",
         "icons": [
             {
                 "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcT4xaoiPW9IzRpTBZ5x_iZy0FEZxGjbHxCqYw&s"

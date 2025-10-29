@@ -4,6 +4,6 @@
     "title": "Nationaal Dataportaal Wegverkeer (NDW)",
     "version": "1.0.0",
     "websiteUrl": "https://www.ndw.nu",
-    "description": "Biedt toegang tot openbare gegevens over het Nederlandse wegverkeer, zoals verkeersborden en wegkenmerken. De informatie wordt door verschillende overheden aangeleverd en dagelijks bijgewerkt. Gebruikers kunnen gegevens opvragen voor analyses, kaarttoepassingen of controles binnen een specifiek gebied of wegtraject."
+    "description": "Toegang tot actuele NL-verkeersdata zoals borden en wegkenmerken voor analyses en kaarten."
   }
 }

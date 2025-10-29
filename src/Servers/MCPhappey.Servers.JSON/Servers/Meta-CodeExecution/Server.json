@@ -3,7 +3,7 @@
     "name": "Meta-CodeExecution",
     "title": "Meta Code Execution",
     "version": "1.0.0",
-    "description": "Executes code through connected AI engines from Google, OpenAI, and xAI. Supports running scripts, processing data, and generating outputs directly within the AI environment."
+    "description": "Run code with Google, OpenAI, xAI, Anthropic, and Mistral to process data and create outputs."
   },
   "plugins": [
     "MCPhappey.Tools.Google.CodeExecution.GoogleCodeExecution, MCPhappey.Tools",

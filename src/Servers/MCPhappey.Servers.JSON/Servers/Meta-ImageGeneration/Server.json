@@ -3,7 +3,7 @@
     "name": "Meta-ImageGeneration",
     "title": "Meta Image Generation",
     "version": "1.0.0",
-    "description": "AI text-to-image generation that produces images across providers (OpenAI, Google Imagen, Google Nano Banana, xAI Grok, Stability AI, Together)."
+    "description": "Generate images from text using multiple AI providers for flexible creative output."
   },
   "plugins": [
     "MCPhappey.Tools.Google.Image.GoogleNanoBanana, MCPhappey.Tools",

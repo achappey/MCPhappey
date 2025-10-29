@@ -3,7 +3,7 @@
     "name": "OpenXML-PowerPoint",
     "title": "OpenXML PowerPoint",
     "version": "1.0.0",
-    "description": "Create and edit PowerPoint files using Open XML. Generate slides, layouts and shapes. Insert images, charts and tables.",
+    "description": "Create and edit PowerPoint slides: add images, shapes, charts and tables.",
     "icons": [
       {
         "src": "https://static.vecteezy.com/system/resources/thumbnails/027/179/348/small/microsoft-power-point-icon-logo-symbol-free-png.png"

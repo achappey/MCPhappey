@@ -3,6 +3,7 @@
     "name": "Mistral-Images",
     "title": "Mistral Images",
     "version": "1.0.0",
+    "websiteUrl": "https://mistral.ai",
     "description": "Generate images using Mistral AI models. Provide a prompt, optionally include parameters like style, and receive tailored visuals for creative, design, or illustration use cases.",
     "icons": [
       {

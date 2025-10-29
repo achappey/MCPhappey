@@ -3,7 +3,7 @@
     "name": "Microsoft-ServiceHealth",
     "title": "Microsoft Service Health",
     "version": "1.0.0",
-    "description": "Microsoft service health provides read-only access to Microsoft 365 service status, health issues and message center announcements. Includes parameterised templates to retrieve detailed information about a specific service, issue or message so assistants can surface real-time health data without full re-fetches.",
+    "description": "Shows Microsoft 365 service status, issues and announcements with real-time health details.",
     "icons": [
       {
         "src": "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1722952497"

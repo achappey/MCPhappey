@@ -3,7 +3,7 @@
     "name": "Google-Imagen",
     "title": "Google Imagen",
     "version": "1.0.0",
-    "description": "Generate high‑quality images with Google Imagen. Create visuals from text prompts, iterate with variations, and prepare assets for documents and apps. Useful for concept art, illustrations and design explorations with controllable styles and safety filters.",
+    "description": "Create images from text prompts using Google Imagen with controllable style.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Google-gemini-icon.svg/2048px-Google-gemini-icon.svg.png"

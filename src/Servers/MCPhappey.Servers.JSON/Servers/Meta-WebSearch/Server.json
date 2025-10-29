@@ -3,7 +3,7 @@
     "name": "Meta-WebSearch",
     "title": "Meta Web Search",
     "version": "1.0.0",
-    "description": "Lightweight meta web search server combining multiple  AI search engines like Perplexity, Brave, etc."
+    "description": "Meta web search: combine multiple AI search engines for quick and broad results."
   },
   "instructions": "Use Brave and Perplexity for quick lookups, use AI WebSearch for depth.",
   "plugins": [

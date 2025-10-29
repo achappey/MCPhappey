@@ -4,7 +4,7 @@
     "title": "Cohere Models",
     "version": "1.0.0",
     "websiteUrl": "https://cohere.com",
-    "description": "Cohere Models lets you browse and use Cohere’s language models for writing, answering questions, and working with information. You can explore available models, check responsible use guidance, and review technical capabilities.",
+    "description": "Browse and use Cohere language models with guidance on capabilities and responsible use.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/cohere-color.png",

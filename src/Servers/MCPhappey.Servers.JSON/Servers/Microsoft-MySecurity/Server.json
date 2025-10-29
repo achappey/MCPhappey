@@ -3,7 +3,7 @@
     "name": "Microsoft-MySecurity",
     "title": "Microsoft My Security",
     "version": "1.0.0",
-    "description": "MCP for Microsoft Graph enabling a user to retrieve their own profile, devices, sign-ins, risks, apps and authentication methods, and generate concise personal security reports.",
+    "description": "See your own profile, devices, risks and security activity with clear personal security insights.",
     "icons": [
       {
         "src": "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1722952497"

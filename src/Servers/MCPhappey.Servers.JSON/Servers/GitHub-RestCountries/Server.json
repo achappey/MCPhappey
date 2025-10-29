@@ -4,7 +4,7 @@
     "title": "GitHub RESTCountries.NET",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/apilayer/restcountries",
-    "description": "Query comprehensive country data: names, ISO codes, regions, capitals, population, currencies, languages and flags. Useful for lookups, validation and enrichment in apps, dashboards and workflows using the Rest Countries dataset.",
+    "description": "Country lookup: names, codes, flags, population, currencies and languages.",
     "icons": [
       {
         "src": "https://api.nuget.org/v3-flatcontainer/restcountries.net/3.5.0/icon"

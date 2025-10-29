@@ -3,7 +3,7 @@
     "name": "WorldAirQualityIndex",
     "title": "World Air Quality Index",
     "version": "1.0.0",
-    "description": "Provides real-time and forecasted air quality data for cities, coordinates, or IP-based locations. Also supports searching stations and querying air quality within map bounds.",
+    "description": "Real-time and forecast air quality for any city or location, including station search.",
     "websiteUrl": "https://aqicn.org",
     "icons": [
       {

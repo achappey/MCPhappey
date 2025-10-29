@@ -3,7 +3,7 @@
     "name": "Office365-Management",
     "title": "Office365 Management",
     "version": "1.0.0",
-    "description": "Access Office 365 Management APIs to retrieve service health, message center posts and unified audit logs. Use tenant app permissions to monitor activity, compliance and operational status across Microsoft 365 for reporting, alerting and investigations.",
+    "description": "Monitor Microsoft 365 health, messages and activity logs for reporting and alerts.",
     "icons": [
       {
         "src": "https://e7.pngegg.com/pngimages/462/265/png-clipart-microsoft-office-365-computer-icons-office-online-office-angle-rectangle-thumbnail.png"

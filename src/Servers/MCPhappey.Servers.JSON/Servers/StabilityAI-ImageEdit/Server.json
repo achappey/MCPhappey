@@ -3,6 +3,7 @@
     "name": "StabilityAI-ImageEdit",
     "title": "StabilityAI Image Edit",
     "version": "1.0.0",
+    "websiteUrl": "https://stability.ai",
     "description": "Handles direct image editing tasks such as inpainting, outpainting, object replacement, recoloring, and background removal. Enables content modification while preserving the quality and composition of the original image.",
     "icons": [
       {

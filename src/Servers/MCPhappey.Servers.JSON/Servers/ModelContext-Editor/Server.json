@@ -3,7 +3,7 @@
     "name": "ModelContext-Editor",
     "title": "ModelContext Editor",
     "version": "1.0.0",
-    "description": "Admin editor for MCP content: browse and edit servers, resources, resource templates and prompts. Enables structured curation, governance and versioning of assets.",
+    "description": "Admin tool to browse and edit MCP servers, resources and prompts for governance.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/mcp.png",

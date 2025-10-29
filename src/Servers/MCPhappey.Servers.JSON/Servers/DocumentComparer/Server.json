@@ -3,7 +3,7 @@
     "name": "DocumentComparer",
     "title": "Document Comparer",
     "version": "1.0.0",
-    "description": "Document Comparer identifies meaningful differences between two document versions. It highlights additions, removals, and important wording changes that affect responsibilities, numbers, deadlines, or scope. Every reported change is based only on the provided texts. Works with SharePoint and OneDrive files to help users quickly review updates without reading both versions line by line."
+    "description": "Shows key differences between two document versions: additions, removals, and important wording changes."
   },
   "plugins": [
     "MCPhappey.Tools.AI.DocumentComparer, MCPhappey.Tools"

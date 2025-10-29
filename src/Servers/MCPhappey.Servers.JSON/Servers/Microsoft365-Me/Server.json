@@ -1,8 +1,9 @@
 {
   "serverInfo": {
     "name": "Microsoft365-Me",
+    "title": "Microsoft 365 Me",
     "version": "1.0.0",
-    "websiteUrl": "https://www.office.com/",
+    "websiteUrl": "https://www.office.com",
     "description": "Access your Microsoft 365 profile, files, people and activity via Microsoft Graph. Retrieve and relate contacts, documents and sites with delegated permissions to build personalized assistants, summaries and workflows centered around the signed-in user.",
     "icons": [
       {

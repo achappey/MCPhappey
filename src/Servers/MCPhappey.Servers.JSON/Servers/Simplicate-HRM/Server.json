@@ -3,7 +3,7 @@
     "name": "Simplicate-HRM",
     "title": "Simplicate HRM",
     "version": "1.0.0",
-    "description": "HR-integratie voor Simplicate voor medewerkers, contracten en verlof/afwezigheid.",
+    "description": "Simplicate HR: medewerkers, contracten en verlof/afwezigheid raadplegen.",
     "icons": [
       {
         "src": "https://developer.simplicate.com/images/simplicate_icon.png"

@@ -3,7 +3,7 @@
     "name": "Simplicate-Export",
     "title": "Simplicate Export",
     "version": "1.0.0",
-    "description": "CSV-exportintegratie voor Simplicate om asynchrone datadumps aan te vragen. Retourneert een download-URL i.p.v. inline data.",
+    "description": "Vraag Simplicate CSV-exports aan en ontvang een download-link voor grote datadumps.",
     "icons": [
       {
         "src": "https://developer.simplicate.com/images/simplicate_icon.png"

@@ -4,7 +4,7 @@
     "title": "Mem0 Personal Memory",
     "version": "1.0.0",
     "websiteUrl": "https://mem0.ai",
-    "description": "This MCP keeps track of details that matter only to you. It remembers useful information from your past conversations so you don’t need to repeat yourself. Everything stored here is private and visible only to you, helping the assistant give faster and more relevant support over time.",
+    "description": "Remembers personal details from your chats so support becomes faster and more relevant to you.",
     "icons": [
       {
         "src": "https://avatars.githubusercontent.com/u/137054526?v=4"

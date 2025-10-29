@@ -4,7 +4,7 @@
     "title": "xAI Images",
     "version": "1.0.0",
     "websiteUrl": "https://x.ai",
-    "description": "Generates images from text prompts using xAI’s Grok model. Accepts English input and returns one or more PNG images encoded in base64. Designed for automated workflows where AI-generated visuals are needed without manual upload or editing.",
+    "description": "Creates images from text prompts using xAI Grok, ready to view or use in your workflow.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/dark/xai.png",

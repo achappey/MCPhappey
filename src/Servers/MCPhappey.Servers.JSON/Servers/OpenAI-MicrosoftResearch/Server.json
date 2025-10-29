@@ -3,7 +3,8 @@
     "name": "OpenAI-MicrosoftResearch",
     "title": "OpenAI Microsoft Research",
     "version": "1.0.0",
-    "description": "Research with OpenAI models across SharePoint, Teams and Outlook: plan literature reviews, extract key findings, track citations, and synthesize insights. Useful for hypothesis exploration, structured note‑taking, and iterative evidence gathering within reproducible workflows.",
+    "websiteUrl": "https://github.com/openai/openai-agents-python/tree/main/examples/research_bot",
+    "description": "Do research with OpenAI on SharePoint files, Teams chats and Outlook for structured insights.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",

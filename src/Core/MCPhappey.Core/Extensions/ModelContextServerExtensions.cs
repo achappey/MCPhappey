@@ -62,6 +62,9 @@ public static partial class ModelContextServerExtensions
     public static string WithoutScheme(this string url)
           => new Uri(url).Authority.TrimEnd('/');
 
+    public static string ReverseDns(this string url)
+          => string.Join(".", new Uri(url).Host.Split('.').Reverse());
+
     public static MCPServerRegistryItem ToMCPServerRegistryItem(this ServerConfig server, string baseUrl)
                => new()
                {
@@ -82,7 +85,7 @@ public static partial class ModelContextServerExtensions
                     Sizes = a.Sizes,
                     Theme = a.Theme
                 }),
-                Name = $"{baseUrl.WithoutScheme()}/{server.Server.ServerInfo.Name}",
+                Name = $"{baseUrl.ReverseDns()}/{server.Server.ServerInfo.Name}",
                 Repository = new()
                 {
                     Source = "github",

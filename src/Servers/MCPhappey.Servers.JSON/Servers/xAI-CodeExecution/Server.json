@@ -4,7 +4,7 @@
     "title": "xAI Code Execution",
     "version": "1.0.0",
     "websiteUrl": "https://x.ai",
-    "description": "Executes code using xAI’s Grok model in a secure, isolated environment. Supports dynamic prompts and language detection, returning structured outputs or error traces. Useful for evaluating logic, testing snippets, or generating computational results directly from natural language without manual scripting or local runtime setup.",
+    "description": "Run code snippets with xAI Grok and get structured results or errors instantly.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/1.74.0/files/dark/xai.png",

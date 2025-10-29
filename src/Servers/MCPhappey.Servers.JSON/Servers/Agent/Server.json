@@ -3,7 +3,7 @@
     "name": "AgentTools",
     "title": "Agent Tools",
     "version": "1.0.0",
-    "description": "Provides basic cognitive utility tools for agents. The Think tool logs internal reasoning without changing data. The Pause tool temporarily delays execution. Intended for simple internal workflow support during complex or timed agent operations."
+    "description": "Utility tools for agents: log internal thoughts or pause execution during workflows."
   },
   "plugins": [
     "MCPhappey.Tools.Agent.AgentService, MCPhappey.Tools"

@@ -3,7 +3,7 @@
     "name": "OpenAI-Containers",
     "title": "OpenAI Containers",
     "version": "1.0.0",
-    "description": "Manage and run OpenAI containers for isolated tool execution. Build, configure and invoke containerized environments to execute tasks reproducibly, share artifacts, and integrate with assistants and workflows.",
+    "description": "Manage isolated Python containers to run code and share results safely in workflows.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",

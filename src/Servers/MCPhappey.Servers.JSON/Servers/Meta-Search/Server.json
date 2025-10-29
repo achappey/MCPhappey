@@ -3,7 +3,7 @@
     "name": "Meta-Search",
     "title": "Meta Search",
     "version": "1.0.0",
-    "description": "Unified meta search server combining multiple AI and enterprise search providers. Includes Brave, Perplexity, SharePoint, and OpenAI-enhanced SharePoint. Designed to aggregate, enrich, and compare search results across sources."
+    "description": "Search across multiple engines at once; compare and enrich results in one place."
   },
   "plugins": [
     "MCPhappey.Tools.AI.WebSearch, MCPhappey.Tools",

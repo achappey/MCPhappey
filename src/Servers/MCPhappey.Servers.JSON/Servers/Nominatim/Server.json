@@ -4,7 +4,7 @@
     "title": "Nominatim",
     "version": "1.0.0",
     "websiteUrl": "https://nominatim.org",
-    "description": "Nominatim is a free geocoding service that uses OpenStreetMap data to find places and addresses. It supports searching by text, converting coordinates to addresses, and looking up location details by IDs. It works worldwide and is useful for mapping, navigation, and location-based applications without relying on commercial providers.",
+    "description": "Worldwide geocoding: find places, convert coordinates and get address details using OSM.",
     "icons": [
       {
         "src": "https://nlnet.nl/project/Nominatim-lib/openstreetmap.logo.svg"

@@ -4,7 +4,7 @@
     "title": "Microsoft Outlook Mail",
     "version": "1.0.0",
     "websiteUrl": "https://outlook.office.com/mail",
-    "description": "Send and manage email via Microsoft Graph: read, search, draft and send messages, handle attachments and folders, and automate notifications and triage. Supports delegated permissions for secure, context‑aware mail workflows.",
+    "description": "Manage email through Microsoft Outlook: read, search, send and organize messages securely with context.",
     "icons": [
       {
         "src": "https://www.ek.co/wp-content/uploads/2025/04/outlooklogo.png"

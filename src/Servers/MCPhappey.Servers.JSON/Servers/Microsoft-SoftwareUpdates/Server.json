@@ -1,7 +1,7 @@
 {
   "serverInfo": {
     "name": "Microsoft-SoftwareUpdates",
-    "title": "Microsoft software updates",
+    "title": "Microsoft Software Updates",
     "version": "1.0.0",
     "description": "Microsoft software updates provides read-only access to Intune Windows Update for Business configurations, device configurations and compliance policies. Includes parameterised templates to retrieve details for a specific configuration or policy so assistants can surface enterprise software update settings without full re-fetches.",
     "icons": [

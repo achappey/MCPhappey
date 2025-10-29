@@ -4,10 +4,10 @@
     "title": "Microsoft Teams",
     "websiteUrl": "https://teams.microsoft.com",
     "version": "1.0.0",
-    "description": "Integrate with Microsoft Teams. Create and manage chats, channels, messages, presence and tabs with delegated permissions. Automate collaboration workflows, post updates, and gather context from teams securely.",
+    "description": "Automate Teams collaboration: create chats, post messages, manage channels and presence securely.",
     "icons": [
       {
-        "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/c9/Microsoft_Office_Teams_%282018%E2%80%93present%29.svg/2203px-Microsoft_Office_Teams_%282018%E2%80%93present%29.svg.png"
+        "src": "https://www.computerhope.com/jargon/m/microsoft-teams.png"
       }
     ]
   },

@@ -3,7 +3,7 @@
     "name": "HTML",
     "title": "HTML",
     "version": "1.0.0",
-    "description": "Fill and render HTML templates for pages or fragments. Useful for emails, documents and web content."
+    "description": "Fill HTML templates and render the result for emails, documents and web content."
   },
   "instructions": "Always add the replacements argument on the HTMLPlugin_FillTemplate, otherwise it will fail",
   "plugins": [

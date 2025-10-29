@@ -4,7 +4,7 @@
     "title": "Cluely",
     "version": "1.0.0",
     "websiteUrl": "https://cluely.com",
-    "description": "An ultra-precise problem-solving assistant built by Cluely. It delivers direct, structured, and fully actionable answers — no fluff, no meta talk. Perfect for coding, math, and UI navigation, with markdown, LaTeX, and strict logic to ensure clarity, correctness, and step-by-step precision in every response.",
+    "description": "Precise problem-solving assistant: structured, actionable answers without fluff.",
     "icons": [
       {
         "src": "https://cluely.com/favicon/light/favicon-256x256.png"

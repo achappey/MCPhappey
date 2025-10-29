@@ -4,7 +4,7 @@
     "title": "European Union Eurostat",
     "version": "1.0.0",
     "websiteUrl": "https://ec.europa.eu/eurostat",
-    "description": "Eurostat provides official statistical data about the European Union and its member states. This server allows access to key indicators such as housing, construction, labour, prices, and demographics. Data can be filtered by country, period, and category.",
+    "description": "Official EU statistics: housing, labour, prices and population, filterable by country and time.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/en/2/27/EU_flag_square.PNG"

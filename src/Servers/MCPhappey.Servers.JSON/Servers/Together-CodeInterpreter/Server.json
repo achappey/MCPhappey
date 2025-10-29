@@ -4,7 +4,7 @@
     "title": "Together Code Interpreter",
     "version": "1.0.0",
     "websiteUrl": "https://www.together.ai",
-    "description": "Executes code snippets through Together AI’s Code Interpreter API. Supports Python execution, persistent sessions, and file uploads. Returns structured output including stdout, stderr, and session details. Useful for running dynamic scripts, testing logic, or performing lightweight computations directly within the MCP environment.",
+    "description": "Run Python code snippets and get results directly for quick tests and computations.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/light/together-color.png"

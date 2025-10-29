@@ -4,7 +4,7 @@
     "title": "Azure AI Search",
     "version": "1.0.0",
     "websiteUrl": "https://azure.microsoft.com/en-us/products/ai-services/ai-search",
-    "description": "Azure AI Search helps you quickly find information in your own data. It indexes documents, PDFs, and structured content so you can search by keywords or ask questions. It supports permissions, filtering, and ranking to give relevant results.",
+    "description": "Search your own documents and data with indexing, filters and relevance ranking.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/f/fa/Microsoft_Azure.svg/2048px-Microsoft_Azure.svg.png"

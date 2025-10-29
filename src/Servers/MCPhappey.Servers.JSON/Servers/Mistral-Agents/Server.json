@@ -4,7 +4,7 @@
     "title": "Mistral Agents",
     "version": "1.0.0",
     "websiteUrl": "https://mistral.ai",
-    "description": "Mistral Agents integrates advanced agent capabilities. It lets you create and manage agents that execute tasks through conversations, handle server-side handoffs, and use tools such as web search, code execution, and document analysis. Ideal for intelligent automation, research support, and scalable assistant workflows across enterprise environments.",
+    "description": "Create and control smart agents that perform tasks like search, code or document actions through chat.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/e/e6/Mistral_AI_logo_%282025%E2%80%93%29.svg/1200px-Mistral_AI_logo_%282025%E2%80%93%29.svg.png"

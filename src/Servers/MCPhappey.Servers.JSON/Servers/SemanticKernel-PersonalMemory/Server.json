@@ -4,7 +4,7 @@
     "title": "Semantic Kernel Personal Memory",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/microsoft/kernel-memory",
-    "description": "Let assistants save, delete, search, list, and query a user's personal memories securely using KernelMemory and OAuth context.",
+    "description": "Securely store and search personal memories so tasks can continue over time.",
     "icons": [
       {
         "src": "https://devblogs.microsoft.com/semantic-kernel/wp-content/uploads/sites/78/2024/03/Large_SK_Logo.png"

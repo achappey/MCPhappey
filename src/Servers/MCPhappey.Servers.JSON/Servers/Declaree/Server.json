@@ -4,7 +4,7 @@
     "title": "Declaree",
     "version": "1.0.0",
     "websiteUrl": "https://app.declaree.com/sso",
-    "description": "Automate expense management with Declaree: submit receipts, categorize expenses, track approvals and reimbursements, and export data. Use the API with bearer tokens to fetch claims, monitor statuses and enforce policies in finance and travel workflows.",
+    "description": "Automate expense claims: manage receipts, track approvals and export reimbursement data.",
     "icons": [
       {
         "src": "https://appwiki.nl/uploads/media/5c0fbade0955d/declaree-logo.png"

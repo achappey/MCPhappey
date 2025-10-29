@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Frankfurter",
+    "title": "Frankfurter",
     "version": "1.0.0",
     "websiteUrl": "https://frankfurter.dev",
     "description": "Foreign exchange rates API powered by the European Central Bank. Retrieve latest and historical currency rates, convert amounts, and build currency analytics for reports and dashboards with reliable, daily‑updated reference data.",

@@ -4,7 +4,7 @@
     "title": "GitHub Noda Time",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/nodatime/nodatime",
-    "description": "Provides advanced date and time features for .NET using the NodaTime library. Supports precise time zone handling, duration and period calculations, business day counting, and reliable conversions between UTC and local times. Ideal for applications needing accurate, timezone-aware time logic and clear temporal operations.",
+    "description": "Advanced timezone-aware date and time calculations using NodaTime.",
     "icons": [
       {
         "src": "https://www.nuget.org/profiles/NodaTime/avatar?imageSize=512"

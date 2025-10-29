@@ -3,6 +3,7 @@
     "name": "StabilityAI-ImageControl",
     "title": "StabilityAI Image Control",
     "version": "1.0.0",
+    "websiteUrl": "https://stability.ai",
     "description": "Provides fine control over image generation using reference images. Includes tools for sketch refinement, structure preservation, style guidance, and style transfer to maintain visual consistency across projects.",
     "icons": [
       {

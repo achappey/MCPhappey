@@ -3,7 +3,7 @@
     "name": "Simplicate-Sales",
     "title": "Simplicate Sales",
     "version": "1.0.0",
-    "description": "Salespijplijn-integratie voor Simplicate met sales, offertes en fases.",
+    "description": "Simplicate sales: deals, offertes en fases raadplegen en analyseren.",
     "icons": [
       {
         "src": "https://developer.simplicate.com/images/simplicate_icon.png"

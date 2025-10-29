@@ -3,7 +3,7 @@
     "name": "Microsoft-Users",
     "title": "Microsoft Users",
     "version": "1.0.0",
-    "description": "Manage Microsoft Entra ID users via Microsoft Graph: read profiles, update properties, manage photos, presence and mailbox settings. Automate provisioning, audits and user data retrieval with delegated permissions and secure OBO flow scopes.",
+    "description": "Manage Microsoft 365 user details: profiles, photos, presence and mailbox settings.",
     "icons": [
       {
         "src": "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1722952497"

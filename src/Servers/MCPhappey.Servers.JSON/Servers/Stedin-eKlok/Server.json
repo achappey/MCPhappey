@@ -4,7 +4,7 @@
     "title": "Stedin eKlok",
     "version": "1.0.0",
     "websiteUrl": "https://eklok.nl",
-    "description": "Toegang tot de openbare eKlok-feed als tijdreeks met 'range'- en kleurindicatoren en NL-geformatteerde timestamps. Nuttig voor monitoring, visualisatie en planning op basis van de aangeleverde indices.",
+    "description": "Toegang tot eKlok-tijdreeksen met kleurindicatoren en NL-tijden voor monitoring en planning.",
     "icons": [
       {
         "src": "https://eklok.nl/images/klokkie.png"

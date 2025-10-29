@@ -3,7 +3,7 @@
     "name": "OneDrive-Canvas",
     "title": "OneDrive Canvas",
     "version": "1.0.0",
-    "description": "Canvas lets you create and edit markdown files stored in OneDrive using simple MCP tools. Users can read, insert and replace content line-by-line, or create new documents directly from a chat workflow. Canvas provides lightweight text editing capabilities that remain synchronized across OneDrive folders and devices.",
+    "description": "Create and edit markdown files in OneDrive directly from chat workflows.",
     "icons": [
       {
         "src": "https://www.aaudxp-cms.aau.dk/media/3sglfyu0/onedrive.png?width=960"

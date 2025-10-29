@@ -3,7 +3,7 @@
     "name": "Microsoft-BrowserManagement",
     "title": "Microsoft Browser Management",
     "version": "1.0.0",
-    "description": "Microsoft Browser Management provides read-only access to browser site lists, individual browser sites and shared cookies. Includes parameterised templates for fetching details of a specific list or its contents so assistants can surface enterprise browser configuration data without full re-fetches.",
+    "description": "View browser site lists and settings to surface enterprise browser configurations.",
     "icons": [
       {
         "src": "https://garvis.ca/wp-content/uploads/2023/03/image-1.png"

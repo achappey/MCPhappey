@@ -3,6 +3,7 @@
     "name": "StabilityAI-ImageUpscale",
     "title": "StabilityAI Image Upscale",
     "version": "1.0.0",
+    "websiteUrl": "https://stability.ai",
     "description": "Improves image resolution using AI upscaling models. Offers both conservative and fast upscaling options to enhance clarity and detail while maintaining natural appearance and accurate proportions.",
     "icons": [
       {

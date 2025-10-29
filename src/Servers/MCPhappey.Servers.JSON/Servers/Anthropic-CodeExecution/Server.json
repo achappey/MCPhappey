@@ -4,7 +4,7 @@
     "title": "Anthropic Code Execution",
     "version": "1.0.0",
     "websiteUrl": "https://www.anthropic.com",
-    "description": "Anthropic Code Execution provides a secure environment for running, testing, and analyzing code directly through AI. It supports automated scripting, data analysis, and file processing within controlled containers.",
+    "description": "Run and test code securely through Anthropic AI, with data and file support.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/1/14/Anthropic.png"

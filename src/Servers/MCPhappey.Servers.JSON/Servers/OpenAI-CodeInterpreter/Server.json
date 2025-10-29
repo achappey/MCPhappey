@@ -3,7 +3,7 @@
     "name": "OpenAI-CodeInterpreter",
     "title": "OpenAI Code Interpreter",
     "version": "1.0.0",
-    "description": "Run code in a managed sandbox to analyze data, generate charts, transform files and validate results. Upload datasets, execute Python steps, and return artifacts to support reproducible, step‑by‑step analyses in workflows.",
+    "description": "Run Python code to analyze data, create charts and process files in workflows.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",
