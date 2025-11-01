@@ -4,7 +4,7 @@
     "title": "StabilityAI Image Upscale",
     "version": "1.0.0",
     "websiteUrl": "https://stability.ai",
-    "description": "Improves image resolution using AI upscaling models. Offers both conservative and fast upscaling options to enhance clarity and detail while maintaining natural appearance and accurate proportions.",
+    "description": "Upscale images to higher resolution with sharper details and natural quality.",
     "icons": [
       {
         "src": "https://media.licdn.com/dms/image/v2/D560BAQGCth_DU2z1Fg/company-logo_200_200/B56Zh18sPOHMAU-/0/1754325501246/stability_ai_logo?e=2147483647&v=beta&t=K2vnKQAZRmg2Nqe0fJY7sYHDbLA752NOG1E45JbZC5s"

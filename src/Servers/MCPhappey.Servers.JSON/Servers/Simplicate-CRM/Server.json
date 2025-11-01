@@ -3,7 +3,7 @@
     "name": "Simplicate-CRM",
     "title": "Simplicate CRM",
     "version": "1.0.0",
-    "description": "Integratie met Simplicate CRM voor relaties: organisaties, personen/contacten, adressen en activiteiten; ondersteunt select-velden en relatie-navigatie via puntnotatie.",
+    "description": "Bekijk en beheer relaties in Simplicate: organisaties, contactpersonen, adressen en activiteiten.",
     "icons": [
       {
         "src": "https://developer.simplicate.com/images/simplicate_icon.png"

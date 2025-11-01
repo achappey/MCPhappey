@@ -1,6 +1,7 @@
 {
   "serverInfo": {
     "name": "Microsoft-Workbooks",
+    "title": "Microsoft Workbooks",
     "version": "1.0.0",
     "websiteUrl": "https://excel.cloud.microsoft",
     "description": "Read and update Excel files: edit sheets, tables and charts through Microsoft 365.",

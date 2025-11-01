@@ -4,7 +4,7 @@
     "title": "Microsoft Planner",
     "version": "1.0.0",
     "websiteUrl": "https://planner.cloud.microsoft",
-    "description": "Plan and track work with Microsoft Planner via Graph. Create and manage plans, buckets, tasks and assignments; update statuses, due dates and checklists. Automate project workflows and reporting across teams with delegated permissions.",
+    "description": "Create and track team tasks and plans in Microsoft Planner directly from chat.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d4/Microsoft_Planner_%282024%E2%80%93present%29.svg/1200px-Microsoft_Planner_%282024%E2%80%93present%29.svg.png"

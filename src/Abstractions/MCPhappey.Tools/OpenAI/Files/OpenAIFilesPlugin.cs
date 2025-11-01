@@ -21,7 +21,8 @@ public static class OpenAIFilesPlugin
      [Description("Id of the OpenAI file.")] string fileId,
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
-     CancellationToken cancellationToken = default)
+     CancellationToken cancellationToken = default) =>
+      await requestContext.WithExceptionCheck(async () =>
     {
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
 
@@ -36,6 +37,6 @@ public static class OpenAIFilesPlugin
             cancellationToken);
 
         return uploaded?.ToResourceLinkCallToolResponse();
-    }
+    });
 }
 

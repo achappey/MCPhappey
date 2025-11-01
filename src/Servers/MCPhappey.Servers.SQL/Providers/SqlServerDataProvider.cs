@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using MCPhappey.Common.Models;
 using MCPhappey.Core.Services;
 using MCPhappey.Servers.SQL.Extensions;
@@ -5,7 +6,7 @@ using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Servers.SQL.Providers;
 
-public class SqlServerDataProvider(Repositories.ServerRepository serverRepository) : IServerDataProvider
+public class SqlServerDataProvider(Repositories.ServerRepository serverRepository, List<ServerIcon> defaultIcons) : IServerDataProvider
 {
     public async Task<ServerConfig?> GetServer(string serverName, CancellationToken ct = default)
     {
@@ -14,7 +15,7 @@ public class SqlServerDataProvider(Repositories.ServerRepository serverRepositor
 
         return new ServerConfig()
         {
-            Server = server.ToMcpServer(),
+            Server = server.ToMcpServer(defaultIcons),
             SourceType = ServerSourceType.Dynamic
         };
     }
@@ -25,7 +26,7 @@ public class SqlServerDataProvider(Repositories.ServerRepository serverRepositor
 
         return servers.Select(a => new ServerConfig()
         {
-            Server = a.ToMcpServer(),
+            Server = a.ToMcpServer(defaultIcons),
             SourceType = ServerSourceType.Dynamic
         });
     }

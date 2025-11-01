@@ -4,7 +4,7 @@
     "title": "Kroki",
     "version": "1.0.0",
     "websiteUrl": "https://kroki.io",
-    "description": "Render diagrams from text descriptions using Kroki. Supply PlantUML, Mermaid, Graphviz and more, and receive ready-to-use images. Ideal for documentation pipelines and visualizing architectures directly from source.",
+    "description": "Turn text diagrams (PlantUML, Mermaid, etc.) into rendered images for docs and design.",
     "icons": [
       {
         "src": "https://avatars.githubusercontent.com/u/4894788?v=4"

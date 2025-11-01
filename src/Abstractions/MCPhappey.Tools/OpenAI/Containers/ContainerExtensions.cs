@@ -48,7 +48,7 @@ public static class ContainerExtensions
         {
             int semi = header.IndexOf(';');
             if (semi > prefix.Length)
-                mimeType = header.Substring(prefix.Length, semi - prefix.Length);
+                mimeType = header[prefix.Length..semi];
         }
 
         // Decode

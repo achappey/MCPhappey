@@ -32,11 +32,11 @@ public static partial class CanvasService
     [Description("Read a canvas (.md) file from OneDrive, or list a directory if path points to a folder.")]
     [McpServerTool(
         Title = "Read Canvas",
-        Name = "canvas_read",
+        Name = "onedrive_canvas_read",
         ReadOnly = true,
         OpenWorld = false,
         Destructive = false)]
-    public static async Task<CallToolResult?> Canvas_Read(
+    public static async Task<CallToolResult?> OneDriveCanvas_Read(
         [Description("Canvas path (e.g. /Projects/Notes/Todo.md or /Projects/Notes). If no .md extension is provided, a directory is assumed unless the exact file exists.")]
            string path,
         RequestContext<CallToolRequestParams> context,
@@ -81,11 +81,11 @@ public static partial class CanvasService
     [Description("Create or overwrite a canvas (.md) file at the specified OneDrive path.")]
     [McpServerTool(
         Title = "Create Canvas",
-        Name = "canvas_create",
+        Name = "onedrive_canvas_create",
         ReadOnly = false,
         OpenWorld = false,
         Destructive = true)]
-    public static async Task<CallToolResult?> Canvas_Create(
+    public static async Task<CallToolResult?> OneDriveCanvas_Create(
         [Description("Canvas file path, e.g. /Projects/Notes/Todo.md ('.md' auto-appended if missing).")]
         string path,
         [Description("Markdown content to write.")] string file_text,
@@ -112,7 +112,7 @@ public static partial class CanvasService
         var lastSlash = trimmed.LastIndexOf('/');
         if (lastSlash > 0)
         {
-            var folderPart = trimmed.Substring(0, lastSlash);
+            var folderPart = trimmed[..lastSlash];
             //    await graph.EnsureFolderExistsAsync(drive.Id!, folderPart, cancellationToken);
         }
 
@@ -124,11 +124,11 @@ public static partial class CanvasService
     [Description("Insert a line into a canvas (.md) file at the given 1-based index.")]
     [McpServerTool(
         Title = "Insert Canvas Line",
-        Name = "canvas_insert",
+        Name = "onedrive_canvas_insert",
         ReadOnly = false,
         OpenWorld = false,
         Destructive = true)]
-    public static async Task<CallToolResult?> Canvas_Insert(
+    public static async Task<CallToolResult?> OneDriveCanvas_Insert(
         [Description("Canvas file path, e.g. /Projects/Notes/Todo.md ('.md' auto-appended if missing).")]
         string path,
         [Description("1-based line number to insert at. If beyond EOF, appends.")] int insert_line,
@@ -156,7 +156,7 @@ public static partial class CanvasService
         var lastSlash = trimmed.LastIndexOf('/');
         if (lastSlash > 0)
         {
-            var folderPart = trimmed.Substring(0, lastSlash);
+            var folderPart = trimmed[..lastSlash];
             await graph.EnsureFolderExistsAsync(drive.Id!, folderPart, cancellationToken);
         }
 
@@ -178,11 +178,11 @@ public static partial class CanvasService
     [Description("Replace text inside a canvas (.md) file (simple find/replace).")]
     [McpServerTool(
         Title = "Replace Canvas Text",
-        Name = "canvas_replace",
+        Name = "onedrive_canvas_replace",
         ReadOnly = false,
         OpenWorld = false,
         Destructive = true)]
-    public static async Task<CallToolResult?> Canvas_Replace(
+    public static async Task<CallToolResult?> OneDriveCanvas_Replace(
         [Description("Canvas file path, e.g. /Projects/Notes/Todo.md ('.md' auto-appended if missing).")]
         string path,
         [Description("Text to find.")] string old_str,

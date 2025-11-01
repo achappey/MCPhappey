@@ -10,7 +10,9 @@
     "MCPhappey.Tools.xAI.GrokCodeExecution, MCPhappey.Tools",
     "MCPhappey.Tools.Anthropic.CodeExecution.AnthropicCodeExecution, MCPhappey.Tools",
     "MCPhappey.Tools.OpenAI.CodeInterpreter.OpenAICodeInterpreter, MCPhappey.Tools",
-    "MCPhappey.Tools.Mistral.CodeInterpreter.MistralCodeInterpreter, MCPhappey.Tools"
+    "MCPhappey.Tools.Mistral.CodeInterpreter.MistralCodeInterpreter, MCPhappey.Tools",
+    "MCPhappey.Tools.Groq.CodeInterpreter.GroqCodeInterpreter, MCPhappey.Tools",
+    "MCPhappey.Tools.Groq.Compound.GroqCompound, MCPhappey.Tools"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

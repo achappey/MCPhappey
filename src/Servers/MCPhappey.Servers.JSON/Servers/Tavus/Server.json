@@ -1,8 +1,9 @@
 {
   "serverInfo": {
     "name": "Tavus",
+    "title": "Tavus",
     "version": "1.0.0",
-    "websiteUrl": "https://www.tavus.io/",
+    "websiteUrl": "https://www.tavus.io",
     "description": "Generate personalized videos from text or voice using custom AI personas.",
     "icons": [
       {

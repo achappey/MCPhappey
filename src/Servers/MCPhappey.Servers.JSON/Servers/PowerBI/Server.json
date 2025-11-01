@@ -1,9 +1,10 @@
 {
   "serverInfo": {
     "name": "PowerBI",
+    "title": "Power BI",
     "version": "1.0.0",
     "websiteUrl": "https://app.powerbi.com",
-    "description": "Connect to Microsoft Power BI to query datasets, refresh models, execute reports, and manage workspaces. Automate insights and export visuals or data with delegated permissions for analytics, embedding and operational reporting.",
+    "description": "View and refresh Power BI reports and data to quickly get updated insights.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/c/cf/New_Power_BI_Logo.svg/1200px-New_Power_BI_Logo.svg.png"

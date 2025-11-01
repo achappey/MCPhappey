@@ -9,6 +9,8 @@ using QUEI = QuestPDF.Infrastructure;
 using QuestPDF.Fluent;
 using MCPhappey.Core.Extensions;
 using ModelContextProtocol.Protocol;
+using QuestPDF.Helpers;
+using QuestPDF.Markdown;
 
 namespace MCPhappey.Tools.GitHub.QuestPDF;
 
@@ -81,4 +83,53 @@ public static class QuestPDFService
                 }]
             };
         });
+
+    [Description("Generates a simple A4 PDF document from Markdown text.")]
+    [McpServerTool(
+        Title = "Render Markdown PDF",
+        Name = "github_questpdf_render_markdown",
+        ReadOnly = true,
+        OpenWorld = false)]
+    public static async Task<CallToolResult?> GitHubQuestPdf_RenderMarkdown(
+   RequestContext<CallToolRequestParams> requestContext,
+   [Description("Markdown content to render as the main body.")] string markdown,
+   [Description("Page margin in centimeters (0–5). Default: 2.0")] double marginCm = 2.0,
+   [Description("Base font size in points (6–48). Default: 12")] float fontSize = 12f)
+   => await requestContext.WithExceptionCheck(async () =>
+   {
+       if (string.IsNullOrWhiteSpace(markdown))
+           throw new ArgumentException("Markdown content is required.", nameof(markdown));
+       if (marginCm < 0 || marginCm > 5)
+           throw new ArgumentOutOfRangeException(nameof(marginCm), "Margin must be between 0 and 5 cm.");
+       if (fontSize < 6 || fontSize > 48)
+           throw new ArgumentOutOfRangeException(nameof(fontSize), "Font size must be between 6 and 48 pt.");
+
+       // Use community license for open / internal use
+       QUE.Settings.License = QUEI.LicenseType.Community;
+
+       byte[] pdfBytes = Document.Create(container =>
+       {
+           container.Page(page =>
+           {
+               page.Size(QUEH.PageSizes.A4);
+               page.Margin((float)marginCm, QUEI.Unit.Centimetre);
+               page.DefaultTextStyle(t => t.FontSize(fontSize));
+               page.PageColor(Colors.White);
+               page.Content().Markdown(markdown);
+             
+           });
+       }).GeneratePdf();
+
+       return new CallToolResult()
+       {
+           Content = [new EmbeddedResourceBlock()
+                {
+                    Resource = new BlobResourceContents()
+                    {
+                        Blob = Convert.ToBase64String(pdfBytes),
+                        MimeType = "application/pdf"
+                    }
+                }]
+       };
+   });
 }

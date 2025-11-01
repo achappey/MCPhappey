@@ -17,7 +17,7 @@ namespace MCPhappey.Servers.SQL.Migrations
         {
 #pragma warning disable 612, 618
             modelBuilder
-                .HasAnnotation("ProductVersion", "9.0.9")
+                .HasAnnotation("ProductVersion", "9.0.10")
                 .HasAnnotation("Relational:MaxIdentifierLength", 128);
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
@@ -35,6 +35,9 @@ namespace MCPhappey.Servers.SQL.Migrations
 
                     b.Property<string>("Source")
                         .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Theme")
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");

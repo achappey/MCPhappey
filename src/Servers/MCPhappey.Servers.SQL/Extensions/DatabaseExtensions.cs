@@ -9,7 +9,7 @@ public static class DatabaseExtensions
     private static readonly string DEFAULT_SCOPES
         = "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Directory.ReadWrite.All https://graph.microsoft.com/Sites.ReadWrite.All https://graph.microsoft.com/Contacts.Read https://graph.microsoft.com/Bookmark.Read.All https://graph.microsoft.com/Calendars.Read https://graph.microsoft.com/ChannelMessage.Read.All https://graph.microsoft.com/Chat.Read https://graph.microsoft.com/Mail.Read https://graph.microsoft.com/User.ReadWrite.All https://graph.microsoft.com/Notes.ReadWrite.All";
 
-    public static Server ToMcpServer(this Models.Server server)
+    public static Server ToMcpServer(this Models.Server server, IEnumerable<ServerIcon> defaultIcons)
     {
         // ----------------------------
         // Build the OBO dictionary
@@ -81,7 +81,20 @@ public static class DatabaseExtensions
                 Description = server.Description,
                 Title = server.Title,
                 WebsiteUrl = server.WebsiteUrl,
-                Version = "1.0.0"
+                Version = "1.0.0",
+                Icons = server.Icons.Count != 0 ? server.Icons.Select(a => new Icon()
+                {
+                    Source = a.Icon.Source,
+                    //Theme = a.Icon.T,
+                    Sizes = [.. a.Icon.Sizes.Select(a => a.Size.Value)],
+                    MimeType = a.Icon.MimeType
+                }) : defaultIcons.Select(a => new Icon()
+                {
+                    Source = a.Source,
+                    Theme = a.Theme,
+                    Sizes = a.Sizes?.ToList(),
+                    MimeType = a.MimeType
+                })
             },
             Groups = server.Secured && server.Groups.Count != 0
                      ? server.Groups.Select(g => g.Id)

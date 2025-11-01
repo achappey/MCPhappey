@@ -3,7 +3,7 @@
     "name": "Microsoft-Reports",
     "title": "Microsoft Reports",
     "version": "1.0.0",
-    "description": "Microsoft Reports provides read-only access to usage and activity reports across Microsoft 365. Includes parameterised templates for Teams, Mailbox, OneDrive, SharePoint, Azure AD sign-ins and more, letting assistants fetch detailed analytics or per-user data without full re-fetches.",
+    "description": "View Microsoft 365 usage and activity reports across apps and users.",
     "icons": [
       {
         "src": "https://companieslogo.com/img/orig/MSFT-a203b22d.png?t=1722952497"

@@ -1,9 +1,10 @@
 {
   "serverInfo": {
     "name": "GitHub-JSONBlob",
+    "title": "GitHub JSONBlob",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/tburch/jsonblob",
-    "description": "Hosted JSON storage API. Allows creation, retrieval, update, and deletion of JSON blobs via RESTful endpoints."
+    "description": "Simple online JSON storage: create, read, update, and delete via API."
   },
   "plugins": [
     "MCPhappey.Tools.GitHub.JSONBlob.JSONBlobService, MCPhappey.Tools"

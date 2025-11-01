@@ -322,10 +322,14 @@ public static partial class ModelContextEditor
       CancellationToken cancellationToken = default)
     {
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
+        var finalUrl = !string.IsNullOrEmpty(websiteUrl)
+            ? websiteUrl
+            : server.WebsiteUrl;
+
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(new UpdateMcpServer()
         {
             Name = serverName,
-            WebsiteUrl = string.IsNullOrEmpty(websiteUrl) ? null : new Uri(websiteUrl),
+            WebsiteUrl = string.IsNullOrEmpty(finalUrl) ? null : new Uri(finalUrl),
             Title = serverTitle ?? server.Title,
             Description = serverDescription ?? server.Description,
             Instructions = instructions ?? server.Instructions,

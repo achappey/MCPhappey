@@ -11,6 +11,10 @@ public class Config
 
     public string? TelemetryDatabase { get; set; }
 
+    public string? DarkIcon { get; set; }
+
+    public string? LightIcon { get; set; }
+
     public string? PrivateKey { get; set; }
 
     public SimplicateOptions? Simplicate { get; set; }

@@ -1,3 +1,4 @@
+using System.Collections.ObjectModel;
 using MCPhappey.Common;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Common.Models;
@@ -11,7 +12,7 @@ using ModelContextProtocol.Server;
 
 namespace MCPhappey.Servers.SQL.Providers;
 
-public class McpEditorScraper(IEnumerable<IContentDecoder> contentDecoders) : IContentScraper
+public class McpEditorScraper(IEnumerable<IContentDecoder> contentDecoders, List<ServerIcon> defaultIcons) : IContentScraper
 {
     public bool SupportsHost(ServerConfig serverConfig, string url)
         => new Uri(url).Scheme.Equals("mcp-editor", StringComparison.OrdinalIgnoreCase);
@@ -122,7 +123,7 @@ public class McpEditorScraper(IEnumerable<IContentDecoder> contentDecoders) : IC
         if (url.Equals("mcp-editor://servers"))
         {
             var servers = await serviceProvider.GetServers(cancellationToken);
-            var userServers = servers.Select(z => z.ToMcpServer());
+            var userServers = servers.Select(z => z.ToMcpServer(defaultIcons));
 
             return [userServers.ToFileItem(url)];
         }

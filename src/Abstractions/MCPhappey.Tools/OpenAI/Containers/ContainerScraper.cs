@@ -57,7 +57,7 @@ public class ContainerScraper : IContentScraper
             containerId = segments[2];
             fileId = segments[4];
 
-            var response = await client.GetContainerFileContentAsync(containerId, fileId);
+            var response = await client.DownloadContainerFileAsync(containerId, fileId);
             var raw = response.GetRawResponse();
 
             var encoding = raw.Headers.TryGetValue("Content-Type", out var ct) &&

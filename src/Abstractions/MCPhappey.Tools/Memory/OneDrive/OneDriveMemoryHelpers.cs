@@ -3,6 +3,7 @@ using Microsoft.Graph.Beta;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using MCPhappey.Common.Extensions;
+using Microsoft.Kiota.Abstractions;
 
 namespace MCPhappey.Tools.Memory.OneDrive;
 
@@ -49,7 +50,6 @@ internal static class OneDriveMemoryHelpers
 
         return created;
     }
-
 
     public static async Task<string?> ReadTextFileAsync(
         this GraphServiceClient client,

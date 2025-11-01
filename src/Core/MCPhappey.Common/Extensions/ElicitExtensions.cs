@@ -8,7 +8,7 @@ namespace MCPhappey.Common.Extensions;
 
 public static class ElicitExtensions
 {
-    public static async Task<(T? typedResult, CallToolResult? notAccepted, ElicitResult? elicitResult)> TryElicit<T>(
+    public static async Task<(T typedResult, CallToolResult? notAccepted, ElicitResult? elicitResult)> TryElicit<T>(
      this McpServer mcpServer,
      T elicitRequest,
      CancellationToken cancellationToken = default)
@@ -22,9 +22,10 @@ public static class ElicitExtensions
         }, JsonSerializerOptions.Web);
 
         var result = await mcpServer.GetElicitResponse(elicitRequest, cancellationToken);
-        var notAccepted = result?.NotAccepted();
-        if (notAccepted != null) return (null, notAccepted, result);
-        var typed = result?.GetTypedResult<T>() ?? throw new Exception("Type cast failed!");
+        // var notAccepted = result?.NotAccepted();
+        if (result?.Action != "accept") throw new Exception($"Elicit not completed: {result?.Action}\n\n{JsonSerializer.Serialize(result, JsonSerializerOptions.Web)}");
+        // if (notAccepted != null) return (null, notAccepted, result);
+        T typed = result?.GetTypedResult<T>() ?? throw new Exception("Type cast failed!");
         return (typed, null, result);
     }
 

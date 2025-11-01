@@ -4,7 +4,7 @@
     "title": "OpenAI ChatGPT Study",
     "version": "1.0.0",
     "websiteUrl": "https://chatgpt.com/studymode",
-    "description": "An interactive study-oriented mode that acts as a patient, guiding teacher. It helps users learn through questions, hints, and step-by-step reasoning, never by giving direct answers. Ideal for studying, practicing, and reinforcing understanding through active dialogue and gentle feedback.",
+    "description": "Helps you learn by guiding with questions and hints, not giving direct answers.",
     "icons": [
       {
         "src": "https://registry.npmmirror.com/@lobehub/icons-static-png/latest/files/dark/openai.png",

@@ -4,7 +4,7 @@
     "title": "Semantic Kernel Memory",
     "version": "1.0.0",
     "websiteUrl": "https://github.com/microsoft/kernel-memory",
-    "description": "Allows assistants to search, ask, and list Microsoft Kernel Memory indexes, retrieving relevant sources and citations with configurable relevance and limits.",
+    "description": "Search your stored knowledge and get key facts with sources from Kernel Memory.",
     "icons": [
       {
         "src": "https://devblogs.microsoft.com/semantic-kernel/wp-content/uploads/sites/78/2024/03/Large_SK_Logo.png"

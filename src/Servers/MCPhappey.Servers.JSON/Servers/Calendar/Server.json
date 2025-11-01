@@ -3,7 +3,7 @@
     "name": "Calendar",
     "title": "Calendar",
     "version": "1.0.0",
-    "description": "MCP server that provides current date/time information and calculates week numbers with start and end dates for any month using configurable rules."
+    "description": "Show today’s date and time and calculate week numbers and ranges for any month."
   },
   "plugins": [
     "MCPhappey.Tools.Agent.CalendarService, MCPhappey.Tools"

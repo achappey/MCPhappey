@@ -27,6 +27,12 @@ using MCPhappey.Tools.Mem0;
 using MCPhappey.Tools.Anthropic.Skills;
 using MCPhappey.Tools.ElevenLabs;
 using MCPhappey.Tools.Runway;
+using MCPhappey.Common.Models;
+using MCPhappey.Tools.Groq.Audio;
+using MCPhappey.Tools.AIML.Images;
+using MCPhappey.Tools.Replicate;
+using MCPhappey.Tools.Parallel;
+using MCPhappey.Tools.JinaAI.Reranker;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -36,7 +42,24 @@ var servers = basePath.GetServers(appConfig?.Simplicate?.Organization ?? "").ToL
 
 if (!string.IsNullOrEmpty(appConfig?.McpDatabase))
 {
-    servers.AddRange(builder.AddSqlMcpServers(appConfig.McpDatabase));
+    var icons = new List<ServerIcon>();
+
+    if (!string.IsNullOrWhiteSpace(appConfig.DarkIcon))
+    {
+        icons.Add(new ServerIcon { Theme = "dark", Source = appConfig.DarkIcon });
+    }
+
+    if (!string.IsNullOrWhiteSpace(appConfig.LightIcon))
+    {
+        icons.Add(new ServerIcon { Theme = "light", Source = appConfig.LightIcon });
+    }
+
+    servers.AddRange(builder.AddSqlMcpServers(appConfig.McpDatabase, icons));
+
+    if (icons.Any())
+    {
+        builder.Services.AddSingleton(icons);
+    }
 }
 
 if (appConfig?.McpExtensions != null)
@@ -73,6 +96,10 @@ AddApi(builder.Services, appConfig, "api.mistral.ai", k => new MistralSettings {
 AddApi(builder.Services, appConfig, "api.perplexity.ai", k => new PerplexitySettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.together.xyz", k => new TogetherSettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.dev.runwayml.com", k => new RunwaySettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.groq.com", k => new GroqSettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.aimlapi.com", k => new AIMLSettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.replicate.com", k => new ReplicateSettings { ApiKey = k });
+AddApi(builder.Services, appConfig, "api.jina.ai", k => new JinaAISettings { ApiKey = k });
 
 if (appConfig?.DomainHeaders is { } headers)
 {
@@ -100,6 +127,19 @@ if (imaggaApiKey != null)
     builder.Services.AddSingleton(new ImaggaSettings()
     {
         ApiKey = imaggaApiKey
+    });
+}
+
+var parallelKey = appConfig?.DomainHeaders?
+    .FirstOrDefault(a => a.Key == "api.parallel.ai")
+    .Value
+    .FirstOrDefault(a => a.Key == "x-api-key").Value.Split(" ").LastOrDefault();
+
+if (parallelKey != null)
+{
+    builder.Services.AddSingleton(new ParallelSettings()
+    {
+        ApiKey = parallelKey
     });
 }
 

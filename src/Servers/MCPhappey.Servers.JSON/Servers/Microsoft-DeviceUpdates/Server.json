@@ -3,7 +3,7 @@
     "name": "Microsoft-DeviceUpdates",
     "title": "Microsoft Device Updates",
     "version": "1.0.0",
-    "description": "Microsoft device updates provides read-only access to Windows Update catalog entries, deployments and audiences. Includes parameterised templates to retrieve details for a specific update, deployment or applicable content so assistants can surface enterprise update status without full re-fetches.",
+    "description": "See which Windows updates are rolling out to your company’s devices.",
     "icons": [
       {
         "src": "https://garvis.ca/wp-content/uploads/2023/03/image-1.png"

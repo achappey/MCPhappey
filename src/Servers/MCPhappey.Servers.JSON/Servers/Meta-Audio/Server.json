@@ -14,7 +14,9 @@
     "MCPhappey.Tools.Azure.Speech.AzureSpeechService, MCPhappey.Tools",
     "MCPhappey.Tools.AI.AudioPlugin, MCPhappey.Tools",
     "MCPhappey.Tools.Mistral.Audio.AudioPlugin, MCPhappey.Tools",
-    "MCPhappey.Tools.ElevenLabs.ElevenLabsAudio, MCPhappey.Tools"
+    "MCPhappey.Tools.ElevenLabs.ElevenLabsAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.Groq.Audio.GroqAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.AIML.Music.AIMLMusic, MCPhappey.Tools"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

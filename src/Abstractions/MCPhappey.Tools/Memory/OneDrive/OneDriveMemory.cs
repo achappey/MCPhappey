@@ -58,7 +58,7 @@ public static class OneDriveMemory
      var lastSlash = trimmed.LastIndexOf('/');
      if (lastSlash > 0)
      {
-         var folderPart = trimmed.Substring(0, lastSlash);
+         var folderPart = trimmed[..lastSlash];
          await graph.EnsureFolderExistsAsync(drive.Id!, folderPart, cancellationToken);
      }
 
@@ -126,7 +126,7 @@ public static class OneDriveMemory
         var lastSlash = trimmed.LastIndexOf('/');
         if (lastSlash > 0)
         {
-            var folderPart = trimmed.Substring(0, lastSlash);
+            var folderPart = trimmed[..lastSlash];
             await graph.EnsureFolderExistsAsync(drive.Id!, folderPart, cancellationToken);
         }
 
@@ -173,7 +173,7 @@ public static class OneDriveMemory
         var lastSlash = trimmed.LastIndexOf('/');
         if (lastSlash > 0)
         {
-            var folderPart = trimmed.Substring(0, lastSlash);
+            var folderPart = trimmed[..lastSlash];
             await graph.EnsureFolderExistsAsync(drive.Id!, folderPart, cancellationToken);
         }
 
@@ -220,7 +220,7 @@ public static class OneDriveMemory
         var lastSlash = trimmed.LastIndexOf('/');
         if (lastSlash > 0)
         {
-            var folderPart = trimmed.Substring(0, lastSlash);
+            var folderPart = trimmed[..lastSlash];
             await graph.EnsureFolderExistsAsync(drive.Id!, folderPart, cancellationToken);
         }
 
@@ -308,7 +308,7 @@ public static class OneDriveMemory
         var lastSlash = trimmed.LastIndexOf('/');
         if (lastSlash > 0)
         {
-            var folderPart = trimmed.Substring(0, lastSlash);
+            var folderPart = trimmed[..lastSlash];
             await graph.EnsureFolderExistsAsync(drive.Id!, folderPart, cancellationToken);
         }
 

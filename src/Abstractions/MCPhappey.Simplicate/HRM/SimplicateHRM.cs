@@ -190,8 +190,6 @@ public static partial class SimplicateHRM
             a.LeaveType?.Label?.Contains(leaveType, StringComparison.OrdinalIgnoreCase) == true)];
         }
 
-
-
         // 4) Shape output
         var result = leaves
             .Where(a => a.Employee?.Id != null && selectedIds.Contains(a.Employee.Id))

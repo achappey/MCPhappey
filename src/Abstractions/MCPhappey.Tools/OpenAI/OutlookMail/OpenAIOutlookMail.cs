@@ -23,35 +23,35 @@ public static class OpenAIOutlookMail
           IServiceProvider serviceProvider,
           RequestContext<CallToolRequestParams> requestContext,
           CancellationToken cancellationToken = default)
-    {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
-        var oboToken = await serviceProvider.GetOboGraphToken(requestContext.Server);
-        var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
         {
-            Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
-                {
-                    {"openai", new {
-                         reasoning = new
-                            {
-                                effort = "minimal"
-                            },
-                        mcp_list_tools = new[] { new { type = "mcp",
-                            server_label = "outlook_email",
-                            authorization = oboToken,
-                            connector_id = "connector_outlookemail",
-                            require_approval = "never"
-                            //allowed_tools = value,
-                             } }
-                     } },
-                }),
-            Temperature = 1,
-            MaxTokens = 8192,
-            ModelPreferences = "gpt-5".ToModelPreferences(),
-            Messages = [prompt.ToUserSamplingMessage()]
-        }, cancellationToken);
+            ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
 
-        return respone.Content;
-    }
+            var oboToken = await serviceProvider.GetOboGraphToken(requestContext.Server);
+            var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
+            {
+                Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
+                    {
+                        {"openai", new {
+                            reasoning = new
+                                {
+                                    effort = "minimal"
+                                },
+                            mcp_list_tools = new[] { new { type = "mcp",
+                                server_label = "outlook_email",
+                                authorization = oboToken,
+                                connector_id = "connector_outlookemail",
+                                require_approval = "never"
+                                //allowed_tools = value,
+                                } }
+                        } },
+                    }),
+                Temperature = 1,
+                MaxTokens = 8192,
+                ModelPreferences = "gpt-5".ToModelPreferences(),
+                Messages = [prompt.ToUserSamplingMessage()]
+            }, cancellationToken);
+
+            return respone.Content;
+        }
 }
 

@@ -236,7 +236,7 @@ public static partial class ModelContextToolExtensions
     private static async Task<ListToolsResult?> GetListToolsResult(this IEnumerable<McpServerTool>? tools, Server server,
         Dictionary<string, string>? headers = null)
     {
-        if (server.McpExtension != null) return await server.ExtendListToolsCapabilities();
+        if (server.McpExtension != null) return await server.ExtendListToolsCapabilities(headers);
 
         if (tools == null || !tools.Any())
             return null;
@@ -259,7 +259,7 @@ public static partial class ModelContextToolExtensions
             Dictionary<string, string>? headers = null,
             CancellationToken cancellationToken = default)
     {
-        if (server.McpExtension != null) return await request.ExtendListToolsCapabilities(server, cancellationToken: cancellationToken);
+        if (server.McpExtension != null) return await request.ExtendListToolsCapabilities(server, headers, cancellationToken: cancellationToken);
 
         if (tools == null || !tools.Any())
             return null;
@@ -291,6 +291,7 @@ public static partial class ModelContextToolExtensions
                   new HttpClientTransport(new HttpClientTransportOptions
                   {
                       Endpoint = new Uri(server.McpExtension?.Url!),
+                      AdditionalHeaders = server.McpExtension?.Headers
 
                   }),
                   clientOptions: new McpClientOptions()
@@ -319,6 +320,7 @@ public static partial class ModelContextToolExtensions
                   new HttpClientTransport(new HttpClientTransportOptions
                   {
                       Endpoint = new Uri(server.McpExtension?.Url!),
+                      AdditionalHeaders = server.McpExtension?.Headers
 
                   }),
                   clientOptions: new McpClientOptions()

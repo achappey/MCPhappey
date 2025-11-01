@@ -14,7 +14,7 @@ public static class AspNetCoreExtensions
 {
     public static IEnumerable<ServerConfig> AddSqlMcpServers(
         this WebApplicationBuilder builder,
-        string mcpDatabase)
+        string mcpDatabase, IEnumerable<ServerIcon> defaultIcons)
     {
         builder.Services.AddDbContext<McpDatabaseContext>(options =>
             options.UseSqlServer(mcpDatabase, sqlOpts => sqlOpts.EnableRetryOnFailure()));
@@ -34,16 +34,30 @@ public static class AspNetCoreExtensions
                 .Include(a => a.ResourceTemplates)
                 .Include(a => a.Prompts)
                 .ThenInclude(a => a.Arguments)
+                .Include(a => a.Prompts)
+                .ThenInclude(a => a.Icons)
+                .ThenInclude(a => a.Icon)
+                .ThenInclude(a => a.Sizes)
+                .ThenInclude(a => a.Size)
+                .Include(a => a.Resources)
+                .ThenInclude(a => a.Icons)
+                .ThenInclude(a => a.Icon)
+                .ThenInclude(a => a.Sizes)
+                .ThenInclude(a => a.Size)
                 .Include(a => a.Plugins)
                 .Include(a => a.Tools)
                 .Include(a => a.Owners)
                 .Include(a => a.Groups)
+                .Include(a => a.Icons)
+                .ThenInclude(a => a.Icon)
+                .ThenInclude(a => a.Sizes)
+                .ThenInclude(a => a.Size)
                 .AsNoTracking()
                 .AsSplitQuery()
                 .ToList()
                 .Select(a => new ServerConfig()
                 {
-                    Server = a.ToMcpServer(),
+                    Server = a.ToMcpServer(defaultIcons),
                     SourceType = ServerSourceType.Dynamic,
                 });
     }

@@ -3,7 +3,7 @@
     "name": "Google-Audio",
     "title": "Google Audio",
     "version": "1.0.0",
-    "description": "Text-to-speech and audio processing with Google. Generate natural voices, support multi‑speaker TTS (keep ≤4 turns), and handle audio for narration, prompts and apps. Note: multi‑speaker synthesis can be slow; batch thoughtfully.",
+    "description": "Create natural speech from text and process audio for voice apps.",
     "icons": [
       {
         "src": "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8f/Google-gemini-icon.svg/2048px-Google-gemini-icon.svg.png"

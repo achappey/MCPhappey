@@ -3,7 +3,7 @@
     "name": "Simplicate-Invoices",
     "title": "Simplicate Facturen",
     "version": "1.0.0",
-    "description": "Facturatie-integratie voor Simplicate voor verkoopfacturen, factuurregels, creditfacturen en betalingen.",
+    "description": "Bekijk en volg verkoopfacturen, creditfacturen en betalingen in Simplicate.",
     "icons": [
       {
         "src": "https://developer.simplicate.com/images/simplicate_icon.png"
