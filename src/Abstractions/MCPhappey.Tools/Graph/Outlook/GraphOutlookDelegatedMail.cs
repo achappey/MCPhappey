@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.Extensions;
@@ -31,9 +30,6 @@ public static class GraphOutlookDelegatedMail
                 new GraphOutlookMail.GraphMailSingleCategoryInput { Category = category ?? string.Empty },
                 cancellationToken
             );
-
-            if (notAccepted != null)
-                throw new Exception(JsonSerializer.Serialize(notAccepted));
 
             if (string.IsNullOrWhiteSpace(typed?.Category))
                 throw new ArgumentException("Category name cannot be empty.", nameof(category));
@@ -116,8 +112,6 @@ public static class GraphOutlookDelegatedMail
             cancellationToken
         );
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
         var flag = new FollowupFlag
         {
             FlagStatus = typed?.FlagStatus switch
@@ -175,9 +169,7 @@ public static class GraphOutlookDelegatedMail
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
-
-        if (typed?.ReplyType == GraphOutlookMail.ReplyTypeEnum.ReplyAll)
+        if (typed.ReplyType == GraphOutlookMail.ReplyTypeEnum.ReplyAll)
         {
             await client.Users[userId].Messages[messageId].ReplyAll.PostAsync(
                 new Microsoft.Graph.Beta.Users.Item.Messages.Item.ReplyAll.ReplyAllPostRequestBody
@@ -195,8 +187,6 @@ public static class GraphOutlookDelegatedMail
         return typed.ToJsonContentBlock($"https://graph.microsoft.com/beta/users/{userId}/messages/{messageId}/reply")
              .ToCallToolResult();
     }));
-
-
 
     [Description("Send an e-mail message through a delegated Outlook mailbox.")]
     [McpServerTool(Title = "Send delegated e-mail", Destructive = true)]
@@ -224,8 +214,6 @@ public static class GraphOutlookDelegatedMail
             },
             cancellationToken
         );
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         var newMessage = new Message
         {
@@ -277,8 +265,6 @@ public static class GraphOutlookDelegatedMail
             },
             cancellationToken
         );
-
-        if (notAccepted != null) return notAccepted;
 
         var newMessage = new Message
         {

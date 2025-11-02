@@ -1,6 +1,5 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
-using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
@@ -37,14 +36,8 @@ public static class AsyncAIService
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(transcript);
 
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var settings = serviceProvider.GetRequiredService<AsyncAISettings>();
-        var http = httpClientFactory.CreateClient();
+        var asyncAI = serviceProvider.GetRequiredService<AsyncAIClient>();
 
-        var url = "https://api.async.ai/text_to_speech";
-        var version = "v1";
-
-        // ✅ For this endpoint: mode = "id"
         var voice = new
         {
             mode = "id",
@@ -68,22 +61,7 @@ public static class AsyncAIService
             output_format = outputFormat
         };
 
-        var req = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = JsonContent.Create(body)
-        };
-        req.Headers.Add("x-api-key", settings.ApiKey);
-        req.Headers.Add("version", version);
-
-        using var response = await http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-
-        if (!response.IsSuccessStatusCode)
-        {
-            var err = await response.Content.ReadAsStringAsync(cancellationToken);
-            throw new Exception($"AsyncAI TTS failed: {err}");
-        }
-
-        var audioBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
+        var audioBytes = await asyncAI.TextToSpeechAsync(body, cancellationToken);
 
         // Upload or embed result
         var uploaded = await requestContext.Server.Upload(
@@ -122,16 +100,11 @@ public static class AsyncAIService
       [Description("Filter by style.")] string? style = null,
       [Description("Return only voices owned by the current user.")] bool? myVoice = null,
       [Description("Pagination cursor (voice id) for next page.")] string? after = null,
-      CancellationToken cancellationToken = default)
-      => await requestContext.WithExceptionCheck(async () =>
+      CancellationToken cancellationToken = default) =>
+      await requestContext.WithExceptionCheck(async () =>
       await requestContext.WithStructuredContent(async () =>
   {
-      var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-      var settings = serviceProvider.GetRequiredService<AsyncAISettings>();
-      var http = httpClientFactory.CreateClient();
-
-      var url = "https://api.async.ai/voices";
-      var version = "v1";
+      var asyncAI = serviceProvider.GetRequiredService<AsyncAIClient>();
 
       var body = new
       {
@@ -145,23 +118,7 @@ public static class AsyncAIService
           after
       };
 
-      var req = new HttpRequestMessage(HttpMethod.Post, url)
-      {
-          Content = JsonContent.Create(body)
-      };
-
-      req.Headers.Add("x-api-key", settings.ApiKey);
-      req.Headers.Add("version", version);
-
-      using var response = await http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-      if (!response.IsSuccessStatusCode)
-      {
-          var err = await response.Content.ReadAsStringAsync(cancellationToken);
-          throw new Exception($"AsyncAI ailed: {err}");
-      }
-
-      var result = await response.Content.ReadFromJsonAsync<AsyncAIVoiceListResponse>(cancellationToken);
-      return result!;
+      return await asyncAI.PostJsonAsync<AsyncAIVoiceListResponse>("voices", body, cancellationToken);
   }));
 
     [Description("Generate speech and aligned word timestamps from input text using asyncAI's Text-to-Speech API.")]
@@ -186,13 +143,7 @@ public static class AsyncAIService
          => await requestContext.WithExceptionCheck(async () =>
          await requestContext.WithStructuredContent(async () =>
      {
-         var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-         var settings = serviceProvider.GetRequiredService<AsyncAISettings>();
-         var http = httpClientFactory.CreateClient();
-
-         var url = "https://api.async.ai/text_to_speech/with_timestamps";
-         var version = "v1";
-
+         var asyncAI = serviceProvider.GetRequiredService<AsyncAIClient>();
          var body = new
          {
              model_id = modelId,
@@ -211,25 +162,7 @@ public static class AsyncAIService
              }
          };
 
-         var req = new HttpRequestMessage(HttpMethod.Post, url)
-         {
-             Content = JsonContent.Create(body)
-         };
-         req.Headers.Add("x-api-key", settings.ApiKey);
-         req.Headers.Add("version", version);
-
-         using var response = await http.SendAsync(req, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-         if (!response.IsSuccessStatusCode)
-         {
-             var err = await response.Content.ReadAsStringAsync(cancellationToken);
-             throw new Exception($"AsyncAI ailed: {err}");
-         }
-
-
-         var result = await response.Content.ReadFromJsonAsync<AsyncAIWithTimestampsResponse>(cancellationToken)
-             ?? throw new InvalidOperationException("Invalid response from Async.AI");
-
-         var audioBytes = Convert.FromBase64String(result.Audio);
+         var audioBytes = await asyncAI.TextToSpeechWithTimestampsAsync(body, cancellationToken);
 
          // Upload audio file
          var uploaded = await requestContext.Server.Upload(
@@ -310,8 +243,3 @@ public static class AsyncAIService
     }
 }
 
-
-public class AsyncAISettings
-{
-    public string ApiKey { get; set; } = default!;
-}

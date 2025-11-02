@@ -5,7 +5,6 @@ using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Microsoft.Extensions.DependencyInjection;
 using System.Net.Http.Headers;
-using MCPhappey.Tools.Mistral.DocumentAI;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using MCPhappey.Tools.StabilityAI;
@@ -57,9 +56,6 @@ public static partial class AudioPlugin
                     Temperature = temperature,
                 },
                 cancellationToken);
-
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
             // 3) Build multipart form-data; prefer direct file upload
             using var form = new MultipartFormDataContent();

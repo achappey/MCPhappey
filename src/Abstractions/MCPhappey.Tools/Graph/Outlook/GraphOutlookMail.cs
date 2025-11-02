@@ -218,8 +218,6 @@ public static class GraphOutlookMail
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
-
         if (typed?.ReplyType == ReplyTypeEnum.ReplyAll)
         {
             await client.Me.Messages[messageId].ReplyAll.PostAsync(
@@ -324,7 +322,9 @@ public static class GraphOutlookMail
         [Description("Subject of the draft e-mail message.")] string? subject = null,
         [Description("Body of the draft e-mail message.")] string? body = null,
         [Description("Type of the message body (html or text).")] BodyType? bodyType = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
     {
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
             new GraphCreateMailDraft
@@ -358,10 +358,9 @@ public static class GraphOutlookMail
                 .ToList() ?? []
         };
 
-        var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var createdMessage = await client.Me.Messages.PostAsync(newMessage, cancellationToken: cancellationToken);
         return createdMessage.ToJsonContentBlock($"https://graph.microsoft.com/beta/me/messages/{createdMessage?.Id}").ToCallToolResult();
-    }
+    }));
 
     [Description("Please fill in the draft e-mail details")]
     public class GraphCreateMailDraft

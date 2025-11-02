@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -24,8 +25,8 @@ public static partial class GraphTeams
         string? description = null,
         CancellationToken cancellationToken = default)
          => await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
     {
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var teams = await client.Teams[teamId]
                            .GetAsync(cancellationToken: cancellationToken);
 
@@ -57,7 +58,7 @@ public static partial class GraphTeams
         return (graphItem ?? newItem).ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels")
             .ToCallToolResult();
 
-    });
+    }));
 
     [Description("Create a new channel message in a Microsoft Teams channel.")]
     [McpServerTool(Title = "Create message in Teams channel",
@@ -71,6 +72,7 @@ public static partial class GraphTeams
         [Description("Content (body) of the message.")] string? content = null,
         CancellationToken cancellationToken = default)
          => await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
     {
         // Vul defaults uit de parameters direct in
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
@@ -83,8 +85,6 @@ public static partial class GraphTeams
             cancellationToken
         );
 
-        if (notAccepted != null) return notAccepted;
-
         var newItem = new ChatMessage
         {
             Subject = typed?.Subject,
@@ -95,7 +95,6 @@ public static partial class GraphTeams
             },
         };
 
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var graphItem = await client.Teams[teamId]
             .Channels[channelId]
             .Messages
@@ -105,7 +104,7 @@ public static partial class GraphTeams
             .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages")
             .ToCallToolResult();
 
-    });
+    }));
 
     [Description("Create a reply to a Teams channel message, mentioning specified users.")]
     [McpServerTool(Title = "Reply in Teams channel with mentions",
@@ -120,9 +119,8 @@ public static partial class GraphTeams
         [Description("Optional extra message after mentions.")] string? content = null,
         CancellationToken cancellationToken = default)
          => await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
     {
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
         var mentionInfo = new List<(string Id, string DisplayName)>();
         foreach (var userId in mentionUserIds)
         {
@@ -189,7 +187,7 @@ public static partial class GraphTeams
             .ToJsonContentBlock($"https://graph.microsoft.com/beta/teams/{teamId}/channels/{channelId}/messages/{messageId}/replies")
             .ToCallToolResult();
 
-    });
+    }));
 
 
 }

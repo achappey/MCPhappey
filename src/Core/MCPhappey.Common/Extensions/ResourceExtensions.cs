@@ -1,5 +1,6 @@
 using System.Net.Mime;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using ModelContextProtocol.Protocol;
 
 namespace MCPhappey.Common.Extensions;
@@ -45,6 +46,43 @@ public static class ResourceExtensions
 
     public static ContentBlock ToJsonContent(this string contents, string uri) =>
         contents.ToTextResourceContent(uri, MediaTypeNames.Application.Json);
+
+    public static ContentBlock ToJsonContent(this JsonElement contents, string uri) =>
+        contents.GetRawText().ToJsonContent(uri);
+
+    public static ContentBlock ToJsonContent(this JsonDocument contents, string uri) =>
+        contents.RootElement.ToJsonContent(uri);
+
+    public static ContentBlock ToJsonContent(this JsonObject contents, string uri) =>
+        contents.ToJsonString().ToJsonContent(uri);
+
+    public static ContentBlock ToBlobContent(this byte[] contents, string uri, string mimeType) =>
+        new EmbeddedResourceBlock()
+        {
+            Resource = contents.ToBlobResourceContents(uri, mimeType)
+        };
+
+    public static ContentBlock ToBlobContent(this BinaryData binaryData, string uri, string mimeType) =>
+        new EmbeddedResourceBlock()
+        {
+            Resource = binaryData.ToBlobResourceContents(uri, mimeType)
+        };
+
+    public static BlobResourceContents ToBlobResourceContents(this BinaryData binaryData, string uri, string mimeType) =>
+        new()
+        {
+            Uri = uri,
+            Blob = Convert.ToBase64String(binaryData),
+            MimeType = mimeType
+        };
+
+    public static BlobResourceContents ToBlobResourceContents(this byte[] contents, string uri, string mimeType) =>
+        new()
+        {
+            Uri = uri,
+            Blob = Convert.ToBase64String(contents),
+            MimeType = mimeType
+        };
 
     public static EmbeddedResourceBlock ToContent(this ResourceContents contents) => new()
     {

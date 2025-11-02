@@ -4,10 +4,6 @@ using MCPhappey.Core.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json;
-using System.Text;
-using System.Net.Http.Headers;
-using MCPhappey.Tools.Mistral.DocumentAI;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using MCPhappey.Common.Models;
@@ -17,7 +13,6 @@ namespace MCPhappey.Tools.Mistral.Libraries;
 public static partial class LibrariesPlugin
 {
     private const string BaseUrl = "https://api.mistral.ai/v1/libraries";
-
 
     [Description("Please confirm deletion of the library with this exact ID: {0}")]
     public class DeleteLibrary : IHasName
@@ -42,23 +37,13 @@ public static partial class LibrariesPlugin
         => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(libraryId);
-
-            var mistralSettings = serviceProvider.GetRequiredService<MistralSettings>();
-            var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-            var endpoint = $"https://api.mistral.ai/v1/libraries/{libraryId}";
+            var mistral = serviceProvider.GetRequiredService<MistralClient>();
 
             return await requestContext.ConfirmAndDeleteAsync<DeleteLibrary>(
                 expectedName: libraryId,
                 deleteAction: async _ =>
                 {
-                    using var client = clientFactory.CreateClient();
-                    using var req = new HttpRequestMessage(HttpMethod.Delete, endpoint);
-
-                    req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", mistralSettings.ApiKey);
-                    req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    using var resp = await client.SendAsync(req, cancellationToken);
+                    var resp = await mistral.DeleteLibraryAsync(libraryId, cancellationToken);
                     var json = await resp.Content.ReadAsStringAsync(cancellationToken);
 
                     if (!resp.IsSuccessStatusCode)
@@ -84,11 +69,6 @@ public static partial class LibrariesPlugin
         => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(name);
-
-            var mistralSettings = serviceProvider.GetRequiredService<MistralSettings>();
-            var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
             var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
                 new CreateLibrary
                 {
@@ -98,27 +78,14 @@ public static partial class LibrariesPlugin
                 cancellationToken
             );
 
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-            if (typed == null) throw new Exception("Invalid library input");
-
             var body = new Dictionary<string, object?>
             {
                 ["name"] = typed.Name,
                 ["description"] = typed.Description
             };
 
-            using var client = clientFactory.CreateClient();
-            using var req = new HttpRequestMessage(HttpMethod.Post, BaseUrl)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(body),
-                                           Encoding.UTF8,
-                                           "application/json")
-            };
-
-            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", mistralSettings.ApiKey);
-            req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            using var resp = await client.SendAsync(req, cancellationToken);
+            var mistral = serviceProvider.GetRequiredService<MistralClient>();
+            var resp = await mistral.CreateLibraryAsync(body, cancellationToken);
             var json = await resp.Content.ReadAsStringAsync(cancellationToken);
 
             if (!resp.IsSuccessStatusCode)

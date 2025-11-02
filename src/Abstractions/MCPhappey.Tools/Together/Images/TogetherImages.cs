@@ -16,46 +16,43 @@ namespace MCPhappey.Tools.Together.Images;
 
 public static class TogetherImages
 {
+
     [Description("List all Together AI image models.")]
     [McpServerTool(Title = "List Together AI Image Models", Name = "together_images_list_models", ReadOnly = true)]
     public static async Task<CallToolResult?> TogetherImages_ListModels(
-     IServiceProvider serviceProvider,
-     RequestContext<CallToolRequestParams> requestContext,
-     CancellationToken cancellationToken = default)
-      => await requestContext.WithExceptionCheck(async ()
-      => await requestContext.WithStructuredContent(async () =>
-    {
-        var settings = serviceProvider.GetRequiredService<TogetherSettings>();
-        var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
-        using var client = clientFactory.CreateClient();
-        client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-
-        using var resp = await client.GetAsync("https://api.together.xyz/v1/models", cancellationToken);
-        var json = await resp.Content.ReadAsStringAsync(cancellationToken);
-
-        if (!resp.IsSuccessStatusCode)
-            throw new Exception($"{resp.StatusCode}: {json}");
-
-        using var doc = JsonDocument.Parse(json);
-        var root = doc.RootElement;
-
-        // ✅ Works for both `{ "data": [...] }` and `[ {...}, {...} ]`
-        var modelsArray = root.ValueKind == JsonValueKind.Array
-            ? root.EnumerateArray()
-            : root.GetProperty("data").EnumerateArray();
-
-        var imageModels = modelsArray
-            .Where(e => e.TryGetProperty("type", out var t) && t.GetString() == "image")
-            .Select(e => JsonNode.Parse(e.GetRawText())!)
-            .ToArray();
-
-        // ✅ Always return an object, not a naked array
-        return new JsonObject
+         IServiceProvider serviceProvider,
+         RequestContext<CallToolRequestParams> requestContext,
+         CancellationToken cancellationToken = default)
+          => await requestContext.WithExceptionCheck(async ()
+          => await requestContext.WithStructuredContent(async () =>
         {
-            ["models"] = new JsonArray(imageModels)
-        };
-    }));
+            using var client = serviceProvider.CreateTogetherClient();
+
+            using var resp = await client.GetAsync("https://api.together.xyz/v1/models", cancellationToken);
+            var json = await resp.Content.ReadAsStringAsync(cancellationToken);
+
+            if (!resp.IsSuccessStatusCode)
+                throw new Exception($"{resp.StatusCode}: {json}");
+
+            using var doc = JsonDocument.Parse(json);
+            var root = doc.RootElement;
+
+            // ✅ Works for both `{ "data": [...] }` and `[ {...}, {...} ]`
+            var modelsArray = root.ValueKind == JsonValueKind.Array
+                ? root.EnumerateArray()
+                : root.GetProperty("data").EnumerateArray();
+
+            var imageModels = modelsArray
+                .Where(e => e.TryGetProperty("type", out var t) && t.GetString() == "image")
+                .Select(e => JsonNode.Parse(e.GetRawText())!)
+                .ToArray();
+
+            // ✅ Always return an object, not a naked array
+            return new JsonObject
+            {
+                ["models"] = new JsonArray(imageModels)
+            };
+        }));
 
     [Description("Generate an image using Together AI image models.")]
     [McpServerTool(Title = "Generate image with Together AI",
@@ -73,12 +70,6 @@ public static class TogetherImages
        CancellationToken cancellationToken = default)
        => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(model);
-
-        var settings = serviceProvider.GetRequiredService<TogetherSettings>();
-        var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
         // Step 1: Ask user for additional image parameters
         var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
             new TogetherNewImage
@@ -92,9 +83,6 @@ public static class TogetherImages
                 GuidanceScale = guidanceScale,
             },
             cancellationToken);
-
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
@@ -111,11 +99,8 @@ public static class TogetherImages
             output_format = "png"
         });
 
-        using var client = clientFactory.CreateClient();
+        using var client = serviceProvider.CreateTogetherClient();
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.together.xyz/v1/images/generations");
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
-        request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
 
         // Step 3: Send request
         using var resp = await client.SendAsync(request, cancellationToken);
@@ -153,7 +138,7 @@ public static class TogetherImages
                 new ImageContentBlock()
                 {
                     Data = Convert.ToBase64String(bytes),
-                    MimeType = "image/png"
+                    MimeType = MimeTypes.ImagePng
                 }
             ]
         };
@@ -209,13 +194,4 @@ public static class TogetherImages
         public int? Seed { get; set; }
 
     }
-
-
-}
-
-
-
-public class TogetherSettings
-{
-    public string ApiKey { get; set; } = default!;
 }

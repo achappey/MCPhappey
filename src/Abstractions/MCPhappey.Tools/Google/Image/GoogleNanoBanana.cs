@@ -40,9 +40,6 @@ public static class GoogleNanoBanana
                },
                cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
-
         var resultContent = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
         {
             Messages = [..items?.Select(a => new SamplingMessage() {

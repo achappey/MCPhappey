@@ -8,6 +8,7 @@ using System.Text.Json.Nodes;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 
 namespace MCPhappey.Tools.Mem0;
 
@@ -27,11 +28,11 @@ public static class Mem0Service
 
         using var req = new HttpRequestMessage(HttpMethod.Post, endpoint)
         {
-            Content = new StringContent(jsonContent, Encoding.UTF8, "application/json")
+            Content = new StringContent(jsonContent, Encoding.UTF8, MimeTypes.Json)
         };
 
         req.Headers.Authorization = new AuthenticationHeaderValue("Token", mem0Settings.ApiKey);
-        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
 
         using var resp = await client.SendAsync(req, ct);
         var json = await resp.Content.ReadAsStringAsync(ct);
@@ -66,11 +67,11 @@ public static class Mem0Service
         using var client = clientFactory.CreateClient();
         using var req = new HttpRequestMessage(HttpMethod.Post, endpoint)
         {
-            Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json")
+            Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, MimeTypes.Json)
         };
 
         req.Headers.Authorization = new AuthenticationHeaderValue("Token", mem0Settings.ApiKey);
-        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
 
         using var resp = await client.SendAsync(req, cancellationToken);
         var json = await resp.Content.ReadAsStringAsync(cancellationToken);

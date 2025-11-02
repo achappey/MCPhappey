@@ -28,8 +28,6 @@ public static class GraphDevices
                 cancellationToken
             );
 
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
             await client
                 .DeviceManagement
                 .ManagedDevices[typed?.DeviceId]
@@ -98,13 +96,12 @@ public static class GraphDevices
         string? managedDeviceId,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async client =>
         {
             if (string.IsNullOrWhiteSpace(entraDeviceId) && string.IsNullOrWhiteSpace(managedDeviceId))
                 throw new ArgumentException("Provide either entraDeviceId or managedDeviceId.");
-
-            var mcpServer = requestContext.Server;
-            using var client = await serviceProvider.GetOboGraphClient(mcpServer);
 
             // Resolve Entra deviceId from Intune managed device if needed
             if (string.IsNullOrWhiteSpace(entraDeviceId))
@@ -146,7 +143,7 @@ public static class GraphDevices
                 },
                 successText: $"Entra device '{display}' ({device.Id}) deleted.",
                 ct: cancellationToken);
-        });
+        }));
 }
 
 

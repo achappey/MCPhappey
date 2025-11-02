@@ -1,12 +1,8 @@
 using System.ComponentModel;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.Extensions;
-using MCPhappey.Tools.JinaAI.Reranker;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
@@ -17,7 +13,10 @@ namespace MCPhappey.Tools.JinaAI.Classifier;
 public static class JinaAIClassifier
 {
     [Description("Classify documents in a SharePoint or OneDrive folder using a Jina AI classifier model.")]
-    [McpServerTool(Title = "Classify SharePoint folder", Name = "jina_classifier_sharepoint_folder", ReadOnly = true)]
+    [McpServerTool(
+        Title = "Classify SharePoint folder",
+        Name = "jina_classifier_sharepoint_folder",
+        ReadOnly = true)]
     public static async Task<CallToolResult?> JinaAIClassifier_SharePointFolder(
          IServiceProvider serviceProvider,
          RequestContext<CallToolRequestParams> requestContext,
@@ -41,12 +40,21 @@ public static class JinaAIClassifier
                         fileUrls.Add(item.WebUrl!);
                 }
 
-                return await ClassifyDocumentsAsync(serviceProvider, requestContext, classifyModel, labels, fileUrls, cancellationToken);
+                return await ClassifyDocumentsAsync(
+                    serviceProvider,
+                    requestContext,
+                    classifyModel,
+                    labels,
+                    fileUrls,
+                    cancellationToken);
             })));
 
 
     [Description("Classify arbitrary text-based documents from a list of URLs using a Jina AI classifier model.")]
-    [McpServerTool(Title = "Classify files", Name = "jina_classifier_files", ReadOnly = true)]
+    [McpServerTool(
+        Title = "Classify files",
+        Name = "jina_classifier_files",
+        ReadOnly = true)]
     public static async Task<CallToolResult?> JinaAIClassifier_Files(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
@@ -56,7 +64,13 @@ public static class JinaAIClassifier
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
            await requestContext.WithStructuredContent(async () =>
-           await ClassifyDocumentsAsync(serviceProvider, requestContext, classifyModel, labels, fileUrls, cancellationToken)));
+               await ClassifyDocumentsAsync(
+                   serviceProvider,
+                   requestContext,
+                   classifyModel,
+                   labels,
+                   fileUrls,
+                   cancellationToken)));
 
 
     // ---------- Shared core logic ----------
@@ -68,8 +82,7 @@ public static class JinaAIClassifier
         List<string> fileUrls,
         CancellationToken cancellationToken)
     {
-        var settings = serviceProvider.GetRequiredService<JinaAISettings>();
-        var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+        var jina = serviceProvider.GetRequiredService<JinaAIClient>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
         var inputs = new List<string>();
@@ -86,13 +99,23 @@ public static class JinaAIClassifier
                         serviceProvider,
                         requestContext.Server,
                         url,
-                        cancellationToken
-                    );
+                        cancellationToken);
 
+                    // 📝 Add text and JSON documents
                     foreach (var z in fileContents
                         .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)))
                     {
                         inputs.Add(z.Contents.ToString() ?? string.Empty);
+                    }
+
+                    // 🖼️ Add base64 images only for jina-clip-v2
+                    if (classifyModel == "jina-clip-v2")
+                    {
+                        foreach (var z in fileContents
+                            .Where(a => a.MimeType.StartsWith("image/")))
+                        {
+                            inputs.Add(Convert.ToBase64String(z.Contents.ToArray()));
+                        }
                     }
                 }
                 finally
@@ -107,28 +130,6 @@ public static class JinaAIClassifier
         if (inputs.Count == 0)
             throw new Exception("No readable text found in provided files.");
 
-        var jsonBody = JsonSerializer.Serialize(new
-        {
-            model = classifyModel,
-            input = inputs,
-            labels
-        });
-
-        using var client = clientFactory.CreateClient();
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.jina.ai/v1/classify")
-        {
-            Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json)
-        };
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
-
-        using var resp = await client.SendAsync(request, cancellationToken);
-        var jsonResponse = await resp.Content.ReadAsStringAsync(cancellationToken);
-
-        if (!resp.IsSuccessStatusCode)
-            throw new Exception($"{resp.StatusCode}: {jsonResponse}");
-
-        return JsonNode.Parse(jsonResponse);
+        return await jina.ClassifyAsync(classifyModel, inputs, labels, cancellationToken);
     }
-
 }

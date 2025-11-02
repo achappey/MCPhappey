@@ -3,6 +3,8 @@ using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
+using Microsoft.KernelMemory.Pipeline;
 using Microsoft.Kiota.Abstractions.Serialization;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -37,7 +39,7 @@ public static partial class GraphWorkbooks
 
         return new ImageContentBlock
         {
-            MimeType = "image/png",
+            MimeType = MimeTypes.ImagePng,
             Data = imageResponse?.Value ?? throw new Exception("No image data returned from Graph.")
         };
     }
@@ -53,7 +55,9 @@ public static partial class GraphWorkbooks
     [Description("The type of chart to add. Example: ColumnStacked, Pie, Line, BarClustered, etc.")] ChartType? type = null,
     [Description("The cell range for the chart source data, e.g. 'A1:B10' or 'Sheet1!A1:C20'.")] string? sourceData = null,
     [Description("How the series are organized in the source data: by rows, columns, or auto.")] ChartSeriesBy? seriesBy = null,
-    CancellationToken cancellationToken = default)
+    CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async (client) =>
     {
         var mcpServer = requestContext.Server;
         var (typed, notAccepted, result) = await mcpServer.TryElicit(
@@ -67,7 +71,6 @@ public static partial class GraphWorkbooks
         );
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid result".ToErrorCallToolResponse();
-        using var client = await serviceProvider.GetOboGraphClient(mcpServer);
         var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
         var requestBody = new Microsoft.Graph.Beta.Drives.Item.Items.Item.Workbook.Worksheets.Item.Charts.Add.AddPostRequestBody
         {
@@ -89,7 +92,7 @@ public static partial class GraphWorkbooks
         var url = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook/worksheets/{worksheetName}/charts/{chart?.Id}";
 
         return chart.ToJsonContentBlock(url).ToCallToolResult();
-    }
+    }));
 
 
     [Description("Please fill in the details to add a chart to an Excel worksheet.")]

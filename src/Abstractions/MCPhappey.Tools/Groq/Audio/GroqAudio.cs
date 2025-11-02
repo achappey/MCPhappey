@@ -47,9 +47,6 @@ public static class GroqAudio
                 },
                 cancellationToken);
 
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
             // 2️⃣ Prepare JSON payload
             var payload = new
             {

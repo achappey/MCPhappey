@@ -60,22 +60,19 @@ public static class OpenAIAudio
                              Instructions = instructions,
                          }, cancellationToken);
 
+        var binaryData = item.Value;
+
         var uploaded = await requestContext.Server.Upload(serviceProvider,
             requestContext.ToOutputFileName("mp3"),
-            item.Value, cancellationToken);
+            binaryData, cancellationToken);
 
         return new CallToolResult()
         {
             Content = [
-                uploaded != null ? new EmbeddedResourceBlock() {
-                    Resource = new BlobResourceContents() {
-                        MimeType = MimeTypes.AudioMP3,
-                        Uri = uploaded.Uri,
-                        Blob = Convert.ToBase64String(item.Value)
-                    }
-            } : new AudioContentBlock() {
+                uploaded != null ? binaryData.ToBlobContent(uploaded.Uri, MimeTypes.AudioMP3)
+                    : new AudioContentBlock() {
                 MimeType = MimeTypes.AudioMP3,
-                Data = Convert.ToBase64String(item.Value),
+                Data = Convert.ToBase64String(binaryData),
             }]
         };
     }

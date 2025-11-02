@@ -31,8 +31,6 @@ public static class GraphUserManagement
             cancellationToken
         );
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
         var refUser = new ReferenceCreate
         {
             OdataId = $"https://graph.microsoft.com/beta/users/{typed.UserId}"
@@ -88,7 +86,6 @@ public static class GraphUserManagement
             cancellationToken
         );
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
         var user = new User()
         {
             DisplayName = typed?.DisplayName,
@@ -148,8 +145,6 @@ public static class GraphUserManagement
             },
             cancellationToken
         );
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
         var user = new User()
         {
             DisplayName = typed?.DisplayName,

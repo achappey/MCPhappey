@@ -25,8 +25,6 @@ public static class GroqCompound
             string reasoning = "medium",
           CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
         {
             Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
@@ -40,29 +38,25 @@ public static class GroqCompound
             Messages = [prompt.ToUserSamplingMessage()]
         }, cancellationToken);
 
-        var metadata = new EmbeddedResourceBlock()
-        {
-            Resource = new TextResourceContents()
-            {
-                Text = JsonSerializer.Serialize(respone.Meta),
-                Uri = "https://api.groq.com",
-                MimeType = "application/json"
-            }
-        };
+        var metadata = respone.Meta?.ToJsonContent("https://api.groq.com");
 
         if (respone.Content is EmbeddedResourceBlock embeddedResourceBlock
             && embeddedResourceBlock.Resource is BlobResourceContents blobResourceContents)
         {
-            var FileExtensionContentTypeProvider = await requestContext.Server.Upload(
+            var uploaded = await requestContext.Server.Upload(
                 serviceProvider,
                 requestContext.ToOutputFileName(blobResourceContents.MimeType!.ResolveExtensionFromMime()),
                 BinaryData.FromBytes(Convert.FromBase64String(blobResourceContents.Blob)),
                 cancellationToken);
 
-            return [FileExtensionContentTypeProvider!, metadata];
+            return metadata is not null
+               ? [uploaded!, metadata]
+               : [uploaded!];
         }
 
-        return [respone.Content, metadata];
+        return metadata is not null
+                ? [respone.Content, metadata]
+                : [respone.Content];
     }
 }
 

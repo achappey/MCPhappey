@@ -254,7 +254,8 @@ public static partial class ModelContextEditor
         string? instructions = null,
         [Description("Optional URL to the server's homepage, documentation, or project website.")]
         string? websiteUrl = null,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var userId = serviceProvider.GetUserId();
@@ -272,9 +273,6 @@ public static partial class ModelContextEditor
             Instructions = instructions,
             Secured = true,
         }, cancellationToken);
-
-        if (notAccepted != null) return notAccepted;
-        if (typedResult == null) return "Something went wrong".ToErrorCallToolResponse();
 
         var server = await serverRepository.CreateServer(new SQL.Models.Server()
         {

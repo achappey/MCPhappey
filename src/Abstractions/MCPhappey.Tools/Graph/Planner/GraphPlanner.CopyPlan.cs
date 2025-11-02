@@ -3,6 +3,7 @@ using System.Net.Mime;
 using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using MCPhappey.Tools.Graph.Planner.Models;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
@@ -23,11 +24,10 @@ public static partial class GraphPlanner
         string title,
      IServiceProvider serviceProvider,
      RequestContext<CallToolRequestParams> requestContext,
-     CancellationToken cancellationToken = default)
+     CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async graphClient =>
     {
-        var mcpServer = requestContext.Server;
-
-        using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
         var plan = await graphClient.Planner.Plans[plannerId].GetAsync((config) => { }, cancellationToken);
         var targetGroup = await graphClient.Groups[groupId].GetAsync((config) => { }, cancellationToken);
 
@@ -41,7 +41,7 @@ public static partial class GraphPlanner
         if (notAccepted != null) return notAccepted;
         if (typed == null) return "Invalid result".ToErrorCallToolResponse();
 
-        var httpClient = await serviceProvider.GetGraphHttpClient(mcpServer);
+        var httpClient = await serviceProvider.GetGraphHttpClient(requestContext.Server);
         var buckets = await graphClient.Planner.Plans[plannerId].Buckets.GetAsync((config) => { }, cancellationToken);
         var tasks = await graphClient.Planner.Plans[plannerId].Tasks.GetAsync((config) => { }, cancellationToken);
 
@@ -150,6 +150,6 @@ public static partial class GraphPlanner
         var newPlanner = await graphClient.Planner.Plans[newPlan?.Id].GetAsync((config) => { }, cancellationToken);
 
         return newPlanner.ToJsonContentBlock($"https://graph.microsoft.com/beta/planner/plans/{newPlanner?.Id}").ToCallToolResult();
-    }
+    }));
 
 }

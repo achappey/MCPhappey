@@ -11,6 +11,7 @@ using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.AIML.Images;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -107,9 +108,6 @@ public static class AIMLAudio
             },
             cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
         // Step 2: Build request payload
         var payload = new
         {
@@ -125,8 +123,8 @@ public static class AIMLAudio
         using var client = clientFactory.CreateClient();
         using var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+        request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
 
         // Step 3: Send API request
         using var resp = await client.SendAsync(request, cancellationToken);
@@ -164,15 +162,7 @@ public static class AIMLAudio
                     Data = Convert.ToBase64String(fileData.Contents),
                     MimeType = "audio/wav"
                 },
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = "application/json",
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                }
+                doc.ToJsonContent(BASE_URL)
             ]
         };
     });
@@ -253,8 +243,6 @@ public static class AIMLAudio
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(text);
-
         var settings = serviceProvider.GetRequiredService<AIMLSettings>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -272,9 +260,6 @@ public static class AIMLAudio
             },
             cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
         {
@@ -289,8 +274,8 @@ public static class AIMLAudio
         using var client = clientFactory.CreateClient();
         using var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+        request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
 
         // Step 3: Send request
         using var resp = await client.SendAsync(request, cancellationToken);
@@ -328,15 +313,7 @@ public static class AIMLAudio
                     Data = Convert.ToBase64String(fileData.Contents),
                     MimeType = "audio/" + typed.ResponseFormat.ToString().ToLowerInvariant()
                 },
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = "application/json",
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                }
+                doc.ToJsonContent(BASE_URL)
             ]
         };
     });

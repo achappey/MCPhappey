@@ -227,8 +227,3 @@ public static partial class MistralDocumentAIPlugin
         return responseText.ToJsonCallToolResponse($"{BaseUrl}/ocr");
     });
 }
-
-public class MistralSettings
-{
-    public string ApiKey { get; set; } = default!;
-}

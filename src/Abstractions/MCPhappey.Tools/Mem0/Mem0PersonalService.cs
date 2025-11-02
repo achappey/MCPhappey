@@ -8,9 +8,9 @@ using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
-using static MCPhappey.Tools.Mem0.Mem0Service;
 
 namespace MCPhappey.Tools.Mem0;
 
@@ -73,8 +73,6 @@ public static class Mem0PersonalService
         => await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(query);
-
             var userId = serviceProvider.GetUserId();
 
             var filters = new JsonObject
@@ -117,16 +115,11 @@ public static class Mem0PersonalService
         => await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(content);
-
             var userId = serviceProvider.GetUserId();
 
             var (typed, notAccepted, _) = await context.Server.TryElicit(
                 new Mem0AddMemory { Role = role, Content = content, Immutable = immutable, Infer = infer },
                 cancellationToken);
-
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-            if (typed == null) throw new Exception("Invalid input");
 
             var body = new Dictionary<string, object>
             {
@@ -162,18 +155,12 @@ public static class Mem0PersonalService
         => await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(memoryId);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(text);
-
             var userId = serviceProvider.GetUserId();
             var mem0Settings = serviceProvider.GetRequiredService<Mem0Settings>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
             var (typed, notAccepted, _) = await context.Server.TryElicit(
                 new Mem0UpdateMemory { Text = text }, cancellationToken);
-
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-            if (typed == null) throw new Exception("Invalid input");
 
             var body = new Dictionary<string, object>
             {
@@ -184,7 +171,7 @@ public static class Mem0PersonalService
             using var client = clientFactory.CreateClient();
             using var req = new HttpRequestMessage(HttpMethod.Put, $"https://api.mem0.ai/v1/memories/{memoryId}/")
             {
-                Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, MimeTypes.Json)
             };
 
             req.Headers.Authorization = new AuthenticationHeaderValue("Token", mem0Settings.ApiKey);
@@ -215,8 +202,6 @@ public static class Mem0PersonalService
         => await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(memoryId);
-
             var mem0Settings = serviceProvider.GetRequiredService<Mem0Settings>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 

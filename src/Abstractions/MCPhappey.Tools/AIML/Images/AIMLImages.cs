@@ -299,9 +299,6 @@ public static class AIMLImages
             },
             cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
         // var colorItems = colors?.Select(a => a.HexToRgb());
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
@@ -429,9 +426,6 @@ public static class AIMLImages
                },
                cancellationToken);
 
-           if (notAccepted != null) return notAccepted;
-           if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
            // Step 2: Build JSON payload
            var jsonBody = JsonSerializer.Serialize(new
            {
@@ -496,15 +490,7 @@ public static class AIMLImages
                Content =
                [
                    .. allUploads,
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                }
+                    doc.ToJsonContent(BASE_URL)
                ]
            };
 
@@ -551,9 +537,6 @@ public static class AIMLImages
                       NumImages = numImages,
                   },
                   cancellationToken);
-
-              if (notAccepted != null) return notAccepted;
-              if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
               // Step 2: Build JSON payload
               var jsonBody = JsonSerializer.Serialize(new
@@ -620,15 +603,7 @@ public static class AIMLImages
                   Content =
                   [
                       .. allUploads,
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                }
+                    doc.ToJsonContent(BASE_URL),
                   ]
               };
           });
@@ -674,8 +649,6 @@ public static class AIMLImages
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var settings = serviceProvider.GetRequiredService<AIMLSettings>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -697,9 +670,6 @@ public static class AIMLImages
                 Seed = seed
             },
             cancellationToken);
-
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
@@ -772,15 +742,7 @@ public static class AIMLImages
             Content =
             [
                 .. allUploads,
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                }
+                doc.ToJsonContent(BASE_URL)
             ]
         };
     });
@@ -899,8 +861,8 @@ public static class AIMLImages
           using var client = clientFactory.CreateClient();
           using var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL);
           request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-          request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-          request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+          request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+          request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
 
           using var resp = await client.SendAsync(request, cancellationToken);
           var jsonResponse = await resp.Content.ReadAsStringAsync(cancellationToken);
@@ -993,20 +955,20 @@ public static class AIMLImages
         foreach (var file in attached)
         {
             var content = new ByteArrayContent(file.Contents.ToArray());
-            content.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            content.Headers.ContentType = new MediaTypeHeaderValue(MimeTypes.ImagePng);
             form.Add(content, "image", Path.GetFileName(file.Filename ?? "input.png"));
         }
 
         if (maskFile != null)
         {
             var maskContent = new ByteArrayContent(maskFile.Contents.ToArray());
-            maskContent.Headers.ContentType = new MediaTypeHeaderValue("image/png");
+            maskContent.Headers.ContentType = new MediaTypeHeaderValue(MimeTypes.ImagePng);
             form.Add(maskContent, "mask", "mask.png");
         }
 
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.aimlapi.com/v1/images/edits");
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
         request.Content = form;
 
         using var resp = await client.SendAsync(request, cancellationToken);
@@ -1130,8 +1092,6 @@ public static class AIMLImages
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var settings = serviceProvider.GetRequiredService<AIMLSettings>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -1148,9 +1108,6 @@ public static class AIMLImages
             },
             cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
         {
@@ -1164,8 +1121,8 @@ public static class AIMLImages
         using var client = clientFactory.CreateClient();
         using var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+        request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
 
         using var resp = await client.SendAsync(request, cancellationToken);
         var jsonResponse = await resp.Content.ReadAsStringAsync(cancellationToken);
@@ -1222,17 +1179,9 @@ public static class AIMLImages
                 new ImageContentBlock()
                 {
                     Data = Convert.ToBase64String(fileData.ToArray()),
-                    MimeType = "image/png"
+                    MimeType = MimeTypes.ImagePng
                 },
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = "application/json",
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                }
+                doc.ToJsonContent(BASE_URL)
             ]
         };
     });
@@ -1299,9 +1248,6 @@ public static class AIMLImages
             },
             cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
         // Step 2: Download all images and convert to base64
         var base64Images = new List<string>();
         foreach (var url in imageUrls.Take(4))
@@ -1328,8 +1274,8 @@ public static class AIMLImages
         using var client = clientFactory.CreateClient();
         using var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL);
         request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-        request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+        request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
 
         // Step 4: Send request
         using var resp = await client.SendAsync(request, cancellationToken);
@@ -1387,20 +1333,124 @@ public static class AIMLImages
                 new ImageContentBlock()
                 {
                     Data = Convert.ToBase64String(fileData.ToArray()),
-                    MimeType = "image/png"
+                    MimeType = MimeTypes.ImagePng
                 },
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = "application/json",
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                }
+                doc.RootElement.ToJsonString().ToJsonContent(BASE_URL)
             ]
         };
     });
+
+    [Description("Generate a 3D model (.glb) from a 2D image using AI/ML TriPoSR.")]
+    [McpServerTool(Title = "Generate 3D model with AI/ML TriPoSR",
+       Name = "aiml_images_triposr_create", Destructive = false)]
+    public static async Task<CallToolResult?> AIMLImages_TriPoSRCreate(
+       [Description("Publicly accessible image URL to convert to 3D model.")]
+        string imageUrl,
+       IServiceProvider serviceProvider,
+       RequestContext<CallToolRequestParams> requestContext,
+       [Description("Remove background before generating model. Default: true")]
+        bool doRemoveBackground = true,
+       [Description("Foreground ratio (0.5–1.0). Default: 0.9")]
+        [Range(0.5, 1.0)] double foregroundRatio = 0.9,
+       [Description("Marching cubes resolution (32–1024). Default: 256")]
+        [Range(32, 1024)] int mcResolution = 256,
+       [Description("Output filename without extension. Defaults to autogenerated name.")]
+        string? filename = null,
+       CancellationToken cancellationToken = default)
+       => await requestContext.WithExceptionCheck(async () =>
+   {
+       ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
+
+       var settings = serviceProvider.GetRequiredService<AIMLSettings>();
+       var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+       var downloadService = serviceProvider.GetRequiredService<DownloadService>();
+
+       // Step 1: Ask for any missing parameters
+       var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
+           new AIMLNewTriPoSR
+           {
+               ImageUrl = new Uri(imageUrl),
+               DoRemoveBackground = doRemoveBackground,
+               ForegroundRatio = foregroundRatio,
+               McResolution = mcResolution,
+               Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("glb")
+           },
+           cancellationToken);
+
+       // Step 1: Build JSON body
+       var jsonBody = JsonSerializer.Serialize(new
+       {
+           model = "triposr",
+           image_url = typed.ImageUrl,
+           output_format = "glb",
+           do_remove_background = typed.DoRemoveBackground,
+           foreground_ratio = typed.ForegroundRatio,
+           mc_resolution = typed.McResolution
+       });
+
+       using var client = clientFactory.CreateClient();
+       using var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL);
+       request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
+       request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+       request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
+
+       // Step 2: Send request
+       using var resp = await client.SendAsync(request, cancellationToken);
+       var jsonResponse = await resp.Content.ReadAsStringAsync(cancellationToken);
+       if (!resp.IsSuccessStatusCode)
+           throw new Exception($"{resp.StatusCode}: {jsonResponse}");
+
+       using var doc = JsonDocument.Parse(jsonResponse);
+
+       var url = doc.RootElement.GetProperty("model_mesh").GetProperty("url").GetString();
+       var fileSize = doc.RootElement.GetProperty("model_mesh").GetProperty("file_size").GetInt32();
+       if (string.IsNullOrWhiteSpace(url))
+           throw new Exception("No 3D model data returned from AI/ML TriPoSR API.");
+
+       return new CallToolResult()
+       {
+           Content =
+           [
+               new ResourceLinkBlock() {
+                   Uri = url,
+                   Size = fileSize,
+                   MimeType = "model/gltf-binary",
+                   Name = $"{typed.Filename}.glb"
+               },
+               doc.RootElement.ToJsonString().ToJsonContent(BASE_URL)
+           ]
+       };
+   });
+
+
+    [Description("Please fill in the AI/ML TriPoSR 3D model request details.")]
+    public class AIMLNewTriPoSR
+    {
+        [JsonPropertyName("image_url")]
+        [Required]
+        [Description("URL of the input image to convert.")]
+        public Uri ImageUrl { get; set; } = default!;
+
+        [JsonPropertyName("do_remove_background")]
+        [Description("Whether to remove the background from the input image.")]
+        public bool DoRemoveBackground { get; set; } = true;
+
+        [JsonPropertyName("foreground_ratio")]
+        [Range(0.5, 1.0)]
+        [Description("Ratio of foreground size to original image.")]
+        public double ForegroundRatio { get; set; } = 0.9;
+
+        [JsonPropertyName("mc_resolution")]
+        [Range(32, 1024)]
+        [Description("Marching cubes resolution (affects mesh detail).")]
+        public int McResolution { get; set; } = 256;
+
+        [JsonPropertyName("filename")]
+        [Required]
+        [Description("Output filename without extension.")]
+        public string Filename { get; set; } = default!;
+    }
+
 
 }
 

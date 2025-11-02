@@ -3,6 +3,7 @@ using System.Text.Json;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Tools.OpenAI.Containers;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -46,7 +47,7 @@ public static class OpenAICodeInterpreter
             {
                 Text = JsonSerializer.Serialize(respone.Meta),
                 Uri = "https://api.openai.com",
-                MimeType = "application/json"
+                MimeType = MimeTypes.Json
             }
         };
 

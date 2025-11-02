@@ -4,10 +4,6 @@ using MCPhappey.Core.Extensions;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 using Microsoft.Extensions.DependencyInjection;
-using System.Text.Json;
-using System.Text;
-using System.Net.Http.Headers;
-using MCPhappey.Tools.Mistral.DocumentAI;
 using System.Text.Json.Serialization;
 using System.ComponentModel.DataAnnotations;
 using System.Text.Json.Nodes;
@@ -18,9 +14,6 @@ namespace MCPhappey.Tools.Mistral.Agents;
 public static partial class AgentsPlugin
 {
     private const string BaseUrl = "https://api.mistral.ai/v1/agents";
-
-    private const string ConversationsUrl = "https://api.mistral.ai/v1/conversations";
-
 
     [Description("Please confirm deletion of the agent with this exact ID: {0}")]
     public class DeleteAgentInput : IHasName
@@ -45,23 +38,12 @@ public static partial class AgentsPlugin
         => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(agentId);
-
-            var mistralSettings = serviceProvider.GetRequiredService<MistralSettings>();
-            var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-            var endpoint = $"https://api.mistral.ai/v1/agents/{agentId}";
-
+            var mistral = serviceProvider.GetRequiredService<MistralClient>();
             return await requestContext.ConfirmAndDeleteAsync<DeleteAgentInput>(
                 expectedName: agentId,
                 deleteAction: async _ =>
                 {
-                    using var client = clientFactory.CreateClient();
-                    using var req = new HttpRequestMessage(HttpMethod.Delete, endpoint);
-
-                    req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", mistralSettings.ApiKey);
-                    req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-                    using var resp = await client.SendAsync(req, cancellationToken);
+                    var resp = await mistral.DeleteAgentAsync(agentId, cancellationToken);
                     var json = await resp.Content.ReadAsStringAsync(cancellationToken);
 
                     if (!resp.IsSuccessStatusCode)
@@ -87,12 +69,7 @@ public static partial class AgentsPlugin
         => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(agentId);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(input);
-
-            var mistralSettings = serviceProvider.GetRequiredService<MistralSettings>();
-            var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
+            var mistral = serviceProvider.GetRequiredService<MistralClient>();
             var body = new Dictionary<string, object?>
             {
                 ["agent_id"] = agentId,
@@ -102,16 +79,7 @@ public static partial class AgentsPlugin
                 ["handoff_execution"] = "server"
             };
 
-            using var client = clientFactory.CreateClient();
-            using var req = new HttpRequestMessage(HttpMethod.Post, ConversationsUrl)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json")
-            };
-
-            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", mistralSettings.ApiKey);
-            req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            using var resp = await client.SendAsync(req, cancellationToken);
+            var resp = await mistral.RunAgentConversationAsync(body, cancellationToken);
             var json = await resp.Content.ReadAsStringAsync(cancellationToken);
 
             if (!resp.IsSuccessStatusCode)
@@ -141,11 +109,7 @@ public static partial class AgentsPlugin
         => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(name);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(model);
-
-            var mistralSettings = serviceProvider.GetRequiredService<MistralSettings>();
-            var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+            var mistral = serviceProvider.GetRequiredService<MistralClient>();
 
             var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
                 new CreateAgentInput
@@ -157,9 +121,6 @@ public static partial class AgentsPlugin
                 },
                 cancellationToken
             );
-
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-            if (typed == null) throw new Exception("Invalid agent input");
 
             var body = new Dictionary<string, object?>
             {
@@ -184,19 +145,7 @@ public static partial class AgentsPlugin
                 body["tools"] = toolList;
             }
 
-
-            using var client = clientFactory.CreateClient();
-            using var req = new HttpRequestMessage(HttpMethod.Post, BaseUrl)
-            {
-                Content = new StringContent(JsonSerializer.Serialize(body),
-                                           Encoding.UTF8,
-                                           "application/json")
-            };
-
-            req.Headers.Authorization = new AuthenticationHeaderValue("Bearer", mistralSettings.ApiKey);
-            req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-
-            using var resp = await client.SendAsync(req, cancellationToken);
+            var resp = await mistral.CreateAgentAsync(body, cancellationToken);
             var json = await resp.Content.ReadAsStringAsync(cancellationToken);
 
             if (!resp.IsSuccessStatusCode)

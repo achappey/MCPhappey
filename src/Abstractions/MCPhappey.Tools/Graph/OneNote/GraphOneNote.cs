@@ -108,8 +108,6 @@ public static class GraphOneNote
                GroupId = groupId
            }, cancellationToken);
 
-       if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
        var section = new CopyNotebookPostRequestBody
        {
            RenameAs = typed!.RenameAs,
@@ -142,12 +140,10 @@ public static class GraphOneNote
                 DisplayName = displayName
             }, cancellationToken);
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
         // POST /me/onenote/notebooks
         var notebook = new Notebook
         {
-            DisplayName = typed!.DisplayName
+            DisplayName = typed.DisplayName
         };
 
         return await client.Me

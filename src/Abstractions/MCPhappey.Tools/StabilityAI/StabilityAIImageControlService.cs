@@ -8,6 +8,7 @@ using MCPhappey.Core.Services;
 using MCPhappey.Tools.StabilityAI.Enums;
 using MCPhappey.Tools.StabilityAI.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -31,9 +32,6 @@ public static class StabilityAIImageControlService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -50,20 +48,18 @@ public static class StabilityAIImageControlService
                    },
                    cancellationToken);
 
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
                // 3️⃣ API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
                    ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
                using var client = clientFactory.CreateClient();
-               using var form = new MultipartFormDataContent();
-
-               // Required
-               form.Add("image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType));
-               form.Add("prompt".NamedField(typed.Prompt));
-               form.Add("output_format".NamedField("png"));
+               using var form = new MultipartFormDataContent
+               {
+                   // Required
+                   "image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType),
+                   "prompt".NamedField(typed.Prompt),
+                   "output_format".NamedField("png")
+               };
 
                // Optional fields
                if (typed.ControlStrength.HasValue)
@@ -115,7 +111,7 @@ public static class StabilityAIImageControlService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };
@@ -154,20 +150,18 @@ public static class StabilityAIImageControlService
                   },
                   cancellationToken);
 
-              if (notAccepted != null) return notAccepted;
-              if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
               // 3️⃣ API key
               var settings = serviceProvider.GetService<StabilityAISettings>()
                   ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
               using var client = clientFactory.CreateClient();
-              using var form = new MultipartFormDataContent();
-
-              // Required
-              form.Add("image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType));
-              form.Add("prompt".NamedField(typed.Prompt));
-              form.Add("output_format".NamedField("png"));
+              using var form = new MultipartFormDataContent
+              {
+                  // Required
+                  "image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType),
+                  "prompt".NamedField(typed.Prompt),
+                  "output_format".NamedField("png")
+              };
 
               // Optional
               if (typed.ControlStrength.HasValue)
@@ -219,7 +213,7 @@ public static class StabilityAIImageControlService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                   ]
               };
@@ -239,9 +233,6 @@ public static class StabilityAIImageControlService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -258,20 +249,18 @@ public static class StabilityAIImageControlService
                    },
                    cancellationToken);
 
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
                // 3️⃣ Load API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
                    ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
                using var client = clientFactory.CreateClient();
-               using var form = new MultipartFormDataContent();
-
-               // Required fields
-               form.Add("image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "style.png", imageFile.MimeType));
-               form.Add("prompt".NamedField(typed.Prompt));
-               form.Add("output_format".NamedField("png"));
+               using var form = new MultipartFormDataContent
+               {
+                   // Required fields
+                   "image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "style.png", imageFile.MimeType),
+                   "prompt".NamedField(typed.Prompt),
+                   "output_format".NamedField("png")
+               };
 
                // Optional params
                if (!string.IsNullOrWhiteSpace(typed.NegativePrompt))
@@ -325,7 +314,7 @@ public static class StabilityAIImageControlService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };
@@ -346,9 +335,6 @@ public static class StabilityAIImageControlService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(initImageUrl);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(styleImageUrl);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -368,19 +354,17 @@ public static class StabilityAIImageControlService
                    },
                    cancellationToken);
 
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
                // 3️⃣ Load API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
                    ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
                using var client = clientFactory.CreateClient();
-               using var form = new MultipartFormDataContent();
-
-               // Required files
-               form.Add("init_image".NamedFile(initFile.Contents.ToArray(), initFile.Filename ?? "init.png", initFile.MimeType));
-               form.Add("style_image".NamedFile(styleFile.Contents.ToArray(), styleFile.Filename ?? "style.png", styleFile.MimeType));
+               using var form = new MultipartFormDataContent
+               {
+                   // Required files
+                   "init_image".NamedFile(initFile.Contents.ToArray(), initFile.Filename ?? "init.png", initFile.MimeType),
+                   "style_image".NamedFile(styleFile.Contents.ToArray(), styleFile.Filename ?? "style.png", styleFile.MimeType)
+               };
 
                // Optional fields
                if (!string.IsNullOrWhiteSpace(typed.Prompt))
@@ -443,7 +427,7 @@ public static class StabilityAIImageControlService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };

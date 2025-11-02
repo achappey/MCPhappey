@@ -1,5 +1,6 @@
 using System.ComponentModel;
-using System.Net.Mime;
+using MCPhappey.Common.Extensions;
+using MCPhappey.Core.Extensions;
 using Microsoft.PowerBI.Api;
 using Microsoft.PowerBI.Api.Models;
 using ModelContextProtocol.Protocol;
@@ -15,52 +16,48 @@ public static class PowerBI
         Destructive = false,
         OpenWorld = false,
         ReadOnly = true)]
-    public static async Task<ContentBlock?> PowerBI_ExecuteDaxQuery(
+    public static async Task<CallToolResult?> PowerBI_ExecuteDaxQuery(
         [Description("PowerBI datasetId")] string datasetId,
         [Description("PowerBI DAX query")]
             string daxQuery,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
-    {
-        var mcpServer = requestContext.Server;
-        PowerBIClient client = await serviceProvider.GetOboPowerBIClient(mcpServer);
-
-        // Build the query request using PowerBI .NET SDK types
-        DatasetExecuteQueriesRequest queryRequest = new()
+        CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
         {
-            Queries =
-        [
-            new() { Query = daxQuery }
-        ]
-        };
+            var mcpServer = requestContext.Server;
+            PowerBIClient client = await serviceProvider.GetOboPowerBIClient(mcpServer);
 
-        // Call the API (for "My Workspace" datasets)
-        var result = await client.Datasets.ExecuteQueriesAsync(datasetId, queryRequest, cancellationToken: cancellationToken);
-
-        return new EmbeddedResourceBlock()
-        {
-            Resource = new TextResourceContents()
+            // Build the query request using PowerBI .NET SDK types
+            DatasetExecuteQueriesRequest queryRequest = new()
             {
-                MimeType = MediaTypeNames.Application.Json,
-                Text = Newtonsoft.Json.JsonConvert.SerializeObject(result),
-                Uri = $"https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/executeQueries"
-            }
-        };
-    }
+                Queries =
+            [
+                new() { Query = daxQuery }
+            ]
+            };
+
+            // Call the API (for "My Workspace" datasets)
+            var result = await client.Datasets.ExecuteQueriesAsync(datasetId, queryRequest, cancellationToken: cancellationToken);
+
+            return Newtonsoft.Json.JsonConvert.SerializeObject(result)
+                .ToJsonContent($"https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/executeQueries")
+                .ToCallToolResult();
+        });
 
     [Description("Creates a new Power BI streaming (push) dataset with the specified table schema.")]
     [McpServerTool(Name = "powerbi_create_streaming_dataset",
         Title = "Create a new Power BI streaming dataset",
         OpenWorld = false,
         Destructive = true)]
-    public static async Task<ContentBlock?> PowerBI_CreateStreamingDataset(
+    public static async Task<CallToolResult?> PowerBI_CreateStreamingDataset(
     [Description("Dataset name")] string datasetName,
     [Description("Table name")] string tableName,
     [Description("Columns (name/type)")] List<PowerBIColumnSchema> columns,
     IServiceProvider serviceProvider,
     RequestContext<CallToolRequestParams> requestContext,
-    CancellationToken cancellationToken = default)
+    CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboPowerBIClient(mcpServer);
@@ -92,30 +89,25 @@ public static class PowerBI
 
         var response = await client.Datasets.PostDatasetAsync(createRequest, cancellationToken: cancellationToken);
 
-        return new EmbeddedResourceBlock()
-        {
-            Resource = new TextResourceContents()
-            {
-                MimeType = MediaTypeNames.Application.Json,
-                Text = Newtonsoft.Json.JsonConvert.SerializeObject(response),
-                Uri = $"https://api.powerbi.com/v1.0/myorg/datasets/{response.Id}"
-            }
-        };
-    }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(response)
+                    .ToJsonContent($"https://api.powerbi.com/v1.0/myorg/datasets/{response.Id}")
+                    .ToCallToolResult();
+    });
 
     [Description("Adds rows to a table in a Power BI streaming (push) dataset, with automatic type detection and mapping.")]
     [McpServerTool(Name = "powerbi_add_rows_to_dataset_table",
         Title = "Add rows to a table in a Power BI streaming dataset",
         OpenWorld = false,
         Destructive = true)]
-    public static async Task<ContentBlock?> PowerBI_AddRowsToDatasetTable(
+    public static async Task<CallToolResult?> PowerBI_AddRowsToDatasetTable(
         [Description("PowerBI dataset ID")] string datasetId,
         [Description("Table name")] string tableName,
         [Description("Rows to insert (each row as a dictionary of column name to value)")]
         List<Dictionary<string, object>> rows,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
     {
         var mcpServer = requestContext.Server;
         var client = await serviceProvider.GetOboPowerBIClient(mcpServer);
@@ -164,16 +156,10 @@ public static class PowerBI
 
         await client.Datasets.PostRowsAsync(datasetId, tableName, rowRequest, cancellationToken: cancellationToken);
 
-        return new EmbeddedResourceBlock()
-        {
-            Resource = new TextResourceContents()
-            {
-                MimeType = MediaTypeNames.Application.Json,
-                Text = Newtonsoft.Json.JsonConvert.SerializeObject(rowRequest),
-                Uri = $"https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/tables/{tableName}/rows"
-            }
-        };
-    }
+        return Newtonsoft.Json.JsonConvert.SerializeObject(rowRequest)
+                           .ToJsonContent($"https://api.powerbi.com/v1.0/myorg/datasets/{datasetId}/tables/{tableName}/rows")
+                           .ToCallToolResult();
+    });
 
     // Minimal Column class for mapping
     public class Column

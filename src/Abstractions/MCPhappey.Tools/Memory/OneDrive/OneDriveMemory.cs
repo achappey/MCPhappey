@@ -117,10 +117,6 @@ public static class OneDriveMemory
                      new OneDriveCreateMemory { Text = file_text },
                      cancellationToken);
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
-
-
         // Ensure full folder structure for nested paths
         var trimmed = path.Trim('/');
         var lastSlash = trimmed.LastIndexOf('/');
@@ -157,17 +153,9 @@ public static class OneDriveMemory
                    ?? throw new Exception("Could not resolve default OneDrive.");
         await graph.EnsureRootFolderExistsAsync(drive.Id!, cancellationToken);
 
-
-
         var (typed, notAccepted, _) = await context.Server.TryElicit(
                           new OneDriveReplaceMemory { TextToReplace = old_str, NewText = new_str },
                           cancellationToken);
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
-
-
-
 
         var trimmed = path.Trim('/');
         var lastSlash = trimmed.LastIndexOf('/');
@@ -212,9 +200,6 @@ public static class OneDriveMemory
         var (typed, notAccepted, _) = await context.Server.TryElicit(
                     new OneDriveInsertMemory { Text = insert_text, Line = insert_line },
                     cancellationToken);
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
 
         var trimmed = path.Trim('/');
         var lastSlash = trimmed.LastIndexOf('/');

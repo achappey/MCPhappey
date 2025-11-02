@@ -11,6 +11,8 @@ using MCPhappey.Core.Extensions;
 using ModelContextProtocol.Protocol;
 using QuestPDF.Helpers;
 using QuestPDF.Markdown;
+using MCPhappey.Common.Extensions;
+using Microsoft.KernelMemory.Pipeline;
 
 namespace MCPhappey.Tools.GitHub.QuestPDF;
 
@@ -73,15 +75,8 @@ public static class QuestPDFService
                 })
                 .GeneratePdf();
 
-            return new CallToolResult()
-            {
-                Content = [new EmbeddedResourceBlock() {
-                    Resource = new BlobResourceContents() {
-                        Blob = Convert.ToBase64String(pdfBytes),
-                        MimeType = "application/pdf"
-                    }
-                }]
-            };
+            return pdfBytes.ToBlobContent("https://www.questpdf.com/", MimeTypes.Pdf)
+                .ToCallToolResult();
         });
 
     [Description("Generates a simple A4 PDF document from Markdown text.")]
@@ -116,20 +111,11 @@ public static class QuestPDFService
                page.DefaultTextStyle(t => t.FontSize(fontSize));
                page.PageColor(Colors.White);
                page.Content().Markdown(markdown);
-             
+
            });
        }).GeneratePdf();
 
-       return new CallToolResult()
-       {
-           Content = [new EmbeddedResourceBlock()
-                {
-                    Resource = new BlobResourceContents()
-                    {
-                        Blob = Convert.ToBase64String(pdfBytes),
-                        MimeType = "application/pdf"
-                    }
-                }]
-       };
+       return pdfBytes.ToBlobContent("https://www.questpdf.com/", MimeTypes.Pdf)
+                      .ToCallToolResult();
    });
 }

@@ -4,13 +4,15 @@ using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using MCPhappey.Core.Extensions;
 
 namespace MCPhappey.Tools.Kroki;
 
 public static class KrokiDiagrams
 {
     [Description("Generate a Kroki diagram from code and diagram type")]
-    [McpServerTool(Idempotent = true, OpenWorld = false,
+    [McpServerTool(Idempotent = true,
+        OpenWorld = false,
         Destructive = false,
         Title = "Create a diagram with Kroki")]
     public static async Task<CallToolResult?> Kroki_CreateDiagram(
@@ -20,6 +22,7 @@ public static class KrokiDiagrams
       IServiceProvider serviceProvider,
       RequestContext<CallToolRequestParams> requestContext,
       CancellationToken cancellationToken = default)
+      => await requestContext.WithExceptionCheck(async () =>
     {
         if (!AllowedTypes.Contains(diagramType))
         {
@@ -53,21 +56,10 @@ public static class KrokiDiagrams
             return error;
 
         var fileBytes = await response.Content.ReadAsByteArrayAsync(cancellationToken);
-        var base64 = Convert.ToBase64String(fileBytes);
 
-        return new CallToolResult()
-        {
-            Content = [new EmbeddedResourceBlock()
-            {
-                Resource = new BlobResourceContents()
-                {
-                    Uri = url,
-                    Blob = base64,
-                    MimeType = "image/" + fileType + (fileType == "svg" ? "+xml" : string.Empty)
-                }
-            }]
-        };
-    }
+        return fileBytes.ToBlobContent(url, "image/" + fileType + (fileType == "svg" ? "+xml" : string.Empty))
+            .ToCallToolResult();
+    });
 
     public static readonly HashSet<string> AllowedTypes = new(StringComparer.OrdinalIgnoreCase)
     {

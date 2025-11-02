@@ -36,8 +36,6 @@ public static class AIMLMusic
          CancellationToken cancellationToken = default)
          => await requestContext.WithExceptionCheck(async () =>
      {
-         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
          var settings = serviceProvider.GetRequiredService<AIMLSettings>();
          var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -51,9 +49,6 @@ public static class AIMLMusic
                  Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("mp3")
              },
              cancellationToken);
-
-         if (notAccepted != null) return notAccepted;
-         if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
          // Step 2: Build JSON payload
          var jsonBody = JsonSerializer.Serialize(new
@@ -89,15 +84,7 @@ public static class AIMLMusic
          {
              Content =
              [
-                 new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
+                doc.ToJsonContent(MINIMAX_UPLOAD_URL),
                 new TextContentBlock()
                 {
                     Text = $"🎵 Music generation started (ID: {id}). The model is processing asynchronously.",
@@ -157,9 +144,6 @@ public static class AIMLMusic
            },
            cancellationToken);
 
-       if (notAccepted != null) return notAccepted;
-       if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
        // Step 2: Build JSON payload
        var jsonBody = JsonSerializer.Serialize(new
        {
@@ -194,15 +178,7 @@ public static class AIMLMusic
        {
            Content =
            [
-               new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
+                doc.ToJsonContent(BASE_URL),
                 new TextContentBlock()
                 {
                     Text = $"🎶 ElevenLabs music generation started (ID: {id}). The model is processing asynchronously.",
@@ -265,8 +241,6 @@ public static class AIMLMusic
                 Purpose = purpose
             },
             cancellationToken);
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
         // Step 3: Build multipart body (binary upload)
         using var client = clientFactory.CreateClient();
@@ -293,15 +267,7 @@ public static class AIMLMusic
         {
             Content =
             [
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = MINIMAX_UPLOAD_URL
-                    }
-                },
+                doc.ToJsonContent(MINIMAX_UPLOAD_URL),
                 new TextContentBlock()
                 {
                     Text = "🎧 Reference track uploaded successfully. You can now use the returned voice_id and/or instrumental_id in the next step.",
@@ -341,8 +307,6 @@ public static class AIMLMusic
                 Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("mp3")
             },
             cancellationToken);
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
         if (string.IsNullOrWhiteSpace(typed.ReferVoice) && string.IsNullOrWhiteSpace(typed.ReferInstrumental))
             throw new ArgumentException("At least one of refer_voice or refer_instrumental is required.");
@@ -384,20 +348,8 @@ public static class AIMLMusic
         {
             Content =
             [
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = MINIMAX_GENERATE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎶 MiniMax music generation started (ID: {id}). Processing asynchronously."
-
-                }
+                doc.ToJsonContent(MINIMAX_GENERATE_URL),
+                $"🎶 MiniMax music generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
             ]
         };
     });
@@ -469,8 +421,6 @@ public static class AIMLMusic
      CancellationToken cancellationToken = default)
      => await requestContext.WithExceptionCheck(async () =>
  {
-     ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
      var settings = serviceProvider.GetRequiredService<AIMLSettings>();
      var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -485,8 +435,6 @@ public static class AIMLMusic
              Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("wav")
          },
          cancellationToken);
-     if (notAccepted != null) return notAccepted;
-     if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
      // Step 2: Build JSON payload
      var jsonBody = JsonSerializer.Serialize(new
@@ -523,19 +471,8 @@ public static class AIMLMusic
      {
          Content =
          [
-             new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎧 Stable Audio generation started (ID: {id}). The model is processing asynchronously.",
-                }
+             doc.ToJsonContent(BASE_URL),
+            $"🎧 Stable Audio generation started (ID: {id}). The model is processing asynchronously.".ToTextContentBlock()
          ]
      };
  });

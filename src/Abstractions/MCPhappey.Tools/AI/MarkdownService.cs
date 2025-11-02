@@ -400,9 +400,6 @@ public static class MarkdownService
         var (typed, notAccepted, _) = await context.Server.TryElicit(
             new MarkdownCreateInput { Text = file_text }, cancellationToken);
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
-
         var trimmed = normalized.Trim('/');
         var lastSlash = trimmed.LastIndexOf('/');
         if (lastSlash > 0)
@@ -443,9 +440,6 @@ public static class MarkdownService
 
         var (typed, notAccepted, _) = await context.Server.TryElicit(
             new MarkdownInsertInput { Line = insert_line, Text = insert_text }, cancellationToken);
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
 
         var trimmed = normalized.Trim('/');
         var lastSlash = trimmed.LastIndexOf('/');
@@ -497,9 +491,6 @@ public static class MarkdownService
 
         var (typed, notAccepted, _) = await context.Server.TryElicit(
             new MarkdownReplaceInput { TextToReplace = old_str, NewText = new_str }, cancellationToken);
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
 
         var content = await graph.ReadTextFileAsync(drive.Id!, normalized, cancellationToken)
                       ?? throw new Exception("File not found");

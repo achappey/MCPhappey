@@ -87,8 +87,6 @@ public static partial class OpenAIContainers
             };
 
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "Error".ToErrorCallToolResponse();
 
             var payload = new Dictionary<string, object?>
             {

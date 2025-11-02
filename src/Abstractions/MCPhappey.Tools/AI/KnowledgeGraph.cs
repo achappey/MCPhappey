@@ -5,6 +5,7 @@ using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -33,7 +34,7 @@ public static class KnowledgeGraph
 
           var files = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
           var content = files
-            .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith("application/json"))
+            .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json))
             .Select(a => a.Contents.ToString());
           var documentContent = string.Join("\n\n", content);
 

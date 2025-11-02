@@ -8,7 +8,6 @@ using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.StabilityAI;
-using MCPhappey.Tools.Together.Images;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
@@ -37,12 +36,6 @@ public static class TogetherAudio
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(input);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(voice);
-
-            var settings = serviceProvider.GetRequiredService<TogetherSettings>();
-            var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
             // 1️⃣ Elicit or confirm model input
             var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
                 new TogetherAudioTextToSpeech
@@ -57,9 +50,6 @@ public static class TogetherAudio
                 },
                 cancellationToken);
 
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
             // 2️⃣ Prepare JSON payload
             var payload = new
             {
@@ -73,10 +63,8 @@ public static class TogetherAudio
                 stream = false
             };
 
-            using var client = clientFactory.CreateClient();
+            using var client = serviceProvider.CreateTogetherClient("audio/*");
             using var request = new HttpRequestMessage(HttpMethod.Post, BASE_URL);
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("audio/*"));
             request.Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, MimeTypes.Json);
 
             // 3️⃣ Execute request
@@ -178,11 +166,7 @@ public static class TogetherAudio
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(audioUrl);
-
-            var settings = serviceProvider.GetRequiredService<TogetherSettings>();
             var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-            var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
             // 1️⃣ Download audio (SharePoint, OneDrive, or HTTP)
             var downloads = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, audioUrl, cancellationToken);
@@ -200,28 +184,28 @@ public static class TogetherAudio
                 },
                 cancellationToken);
 
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
             // 3️⃣ Build multipart form
-            using var form = new MultipartFormDataContent();
-            form.Add(new StreamContent(audio.Contents.ToStream())
+            using var form = new MultipartFormDataContent
             {
-                Headers = { ContentType = new MediaTypeHeaderValue(audio.MimeType) }
-            }, "file", audio.Filename ?? "input.mp3");
-
-            form.Add("model".NamedField(typed.Model));
-            form.Add("language".NamedField(typed.Language));
-            form.Add("response_format".NamedField("json"));
-            form.Add("temperature".NamedField(typed.Temperature.ToString(System.Globalization.CultureInfo.InvariantCulture)));
+                {
+                    new StreamContent(audio.Contents.ToStream())
+                    {
+                        Headers = { ContentType = new MediaTypeHeaderValue(audio.MimeType) }
+                    },
+                    "file",
+                    audio.Filename ?? "input.mp3"
+                },
+                "model".NamedField(typed.Model),
+                "language".NamedField(typed.Language),
+                "response_format".NamedField("json"),
+                "temperature".NamedField(typed.Temperature.ToString(System.Globalization.CultureInfo.InvariantCulture))
+            };
 
             if (!string.IsNullOrWhiteSpace(typed.Prompt))
                 form.Add("prompt".NamedField(typed.Prompt));
 
             // 4️⃣ Send request
-            using var client = clientFactory.CreateClient();
-            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+            using var client = serviceProvider.CreateTogetherClient();
 
             using var resp = await client.PostAsync(TRANSCRIBE_URL, form, cancellationToken);
             var json = await resp.Content.ReadAsStringAsync(cancellationToken);
@@ -230,7 +214,7 @@ public static class TogetherAudio
                 throw new Exception($"{resp.StatusCode}: {json}");
 
             // 5️⃣ Extract transcribed text
-            var result = System.Text.Json.JsonDocument.Parse(json);
+            var result = JsonDocument.Parse(json);
             var text = result.RootElement.TryGetProperty("text", out var t) ? t.GetString() : json;
 
             if (string.IsNullOrWhiteSpace(text))

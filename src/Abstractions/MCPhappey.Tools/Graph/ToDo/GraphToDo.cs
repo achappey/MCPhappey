@@ -40,8 +40,6 @@ public static class GraphToDo
                     cancellationToken
                 );
 
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
             var linkedResource = new LinkedResource
             {
                 WebUrl = typed?.Url,
@@ -79,7 +77,6 @@ public static class GraphToDo
             cancellationToken
         );
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         var newTask = await client.Me.Todo.Lists[listId].Tasks
             .PostAsync(new TodoTask
@@ -130,8 +127,6 @@ public static class GraphToDo
             },
             cancellationToken
         );
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         return await client.Me.Todo.Lists
             .PostAsync(new TodoTaskList

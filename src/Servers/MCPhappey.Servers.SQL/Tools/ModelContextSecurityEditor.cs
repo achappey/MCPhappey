@@ -23,21 +23,18 @@ public static partial class ModelContextSecurityEditor
        [Description("User id of new owner")] string ownerUserId,
        IServiceProvider serviceProvider,
        RequestContext<CallToolRequestParams> requestContext,
-       CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+       CancellationToken cancellationToken = default) =>
+       await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
         using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var user = await graphClient.Users[ownerUserId].GetAsync();
 
-        var dto = await requestContext.Server.GetElicitResponse(new McpServerOwner()
+        var (typed, notAccepted, _) = await requestContext.Server.TryElicit(new McpServerOwner()
         {
             UserId = ownerUserId
         }, cancellationToken);
-
-        var notAccepted = dto?.NotAccepted();
-        if (notAccepted != null) return notAccepted;
-        var typed = dto?.GetTypedResult<McpServerOwner>() ?? throw new Exception();
 
         if (server.Owners.Any(a => a.Id == typed.UserId) == true)
         {

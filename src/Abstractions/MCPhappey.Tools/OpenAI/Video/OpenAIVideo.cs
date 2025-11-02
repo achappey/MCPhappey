@@ -28,7 +28,6 @@ public static class OpenAIVideo
       => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
 
         var imageInput = new OpenAINewVideo
@@ -76,8 +75,6 @@ public static class OpenAIVideo
        CancellationToken cancellationToken = default)
        => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(videoId);
-
         var openAiClient = serviceProvider.GetRequiredService<OpenAIClient>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 

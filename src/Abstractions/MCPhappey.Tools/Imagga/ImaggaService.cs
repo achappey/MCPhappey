@@ -1,7 +1,4 @@
 using System.ComponentModel;
-using System.Net.Http.Headers;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Nodes;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
@@ -35,10 +32,8 @@ public static class ImaggaService
        => await requestContext.WithExceptionCheck(async () =>
        await requestContext.WithStructuredContent(async () =>
    {
-       // Resolve dependencies
-       var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
+       var imagga = serviceProvider.GetRequiredService<ImaggaClient>();
        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-       var settings = serviceProvider.GetRequiredService<ImaggaSettings>();
 
        // Download and encode image
        var files = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
@@ -48,12 +43,6 @@ public static class ImaggaService
            throw new InvalidOperationException("Failed to download or read image from the provided URL.");
 
        string base64Image = Convert.ToBase64String(image.Contents.ToArray());
-
-       // Build endpoint
-       var baseUrl = "https://api.imagga.com/v2/tags";
-       var url = string.IsNullOrWhiteSpace(taggerId) ? baseUrl : $"{baseUrl}/{taggerId}";
-
-       var httpClient = httpClientFactory.CreateClient();
 
        // Prepare request body
        var payload = new Dictionary<string, object?>
@@ -66,25 +55,13 @@ public static class ImaggaService
            ["decrease_parents"] = decreaseParents
        };
 
-       var request = new HttpRequestMessage(HttpMethod.Post, url)
-       {
-           Content = new StringContent(JsonSerializer.Serialize(payload, new JsonSerializerOptions
-           {
-               DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-           }), Encoding.UTF8, "application/json")
-       };
-
-       request.Headers.Authorization = new AuthenticationHeaderValue("Basic", settings.ApiKey);
-
        // Send request
-       using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-       response.EnsureSuccessStatusCode();
+       using var resp = await imagga.AutoTagAsync(payload, taggerId, cancellationToken);
+       resp.EnsureSuccessStatusCode();
 
        // Parse response
-       var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-       var json = await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
-
-       return json;
+       var stream = await resp.Content.ReadAsStreamAsync(cancellationToken);
+       return await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
    }));
 
     [Description("Extract dominant colors, palettes, and foreground/background separation from an image using Imagga API.")]
@@ -110,10 +87,7 @@ public static class ImaggaService
         => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
     {
-        // Dependencies
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-        var settings = serviceProvider.GetRequiredService<ImaggaSettings>();
 
         // Download image and convert to Base64
         var files = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
@@ -123,10 +97,6 @@ public static class ImaggaService
             throw new InvalidOperationException("Failed to download or read image from the provided URL.");
 
         string base64Image = Convert.ToBase64String(image.Contents.ToArray());
-
-        // Build Imagga endpoint
-        var url = "https://api.imagga.com/v2/colors";
-        var httpClient = httpClientFactory.CreateClient();
 
         // Build payload
         var payload = new Dictionary<string, object?>
@@ -142,23 +112,12 @@ public static class ImaggaService
             ["features_type"] = featuresType
         };
 
-        // Prepare request
-        var request = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(payload, new JsonSerializerOptions
-            {
-                DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-            }), Encoding.UTF8, "application/json")
-        };
-
-        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", settings.ApiKey);
-
-        // Execute
-        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        response.EnsureSuccessStatusCode();
+        var imagga = serviceProvider.GetRequiredService<ImaggaClient>();
+        using var resp = await imagga.AnalyzeColorsAsync(payload, cancellationToken);
+        resp.EnsureSuccessStatusCode();
 
         // Parse result
-        var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+        var stream = await resp.Content.ReadAsStreamAsync(cancellationToken);
         var json = await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
 
         return json;
@@ -185,9 +144,7 @@ public static class ImaggaService
         await requestContext.WithStructuredContent(async () =>
     {
         // Resolve dependencies
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-        var settings = serviceProvider.GetRequiredService<ImaggaSettings>();
 
         // Download image and convert to Base64
         var files = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
@@ -198,11 +155,6 @@ public static class ImaggaService
 
         string base64Image = Convert.ToBase64String(image.Contents.ToArray());
 
-        // Build Imagga endpoint URL
-        var url = $"https://api.imagga.com/v2/categories/{categorizerId}";
-
-        var httpClient = httpClientFactory.CreateClient();
-
         // Prepare request payload
         var payload = new Dictionary<string, object?>
         {
@@ -211,23 +163,14 @@ public static class ImaggaService
         };
 
         // Construct the request
-        var request = new HttpRequestMessage(HttpMethod.Post, url)
-        {
-            Content = new StringContent(JsonSerializer.Serialize(payload), Encoding.UTF8, "application/json")
-        };
-
-        // Prepare Basic Auth header
-        request.Headers.Authorization = new AuthenticationHeaderValue("Basic", settings.ApiKey);
-
-        // Send request
-        using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-        response.EnsureSuccessStatusCode();
+        var imagga = serviceProvider.GetRequiredService<ImaggaClient>();
+        using var resp = await imagga.CategorizeAsync(payload, categorizerId, cancellationToken);
+        resp.EnsureSuccessStatusCode();
 
         // Parse JSON response
-        var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
-        var json = await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
+        var stream = await resp.Content.ReadAsStreamAsync(cancellationToken);
 
-        return json;
+        return await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
     }));
 
     [Description("Analyze an image using Imagga Smart Cropping and return suggested crop coordinates.")]
@@ -245,14 +188,12 @@ public static class ImaggaService
        [Description("If 1, coordinates exactly match resolution without scaling. Default: 0")] int? noScaling = null,
        [Description("Minimum visual area percentage to preserve (-1 lets the API decide).")] double? rectPercentage = null,
        [Description("Return raster image result (1 = yes, default 0 = coordinates only).")] int? imageResult = null,
-       CancellationToken cancellationToken = default)
-       => await requestContext.WithExceptionCheck(async () =>
+       CancellationToken cancellationToken = default) =>
+       await requestContext.WithExceptionCheck(async () =>
        await requestContext.WithStructuredContent(async () =>
    {
        // Resolve dependencies
-       var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-       var settings = serviceProvider.GetRequiredService<ImaggaSettings>();
 
        // Download the image
        var files = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
@@ -263,11 +204,6 @@ public static class ImaggaService
 
        // Convert image to Base64
        string base64Image = Convert.ToBase64String(image.Contents.ToArray());
-
-       // Build Imagga endpoint
-       var url = "https://api.imagga.com/v2/croppings";
-
-       var httpClient = httpClientFactory.CreateClient();
 
        // Build payload
        var payload = new Dictionary<string, object?>
@@ -280,31 +216,14 @@ public static class ImaggaService
        };
 
        // Prepare request
-       var request = new HttpRequestMessage(HttpMethod.Post, url)
-       {
-           Content = new StringContent(JsonSerializer.Serialize(payload, new JsonSerializerOptions
-           {
-               DefaultIgnoreCondition = System.Text.Json.Serialization.JsonIgnoreCondition.WhenWritingNull
-           }), Encoding.UTF8, "application/json")
-       };
-
-       // Auth header
-       request.Headers.Authorization = new AuthenticationHeaderValue("Basic", settings.ApiKey);
-
-       // Execute call
-       using var response = await httpClient.SendAsync(request, HttpCompletionOption.ResponseHeadersRead, cancellationToken);
-       response.EnsureSuccessStatusCode();
+       var imagga = serviceProvider.GetRequiredService<ImaggaClient>();
+       using var resp = await imagga.SmartCropAsync(payload, cancellationToken);
+       resp.EnsureSuccessStatusCode();
 
        // Parse response
-       var stream = await response.Content.ReadAsStreamAsync(cancellationToken);
+       var stream = await resp.Content.ReadAsStreamAsync(cancellationToken);
        var json = await JsonNode.ParseAsync(stream, cancellationToken: cancellationToken);
 
        return json;
    }));
-
-}
-
-public class ImaggaSettings
-{
-    public string ApiKey { get; set; } = default!;
 }

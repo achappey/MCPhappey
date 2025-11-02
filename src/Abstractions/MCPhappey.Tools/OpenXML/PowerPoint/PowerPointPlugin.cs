@@ -22,9 +22,10 @@ public static class PowerPointPlugin
         string url,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async graphClient =>
     {
-        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var fileItems = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
         var fileItem = fileItems.FirstOrDefault();
@@ -34,7 +35,7 @@ public static class PowerPointPlugin
         var uploaded = await graphClient.UploadBinaryDataAsync(url, newBinary, cancellationToken);
 
         return uploaded?.ToResourceLinkBlock(uploaded?.Name!).ToCallToolResult();
-    });
+    }));
 
     [Description("Create a new PowerPoint presentation")]
     [McpServerTool(ReadOnly = false, OpenWorld = false, Idempotent = false, Destructive = false)]
@@ -42,17 +43,17 @@ public static class PowerPointPlugin
         [Description("Filename without .pptx extension")] string fileName,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async graphClient =>
     {
-        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
         using var stream = new MemoryStream();
         CreatePresentation(stream);
 
         var uploaded = await graphClient.Upload($"{fileName}.pptx", await BinaryData.FromStreamAsync(stream, cancellationToken), cancellationToken);
 
         return uploaded?.ToCallToolResult();
-    });
+    }));
 
     // 1) SLIDE VERWIJDEREN
     [Description("Remove a slide (by zero-based index) from a PowerPoint presentation")]
@@ -62,10 +63,10 @@ public static class PowerPointPlugin
         int slideIndex,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async graphClient =>
     {
-        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var fileItems = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
         var fileItem = fileItems.FirstOrDefault();
@@ -75,7 +76,7 @@ public static class PowerPointPlugin
         var uploaded = await graphClient.UploadBinaryDataAsync(url, newBinary, cancellationToken);
 
         return uploaded?.ToResourceLinkBlock(uploaded?.Name!).ToCallToolResult(); ;
-    });
+    }));
 
     // 2) SLIDE VERPLAATSEN (REORDER)
     [Description("Move a slide from one index to another (zero-based) in a PowerPoint presentation")]
@@ -86,10 +87,10 @@ public static class PowerPointPlugin
         int toIndex,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async graphClient =>
     {
-        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var fileItems = await downloadService.DownloadContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
         var fileItem = fileItems.FirstOrDefault();
@@ -99,7 +100,7 @@ public static class PowerPointPlugin
         var uploaded = await graphClient.UploadBinaryDataAsync(url, newBinary, cancellationToken);
 
         return uploaded?.ToResourceLinkBlock(uploaded?.Name!).ToCallToolResult(); ;
-    });
+    }));
 
     private static BinaryData ReorderSlides(BinaryData pptx, int fromIndex, int toIndex)
     {

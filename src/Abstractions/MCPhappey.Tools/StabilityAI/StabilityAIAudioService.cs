@@ -29,8 +29,6 @@ public static class StabilityAIAudioService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
                // 1️⃣ Get user input via elicitation
@@ -42,24 +40,22 @@ public static class StabilityAIAudioService
                    },
                    cancellationToken);
 
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
                // 2️⃣ Load API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
                    ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
                using var client = clientFactory.CreateClient();
-               using var form = new MultipartFormDataContent();
+               using var form = new MultipartFormDataContent
+               {
+                   // Required field
+                   "prompt".NamedField(typed.Prompt),
 
-               // Required field
-               form.Add("prompt".NamedField(typed.Prompt));
-
-               // Optional fields
-               form.Add("duration".NamedField(typed.Duration.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)));
-               form.Add("steps".NamedField(typed.Steps.ToString()));
-               form.Add("cfg_scale".NamedField(typed.CfgScale.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)));
-               form.Add("model".NamedField("stable-audio-2-5"));
+                   // Optional fields
+                   "duration".NamedField(typed.Duration.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)),
+                   "steps".NamedField(typed.Steps.ToString()),
+                   "cfg_scale".NamedField(typed.CfgScale.ToString("0.##", System.Globalization.CultureInfo.InvariantCulture)),
+                   "model".NamedField("stable-audio-2-5")
+               };
 
                if (typed.Seed.HasValue && typed.Seed > 0)
                    form.Add("seed".NamedField(typed.Seed.ToString()!));
@@ -123,9 +119,6 @@ public static class StabilityAIAudioService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(audioUrl);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -141,9 +134,6 @@ public static class StabilityAIAudioService
                        Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName()
                    },
                    cancellationToken);
-
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
                // 3️⃣ Load API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -247,9 +237,6 @@ public static class StabilityAIAudioService
                     Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName()
                 },
                 cancellationToken);
-
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
             // 3️⃣ Load API key
             var settings = serviceProvider.GetService<StabilityAISettings>()

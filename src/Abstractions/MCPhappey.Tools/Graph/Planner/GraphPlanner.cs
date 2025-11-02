@@ -82,9 +82,6 @@ public static partial class GraphPlanner
             OrderHint = orderHint
         }, cancellationToken);
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid result");
-
         return await client.Planner.Buckets.PostAsync(new PlannerBucket
         {
             Name = typed.Name,

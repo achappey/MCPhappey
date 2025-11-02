@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.Net.Http.Json;
 using System.Text.Json.Serialization;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Perplexity.Clients;
 using Microsoft.Extensions.DependencyInjection;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -24,36 +25,26 @@ public static class PerplexityPlugin
       CancellationToken cancellationToken = default) => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
     {
-        var httpClientFactory = serviceProvider.GetService<IHttpClientFactory>()
-            ?? throw new InvalidOperationException("No IHttpClientFactory found in service provider");
+        var perplexity = serviceProvider.GetRequiredService<PerplexityClient>();
 
-        var settings = serviceProvider.GetService<PerplexitySettings>()
-            ?? throw new InvalidOperationException("No PerplexitySettings found in service provider");
-
-        var httpClient = httpClientFactory.CreateClient();
-
-        var url = $"https://api.perplexity.ai/search";
-
-        // Prepare the HTTP POST request
-        var request = new HttpRequestMessage(HttpMethod.Post, url)
+        var body = new
         {
-            Content = JsonContent.Create(new
-            {
-                query,
-                max_results = maxResults,
-                max_tokens_per_page = maxTokensPerPage,
-                country
-            })
+            query,
+            max_results = maxResults,
+            max_tokens_per_page = maxTokensPerPage,
+            country
         };
 
-        request.Headers.Add("Authorization", $"Bearer {settings.ApiKey}");
+        using var resp = await perplexity.SearchAsync(body, cancellationToken);
+        var results = await resp.Content.ReadFromJsonAsync<PerplexitySearchResults>(cancellationToken);
 
-        using var response = await httpClient.SendAsync(request,
-            HttpCompletionOption.ResponseHeadersRead, cancellationToken);
+        if (!resp.IsSuccessStatusCode)
+        {
+            var json = await resp.Content.ReadAsStringAsync(cancellationToken);
+            throw new Exception($"{resp.StatusCode}: {json}");
+        }
 
-        response.EnsureSuccessStatusCode();
-
-        return await response.Content.ReadFromJsonAsync<PerplexitySearchResults>(cancellationToken);
+        return results;
     }));
 
     public class PerplexitySearchResults
@@ -79,9 +70,4 @@ public static class PerplexityPlugin
         [JsonPropertyName("last_update")]
         public string LastUpdate { get; set; } = null!;
     }
-}
-
-public class PerplexitySettings
-{
-    public string ApiKey { get; set; } = default!;
 }

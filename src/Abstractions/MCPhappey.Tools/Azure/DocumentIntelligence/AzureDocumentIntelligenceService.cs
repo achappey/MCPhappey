@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using System.Text;
 using System.Text.Json.Nodes;
-using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -45,10 +45,9 @@ public static class AzureDocumentIntelligence
             ["base64Source"] = Convert.ToBase64String(file.Contents.ToArray())
         };
 
-
         using var post = new HttpRequestMessage(HttpMethod.Post, uri);
         post.Headers.Add("Ocp-Apim-Subscription-Key", settings.ApiKey);
-        post.Content = new StringContent(payload.ToJsonString(), Encoding.UTF8, "application/json");
+        post.Content = new StringContent(payload.ToJsonString(), Encoding.UTF8, MimeTypes.Json);
 
         // 3) Send POST request
         using var postResponse = await httpClient.SendAsync(post, cancellationToken);
@@ -120,7 +119,7 @@ public static class AzureDocumentIntelligence
 
     using var post = new HttpRequestMessage(HttpMethod.Post, uri);
     post.Headers.Add("Ocp-Apim-Subscription-Key", settings.ApiKey);
-    post.Content = new StringContent(payload.ToJsonString(), Encoding.UTF8, "application/json");
+    post.Content = new StringContent(payload.ToJsonString(), Encoding.UTF8, MimeTypes.Json);
 
     using var postResponse = await httpClient.SendAsync(post, cancellationToken);
     if (!postResponse.IsSuccessStatusCode)

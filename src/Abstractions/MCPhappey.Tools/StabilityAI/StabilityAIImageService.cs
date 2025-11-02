@@ -6,6 +6,7 @@ using MCPhappey.Core.Services;
 using MCPhappey.Tools.StabilityAI.Enums;
 using MCPhappey.Tools.StabilityAI.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -31,8 +32,6 @@ public static class StabilityAIImageService
         CancellationToken cancellationToken = default) =>
         await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var downloader = serviceProvider.GetRequiredService<DownloadService>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var items = !string.IsNullOrEmpty(fileUrl) ? await downloader.DownloadContentAsync(serviceProvider,
@@ -49,9 +48,6 @@ public static class StabilityAIImageService
                            ?? requestContext.ToOutputFileName()
             },
             cancellationToken);
-
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
         // 2) Load API key
         var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -116,7 +112,7 @@ public static class StabilityAIImageService
         {
             Content = [graphItem, new ImageContentBlock() {
                 Data = Convert.ToBase64String(bytesOut),
-                MimeType = "image/png"
+                MimeType = MimeTypes.ImagePng
             }]
         };
     });
@@ -148,9 +144,6 @@ public static class StabilityAIImageService
                               ?? requestContext.ToOutputFileName()
                },
                cancellationToken);
-
-           if (notAccepted != null) return notAccepted;
-           if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
            // 2) Load API key
            var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -204,7 +197,7 @@ public static class StabilityAIImageService
            {
                Content = [graphItem, new ImageContentBlock() {
                 Data = Convert.ToBase64String(bytesOut),
-                MimeType = "image/png"
+                MimeType = MimeTypes.ImagePng
             }]
            };
        });
@@ -225,8 +218,6 @@ public static class StabilityAIImageService
         CancellationToken cancellationToken = default) =>
         await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var downloader = serviceProvider.GetRequiredService<DownloadService>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var items = !string.IsNullOrEmpty(fileUrl) ? await downloader.DownloadContentAsync(serviceProvider,
@@ -244,10 +235,6 @@ public static class StabilityAIImageService
             },
             cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
-        // 2) Load API key
         var settings = serviceProvider.GetService<StabilityAISettings>()
             ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
@@ -306,7 +293,7 @@ public static class StabilityAIImageService
         {
             Content = [graphItem, new ImageContentBlock() {
                 Data = Convert.ToBase64String(bytesOut),
-                MimeType = "image/png"
+                MimeType = MimeTypes.ImagePng
             }]
         };
 

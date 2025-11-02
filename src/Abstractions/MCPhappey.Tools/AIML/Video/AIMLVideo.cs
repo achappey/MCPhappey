@@ -42,8 +42,6 @@ public static class AIMLVideo
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var settings = serviceProvider.GetRequiredService<AIMLSettings>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -61,9 +59,6 @@ public static class AIMLVideo
                 Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("mp4")
             },
             cancellationToken);
-
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
@@ -104,19 +99,8 @@ public static class AIMLVideo
         {
             Content =
             [
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = PIXVERSE_BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎬 PixVerse video generation started (ID: {id}). Processing asynchronously."
-                }
+                doc.ToJsonContent(PIXVERSE_BASE_URL),
+                $"🎬 PixVerse video generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
             ]
         };
     });
@@ -233,8 +217,6 @@ public static class AIMLVideo
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var settings = serviceProvider.GetRequiredService<AIMLSettings>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -249,9 +231,6 @@ public static class AIMLVideo
                 Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("mp4")
             },
             cancellationToken);
-
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
@@ -289,19 +268,8 @@ public static class AIMLVideo
         {
             Content =
             [
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎞️ SberAI Kandinsky 5 video generation started (ID: {id}). Processing asynchronously."
-                }
+                doc.ToJsonContent(BASE_URL),
+                $"🎞️ SberAI Kandinsky 5 video generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
             ]
         };
     });
@@ -388,9 +356,6 @@ public static class AIMLVideo
          },
          cancellationToken);
 
-     if (notAccepted != null) return notAccepted;
-     if (typed == null) return "User input missing.".ToErrorCallToolResponse();
-
      // Step 2: Build JSON payload
      var jsonBody = JsonSerializer.Serialize(new
      {
@@ -426,19 +391,8 @@ public static class AIMLVideo
      {
          Content =
          [
-             new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎬 SberAI Kandinsky 5 Distill video generation started (ID: {id}). Processing asynchronously."
-                }
+             doc.ToJsonContent(BASE_URL),
+            $"🎬 SberAI Kandinsky 5 Distill video generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
          ]
      };
  });
@@ -560,19 +514,8 @@ public static class AIMLVideo
       {
           Content =
           [
-              new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎥 Krea WAN-14B video generation started (ID: {id}). Processing asynchronously (≈ {typed.NumFrames / 16.0:F1}s at 16 fps)."
-                }
+                doc.ToJsonContent(BASE_URL),
+                $"🎥 Krea WAN-14B video generation started (ID: {id}). Processing asynchronously (≈ {typed.NumFrames / 16.0:F1}s at 16 fps).".ToTextContentBlock()
           ]
       };
   });
@@ -623,9 +566,6 @@ public static class AIMLVideo
        CancellationToken cancellationToken = default)
        => await requestContext.WithExceptionCheck(async () =>
    {
-       ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-       ArgumentNullException.ThrowIfNullOrWhiteSpace(videoUrl);
-
        var settings = serviceProvider.GetRequiredService<AIMLSettings>();
        var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
        var downloadService = serviceProvider.GetRequiredService<DownloadService>();
@@ -650,9 +590,6 @@ public static class AIMLVideo
                Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("mp4")
            },
            cancellationToken);
-
-       if (notAccepted != null) return notAccepted;
-       if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
        // Step 4: Build JSON payload
        var jsonBody = JsonSerializer.Serialize(new
@@ -691,19 +628,8 @@ public static class AIMLVideo
        {
            Content =
            [
-               new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎞️ Krea WAN-14B Video-to-Video generation started (ID: {id}). Processing asynchronously."
-                }
+                doc.ToJsonContent(BASE_URL),
+                $"🎞️ Krea WAN-14B Video-to-Video generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
            ]
        };
    });
@@ -763,8 +689,6 @@ public static class AIMLVideo
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var settings = serviceProvider.GetRequiredService<AIMLSettings>();
         var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -784,9 +708,6 @@ public static class AIMLVideo
                 Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("mp4")
             },
             cancellationToken);
-
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
         // Step 2: Build JSON payload
         var jsonBody = JsonSerializer.Serialize(new
@@ -829,19 +750,8 @@ public static class AIMLVideo
         {
             Content =
             [
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎬 Google Veo 3.1 video generation started (ID: {id}). Processing asynchronously."
-                }
+                doc.ToJsonContent(BASE_URL),
+                $"🎬 Google Veo 3.1 video generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
             ]
         };
     });
@@ -938,8 +848,6 @@ public static class AIMLVideo
        CancellationToken cancellationToken = default)
        => await requestContext.WithExceptionCheck(async () =>
    {
-       ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
        var settings = serviceProvider.GetRequiredService<AIMLSettings>();
        var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -959,9 +867,6 @@ public static class AIMLVideo
                Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName("mp4")
            },
            cancellationToken);
-
-       if (notAccepted != null) return notAccepted;
-       if (typed == null) return "User input missing.".ToErrorCallToolResponse();
 
        // Step 2: build JSON payload
        var jsonBody = JsonSerializer.Serialize(new
@@ -1004,19 +909,8 @@ public static class AIMLVideo
        {
            Content =
            [
-               new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = BASE_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"⚡ Google Veo 3.1 Fast video generation started (ID: {id}). Processing asynchronously."
-                }
+                doc.ToJsonContent(BASE_URL),
+                $"⚡ Google Veo 3.1 Fast video generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
            ]
        };
    });
@@ -1171,19 +1065,8 @@ public static class AIMLVideo
         {
             Content =
             [
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = MINIMAX_VIDEO_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎥 MiniMax Hailuo-02 video generation started (ID: {id}). Processing asynchronously."
-                }
+                doc.ToJsonContent(MINIMAX_VIDEO_URL),
+                $"🎥 MiniMax Hailuo-02 video generation started (ID: {id}). Processing asynchronously.".ToTextContentBlock()
             ]
         };
     });
@@ -1301,26 +1184,7 @@ public static class AIMLVideo
         if (string.IsNullOrWhiteSpace(id))
             throw new Exception("No generation ID returned from Runway API.");
 
-        // Step 5: Return result
-        return new CallToolResult()
-        {
-            Content =
-            [
-                new EmbeddedResourceBlock()
-                {
-                    Resource = new TextResourceContents()
-                    {
-                        MimeType = MimeTypes.Json,
-                        Text = doc.RootElement.ToJsonString(),
-                        Uri = RUNWAY_URL
-                    }
-                },
-                new TextContentBlock()
-                {
-                    Text = $"🎞 Runway Gen-4 Aleph video generation started (ID: {id}). Processing asynchronously."
-                }
-            ]
-        };
+        return doc.ToJsonContent(RUNWAY_URL).ToCallToolResult();
     });
 
     // --- DTOs & Enums ---

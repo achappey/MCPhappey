@@ -1,6 +1,7 @@
 using System.ComponentModel;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Graph.Beta.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -12,18 +13,15 @@ public static class GraphUsers
     [Description("List all users grouped by department.")]
     [McpServerTool(Title = "Group users by department", OpenWorld = false, ReadOnly = true)]
     public static async Task<CallToolResult?> GraphUsers_GroupUsersByDepartment(
-            IServiceProvider serviceProvider,
             RequestContext<CallToolRequestParams> requestContext,
             [Description("Include users without a department (null/empty). Default is false.")]
             bool includeEmpty = false,
             [Description("Include disabled users. Default is false.")]
             bool includeDisabled = false,
-            CancellationToken cancellationToken = default
-        ) => await requestContext.WithExceptionCheck(async () =>
+            CancellationToken cancellationToken = default) =>
+            await requestContext.WithExceptionCheck(async () =>
+            await requestContext.WithOboGraphClient(async (client) =>
         {
-            var mcpServer = requestContext.Server;
-            using var client = await serviceProvider.GetOboGraphClient(mcpServer);
-
             // Map: Department -> List of user display names (or IDs if displayName is empty)
             var map = new Dictionary<string, List<string>>(StringComparer.OrdinalIgnoreCase);
 
@@ -38,7 +36,7 @@ public static class GraphUsers
                     // Apply server-side filter
                     req.QueryParameters.Filter = "accountEnabled eq true";
                 }
-                
+
             }, cancellationToken);
 
             while (page != null)
@@ -82,6 +80,6 @@ public static class GraphUsers
             return ordered
                 .ToJsonContentBlock("https://graph.microsoft.com/beta/users?$select=id,displayName,department")
                 .ToCallToolResult();
-        });
+        }));
 
 }

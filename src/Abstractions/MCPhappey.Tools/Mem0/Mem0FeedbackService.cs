@@ -10,6 +10,7 @@ using MCPhappey.Auth.Extensions;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -62,11 +63,11 @@ public static class Mem0FeedbackService
           using var client = clientFactory.CreateClient();
           using var req = new HttpRequestMessage(HttpMethod.Post, "https://api.mem0.ai/v1/feedback/")
           {
-              Content = new StringContent(jsonBody, Encoding.UTF8, "application/json")
+              Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json)
           };
 
           req.Headers.Authorization = new AuthenticationHeaderValue("Token", mem0Settings.ApiKey);
-          req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+          req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
 
           using var resp = await client.SendAsync(req, cancellationToken);
           var json = await resp.Content.ReadAsStringAsync(cancellationToken);

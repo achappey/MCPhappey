@@ -1,5 +1,4 @@
 using System.ComponentModel;
-using System.Net.Http.Headers;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
@@ -14,7 +13,17 @@ namespace MCPhappey.Tools.AzureMaps;
 
 public static class AzureMapsService
 {
-    private const string BASE_URL = "https://atlas.microsoft.com";
+    private static readonly string[] entityTypes =
+     [
+        "Neighbourhood",                 // wijk/buurt (if available)
+        "MunicipalitySubdivision",       // stadsdeel / deelgemeente
+        "MunicipalSubdivision",          // alt naming in some data
+        "PostalCodeArea",                // postcode area (polygon)
+        "Municipality",                  // gemeente
+        "CountrySecondarySubdivision",   // province/state
+        "CountrySubdivision",            // region
+        "CountryRegion"                  // country
+     ];
 
     public enum AzureMapsTileset
     {
@@ -80,32 +89,14 @@ public static class AzureMapsService
      CancellationToken cancellationToken = default)
      => await requestContext.WithExceptionCheck(async () =>
  {
-     var settings = serviceProvider.GetService<AzureMapsSettings>();
-     if (string.IsNullOrWhiteSpace(settings?.ApiKey))
-         throw new Exception("Azure Maps API key not configured.");
+     var maps = serviceProvider.GetRequiredService<AzureMapsClient>();
 
-     var httpFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-     var http = httpFactory.CreateClient();
-     http.BaseAddress = new Uri(BASE_URL.TrimEnd('/') + "/");
-     http.DefaultRequestHeaders.Add("Subscription-Key", settings.ApiKey);
-     http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
 
      // --- 1) Address search (no hard entityType filter; we choose from results) ---
      // Default preference order (fine → coarse)
-     var defaultPrefs = new[]
-     {
-        "Neighbourhood",                 // wijk/buurt (if available)
-        "MunicipalitySubdivision",       // stadsdeel / deelgemeente
-        "MunicipalSubdivision",          // alt naming in some data
-        "PostalCodeArea",                // postcode area (polygon)
-        "Municipality",                  // gemeente
-        "CountrySecondarySubdivision",   // province/state
-        "CountrySubdivision",            // region
-        "CountryRegion"                  // country
-     };
 
      var prefs = string.IsNullOrWhiteSpace(entityTypesPreferred)
-         ? defaultPrefs
+         ? entityTypes
          : entityTypesPreferred.Split(',', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
      // Build address search URL
@@ -115,12 +106,9 @@ public static class AzureMapsService
      if (!string.IsNullOrWhiteSpace(countrySet))
          addrUrlSb.Append("&countrySet=").Append(Uri.EscapeDataString(countrySet!));
 
-     using var addrRes = await http.GetAsync(addrUrlSb.ToString(), cancellationToken);
-     var addrBody = await addrRes.Content.ReadAsStringAsync(cancellationToken);
-     if (!addrRes.IsSuccessStatusCode)
-         throw new Exception($"Azure Maps address error {(int)addrRes.StatusCode} {addrRes.ReasonPhrase}: {addrBody}");
+     var body = await maps.GetStringAsync(addrUrlSb.ToString(), cancellationToken);
 
-     var addrJson = JsonSerializer.Deserialize<JsonElement>(addrBody);
+     var addrJson = JsonSerializer.Deserialize<JsonElement>(body);
      if (!addrJson.TryGetProperty("results", out var results) || results.GetArrayLength() == 0)
          throw new Exception($"No search results for '{query}'.");
 
@@ -156,10 +144,8 @@ public static class AzureMapsService
 
      // --- 2) Get the polygon by geometry id ---
      var polyUrl = $"/search/polygon/json?api-version=1.0&geometries={Uri.EscapeDataString(geometryId)}";
-     using var polyRes = await http.GetAsync(polyUrl, cancellationToken);
-     var polyBody = await polyRes.Content.ReadAsStringAsync(cancellationToken);
-     if (!polyRes.IsSuccessStatusCode)
-         throw new Exception($"Azure Maps polygon error {(int)polyRes.StatusCode} {polyRes.ReasonPhrase}: {polyBody}");
+
+     var polyBody = await maps.GetStringAsync(polyUrl, cancellationToken);
 
      var polyJson = JsonSerializer.Deserialize<JsonElement>(polyBody);
      if (!polyJson.TryGetProperty("additionalData", out var addData) || addData.GetArrayLength() == 0)
@@ -219,11 +205,11 @@ public static class AzureMapsService
 
      // --- 3) Close ring, decimate to ≤100, re-close ---
      if (ringCoords[0][0] != ringCoords[^1][0] || ringCoords[0][1] != ringCoords[^1][1])
-         ringCoords.Add(new[] { ringCoords[0][0], ringCoords[0][1] });
+         ringCoords.Add([ringCoords[0][0], ringCoords[0][1]]);
 
      ringCoords = Decimate(ringCoords, 100);
      if (ringCoords[0][0] != ringCoords[^1][0] || ringCoords[0][1] != ringCoords[^1][1])
-         ringCoords[^1] = new[] { ringCoords[0][0], ringCoords[0][1] };
+         ringCoords[^1] = [ringCoords[0][0], ringCoords[0][1]];
 
      // --- 4) Fit/center ---
      var (minLon, minLat, maxLon, maxLat) = GetBounds(ringCoords);
@@ -254,19 +240,12 @@ public static class AzureMapsService
          .Append("&path=").Append(Uri.EscapeDataString(pathValue))
          .ToString();
 
-     using var imgReq = new HttpRequestMessage(HttpMethod.Get, qs);
-     imgReq.Headers.Add("Subscription-Key", settings.ApiKey);
-     using var imgRes = await http.SendAsync(imgReq, cancellationToken);
-     var imgBody = await imgRes.Content.ReadAsStringAsync(cancellationToken);
-     if (!imgRes.IsSuccessStatusCode)
-         throw new Exception($"Static image error {(int)imgRes.StatusCode} {imgRes.ReasonPhrase}: {imgBody}");
-
-     var bytes = await imgRes.Content.ReadAsByteArrayAsync(cancellationToken);
+     var bytes = await maps.GetBytesAsync(qs, cancellationToken);
      var base64 = Convert.ToBase64String(bytes);
 
      return new CallToolResult
      {
-         Content = [new ImageContentBlock { MimeType = "image/png", Data = base64 }]
+         Content = [new ImageContentBlock { MimeType = MimeTypes.ImagePng, Data = base64 }]
      };
  });
 
@@ -332,24 +311,13 @@ public static class AzureMapsService
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
     {
-        var settings = serviceProvider.GetService<AzureMapsSettings>();
-        if (string.IsNullOrWhiteSpace(settings?.ApiKey))
-            throw new Exception("Azure Maps API key not configured.");
-
-        var httpClientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-        var http = httpClientFactory.CreateClient();
-        http.BaseAddress = new Uri(BASE_URL.TrimEnd('/') + "/");
-        http.DefaultRequestHeaders.Add("Subscription-Key", settings.ApiKey);
-        http.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+        var maps = serviceProvider.GetRequiredService<AzureMapsClient>();
 
         // 1) Directions (lat,lon : lat,lon)
         var dirUrl = $"/route/directions/json?api-version=1.0&query={latitudeFrom},{longitudeFrom}:{latitudeTo},{longitudeTo}";
-        using var dirRes = await http.GetAsync(dirUrl, cancellationToken);
-        var dirBody = await dirRes.Content.ReadAsStringAsync(cancellationToken);
-        if (!dirRes.IsSuccessStatusCode)
-            throw new Exception($"Azure Maps error {(int)dirRes.StatusCode} {dirRes.ReasonPhrase}: {dirBody}");
+        var body = await maps.GetStringAsync(dirUrl, cancellationToken);
 
-        var json = JsonSerializer.Deserialize<JsonElement>(dirBody);
+        var json = JsonSerializer.Deserialize<JsonElement>(body);
         var points = json.GetProperty("routes")[0]
                          .GetProperty("legs")[0]
                          .GetProperty("points")
@@ -399,21 +367,12 @@ public static class AzureMapsService
             .Append("&path=").Append(Uri.EscapeDataString(pathValue))
             .ToString();
 
-        using var imgReq = new HttpRequestMessage(HttpMethod.Get, qs);
-        imgReq.Headers.Add("Subscription-Key", settings.ApiKey);
-        using var imgRes = await http.SendAsync(imgReq, cancellationToken);
-        if (!imgRes.IsSuccessStatusCode)
-        {
-            var err = await imgRes.Content.ReadAsStringAsync(cancellationToken);
-            throw new Exception($"Static image error {(int)imgRes.StatusCode} {imgRes.ReasonPhrase}: {err}");
-        }
-
-        var bytes = await imgRes.Content.ReadAsByteArrayAsync(cancellationToken);
+        var bytes = await maps.GetBytesAsync(qs, cancellationToken);
         var base64 = Convert.ToBase64String(bytes);
         return new CallToolResult()
         {
             Content = [new ImageContentBlock() {
-                MimeType = "image/png",
+                MimeType = MimeTypes.ImagePng,
                 Data = base64
             }]
         };
@@ -440,7 +399,6 @@ public static class AzureMapsService
         const double pad = 1.10;
 
         double lonSpan = Math.Max(1e-9, maxLon - minLon);
-        double latSpan = Math.Max(1e-9, maxLat - minLat);
 
         // mercator helper
         static double LatToMercatorY(double latDeg)
@@ -455,8 +413,8 @@ public static class AzureMapsService
 
         // world pixels = tile * 2^z; fit spans into width/height
         // lon → pixels at equator; lat uses mercator span
-        double zLon = Math.Log2((w * 2 * Math.PI) / (tile * pad * (lonSpan * Math.PI / 180.0)));
-        double zLat = Math.Log2((h * 2) / (tile * pad * mercSpan)); // 2π cancels in merc span
+        double zLon = Math.Log2(w * 2 * Math.PI / (tile * pad * (lonSpan * Math.PI / 180.0)));
+        double zLat = Math.Log2(h * 2 / (tile * pad * mercSpan)); // 2π cancels in merc span
 
         var z = (int)Math.Floor(Math.Min(zLon, zLat));
         return Math.Clamp(z, 3, 18);
@@ -466,8 +424,10 @@ public static class AzureMapsService
     private static List<double[]> Decimate(List<double[]> pts, int maxPts)
     {
         if (pts.Count <= maxPts) return pts;
-        var result = new List<double[]>(maxPts);
-        result.Add(pts[0]);
+        var result = new List<double[]>(maxPts)
+        {
+            pts[0]
+        };
         double step = (pts.Count - 1.0) / (maxPts - 1.0);
         for (int i = 1; i < maxPts - 1; i++)
         {
@@ -477,9 +437,4 @@ public static class AzureMapsService
         result.Add(pts[^1]);
         return result;
     }
-}
-
-public class AzureMapsSettings
-{
-    public string ApiKey { get; set; } = default!;
 }

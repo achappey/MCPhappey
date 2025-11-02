@@ -8,6 +8,7 @@ using MCPhappey.Core.Services;
 using MCPhappey.Tools.StabilityAI.Enums;
 using MCPhappey.Tools.StabilityAI.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -55,8 +56,6 @@ public static class StabilityAIImageEditService
                     GrowMask = growMask ?? 5,
                 },
                 cancellationToken);
-
-            if (notAccepted != null) return notAccepted;
 
             // 2) Load API key
             var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -115,7 +114,7 @@ public static class StabilityAIImageEditService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                 ]
             };
@@ -163,9 +162,6 @@ public static class StabilityAIImageEditService
                                  ?? requestContext.ToOutputFileName()
                   },
                   cancellationToken);
-
-              if (notAccepted != null) return notAccepted;
-              if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
               // 2️⃣ API Key
               var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -231,12 +227,11 @@ public static class StabilityAIImageEditService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                   ]
               };
           });
-
 
     [Description("Expand an image in any direction using Stability AI’s Outpaint model.")]
     [McpServerTool(
@@ -252,8 +247,6 @@ public static class StabilityAIImageEditService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -270,9 +263,6 @@ public static class StabilityAIImageEditService
                    },
                    cancellationToken);
 
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
                // Must have at least one outpainting direction
                if (typed.Left == 0 && typed.Right == 0 && typed.Up == 0 && typed.Down == 0)
                    throw new ArgumentException("At least one outpainting direction (left, right, up, down) must be greater than 0.");
@@ -282,10 +272,11 @@ public static class StabilityAIImageEditService
                    ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
                using var client = clientFactory.CreateClient();
-               using var form = new MultipartFormDataContent();
-
-               // Required image
-               form.Add("image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType));
+               using var form = new MultipartFormDataContent
+               {
+                   // Required image
+                   "image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType)
+               };
 
                // Optional params
                if (!string.IsNullOrWhiteSpace(typed.Prompt))
@@ -343,7 +334,7 @@ public static class StabilityAIImageEditService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };
@@ -364,10 +355,6 @@ public static class StabilityAIImageEditService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(searchPrompt);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -385,21 +372,19 @@ public static class StabilityAIImageEditService
                    },
                    cancellationToken);
 
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
                // 2️⃣ API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
                    ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
                using var client = clientFactory.CreateClient();
-               using var form = new MultipartFormDataContent();
-
-               // Required fields
-               form.Add("image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType));
-               form.Add("prompt".NamedField(typed.Prompt));
-               form.Add("search_prompt".NamedField(typed.SearchPrompt));
-               form.Add("output_format".NamedField("png"));
+               using var form = new MultipartFormDataContent
+               {
+                   // Required fields
+                   "image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType),
+                   "prompt".NamedField(typed.Prompt),
+                   "search_prompt".NamedField(typed.SearchPrompt),
+                   "output_format".NamedField("png")
+               };
 
                // Optional params
                if (!string.IsNullOrWhiteSpace(typed.NegativePrompt))
@@ -450,7 +435,7 @@ public static class StabilityAIImageEditService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };
@@ -472,10 +457,6 @@ public static class StabilityAIImageEditService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(selectPrompt);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -492,9 +473,6 @@ public static class StabilityAIImageEditService
                        Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName()
                    },
                    cancellationToken);
-
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
                // 2️⃣ API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -558,7 +536,7 @@ public static class StabilityAIImageEditService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };
@@ -578,8 +556,6 @@ public static class StabilityAIImageEditService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -594,9 +570,6 @@ public static class StabilityAIImageEditService
                        Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName()
                    },
                    cancellationToken);
-
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
                // 2️⃣ Load API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -648,7 +621,7 @@ public static class StabilityAIImageEditService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };

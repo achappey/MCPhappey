@@ -63,7 +63,6 @@ public static class SimplicateHours
 
         // Optionally let user confirm/fill fields in Elicit if you want:
         var (dtoItem, notAccepted, result) = await requestContext.Server.TryElicit(dto, cancellationToken);
-        if (notAccepted != null) return notAccepted;
 
         return (await serviceProvider.PostSimplicateItemAsync(
             baseUrl,

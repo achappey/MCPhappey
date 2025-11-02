@@ -36,7 +36,7 @@ public static class OpenAIImages
         {
             Prompt = prompt,
             Model = model,
-          //  Model = model.ParseEnumMemberValue<Model>(),
+            //  Model = model.ParseEnumMemberValue<Model>(),
             Filename = filename ?? requestContext.ToOutputFileName("png"),
             Size = size ?? ImageSize.square,
             Quality = quality ?? ImageQuality.auto,
@@ -44,9 +44,7 @@ public static class OpenAIImages
             Moderation = moderation ?? ImageModerationLevel.auto
         };
 
-        var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Error".ToErrorCallToolResponse();
+        var (typed, _, _) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
 
         var sizeValue = typed.Size switch
         {

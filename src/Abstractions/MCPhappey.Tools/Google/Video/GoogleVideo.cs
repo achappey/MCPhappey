@@ -26,10 +26,7 @@ public static class GoogleVideo
         CancellationToken cancellationToken = default) =>
         await requestContext.WithExceptionCheck(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(url);
-
-            var googleAI = serviceProvider.GetRequiredService<Mscc.GenerativeAI.GoogleAI>();
+            var googleAI = serviceProvider.GetRequiredService<GoogleAI>();
             var googleClient = googleAI.GenerativeModel("gemini-2.5-flash");
 
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
@@ -41,10 +38,7 @@ public static class GoogleVideo
 
                         cancellationToken);
 
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
-
-            var graphItem = await googleClient.GenerateContent(new Mscc.GenerativeAI.GenerateContentRequest()
+            var graphItem = await googleClient.GenerateContent(new GenerateContentRequest()
             {
                 Contents =
                 [

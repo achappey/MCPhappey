@@ -49,8 +49,6 @@ public static partial class OpenAIVectorStores
                 };
 
                 var (typed, notAccepted, result) = await requestContext.Server.TryElicit(input, cancellationToken);
-                if (notAccepted != null) return notAccepted;
-                if (typed == null) return "Error".ToErrorCallToolResponse();
 
                 // Build update options; preserve existing metadata (Owners/Visibility/etc.)
                 var newMetadata = new Dictionary<string, string>(current.Metadata);
@@ -104,8 +102,6 @@ public static partial class OpenAIVectorStores
                 };
 
                 var (typed, notAccepted, result) = await requestContext.Server.TryElicit(input, cancellationToken);
-                if (notAccepted != null) return notAccepted;
-                if (typed == null) return "Error".ToErrorCallToolResponse();
 
                 // Build update options; preserve existing metadata (Owners/Visibility/etc.)
                 var updateOptions = new VectorStoreModificationOptions
@@ -152,8 +148,6 @@ public static partial class OpenAIVectorStores
             };
 
             var (typed, notAccepted, result) = await requestContext.Server.TryElicit(imageInput, cancellationToken);
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "Error".ToErrorCallToolResponse();
 
             var options = new OAIV.VectorStoreCreationOptions()
             {

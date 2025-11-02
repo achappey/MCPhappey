@@ -7,6 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.KernelMemory;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
+using MCPhappey.Core.Extensions;
 
 namespace MCPhappey.Tools.OpenMemory;
 
@@ -15,12 +16,13 @@ public static class OpenMemory
     [Description("Save a personal user memory")]
     [McpServerTool(Title = "Save memory",
         OpenWorld = false)]
-    public static async Task<CallToolResult> OpenMemory_SaveMemory(
+    public static async Task<CallToolResult?> OpenMemory_SaveMemory(
         [Description("Memory to save")]
         string memory,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
     {
         var kernelMemory = serviceProvider.GetRequiredService<IKernelMemory>();
         var appSettings = serviceProvider.GetService<OAuthSettings>();
@@ -33,15 +35,12 @@ public static class OpenMemory
                 },
                 cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
-
         var answer = await kernelMemory.ImportTextAsync(typed.Memory, index: appSettings?.ClientId!,
             tags: serviceProvider.ToTagCollection(),
             cancellationToken: cancellationToken);
 
         return answer.ToTextCallToolResponse();
-    }
+    });
 
     [Description("Delete a personal user memory")]
     [McpServerTool(Title = "Delete memory",

@@ -56,5 +56,37 @@ public static class GraphExtensions
         return await func(client);
     }
 
+    /// <summary>
+    /// Returns all file URLs from a SharePoint or OneDrive folder URL.
+    /// </summary>
+    public static async Task<List<string>> GetFileUrlsFromFolderAsync(
+        this GraphServiceClient graphClient,
+        string folderUrl,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(graphClient);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(folderUrl);
 
+        var fileUrls = new List<string>();
+        var folderItem = await graphClient.GetDriveItem(folderUrl);
+
+        // Skip if not a folder
+        if (folderItem?.Folder == null)
+            return fileUrls;
+
+        var driveId = folderItem.ParentReference?.DriveId ?? throw new Exception("DriveId missing");
+        var folderId = folderItem.Id ?? throw new Exception("FolderId missing");
+
+        var children = await graphClient.Drives[driveId].Items[folderId].Children
+            .GetAsync(cancellationToken: cancellationToken);
+
+        foreach (var item in children?.Value?.Where(a => !string.IsNullOrEmpty(a.WebUrl)) ?? Enumerable.Empty<DriveItem>())
+        {
+            // Include only files (no subfolders)
+            if (item.Folder == null && !string.IsNullOrEmpty(item.WebUrl))
+                fileUrls.Add(item.WebUrl!);
+        }
+
+        return fileUrls;
+    }
 }

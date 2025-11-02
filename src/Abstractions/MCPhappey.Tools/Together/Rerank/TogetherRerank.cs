@@ -92,11 +92,7 @@ public static class TogetherRerank
         => await requestContext.WithExceptionCheck(async ()
         => await requestContext.WithStructuredContent(async () =>
       {
-          var settings = serviceProvider.GetRequiredService<TogetherSettings>();
-          var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
-
-          using var client = clientFactory.CreateClient();
-          client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
+          using var client = serviceProvider.CreateTogetherClient();
 
           using var resp = await client.GetAsync("https://api.together.xyz/v1/models", cancellationToken);
           var json = await resp.Content.ReadAsStringAsync(cancellationToken);
@@ -139,19 +135,7 @@ public static class TogetherRerank
            await requestContext.WithOboGraphClient(async (graphClient) =>
            await requestContext.WithStructuredContent(async () =>
            {
-               var downloadService = serviceProvider.GetRequiredService<DownloadService>();
-               var result = await graphClient.GetDriveItem(sharepointFolderUrl);
-
-               var fileUrls = new List<string>();
-
-               if (result?.Folder != null)
-               {
-                   var items = await graphClient.Drives[result.ParentReference?.DriveId!]
-                       .Items[result.Id!].Children.GetAsync();
-
-                   foreach (var item in items?.Value?.Where(a => !string.IsNullOrEmpty(a.WebUrl)) ?? [])
-                       fileUrls.Add(item.WebUrl!);
-               }
+               var fileUrls = await graphClient.GetFileUrlsFromFolderAsync(sharepointFolderUrl, cancellationToken);
 
                return await RerankDocumentsAsync(serviceProvider, requestContext, rerankModel, query, fileUrls, topN, cancellationToken);
            })));
@@ -182,8 +166,6 @@ public static class TogetherRerank
         int topN,
         CancellationToken cancellationToken)
     {
-        var settings = serviceProvider.GetRequiredService<TogetherSettings>();
-        var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
 
         var documents = new List<object>();
@@ -223,22 +205,7 @@ public static class TogetherRerank
             .ToList();
 
         await Task.WhenAll(tasks);
-        /*
-            foreach (var url in fileUrls.Where(a => !string.IsNullOrWhiteSpace(a)))
-            {
-                var fileContents = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, url, cancellationToken);
 
-                documents.AddRange(fileContents
-                    .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json))
-                    .Select(z => new
-                    {
-                        uri = z.Uri,
-                        mimeType = z.MimeType,
-                        filename = z.Filename,
-                        contents = z.Contents.ToString(),
-                    }));
-            }
-    */
         if (documents.Count == 0)
             throw new Exception("No content found in provided files.");
 
@@ -251,13 +218,11 @@ public static class TogetherRerank
             top_n = topN
         });
 
-        using var client = clientFactory.CreateClient();
+        using var client = serviceProvider.CreateTogetherClient();
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.together.xyz/v1/rerank")
         {
             Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json)
         };
-        request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-        request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
 
         using var resp = await client.SendAsync(request, cancellationToken);
         var jsonResponse = await resp.Content.ReadAsStringAsync(cancellationToken);

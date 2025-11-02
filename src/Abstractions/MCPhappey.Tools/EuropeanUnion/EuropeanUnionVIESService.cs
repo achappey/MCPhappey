@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.Net.Http.Headers;
-using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
 using MCPhappey.Common.Extensions;
@@ -30,15 +28,19 @@ public static class EuropeanUnionVIESService
         IServiceProvider sp = null!,
         RequestContext<CallToolRequestParams> rc = null!,
         CancellationToken ct = default)
-        => await ExecutePostAsync(
-                sp, rc,
-                "/check-vat-number",
-                new JsonObject
-                {
-                    ["countryCode"] = countryCode,
-                    ["vatNumber"] = vatNumber
-                },
-                ct);
+        => await rc.WithExceptionCheck(async () =>
+        await rc.WithStructuredContent(async () =>
+    {
+        var eu = sp.GetRequiredService<EuropeanUnionClient>();
+        var body = new JsonObject
+        {
+            ["countryCode"] = countryCode,
+            ["vatNumber"] = vatNumber
+        };
+
+        await NotifyCall(rc, "POST", "/check-vat-number", body.ToJsonString());
+        return await eu.PostAsync("check-vat-number", body, ct);
+    }));
 
     // -------------------------------------------------------
     // ✅ VIES system status (GET)
@@ -53,7 +55,13 @@ public static class EuropeanUnionVIESService
         IServiceProvider sp = null!,
         RequestContext<CallToolRequestParams> rc = null!,
         CancellationToken ct = default)
-        => await ExecuteGetAsync(sp, rc, "/check-status", ct);
+        => await rc.WithExceptionCheck(async () =>
+        await rc.WithStructuredContent(async () =>
+    {
+        var eu = sp.GetRequiredService<EuropeanUnionClient>();
+        await NotifyCall(rc, "GET", "/check-status");
+        return await eu.GetAsync("check-status", ct);
+    }));
 
     // -------------------------------------------------------
     // ✅ Integration test validation (POST) – 100=VALID, 200=INVALID
@@ -69,107 +77,48 @@ public static class EuropeanUnionVIESService
         IServiceProvider sp = null!,
         RequestContext<CallToolRequestParams> rc = null!,
         CancellationToken ct = default)
-        => await ExecutePostAsync(
-                sp, rc,
-                "/check-vat-test-service",
-                new JsonObject
-                {
-                    ["countryCode"] = "NL", // mandatory placeholder
-                    ["vatNumber"] = vatNumber
-                },
-                ct);
-
-    // =======================================================
-    // Shared HTTP executors (clean and small)
-    // =======================================================
-    private static async Task<CallToolResult?> ExecutePostAsync(
-        IServiceProvider sp,
-        RequestContext<CallToolRequestParams> rc,
-        string endpoint,
-        JsonNode body,
-        CancellationToken ct) =>
-        await rc.WithExceptionCheck(async () =>
+        => await rc.WithExceptionCheck(async () =>
         await rc.WithStructuredContent(async () =>
     {
-        var client = sp.GetRequiredService<IHttpClientFactory>().CreateClient();
-        var url = BaseUrl + endpoint;
-        var json = body.ToJsonString();
-
-        using var req = new HttpRequestMessage(HttpMethod.Post, url)
+        var eu = sp.GetRequiredService<EuropeanUnionClient>();
+        var body = new JsonObject
         {
-            Content = new StringContent(json, Encoding.UTF8, "application/json")
+            ["countryCode"] = "NL", // mandatory placeholder
+            ["vatNumber"] = vatNumber
         };
-        req.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
 
-        await NotifyCall(rc, "POST", url, json);
-
-        using var resp = await client.SendAsync(req, ct);
-        return await HandleResponse(resp);
+        await NotifyCall(rc, "POST", "/check-vat-test-service", body.ToJsonString());
+        return await eu.PostAsync("check-vat-test-service", body, ct);
     }));
 
-    private static async Task<CallToolResult?> ExecuteGetAsync(
-        IServiceProvider sp,
-        RequestContext<CallToolRequestParams> rc,
-        string endpoint,
-        CancellationToken ct) =>
-        await rc.WithExceptionCheck(async () =>
-        await rc.WithStructuredContent(async () =>
-        {
-            var client = sp.GetRequiredService<IHttpClientFactory>().CreateClient();
-            var url = BaseUrl + endpoint;
-
-            await NotifyCall(rc, "GET", url);
-
-            using var resp = await client.GetAsync(url, ct);
-            return await HandleResponse(resp);
-        }));
-
     // =======================================================
-    // Response + trace helpers
+    // 🧠 Shared trace helpers (keep your rich trace view)
     // =======================================================
     private static async Task NotifyCall(
         RequestContext<CallToolRequestParams> rc,
         string method,
-        string url,
+        string endpoint,
         string? json = null)
     {
-        var domain = new Uri(url).Host;
+        var domain = new Uri(BaseUrl).Host;
         var msg = json is null
-            ? $"**{method}** `{domain}{url.Replace(BaseUrl, "")}`"
-            : $"<details><summary>{method} {domain}{url.Replace(BaseUrl, "")}</summary>\n\n```json\n{Pretty(json)}\n```\n</details>";
+            ? $"**{method}** `{domain}{endpoint}`"
+            : $"<details><summary>{method} {domain}{endpoint}</summary>\n\n```json\n{Pretty(json)}\n```\n</details>";
         await rc.Server.SendMessageNotificationAsync(msg);
     }
 
+    private static readonly JsonSerializerOptions jsonOptions = new() { WriteIndented = true };
+    
     private static string Pretty(string json)
     {
         try
         {
             var node = JsonNode.Parse(json);
-            return node?.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) ?? json;
+            return node?.ToJsonString(jsonOptions) ?? json;
         }
         catch
         {
             return json;
-        }
-    }
-
-    private static async Task<JsonNode?> HandleResponse(HttpResponseMessage resp)
-
-    {
-        var text = await resp.Content.ReadAsStringAsync();
-
-        try
-        {
-            var parsed = JsonNode.Parse(text);
-            return parsed;
-        }
-        catch
-        {
-            return new JsonObject
-            {
-                ["status"] = (int)resp.StatusCode,
-                ["raw"] = text
-            };
         }
     }
 }

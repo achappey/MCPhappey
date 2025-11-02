@@ -233,16 +233,14 @@ public static class GraphLists
                 cancellationToken
             );
 
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-
             return await client.Sites[siteId].Lists.PostAsync(
                 new Microsoft.Graph.Beta.Models.List
                 {
-                    DisplayName = typed?.Title,
-                    Description = typed?.Description,
+                    DisplayName = typed.Title,
+                    Description = typed.Description,
                     ListProp = new Microsoft.Graph.Beta.Models.ListInfo
                     {
-                        Template = typed?.Template.ToString()
+                        Template = typed.Template.ToString()
                     }
                 },
                 cancellationToken: cancellationToken
@@ -289,9 +287,6 @@ public static class GraphLists
                     },
                     cancellationToken
                 );
-
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-            if (typed == null) throw new Exception("Invalid result");
 
             // Build column based on type (jouw bestaande logic)
             var columnDef = GetColumnDefinition(typed.Name, typed.DisplayName ?? typed.Name, typed.ColumnType, typed.Choices);

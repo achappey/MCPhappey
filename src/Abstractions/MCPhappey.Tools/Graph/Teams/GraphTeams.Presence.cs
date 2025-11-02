@@ -3,6 +3,7 @@ using System.Xml;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Beta.Me.Presence.SetPresence;
 using Microsoft.Graph.Beta.Me.Presence.SetStatusMessage;
@@ -16,16 +17,15 @@ public static partial class GraphTeams
 {
     [Description("Set a Teams status message for a user.")]
     [McpServerTool(Title = "Set Teams status message", Destructive = true)]
-    public static async Task<CallToolResult> GraphTeams_SetStatusMessage(
+    public static async Task<CallToolResult?> GraphTeams_SetStatusMessage(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Status message")] string statusMessage,
         [Description("Message type")] BodyType? messageType = BodyType.Text,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async (graphClient) =>
     {
-        var mcpServer = requestContext.Server;
-        using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer);
-
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
                new GraphSetStatusMessage
                {
@@ -35,7 +35,6 @@ public static partial class GraphTeams
                cancellationToken
            );
 
-        if (notAccepted != null) return notAccepted;
         SetStatusMessagePostRequestBody body = new()
         {
             StatusMessage = new()
@@ -59,7 +58,7 @@ public static partial class GraphTeams
 
         return body.ToJsonContentBlock("https://graph.microsoft.com/beta/me/presence")
           .ToCallToolResult();
-    }
+    }));
 
     [Description(@"Provide the presence status to set for Teams.
         Supported combinations:
@@ -70,16 +69,16 @@ public static partial class GraphTeams
         - DoNotDisturb + Presenting: Sets presence to DoNotDisturb, Presenting.
         ")]
     [McpServerTool(Title = "Set Teams presence", Destructive = true)]
-    public static async Task<CallToolResult> GraphTeams_SetPresence(
+    public static async Task<CallToolResult?> GraphTeams_SetPresence(
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Availability (Available, Busy, DoNotDisturb, Away, etc.)")] string availability,
         [Description("Activity (Available, InACall, InAConferenceCall, Presenting, Away, etc.)")] string activity,
         [Description("Expiration duration in ISO8601 duration format, e.g. 'PT1H' for 1 hour. Optional.")] string? expirationDuration = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async (graphClient) =>
     {
-        var mcpServer = requestContext.Server;
-        using var graphClient = await serviceProvider.GetOboGraphClient(mcpServer); // Zorg dat je BETA gebruikt!
         var oauth = serviceProvider.GetService<OAuthSettings>();
 
         var (typed, notAccepted, result) = await requestContext.Server.TryElicit(
@@ -91,8 +90,6 @@ public static partial class GraphTeams
                },
                cancellationToken
            );
-
-        if (notAccepted != null) return notAccepted;
 
         var setPresenceBody = new SetPresencePostRequestBody
         {
@@ -107,5 +104,5 @@ public static partial class GraphTeams
 
         return setPresenceBody.ToJsonContentBlock("https://graph.microsoft.com/beta/me/presence")
           .ToCallToolResult();
-    }
+    }));
 }

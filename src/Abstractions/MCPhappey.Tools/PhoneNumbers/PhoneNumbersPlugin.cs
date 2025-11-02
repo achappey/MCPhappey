@@ -16,8 +16,8 @@ public static class PhoneNumberPlugin
         var parsed = PhoneUtil.Parse(phoneNumber, regionCode);
         return new
         {
-            CountryCode = parsed.CountryCode,
-            NationalNumber = parsed.NationalNumber,
+            parsed.CountryCode,
+            parsed.NationalNumber,
             Extension = parsed.HasExtension ? parsed.Extension : null,
             RegionCode = PhoneUtil.GetRegionCodeForNumber(parsed)
         };

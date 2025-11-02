@@ -29,8 +29,6 @@ public static class GrokImageService
        CancellationToken cancellationToken = default) =>
        await requestContext.WithExceptionCheck(async () =>
    {
-       ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
        var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
            new GrokNewImage
            {
@@ -40,9 +38,6 @@ public static class GrokImageService
                          ?? requestContext.ToOutputFileName()
            },
            cancellationToken);
-
-       if (notAccepted != null) return notAccepted;
-       if (typed == null) return "Something went wrong".ToErrorCallToolResponse();
 
        // 1) Build HTTP client
        var settings = serviceProvider.GetService<XAISettings>()

@@ -8,6 +8,7 @@ using System.Text.Json.Serialization;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -72,7 +73,7 @@ public static class ParallelService
        // 4) Send request
        using var req = new HttpRequestMessage(HttpMethod.Post, "v1beta/extract")
        {
-           Content = new StringContent(json, Encoding.UTF8, "application/json")
+           Content = new StringContent(json, Encoding.UTF8, MimeTypes.Json)
        };
 
        using var resp = await client.SendAsync(req, cancellationToken);
@@ -135,7 +136,7 @@ public static class ParallelService
        // 4) Send request
        using var req = new HttpRequestMessage(HttpMethod.Post, "v1beta/search")
        {
-           Content = new StringContent(json, Encoding.UTF8, "application/json")
+           Content = new StringContent(json, Encoding.UTF8, MimeTypes.Json)
        };
 
        using var resp = await client.SendAsync(req, cancellationToken);
@@ -187,9 +188,6 @@ public static class ParallelService
                 },
                 cancellationToken);
 
-            if (notAccepted != null) throw new Exception();
-            if (typed == null) throw new Exception();
-
             inputSchema = typed.InputSchema;
             enableEvents = typed.EnableEvents;
             webhook = typed.Webhook;
@@ -230,7 +228,7 @@ public static class ParallelService
         // 6) Send request
         using var req = new HttpRequestMessage(HttpMethod.Post, "v1beta/tasks/runs")
         {
-            Content = new StringContent(json, Encoding.UTF8, "application/json")
+            Content = new StringContent(json, Encoding.UTF8, MimeTypes.Json)
         };
 
         using var resp = await client.SendAsync(req, cancellationToken);
@@ -300,7 +298,7 @@ public static class ParallelService
        // 4) Send request
        using var req = new HttpRequestMessage(HttpMethod.Post, "v1beta/tasks/groups")
        {
-           Content = new StringContent(json, Encoding.UTF8, "application/json")
+           Content = new StringContent(json, Encoding.UTF8, MimeTypes.Json)
        };
 
        using var resp = await client.SendAsync(req, cancellationToken);
@@ -357,9 +355,6 @@ public static class ParallelService
                   },
                   cancellationToken);
 
-              if (notAccepted != null) throw new Exception();
-              if (typed == null) throw new Exception();
-
               processor = typed.Processor;
               input = typed.Input;
               enableEvents = typed.EnableEvents;
@@ -400,7 +395,7 @@ public static class ParallelService
           // 5) Send request
           using var req = new HttpRequestMessage(HttpMethod.Post, "v1beta/tasks/runs")
           {
-              Content = new StringContent(json, Encoding.UTF8, "application/json")
+              Content = new StringContent(json, Encoding.UTF8, MimeTypes.Json)
           };
 
           using var resp = await client.SendAsync(req, cancellationToken);

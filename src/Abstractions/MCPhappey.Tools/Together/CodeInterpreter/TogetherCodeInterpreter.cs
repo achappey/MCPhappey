@@ -44,7 +44,6 @@ public static class TogetherCodeInterpreter
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
         {
-            var settings = serviceProvider.GetRequiredService<TogetherSettings>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
             // 2) Construct Together API payload
@@ -63,10 +62,8 @@ public static class TogetherCodeInterpreter
             };
 
             // 3) Call Together API
-            using var client = clientFactory.CreateClient();
+            using var client = serviceProvider.CreateTogetherClient();
             using var request = new HttpRequestMessage(HttpMethod.Post, "https://api.together.xyz/v1/tci/execute");
-            request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-            request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
             request.Content = new StringContent(payload.ToJsonString(options), Encoding.UTF8, MimeTypes.Json);
 
             using var resp = await client.SendAsync(request, cancellationToken);

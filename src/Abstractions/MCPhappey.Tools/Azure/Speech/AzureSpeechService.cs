@@ -1,6 +1,4 @@
 using System.ComponentModel;
-using System.Text;
-using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.Azure.DocumentIntelligence;

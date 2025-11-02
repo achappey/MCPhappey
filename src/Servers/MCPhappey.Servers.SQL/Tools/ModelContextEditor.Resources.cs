@@ -16,7 +16,7 @@ public static partial class ModelContextEditor
     [McpServerTool(
         Title = "Add a resource to an MCP-server",
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextEditor_AddResource(
+    public static async Task<CallToolResult?> ModelContextEditor_AddResource(
         [Description("Name of the server")]
             string serverName,
         [Description("The URI of the resource to add.")]
@@ -37,7 +37,8 @@ public static partial class ModelContextEditor
         bool? assistantAudience = true,
         [Description("Optional user audience target.")]
         bool? userAudience = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+           await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
@@ -53,9 +54,6 @@ public static partial class ModelContextEditor
             Description = description
         }, cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-        if (typed == null) return "Invalid response".ToErrorCallToolResponse();
-
         var item = await serverRepository.AddServerResource(server.Id, typed.Uri,
             typed.Name.Slugify().ToLowerInvariant(),
             typed.Description,
@@ -68,13 +66,13 @@ public static partial class ModelContextEditor
         return item.ToResource()
                .ToJsonContentBlock($"mcp-editor://server/{serverName}/resources/{item.Name}")
                .ToCallToolResult();
-    }
+    });
 
     [Description("Updates a resource of a MCP-server")]
     [McpServerTool(
         Title = "Update a resource of an MCP-server",
         OpenWorld = false)]
-    public static async Task<CallToolResult> ModelContextEditor_UpdateResource(
+    public static async Task<CallToolResult?> ModelContextEditor_UpdateResource(
         [Description("Name of the server")] string serverName,
         [Description("Name of the resource to update")] string resourceName,
         IServiceProvider serviceProvider,
@@ -90,7 +88,8 @@ public static partial class ModelContextEditor
         bool? assistantAudience = true,
         [Description("New value for the user audience target.")]
         bool? userAudience = null,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default) =>
+           await requestContext.WithExceptionCheck(async () =>
     {
         var serverRepository = serviceProvider.GetRequiredService<ServerRepository>();
         var server = await serviceProvider.GetServer(serverName, cancellationToken);
@@ -107,7 +106,6 @@ public static partial class ModelContextEditor
             Priority = (priority ?? resource.Priority).GetPriority(1),
         }, cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
         if (!string.IsNullOrEmpty(typed?.Uri))
         {
             resource.Uri = typed.Uri;
@@ -130,7 +128,7 @@ public static partial class ModelContextEditor
         return updated.ToResource()
                .ToJsonContentBlock($"mcp-editor://server/{serverName}/resources/{updated.Name}")
                .ToCallToolResult();
-    }
+    });
 
     [Description("Deletes a resource from a MCP-server")]
     [McpServerTool(Title = "Delete a resource from an MCP-server",

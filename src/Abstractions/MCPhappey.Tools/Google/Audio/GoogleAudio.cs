@@ -2,6 +2,7 @@ using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Graph.Beta;
 using ModelContextProtocol.Protocol;
@@ -87,7 +88,9 @@ public static partial class GoogleAudio
                 TtsVoiceOption voiceSpeakerOne = TtsVoiceOption.Kore,
            [Description("Voice speaker two")]
                 TtsVoiceOption voiceSpeakerTwo = TtsVoiceOption.Sulafat,
-           CancellationToken cancellationToken = default)
+           CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
+        await requestContext.WithOboGraphClient(async client =>
     {
         ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
         var googleAI = serviceProvider.GetRequiredService<GoogleAI>();
@@ -103,8 +106,6 @@ public static partial class GoogleAudio
             cancellationToken
         );
 
-        using var client = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
         var outputName = $"{filename}.mp3";
         using var uploadStream = new MemoryStream(Convert.FromBase64String(audio.Data));
 
@@ -113,7 +114,7 @@ public static partial class GoogleAudio
             .Content.PutAsync(uploadStream, cancellationToken: cancellationToken);
 
         return uploadedItem?.WebUrl?.ToTextCallToolResponse();
-    }
+    }));
 
 }
 

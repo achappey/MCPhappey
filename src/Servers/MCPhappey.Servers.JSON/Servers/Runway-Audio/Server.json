@@ -1,10 +1,10 @@
 {
   "serverInfo": {
-    "name": "Runway",
-    "title": "Runway",
+    "name": "Runway-Audio",
+    "title": "Runway Audio",
     "version": "1.0.0",
     "websiteUrl": "https://runwayml.com",
-    "description": "Generate short videos from text or images and download when they’re ready.",
+    "description": "Generate, edit, and process sound or speech using Runway’s audio tools.",
     "icons": [
       {
         "src": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQQE01cLcJx7cJONWLVmk5tRBhGB0LIJ8SqSQ&s"
@@ -12,7 +12,7 @@
     ]
   },
   "plugins": [
-    "MCPhappey.Tools.Runway.RunwayVideo, MCPhappey.Tools"
+    "MCPhappey.Tools.Runway.Audio.RunwayAudio, MCPhappey.Tools"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

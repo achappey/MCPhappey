@@ -19,7 +19,6 @@ using MCPhappey.Tools.Mistral.DocumentAI;
 using MCPhappey.Servers.JSON.Extensions;
 using MCPhappey.Tools.AzureMaps;
 using MCPhappey.Tools.StabilityAI.Models;
-using MCPhappey.Tools.Together.Images;
 using MCPhappey.Tools.Azure.DocumentIntelligence;
 using MCPhappey.Tools.Imagga;
 using MCPhappey.Tools.AsyncAI;
@@ -33,6 +32,14 @@ using MCPhappey.Tools.AIML.Images;
 using MCPhappey.Tools.Replicate;
 using MCPhappey.Tools.Parallel;
 using MCPhappey.Tools.JinaAI.Reranker;
+using MCPhappey.Tools.Together;
+using MCPhappey.Tools.Mistral;
+using System.Net.Http.Headers;
+using Microsoft.KernelMemory.Pipeline;
+using MCPhappey.Tools.EuropeanUnion;
+using MCPhappey.Tools.Cohere;
+using MCPhappey.Tools.Rijkswaterstaat;
+using MCPhappey.Tools.JinaAI;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -92,14 +99,23 @@ static void AddApi<T>(IServiceCollection services, Config? cfg, string domain, F
 AddApi(builder.Services, appConfig, "connect.deskbird.com", k => new DeskbirdSettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.stability.ai", k => new StabilityAISettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.x.ai", k => new XAISettings { ApiKey = k });
-AddApi(builder.Services, appConfig, "api.mistral.ai", k => new MistralSettings { ApiKey = k });
-AddApi(builder.Services, appConfig, "api.perplexity.ai", k => new PerplexitySettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.together.xyz", k => new TogetherSettings { ApiKey = k });
-AddApi(builder.Services, appConfig, "api.dev.runwayml.com", k => new RunwaySettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.groq.com", k => new GroqSettings { ApiKey = k });
 AddApi(builder.Services, appConfig, "api.aimlapi.com", k => new AIMLSettings { ApiKey = k });
-AddApi(builder.Services, appConfig, "api.replicate.com", k => new ReplicateSettings { ApiKey = k });
-AddApi(builder.Services, appConfig, "api.jina.ai", k => new JinaAISettings { ApiKey = k });
+
+builder.Services
+.AddMistral(appConfig?.DomainHeaders)
+.AddPerplexity(appConfig?.DomainHeaders)
+.AddParallel(appConfig?.DomainHeaders)
+.AddImagga(appConfig?.DomainHeaders)
+.AddRunway(appConfig?.DomainHeaders)
+.AddReplicate(appConfig?.DomainHeaders)
+.AddCohere(appConfig?.DomainHeaders)
+.AddJinaAI(appConfig?.DomainHeaders)
+.AddAzureMaps(appConfig?.DomainHeaders)
+.AddAsyncAI(appConfig?.DomainHeaders)
+.AddRijkswaterstaat()
+.AddEuropeanUnionVies();
 
 if (appConfig?.DomainHeaders is { } headers)
 {
@@ -115,32 +131,6 @@ if (appConfig?.DomainHeaders is { } headers)
             ApiKey = diApiKey
         });
     }
-}
-
-var imaggaApiKey = appConfig?.DomainHeaders?
-    .FirstOrDefault(a => a.Key == "api.imagga.com")
-    .Value
-    .FirstOrDefault(a => a.Key == "Authorization").Value.Split(" ").LastOrDefault();
-
-if (imaggaApiKey != null)
-{
-    builder.Services.AddSingleton(new ImaggaSettings()
-    {
-        ApiKey = imaggaApiKey
-    });
-}
-
-var parallelKey = appConfig?.DomainHeaders?
-    .FirstOrDefault(a => a.Key == "api.parallel.ai")
-    .Value
-    .FirstOrDefault(a => a.Key == "x-api-key").Value.Split(" ").LastOrDefault();
-
-if (parallelKey != null)
-{
-    builder.Services.AddSingleton(new ParallelSettings()
-    {
-        ApiKey = parallelKey
-    });
 }
 
 var elevenLabsKey = appConfig?.DomainHeaders?
@@ -166,32 +156,6 @@ if (mem0Key != null)
     builder.Services.AddSingleton(new Mem0Settings()
     {
         ApiKey = mem0Key
-    });
-}
-
-var asyncAIKey = appConfig?.DomainHeaders?
-    .FirstOrDefault(a => a.Key == "api.async.ai")
-    .Value
-    .FirstOrDefault(a => a.Key == "x-api-key").Value;
-
-if (asyncAIKey != null)
-{
-    builder.Services.AddSingleton(new AsyncAISettings()
-    {
-        ApiKey = asyncAIKey
-    });
-}
-
-var azureMapsApiKey = appConfig?.DomainHeaders?
-    .FirstOrDefault(a => a.Key == "atlas.microsoft.com")
-    .Value
-    .FirstOrDefault(a => a.Key == "Subscription-Key").Value;
-
-if (azureMapsApiKey != null)
-{
-    builder.Services.AddSingleton(new AzureMapsSettings()
-    {
-        ApiKey = azureMapsApiKey
     });
 }
 

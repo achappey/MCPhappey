@@ -92,8 +92,6 @@ public static class AnthropicSkills
         => await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(skillId);
-
             var antSettings = serviceProvider.GetRequiredService<AnthropicSettings>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
             var httpClient = clientFactory.CreateClient();
@@ -150,9 +148,6 @@ public static class AnthropicSkills
             DisplayTitle = displayTitle,
         }, cancellationToken);
 
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
-
         var files = await client.BuildSkillFilesFromSharePointFolderAsync(
             folderUrl,
             cancellationToken);
@@ -190,9 +185,6 @@ public static class AnthropicSkills
         {
             SkillId = skillId,
         }, cancellationToken);
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-        if (typed == null) throw new Exception("Invalid input");
 
         var files = await client.BuildSkillFilesFromSharePointFolderAsync(
             folderUrl,

@@ -8,6 +8,7 @@ using ModelContextProtocol.Server;
 using HtmlAgilityPack.CssSelectors.NetCore;
 using System.Text.Json;
 using System.Text;
+using Microsoft.KernelMemory.Pipeline;
 
 namespace MCPhappey.Tools.HTTP;
 
@@ -171,7 +172,7 @@ public static class HTTPService
 
         var mime = response.Content.Headers.ContentType?.MediaType ?? "text/plain";
 
-        if (mime.Contains("application/json", StringComparison.OrdinalIgnoreCase))
+        if (mime.Contains(MimeTypes.Json, StringComparison.OrdinalIgnoreCase))
         {
             var formatted = responseBody.TryFormatJson();
             return [formatted.ToTextContentBlock()];

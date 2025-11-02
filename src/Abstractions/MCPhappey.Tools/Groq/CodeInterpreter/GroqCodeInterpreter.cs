@@ -10,64 +10,60 @@ namespace MCPhappey.Tools.Groq.CodeInterpreter;
 
 public static class GroqCodeInterpreter
 {
-    [Description("Run a prompt with Groq Code interpreter tool.")]
-    [McpServerTool(Title = "Groq Code Interpreter", Name = "groq_codeinterpreter_run",
-        Destructive = false,
-        ReadOnly = true)]
-    public static async Task<IEnumerable<ContentBlock>> GroqCodeInterpreter_Run(
-            IServiceProvider serviceProvider,
-          [Description("Prompt to execute (code is allowed).")]
+  [Description("Run a prompt with Groq Code interpreter tool.")]
+  [McpServerTool(Title = "Groq Code Interpreter", Name = "groq_codeinterpreter_run",
+      Destructive = false,
+      ReadOnly = true)]
+  public static async Task<IEnumerable<ContentBlock>> GroqCodeInterpreter_Run(
+          IServiceProvider serviceProvider,
+        [Description("Prompt to execute (code is allowed).")]
             string prompt,
-          RequestContext<CallToolRequestParams> requestContext,
-          [Description("Target model (e.g. openai/gpt-oss-20b or openai/gpt-oss-120b).")]
+        RequestContext<CallToolRequestParams> requestContext,
+        [Description("Target model (e.g. openai/gpt-oss-20b or openai/gpt-oss-120b).")]
             string model = "openai/gpt-oss-20b",
-          [Description("Reasoning effort (low, medium of high).")]
+        [Description("Reasoning effort (low, medium of high).")]
             string reasoning = "medium",
-          CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default)
+  {
+    var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
-        var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
-        {
-            Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
+      Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
                 {
                     {"groq", new {
-                        code_interpreter = new { type = "code_interpreter", container = new {  type= "auto"} },
+                        code_interpreter = new {
+                          type = "code_interpreter",
+                          container = new {  type= "auto"} },
                         reasoning = new
                                 {
                                       effort = reasoning
                                 }
                      } },
                 }),
-            Temperature = 0,
-            MaxTokens = 8192,
-            ModelPreferences = model.ToModelPreferences(),
-            Messages = [prompt.ToUserSamplingMessage()]
-        }, cancellationToken);
+      Temperature = 0,
+      MaxTokens = 8192,
+      ModelPreferences = model.ToModelPreferences(),
+      Messages = [prompt.ToUserSamplingMessage()]
+    }, cancellationToken);
 
-        var metadata = new EmbeddedResourceBlock()
-        {
-            Resource = new TextResourceContents()
-            {
-                Text = JsonSerializer.Serialize(respone.Meta),
-                Uri = "https://api.groq.com",
-                MimeType = "application/json"
-            }
-        };
+    var metadata = respone.Meta?.ToJsonContent("https://api.groq.com");
 
-        if (respone.Content is EmbeddedResourceBlock embeddedResourceBlock
-            && embeddedResourceBlock.Resource is BlobResourceContents blobResourceContents)
-        {
-            var FileExtensionContentTypeProvider = await requestContext.Server.Upload(
-                serviceProvider,
-                requestContext.ToOutputFileName(blobResourceContents.MimeType!.ResolveExtensionFromMime()),
-                BinaryData.FromBytes(Convert.FromBase64String(blobResourceContents.Blob)),
-                cancellationToken);
+    if (respone.Content is EmbeddedResourceBlock embeddedResourceBlock
+        && embeddedResourceBlock.Resource is BlobResourceContents blobResourceContents)
+    {
+      var uploaded = await requestContext.Server.Upload(
+          serviceProvider,
+          requestContext.ToOutputFileName(blobResourceContents.MimeType!.ResolveExtensionFromMime()),
+          BinaryData.FromBytes(Convert.FromBase64String(blobResourceContents.Blob)),
+          cancellationToken);
 
-            return [FileExtensionContentTypeProvider!, metadata];
-        }
-
-        return [respone.Content, metadata];
+      return metadata is not null
+        ? [uploaded!, metadata]
+        : [uploaded!];
     }
+
+    return metadata is not null
+            ? [respone.Content, metadata]
+            : [respone.Content];
+  }
 }
 

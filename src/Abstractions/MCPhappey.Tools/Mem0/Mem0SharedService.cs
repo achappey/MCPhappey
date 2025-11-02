@@ -1,17 +1,15 @@
 using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
 using System.Net.Http.Headers;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Nodes;
-using System.Text.Json.Serialization;
 using MCPhappey.Auth.Extensions;
 using MCPhappey.Auth.Models;
 using MCPhappey.Common.Extensions;
-using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -32,8 +30,8 @@ public static class Mem0SharedService
         [Range(1, 100)] int pageSize,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> context,
-        CancellationToken cancellationToken = default)
-        => await context.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
             if (page < 1) throw new ArgumentException("Page must be >= 1");
@@ -70,8 +68,8 @@ public static class Mem0SharedService
         int topK,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> context,
-        CancellationToken cancellationToken = default)
-        => await context.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
             ArgumentNullException.ThrowIfNullOrWhiteSpace(query);
@@ -114,21 +112,16 @@ public static class Mem0SharedService
         bool infer,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> context,
-        CancellationToken cancellationToken = default)
-        => await context.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(content);
-
             var appSettings = serviceProvider.GetRequiredService<OAuthSettings>();
             var userId = serviceProvider.GetUserId();
 
             var (typed, notAccepted, _) = await context.Server.TryElicit(
                 new Mem0AddMemory { Role = role, Content = content, Immutable = immutable, Infer = infer },
                 cancellationToken);
-
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-            if (typed == null) throw new Exception("Invalid input");
 
             var body = new Dictionary<string, object>
             {
@@ -161,22 +154,16 @@ public static class Mem0SharedService
         string text,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> context,
-        CancellationToken cancellationToken = default)
-        => await context.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(memoryId);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(text);
-
             var userId = serviceProvider.GetUserId();
             var mem0Settings = serviceProvider.GetRequiredService<Mem0Settings>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
             var (typed, notAccepted, _) = await context.Server.TryElicit(
                 new Mem0UpdateMemory { Text = text }, cancellationToken);
-
-            if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-            if (typed == null) throw new Exception("Invalid input");
 
             var body = new Dictionary<string, object>
             {
@@ -189,7 +176,7 @@ public static class Mem0SharedService
                 HttpMethod.Put,
                 $"https://api.mem0.ai/v1/memories/{memoryId}/")
             {
-                Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, "application/json")
+                Content = new StringContent(JsonSerializer.Serialize(body), Encoding.UTF8, MimeTypes.Json)
             };
 
             req.Headers.Authorization = new AuthenticationHeaderValue("Token", mem0Settings.ApiKey);
@@ -215,12 +202,10 @@ public static class Mem0SharedService
         string memoryId,
         IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> context,
-        CancellationToken cancellationToken = default)
-        => await context.WithExceptionCheck(async () =>
+        CancellationToken cancellationToken = default) =>
+        await context.WithExceptionCheck(async () =>
         await context.WithStructuredContent(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(memoryId);
-
             var mem0Settings = serviceProvider.GetRequiredService<Mem0Settings>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 

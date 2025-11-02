@@ -26,7 +26,6 @@ public static partial class GraphWorkbooks
         OpenWorld = false)]
     public static async Task<CallToolResult?> GraphWorkbooks_AddWorksheet(
         string excelFileUrl,
-        IServiceProvider serviceProvider,
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Optional worksheet name. If omitted, Excel assigns a name.")]
             string? worksheetName = null,
@@ -42,8 +41,6 @@ public static partial class GraphWorkbooks
             },
             cancellationToken
         );
-
-        if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
 
         // Resolve the DriveItem from the sharing/ODSP URL
         var driveItem = await client.GetDriveItem(excelFileUrl, cancellationToken);
@@ -96,11 +93,8 @@ public static partial class GraphWorkbooks
         Dictionary<string, string>? defaultValues = null,
             CancellationToken cancellationToken = default)
               => await requestContext.WithExceptionCheck(async () =>
+                await requestContext.WithOboGraphClient(async (graphClient) =>
     {
-        // 1. Haal de kolomnamen van de Excel-tabel op
-        using var graphClient = await serviceProvider.GetOboGraphClient(requestContext.Server);
-
-
         var driveItem = await graphClient.GetDriveItem(excelFileUrl, cancellationToken);
         var columnsResponse = await graphClient.Drives[driveItem?.ParentReference?.DriveId]
             .Items[driveItem?.Id]
@@ -151,7 +145,9 @@ public static partial class GraphWorkbooks
         var workbookGraphUrl = $"https://graph.microsoft.com/beta/drives/{driveItem?.ParentReference?.DriveId}/items/{driveItem?.Id}/workbook";
 
         return elicited.Content.ToJsonContentBlock(workbookGraphUrl).ToCallToolResult();
-    });
+    }));
+
+    private static readonly char[] charArray = [';', ',', '\t', '|'];
 
     [Description("Import a remote CSV (by URL) into a new Excel table on OneDrive/SharePoint. Downloads CSV, fills worksheet, and creates an Excel table.")]
     [McpServerTool(
@@ -185,7 +181,7 @@ public static partial class GraphWorkbooks
 
         // Auto-detect delimiter: leest eerste lijn, telt het meest gebruikte teken (je kunt ';', ',', '\t', '|' proberen)
         var sample = csvRaw.Split('\n').FirstOrDefault() ?? "";
-        var delimiters = new[] { ';', ',', '\t', '|' };
+        var delimiters = charArray;
         var detectedDelimiter = delimiters
             .OrderByDescending(d => sample.Count(c => c == d))
             .First();

@@ -29,7 +29,7 @@ public static class AIMLVision
             RequestContext<CallToolRequestParams> requestContext,
              CancellationToken cancellationToken = default)
              => await requestContext.WithExceptionCheck(async () =>
-            await requestContext.WithStructuredContent(async () =>
+                await requestContext.WithStructuredContent(async () =>
           {
 
               var settings = serviceProvider.GetRequiredService<AIMLSettings>();
@@ -151,8 +151,8 @@ public static class AIMLVision
       using var client = clientFactory.CreateClient();
       using var request = new HttpRequestMessage(HttpMethod.Post, VISION_BASE_URL);
       request.Headers.Authorization = new AuthenticationHeaderValue("Bearer", settings.ApiKey);
-      request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-      request.Content = new StringContent(jsonBody, Encoding.UTF8, "application/json");
+      request.Headers.Accept.Add(new MediaTypeWithQualityHeaderValue(MimeTypes.Json));
+      request.Content = new StringContent(jsonBody, Encoding.UTF8, MimeTypes.Json);
 
       // Step 3: Send request
       using var resp = await client.SendAsync(request, cancellationToken);

@@ -65,6 +65,7 @@ public static partial class HTMLPlugin
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Default values for the replacements. Format: key is argument name (without braces), value is replacement.")] Dictionary<string, string>? replacements = null,
         CancellationToken cancellationToken = default) =>
+        await requestContext.WithExceptionCheck(async () =>
         await requestContext.WithOboGraphClient(async client =>
     {
         var arguments = await GetArguments(sourceUrl, client, cancellationToken);
@@ -89,8 +90,6 @@ public static partial class HTMLPlugin
               new HtmlNewFile { Name = newFilename },
               cancellationToken);
 
-        if (notAccepted != null) return notAccepted;
-
         var driveItem = await client.GetDriveItem(sourceUrl, cancellationToken);
         var contentStream = await client
                 .Drives[driveItem?.ParentReference?.DriveId]
@@ -111,7 +110,7 @@ public static partial class HTMLPlugin
                                BinaryData.FromString(html), cancellationToken);
 
         return graphItem?.ToResourceLinkCallToolResponse();
-    });
+    }));
 
 
     [Description("Please fill in the new HTML file details.")]

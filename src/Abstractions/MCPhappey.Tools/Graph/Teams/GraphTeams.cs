@@ -89,8 +89,6 @@ public static partial class GraphTeams
           },
           cancellationToken
       );
-      if (notAccepted != null) throw new Exception(JsonSerializer.Serialize(notAccepted));
-      if (typed == null) throw new Exception("Something went wrong");
 
       var newEvent = new Event
       {

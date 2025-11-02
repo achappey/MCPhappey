@@ -7,6 +7,7 @@ using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.StabilityAI.Models;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -31,9 +32,6 @@ public static class StabilityAIImageUpscaleService
         CancellationToken cancellationToken = default) =>
         await requestContext.WithExceptionCheck(async () =>
         {
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-            ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
             var downloader = serviceProvider.GetRequiredService<DownloadService>();
             var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -50,20 +48,18 @@ public static class StabilityAIImageUpscaleService
                 },
                 cancellationToken);
 
-            if (notAccepted != null) return notAccepted;
-            if (typed == null) return "No input data provided".ToErrorCallToolResponse();
-
             // 2️⃣ API key
             var settings = serviceProvider.GetService<StabilityAISettings>()
                 ?? throw new InvalidOperationException("No StabilityAISettings found in service provider");
 
             using var client = clientFactory.CreateClient();
-            using var form = new MultipartFormDataContent();
-
-            // Required image + prompt
-            form.Add("image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType));
-            form.Add("prompt".NamedField(typed.Prompt));
-            form.Add("output_format".NamedField("png"));
+            using var form = new MultipartFormDataContent
+            {
+                // Required image + prompt
+                "image".NamedFile(imageFile.Contents.ToArray(), imageFile.Filename ?? "image.png", imageFile.MimeType),
+                "prompt".NamedField(typed.Prompt),
+                "output_format".NamedField("png")
+            };
 
             // Optional fields
             if (!string.IsNullOrWhiteSpace(typed.NegativePrompt))
@@ -113,7 +109,7 @@ public static class StabilityAIImageUpscaleService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                 ]
             };
@@ -132,8 +128,6 @@ public static class StabilityAIImageUpscaleService
            CancellationToken cancellationToken = default) =>
            await requestContext.WithExceptionCheck(async () =>
            {
-               ArgumentNullException.ThrowIfNullOrWhiteSpace(imageUrl);
-
                var downloader = serviceProvider.GetRequiredService<DownloadService>();
                var clientFactory = serviceProvider.GetRequiredService<IHttpClientFactory>();
 
@@ -148,9 +142,6 @@ public static class StabilityAIImageUpscaleService
                        Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName()
                    },
                    cancellationToken);
-
-               if (notAccepted != null) return notAccepted;
-               if (typed == null) return "No input data provided".ToErrorCallToolResponse();
 
                // 2️⃣ Load API key
                var settings = serviceProvider.GetService<StabilityAISettings>()
@@ -199,7 +190,7 @@ public static class StabilityAIImageUpscaleService
                     new ImageContentBlock
                     {
                         Data = Convert.ToBase64String(bytesOut),
-                        MimeType = "image/png"
+                        MimeType = MimeTypes.ImagePng
                     }
                    ]
                };
