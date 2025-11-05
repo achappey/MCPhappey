@@ -3,6 +3,7 @@
     "name": "Vektis",
     "title": "Vektis",
     "version": "1.0.0",
+    "websiteUrl": "https://www.vektis.nl",
     "description": "Bekijk en vergelijk zorgkosten per regio in Nederland op basis van open Vektis-data.",
     "icons": [
       {
