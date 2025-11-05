@@ -185,8 +185,7 @@ public static class TogetherRerank
                         cancellationToken
                     );
 
-                    foreach (var z in fileContents
-                        .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)))
+                    foreach (var z in fileContents.GetTextFiles())
                     {
                         documents.Add(new
                         {

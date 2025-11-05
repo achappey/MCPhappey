@@ -32,10 +32,10 @@ public static class DocumentComparer
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var files = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, originalFileUrl, cancellationToken);
-        var contents = string.Join("\n\n", files.Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)).Select(z => z.Contents.ToString()));
+        var contents = string.Join("\n\n", files.GetTextFiles().Select(z => z.Contents.ToString()));
 
         var newFiles = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, newFileUrl, cancellationToken);
-        var newContents = string.Join("\n\n", newFiles.Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)).Select(z => z.Contents.ToString()));
+        var newContents = string.Join("\n\n", newFiles.GetTextFiles().Select(z => z.Contents.ToString()));
 
         var promptArgs = new Dictionary<string, JsonElement>
         {

@@ -16,7 +16,11 @@
     "MCPhappey.Tools.Mistral.Audio.AudioPlugin, MCPhappey.Tools",
     "MCPhappey.Tools.ElevenLabs.ElevenLabsAudio, MCPhappey.Tools",
     "MCPhappey.Tools.Groq.Audio.GroqAudio, MCPhappey.Tools",
-    "MCPhappey.Tools.AIML.Music.AIMLMusic, MCPhappey.Tools"
+    "MCPhappey.Tools.AIML.Music.AIMLMusic, MCPhappey.Tools",
+    "MCPhappey.Tools.Runway.Audio.RunwayAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.AIML.Audio.AIMLAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.Runware.Audio.RunwareAudio, MCPhappey.Tools",
+    "MCPhappey.Tools.Runware.Utilities.RunwareUtilities, MCPhappey.Tools"
   ],
   "obo": {
     "graph.microsoft.com": "https://graph.microsoft.com/User.Read https://graph.microsoft.com/Sites.ReadWrite.All"

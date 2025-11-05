@@ -40,6 +40,8 @@ using MCPhappey.Tools.EuropeanUnion;
 using MCPhappey.Tools.Cohere;
 using MCPhappey.Tools.Rijkswaterstaat;
 using MCPhappey.Tools.JinaAI;
+using MCPhappey.Tools.Runware;
+using MCPhappey.Tools.EdenAI;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -114,6 +116,8 @@ builder.Services
 .AddJinaAI(appConfig?.DomainHeaders)
 .AddAzureMaps(appConfig?.DomainHeaders)
 .AddAsyncAI(appConfig?.DomainHeaders)
+.AddRunware(appConfig?.DomainHeaders)
+.AddEdenAI(appConfig?.DomainHeaders)
 .AddRijkswaterstaat()
 .AddEuropeanUnionVies();
 

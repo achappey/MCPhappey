@@ -38,8 +38,7 @@ public static partial class GoogleAudio
             requestContext.Server, inputFileUrl, cancellationToken);
         var promptArgs = new Dictionary<string, JsonElement>
         {
-            ["documentContent"] = JsonSerializer.SerializeToElement(string.Join("\n\n", contents
-                .Where(t => t.MimeType.StartsWith("text/") || t.MimeType.StartsWith(MediaTypeNames.Application.Json))
+            ["documentContent"] = JsonSerializer.SerializeToElement(string.Join("\n\n", contents.GetTextFiles()
                 .Select(t => t.Contents.ToString()))),
             ["inputAroundPodcast"] = JsonSerializer.SerializeToElement(prompt)
         };

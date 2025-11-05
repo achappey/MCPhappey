@@ -15,23 +15,30 @@ public static class OpenAICodeInterpreter
     [McpServerTool(Title = "OpenAI Code Interpreter", Name = "openai_codeinterpreter_run",
         Destructive = false,
         ReadOnly = true)]
-    public static async Task<IEnumerable<ContentBlock>> OpenAICodeInterpreter_Run(
+    public static async Task<CallToolResult?> OpenAICodeInterpreter_Run(
             IServiceProvider serviceProvider,
           [Description("Prompt to execute (code is allowed).")]
             string prompt,
           RequestContext<CallToolRequestParams> requestContext,
           [Description("Target model (e.g. gpt-5 or gpt-5-mini).")]
             string model = "gpt-5-mini",
-          CancellationToken cancellationToken = default)
+          [Description("Reasoning effort level. low, medium, hard ")]
+            string reasoningEffort = "low",
+          [Description("Optional container id")]
+            string? containerId = null,
+          CancellationToken cancellationToken = default) =>
+          await requestContext.WithExceptionCheck(async () =>
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(prompt);
-
         var respone = await requestContext.Server.SampleAsync(new CreateMessageRequestParams()
         {
             Metadata = JsonSerializer.SerializeToElement(new Dictionary<string, object>()
                 {
                     {"openai", new {
-                        code_interpreter = new { type = "auto" }
+                        code_interpreter = new { type = "auto",
+                            container = !string.IsNullOrEmpty(containerId) ? containerId : null },
+                        reasoning = new {
+                                    effort = reasoningEffort
+                                }
                      } },
                 }),
             Temperature = 1,
@@ -54,16 +61,16 @@ public static class OpenAICodeInterpreter
         if (respone.Content is EmbeddedResourceBlock embeddedResourceBlock
             && embeddedResourceBlock.Resource is BlobResourceContents blobResourceContents)
         {
-            var FileExtensionContentTypeProvider = await requestContext.Server.Upload(
+            var upload = await requestContext.Server.Upload(
                 serviceProvider,
                 requestContext.ToOutputFileName(blobResourceContents.MimeType!.ResolveExtensionFromMime()),
                 BinaryData.FromBytes(Convert.FromBase64String(blobResourceContents.Blob)),
                 cancellationToken);
 
-            return [FileExtensionContentTypeProvider!, metadata];
+            return new List<ContentBlock>() { upload!, metadata }.ToCallToolResponse();
         }
 
-        return [respone.Content, metadata];
-    }
+        return new List<ContentBlock>() { respone.Content, metadata }.ToCallToolResponse();
+    });
 }
 

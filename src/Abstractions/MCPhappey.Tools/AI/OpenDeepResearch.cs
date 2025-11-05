@@ -34,38 +34,6 @@ public static class OpenDeepResearch
 
             var documents = new List<FileItem>();
 
-         /*   var tasks = fileUrls
-                .Where(a => !string.IsNullOrWhiteSpace(a))
-                .Select(async url =>
-                {
-                    await semaphore.WaitAsync(cancellationToken);
-                    try
-                    {
-                        var files = await downloadService.ScrapeContentAsync(
-                            serviceProvider,
-                            requestContext.Server,
-                            url,
-                            cancellationToken);
-
-                        foreach (var f in files
-                            .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)))
-                            documents.Add(f);
-                    }
-                    catch (Exception) { }
-                    finally
-                    {
-                        semaphore.Release();
-                    }
-                })
-                .ToList();
-
-            await Task.WhenAll(tasks);
-
-            var documentContent = string.Join("\n\n", documents
-                .Where(a => !a.Contents.IsEmpty)
-                .Take(5)
-                .Select(a => $"{a.Uri}\n{a.Filename}\n\n{a.Contents}\n\n"));
-*/
             var promptArgs = new Dictionary<string, JsonElement>
             {
                 ["documents"] = JsonSerializer.SerializeToElement(string.Empty),

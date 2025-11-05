@@ -1,10 +1,10 @@
 using System.ComponentModel;
 using System.Text.Json.Nodes;
 using MCPhappey.Core.Extensions;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.Extensions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -70,8 +70,8 @@ public static class CohereService
                 try
                 {
                     var files = await downloadService.ScrapeContentAsync(sp, rc.Server, url, ct);
-                    foreach (var f in files
-                        .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)))
+                    var textFiles = files.GetTextFiles();
+                    foreach (var f in textFiles)
                         documents.Add(f.Contents.ToString());
                 }
                 finally

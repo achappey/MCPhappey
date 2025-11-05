@@ -1,4 +1,5 @@
 
+using System.Net.Mime;
 using MCPhappey.Common.Models;
 
 namespace MCPhappey.Scrapers.Extensions;
@@ -10,8 +11,7 @@ public static class HttpExtensions
      CancellationToken cancellationToken = default) => new()
      {
          Contents = BinaryData.FromBytes(await httpResponseMessage.Content.ReadAsByteArrayAsync(cancellationToken)),
-         // Stream = await httpResponseMessage.Content.ReadAsStreamAsync(cancellationToken),
-         MimeType = httpResponseMessage.Content.Headers.ContentType?.MediaType!,
+         MimeType = httpResponseMessage.Content.Headers.ContentType?.MediaType ?? MediaTypeNames.Application.Octet,
          Uri = uri,
      };
 

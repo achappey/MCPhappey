@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json.Nodes;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.Extensions;
@@ -82,8 +83,7 @@ public static class JinaAIReranker
                         cancellationToken);
 
                     // 📝 Add text and JSON documents
-                    foreach (var z in files.Where(a =>
-                        a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)))
+                    foreach (var z in files.GetTextFiles())
                     {
                         documents.Add(z.Contents.ToString() ?? string.Empty);
                     }

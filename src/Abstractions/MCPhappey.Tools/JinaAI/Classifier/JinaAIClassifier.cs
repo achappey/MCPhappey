@@ -1,5 +1,6 @@
 using System.ComponentModel;
 using System.Text.Json.Nodes;
+using MCPhappey.Common.Extensions;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using MCPhappey.Tools.Extensions;
@@ -101,9 +102,9 @@ public static class JinaAIClassifier
                         url,
                         cancellationToken);
 
+                    var textFiles = fileContents.GetTextFiles();
                     // 📝 Add text and JSON documents
-                    foreach (var z in fileContents
-                        .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)))
+                    foreach (var z in textFiles)
                     {
                         inputs.Add(z.Contents.ToString() ?? string.Empty);
                     }

@@ -33,8 +33,7 @@ public static class KnowledgeGraph
           var model = modelName ?? "gpt-5-mini";
 
           var files = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
-          var content = files
-            .Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json))
+          var content = files.GetTextFiles()
             .Select(a => a.Contents.ToString());
           var documentContent = string.Join("\n\n", content);
 

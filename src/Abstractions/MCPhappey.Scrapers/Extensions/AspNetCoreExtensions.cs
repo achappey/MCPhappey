@@ -20,12 +20,30 @@ public static class AspNetCoreExtensions
         {
             foreach (var server in servers)
             {
-                services.AddSingleton<IContentScraper>(sp =>
-                {
-                    var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
 
-                    return new OboClientScraper(httpClientFactory, server, oAuthSettings);
-                });
+
+                if (server.Server.OBO?.Values.Any(a => a.EndsWith(".sharepoint.com/.default")) == true)
+                {
+                    services.AddSingleton<IContentScraper>(sp =>
+                   {
+                       var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+
+                       return new SharePointRESTScraper(httpClientFactory, server, oAuthSettings);
+                   });
+                }
+                else
+                {
+                    if (server.Server.OBO?.Any() == true)
+                    {
+                        services.AddSingleton<IContentScraper>(sp =>
+                        {
+                            var httpClientFactory = sp.GetRequiredService<IHttpClientFactory>();
+
+                            return new OboClientScraper(httpClientFactory, server, oAuthSettings);
+                        });
+                    }
+                }
+
 
                 if (server.Server.OBO?.ContainsKey(Hosts.MicrosoftGraph) == true)
                 {

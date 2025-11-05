@@ -23,6 +23,7 @@ public static class AspNetCoreExtensions
         return builder.WithContentDecoder<EpubDecoder>()
             .WithContentDecoder<JsonDecoder>()
             .WithContentDecoder<RtfDecoder>()
+            .WithContentDecoder<EmlDecoder>()
             .WithContentDecoder<HtmlDecoder>();
     }
 }

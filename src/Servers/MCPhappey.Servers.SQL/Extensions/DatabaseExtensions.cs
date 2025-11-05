@@ -85,7 +85,7 @@ public static class DatabaseExtensions
                 Icons = server.Icons.Count != 0 ? server.Icons.Select(a => new Icon()
                 {
                     Source = a.Icon.Source,
-                    //Theme = a.Icon.T,
+                    Theme = a.Icon.Theme,
                     Sizes = [.. a.Icon.Sizes.Select(a => a.Size.Value)],
                     MimeType = a.Icon.MimeType
                 }) : defaultIcons.Select(a => new Icon()

@@ -44,8 +44,7 @@ public static class DocumentTools
                 cancellationToken);
 
             var contents = string.Join("\n\n",
-                files.Where(a => a.MimeType.StartsWith("text/") ||
-                                 a.MimeType.StartsWith(MimeTypes.Json))
+                files.GetTextFiles()
                      .Select(z => z.Contents.ToString()));
 
             var promptArgs = new Dictionary<string, JsonElement>
@@ -154,8 +153,7 @@ public static class DocumentTools
                 cancellationToken);
 
             var contents = string.Join("\n\n",
-                files.Where(a => a.MimeType.StartsWith("text/") ||
-                                 a.MimeType.StartsWith(MimeTypes.Json))
+                files.GetTextFiles()
                      .Select(z => z.Contents.ToString()));
 
             var promptArgs = new Dictionary<string, JsonElement>
@@ -265,8 +263,7 @@ public static class DocumentTools
                 cancellationToken);
 
             var contents = string.Join("\n\n",
-                files.Where(a => a.MimeType.StartsWith("text/") ||
-                                 a.MimeType.StartsWith(MimeTypes.Json))
+                files.GetTextFiles()
                      .Select(z => z.Contents.ToString()));
 
             var promptArgs = new Dictionary<string, JsonElement>

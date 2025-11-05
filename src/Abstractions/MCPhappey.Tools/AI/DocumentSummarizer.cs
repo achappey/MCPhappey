@@ -37,7 +37,7 @@ public static class DocumentSummarizer
         var samplingService = serviceProvider.GetRequiredService<SamplingService>();
         var downloadService = serviceProvider.GetRequiredService<DownloadService>();
         var files = await downloadService.ScrapeContentAsync(serviceProvider, requestContext.Server, fileUrl, cancellationToken);
-        var contents = string.Join("\n\n", files.Where(a => a.MimeType.StartsWith("text/") || a.MimeType.StartsWith(MimeTypes.Json)).Select(z => z.Contents.ToString()));
+        var contents = string.Join("\n\n", files.GetTextFiles().Select(z => z.Contents.ToString()));
 
         var promptArgs = new Dictionary<string, JsonElement>
         {

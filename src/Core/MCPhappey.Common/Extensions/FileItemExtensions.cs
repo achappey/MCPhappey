@@ -1,4 +1,5 @@
 using MCPhappey.Common.Models;
+using Microsoft.AspNetCore.StaticFiles;
 using ModelContextProtocol.Protocol;
 using System.Net.Mime;
 using System.Text;
@@ -8,10 +9,23 @@ namespace MCPhappey.Common.Extensions;
 
 public static class FileItemExtensions
 {
+
+
     public static async Task<string> ToStringValueAsync(this Stream stream) => (await BinaryData.FromStreamAsync(stream)).ToString();
     public static string ToStringValue(this Stream stream) => BinaryData.FromStream(stream).ToString();
 
     public static byte[] ToArray(this Stream stream) => BinaryData.FromStream(stream).ToArray();
+
+    public static bool IsText(this FileItem item) => item.MimeType.IsTextMimeType();
+
+    public static IEnumerable<FileItem> GetTextFiles(this IEnumerable<FileItem> items) => items.Where(a => a.IsText());
+
+    public static bool IsTextMimeType(this string text) => text.StartsWith("text/")
+        || text.Equals(MediaTypeNames.Application.Json, StringComparison.OrdinalIgnoreCase)
+        || text.Equals(MediaTypeNames.Application.ProblemJson)
+        || (text.StartsWith("application/") && text.EndsWith("+json"))
+        || (text.StartsWith("application/", StringComparison.OrdinalIgnoreCase) && text.EndsWith("+xml"))
+        || text.Equals(MediaTypeNames.Application.Xml);
 
     public static FileItem ToFileItem<T>(this T content, string uri, string? filename = null) => new()
     {
@@ -81,28 +95,30 @@ public static class FileItemExtensions
               });
 
     public static ResourceContents ToResourceContents(this FileItem fileItem)
-        => fileItem.MimeType.StartsWith("text/")
-            || fileItem.MimeType.Equals(MediaTypeNames.Application.Json)
-            || fileItem.MimeType.Equals(MediaTypeNames.Application.ProblemJson)
-            || (fileItem.MimeType.StartsWith("application/") && fileItem.MimeType.EndsWith("+json"))
-            || (fileItem.MimeType.StartsWith("application/", StringComparison.OrdinalIgnoreCase) && fileItem.MimeType.EndsWith("+xml"))
-            || fileItem.MimeType.Equals(MediaTypeNames.Application.Xml) ? new TextResourceContents()
-            {
-                //Text = Encoding.UTF8.GetString(BinaryData.FromStream(fileItem.Stream!)),
-                Text = Encoding.UTF8.GetString(fileItem.Contents.ToArray()),
-                //Text = fileItem.Stream != null ? Encoding.UTF8.GetString(BinaryData.FromStream(fileItem.Stream))
-                //   : Encoding.UTF8.GetString(fileItem.Contents.ToArray()),
-                MimeType = fileItem.MimeType,
-                Uri = fileItem.Uri,
-            } : new BlobResourceContents()
-            {
-                //   Blob = Convert.ToBase64String(BinaryData.FromStream(fileItem.Stream!)),
-                Blob = Convert.ToBase64String(fileItem.Contents.ToArray()),
-                //  Blob = fileItem.Stream != null ? Convert.ToBase64String(BinaryData.FromStream(fileItem.Stream))
-                //       : Convert.ToBase64String(fileItem.Contents.ToArray()),
-                MimeType = fileItem.MimeType,
-                Uri = fileItem.Uri,
-            };
+        => fileItem.MimeType.IsTextMimeType() ? new TextResourceContents()
+        {
+            Text = Encoding.UTF8.GetString(fileItem.Contents.ToArray()),
+            MimeType = fileItem.MimeType,
+            Uri = fileItem.Uri,
+        } : new BlobResourceContents()
+        {
+            Blob = Convert.ToBase64String(fileItem.Contents.ToArray()),
+            MimeType = fileItem.MimeType,
+            Uri = fileItem.Uri,
+        };
+
+    private static readonly FileExtensionContentTypeProvider _provider = new();
+
+    public static string ResolveMimeFromExtension(this string? pathOrExt)
+    {
+        if (string.IsNullOrWhiteSpace(pathOrExt))
+            return MediaTypeNames.Application.Octet;
+
+        if (!_provider.TryGetContentType(pathOrExt, out var mime))
+            mime = MediaTypeNames.Application.Octet;
+
+        return mime;
+    }
 
 }
 

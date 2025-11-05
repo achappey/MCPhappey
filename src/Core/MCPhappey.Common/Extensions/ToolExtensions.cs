@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Runtime.Serialization;
+using System.Text.Json.Nodes;
 using MCPhappey.Common.Models;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
@@ -8,6 +9,20 @@ namespace MCPhappey.Common.Extensions;
 
 public static class ToolExtensions
 {
+
+    public static CallToolResult ToCallToolResponse(this IEnumerable<ContentBlock> content)
+        => new()
+        {
+            Content = [.. content]
+        };
+
+    public static CallToolResult ToCallToolResponse(this JsonNode content)
+        => new()
+        {
+            StructuredContent = content
+        };
+
+
     public static CallToolResult ToErrorCallToolResponse(this string content)
          => new()
          {
