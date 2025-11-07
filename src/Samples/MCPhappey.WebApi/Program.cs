@@ -42,6 +42,7 @@ using MCPhappey.Tools.Rijkswaterstaat;
 using MCPhappey.Tools.JinaAI;
 using MCPhappey.Tools.Runware;
 using MCPhappey.Tools.EdenAI;
+using MCPhappey.Tools.VoyageAI;
 
 var builder = WebApplication.CreateBuilder(args);
 var appConfig = builder.Configuration.Get<Config>();
@@ -118,6 +119,7 @@ builder.Services
 .AddAsyncAI(appConfig?.DomainHeaders)
 .AddRunware(appConfig?.DomainHeaders)
 .AddEdenAI(appConfig?.DomainHeaders)
+.AddVoyageAI(appConfig?.DomainHeaders)
 .AddRijkswaterstaat()
 .AddEuropeanUnionVies();
 

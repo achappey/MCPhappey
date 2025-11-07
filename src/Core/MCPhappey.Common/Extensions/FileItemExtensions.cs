@@ -30,7 +30,6 @@ public static class FileItemExtensions
     public static FileItem ToFileItem<T>(this T content, string uri, string? filename = null) => new()
     {
         Contents = BinaryData.FromObjectAsJson(content, JsonSerializerOptions.Web),
-        //Stream = BinaryData.FromObjectAsJson(content, JsonSerializerOptions.Web).ToStream(),
         MimeType = MediaTypeNames.Application.Json,
         Uri = uri,
         Filename = filename
@@ -43,7 +42,6 @@ public static class FileItemExtensions
               => new()
               {
                   Contents = binaryData,
-                  //Stream = binaryData.ToStream(),
                   MimeType = mimeType,
                   Filename = filename,
                   Uri = uri,

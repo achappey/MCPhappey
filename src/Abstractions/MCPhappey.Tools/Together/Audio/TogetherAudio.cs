@@ -19,9 +19,9 @@ public static class TogetherAudio
 {
     private const string BASE_URL = "https://api.together.xyz/v1/audio/speech";
 
-    [Description("Generate lifelike speech from text using Together AI’s Cartesia Sonic voice models.")]
+    [Description("Generate lifelike speech from text using Together AI voice models.")]
     [McpServerTool(
-        Title = "Together Audio Text-to-Speech",
+        Title = "Text-to-Speech",
         Name = "together_audio_text_to_speech",
         Destructive = false)]
     public static async Task<CallToolResult?> TogetherAudio_TextToSpeech(
@@ -29,6 +29,7 @@ public static class TogetherAudio
         RequestContext<CallToolRequestParams> requestContext,
         [Description("Text to be spoken.")] string input,
         [Description("Voice style, e.g. 'laidback woman' or 'storyteller lady'.")] string voice = "storyteller lady",
+        [Description("Text-to-speech model. canopylabs/orpheus-3b-0.1-ft, hexgrad/Kokoro-82M, cartesia/sonic-2 or cartesia/sonic")] string? model = "cartesia/sonic",
         [Description("Audio format (mp3, wav, raw). Default: wav.")] string responseFormat = "wav",
         [Description("Language code, e.g. en, de, fr, nl, zh. Default: en.")] string language = "en",
         [Description("Sample rate in Hz. Default: 44100.")] int sampleRate = 44100,
@@ -40,7 +41,7 @@ public static class TogetherAudio
             var (typed, notAccepted, _) = await requestContext.Server.TryElicit(
                 new TogetherAudioTextToSpeech
                 {
-                    Model = "cartesia/sonic",
+                    Model = model ?? "cartesia/sonic",
                     Input = input,
                     Voice = voice,
                     ResponseFormat = responseFormat,
@@ -113,7 +114,7 @@ public static class TogetherAudio
     {
         [Required]
         [JsonPropertyName("model")]
-        [Description("The Together model to use, typically 'cartesia/sonic'.")]
+        [Description("The Together model to use. canopylabs/orpheus-3b-0.1-ft, hexgrad/Kokoro-82M, cartesia/sonic-2 or cartesia/sonic")]
         public string Model { get; set; } = "cartesia/sonic";
 
         [Required]
@@ -150,7 +151,7 @@ public static class TogetherAudio
 
     private const string TRANSCRIBE_URL = "https://api.together.xyz/v1/audio/transcriptions";
 
-    [Description("Transcribe speech to text using Together AI’s Whisper model.")]
+    [Description("Transcribe speech to text using Together AI STT models.")]
     [McpServerTool(
         Title = "Together Audio Transcription",
         Name = "together_audio_transcribe_audio",
@@ -160,8 +161,10 @@ public static class TogetherAudio
         RequestContext<CallToolRequestParams> requestContext,
         [Description("URL of the audio file (.mp3, .wav, .m4a, .webm, .flac) to transcribe.")] string audioUrl,
         [Description("Optional text prompt to improve transcription quality.")] string? prompt = null,
+        [Description("Speech-to-text model. openai/whisper-large-v3 or mistralai/Voxtral-Mini-3B-2507")] string? model = "openai/whisper-large-v3",
         [Description("Language code (e.g. en, nl, fr). Use 'auto' for auto-detect. Default: en.")] string? language = "en",
         [Description("Sampling temperature (0–1). Default: 0.")] double temperature = 0,
+        [Description("Enable speaker diarization.")] bool diarize = true,
         [Description("Output filename without extension.")] string? filename = null,
         CancellationToken cancellationToken = default)
         => await requestContext.WithExceptionCheck(async () =>
@@ -177,9 +180,10 @@ public static class TogetherAudio
                 new TogetherAudioTranscription
                 {
                     Filename = filename?.ToOutputFileName() ?? requestContext.ToOutputFileName(),
-                    Model = "openai/whisper-large-v3",
+                    Model = model ?? "openai/whisper-large-v3",
                     Language = language ?? "en",
                     Prompt = prompt,
+                    Diarize = diarize,
                     Temperature = temperature,
                 },
                 cancellationToken);
@@ -196,6 +200,7 @@ public static class TogetherAudio
                     audio.Filename ?? "input.mp3"
                 },
                 "model".NamedField(typed.Model),
+                "diarize".NamedField(typed.Diarize.ToString().ToLower()),
                 "language".NamedField(typed.Language),
                 "response_format".NamedField("json"),
                 "temperature".NamedField(typed.Temperature.ToString(System.Globalization.CultureInfo.InvariantCulture))
@@ -243,7 +248,7 @@ public static class TogetherAudio
     {
         [JsonPropertyName("model")]
         [Required]
-        [Description("Transcription model. Default: openai/whisper-large-v3.")]
+        [Description("Transcription model. openai/whisper-large-v3 or mistralai/Voxtral-Mini-3B-2507.")]
         public string Model { get; set; } = "openai/whisper-large-v3";
 
         [JsonPropertyName("language")]
@@ -260,6 +265,12 @@ public static class TogetherAudio
         [Required]
         [Description("Sampling temperature between 0.0 and 1.0. Default: 0.")]
         public double Temperature { get; set; } = 0;
+
+        [JsonPropertyName("diarize")]
+        [Required]
+        [Description("Enable speaker diarization.")]
+        [DefaultValue(true)]
+        public bool Diarize { get; set; }
 
         [JsonPropertyName("filename")]
         [Required]

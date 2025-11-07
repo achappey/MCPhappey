@@ -6,7 +6,6 @@ using MCPhappey.Common.Models;
 using MCPhappey.Core.Extensions;
 using MCPhappey.Core.Services;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.KernelMemory.Pipeline;
 using ModelContextProtocol.Protocol;
 using ModelContextProtocol.Server;
 
@@ -18,7 +17,7 @@ public static class DocumentSummarizer
     //command-a-03-2025
 
     [Description("Parallel document summarize across multiple AI models.")]
-    [McpServerTool(Title = "Document summarizer (multi-model)",
+    [McpServerTool(Title = "Document summarizer",
         Name = "document_summarizer_summarize",
         ReadOnly = true)]
     public static async Task<CallToolResult?> DocumentSummarizer_Summarize(

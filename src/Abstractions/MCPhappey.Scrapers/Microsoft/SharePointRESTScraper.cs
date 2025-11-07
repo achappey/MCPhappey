@@ -224,6 +224,7 @@ public class SharePointRESTScraper(IHttpClientFactory httpClientFactory, ServerC
 
         return [await content.ToFileItem(url, cancellationToken)];
     }
+    
     private static string GetFileNameFromUrl(Uri uri)
     {
         if (uri == null)

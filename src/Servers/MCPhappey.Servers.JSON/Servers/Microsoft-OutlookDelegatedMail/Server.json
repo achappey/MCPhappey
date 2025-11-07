@@ -4,7 +4,7 @@
     "title": "Microsoft Outlook Delegated Mail",
     "version": "1.0.0",
     "websiteUrl": "https://outlook.office.com/mail",
-    "description": "Secure delegated email: read, search, send and organize messages with context-aware access.",
+    "description": "Read and manage Outlook emails you're allowed to handle for someone else.",
     "icons": [
       {
         "src": "https://www.ek.co/wp-content/uploads/2025/04/outlooklogo.png"
